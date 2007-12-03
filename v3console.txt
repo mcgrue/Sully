@@ -1,0 +1,183 @@
+                     ====================================
+                     =    V3 Console Command Summary    =
+                     ====================================
+
+Console emulation by Overkill.
+
+Updates List
+====================================
+VERSION 5:
+* COLUMNS added. Need I say more?
+
+VERSION 4:
+* SHOWHOTS added
+* HOOKRETRACE added (THANKS TO ZIP)
+* RSTRING added
+* Hacky V3Console__GetPlayer() by Zip that determines player by screen location.
+
+VERSION 3:
+* APPNAME implemented
+* PLAYERSPEED included
+* CAMERATRACKING toggle was put in.
+* Working SHOWOBS added (THANKS TO ZIP)
+* SHOWZONES was added (but sort of untested).
+* CONSOLEBG added on Omni's request.
+* Render() added to V3Console__Process(), thus making the screen refresh and
+  not smear.
+
+VERSION 2:
+* CAPS IMPLEMENTED. (THANKS TO ZIP)
+* SHOWOBS was added, but untested.
+* Filling the screen black was removed.
+
+To Enable the Console In Your Game
+====================================
+For each map file put V3Console__Init() in your start event.
+Or, if maps aren't your thing, slip V3Console__Init() into AutoExec().
+Then it should work.
+
+If you have conflicting variable names, feel free to change yours or the ones
+in this file. You may want to make the player variable in the console the
+same as the one that use for your game.
+
+Using the Command Console
+====================================
+The command console is summoned by the / (backslash) key. This is because
+the standard ` (tilde) key is reserved for fast forward. ALT allows you to
+exit from the console.
+
+You basically use it by just typing commands into it. The actual commands will
+be detailed below. However, in addition to typing commands, it also supports
+the following features:
+
+It's writen in V3 VergeC, so most features from the V2 builtin console were 
+lost.
+
+NOTE: Typing a non-command will just log your text instead. 
+      That could be useful!
+
+Console Command Reference
+====================================                                   
+
+ APPNAME  Parameters: [Application name]                                         
+ Usage: APPNAME [name]                                               
+ Description: Switches the application name.
+
+ EXIT  Parameters: [optional message]                                            
+ Usage: EXIT [optional message]                                                
+ Description: Exits VERGE.
+
+ CAMERATRACKING Parameters: None
+ Usage: CAMERATRACKING                                           
+ Description: CAMERATRACKING will be toggled.
+
+ CONSOLEBG Parameters: [image-file]
+ Usage: CONSOLEBG [img]                                           
+ Description: CONSOLEBG changes the background skin for the console menu.
+
+ MAP  Parameters: [MAP name]                                          
+ Usage: MAP [MAP name]                                           
+ Description: MAP will attempt to map switch to the map file specified.    
+
+ PLAYER  Parameters: [Entity index]                                   
+ Usage: PLAYER [idx]                                          
+ Description: Sets the player to the given entity number.                                               
+ PLAYERSPEED Parameters: [Speed in 1/100 pixels] 
+ Usage: PLAYERSPEED [spd]
+ Description: Makes the player move at the set speed, in 1/100ths of pixels.
+              100 (1 pixel/tick) is default for most characters.
+
+ VERSION  Parameters: None                                                
+ Usage: VERSION                                                      
+ Description: Displays a V3 version report and build info.             
+
+ WARP  Parameters: [tile-x, tile-y]                                   
+ Usage: WARP [x] [y]                                            
+ Description: Warps the player to the specified location.              
+
+ CHANGECHR  Parameters: [entity index, chr-file]                                 
+ Usage: CHANGECHR [idx] [chr-file]                                            
+ Description: Switches the sprite image used for a specified entity.
+  
+ MUSIC  Parameters: [song-file]                                   
+ Usage: MUSIC [song]                                            
+ Description: Plays the specified song, if found.
+ 
+ RES  Parameters: [x-resolution, y-resolution]
+ Usage: RES [width] [height]
+ Description: Modifies the screen resolution. Potentially 
+              dangerous in full-screen.
+
+ SHOWOBS Parameters: None
+ Usage: SHOWOBS
+ Description: Renders obstructions.
+
+ SHOWZONES Parameters: None
+ Usage: SHOWZONES
+ Description: Renders zones.
+
+ SHOWHOTS Parameters: None
+ Usage: SHOWZONES
+ Description: Renders entity hotspots and entity numbers.
+              //Blue = OBSTRUCTS ONLY
+              //Red = OBSTRUCTABLE ONLY
+              //Purple = BOTH
+              //Green = NEITHER
+
+ RSTRING Parameters: [render-string]
+ Usage: RSTRING [layer order]
+ Description: Modifies the render string of the current map.
+              Seperate each layer with a comma.
+              Be careful with this, as it crashes if the rstring is errant.
+ Example: RSTRING 1,2,E,5,4,R
+
+ COLUMNS Parameters: None
+ Usage: Columns
+ Description: Plays columns, an addictive puzzle game that was built-in Maped2. 
+
+Special Commands:
+
+GETINT [variable-name] [value]
+GETINTARR [variable-name] [index] [value]
+GETSTR [variable-name] [value]
+GETSTRARR [variable-name] [index] [value]**
+
+Description: These commands retreive data from existing variables,
+             which can be useful.
+** GETSTRARR crashes for an unknown reason on my PC, I don't know why.
+
+SETINT [variable-name] [value]
+SETINTARR [variable-name] [index] [value]
+SETSTR [variable-name] [value]
+SETSTRARR [variable-name] [index] [value]
+
+Description: These commands modify existing variables.
+
+CALLFUNC [function-name]
+
+Description: Executes a function that takes no arguments 
+             and returns no values.
+
+EXISTFUNC [function-name]
+
+Description: Confirms the existance of a function.
+
+HOOKRETRACE [function-name]
+
+Description: Allows constant function hooking.
+** Note: HOOKRETRACE SHOWOBS -- Allows obstructions to stay outside console
+         HOOKRETRACE SHOWZONES -- Allows zones to stay outside console
+         HOOKRETRACE SHOWHOTS -- Allows hotspots to stay outside console
+         HOOKRETRACE SHOWOZ -- Allows obstruction and zones.
+         HOOKRETRACE SHOWHOZ -- Allows obstruction, zones, hotspots.
+
+
+In closing...
+====================================
+
+This was just something I thought would be useful for debugging my game.
+Something that was built into DOS V2, but was forgotten since.
+You may use it in your games and even modify and update it as you see fit.
+Mail me at overkill9999@hotmail.com if you see something else that's worth adding.
+
+- Overkill

@@ -1,0 +1,78 @@
+- Start the battle cursor in appropriate places
+
+* Debug the "crystal and darin will resolve their attacks simultaneously" problem.
+
+- Figure out why the battle menu is corrupting in any circumstance other than a fresh load.
+
+* After that I'll start in on some basic effects, like item use - Herb. 
+  Some pose changes and a simple sparlie overlay, and +30 HP. This'll be a testbed
+  for working out the battle effect process, which I hope to fully document sometime
+  soon so anyone who wants to, can add content to Sully in the near future.
+
+* After a few battle effects are in, then it's time to implement the Status effects, 
+  which is twofold: one: implementing a triggering system for cleanup (on_death, on_hit,
+  expiry_time, etc etc), and two: actually putting the checks for various status 
+  ailments in the right places.
+
+* After that, making sure that the proper special animations/poses occur when a character
+  is effected by a status ailment, and making sure they're removed when the ailment is removed.
+
+* After that, just some mundane fixes (McFAIL needs a deadzone time on button presses,
+  McGrender needs to be fully debugged since some render layers are missing on battle reloads,
+  The Battle Menu parser needs to be kicked some so it always loads the right data on startup...)
+
+* And then, content. Whee.
+
+=========================================
+
+* Create some animation stubs for Item Use and General Spell Effects.
+	* Create a function that can tell if a sprite has reached the end of a custom animation cycle or not.
+		*Tweak the sprite-handler in the McGrender engine so it can optionally hold certain frames until told to release.
+
+* tweak the selection-map library for battle mode.  Make it so a left-click when on the ally side goes to "enemy 1", and any offensive ability starts targetting on "enemy 1".
+	"Enemy 1" is the rightmost, topmost enemy.
+
+* implement end-of-action checks (status ailments, check for death, etc) (in AreBattleEffectsRendering() maybe???)
+
+* Implement Herb healing.
+
+* Implement Heal Sparklies!
+
+- Implement Basic attack from menu.
+
+* Implement other basic functions. (Run, defend, masturbate, etc)
+
+* Lay out explicitly in a tutorial how to create functions for battleskills.
+
+- QUERY: was this fixed with the base_page clearing fix?
+-
+- TOTAL HACKAROUND, FIX THIS: Fix the problem where the battle menu fucking breaks in-battle if the dump_bm() call isn't made within battle_menu.vc::TurnBattleMenuOn();
+
+* Modify McFail to have an optional longer "dead" period when in joystick mode.
+
+* loading a new game does not reset previously loaded partymember chrs.  If you load an overworld save, and then load a town/dungeon save, you still have the overworld chrs.
+
+* Fix all volumes!
+
+* implement a letter in the sprite definition files to mean "stop".  For the end of Death, Stone, and other non-repeating poses.
+
+* After that I'll reactivate the slashies, which now means defining a 
+  slash for every monster and ally. But since there'll be a lot of reuse, 
+  I'm fine by that. It's mainly an excersize in altering the datafile parsers.
+
+========================================
+
+* Make a blue font in the bouncytext for MP changes?
+
+* Seperate the evade/hit animations from the battle_damage_queue?
+
+* Add a "recieving positive effect" stance? (opposite of 'hit')
+
+========================================
+General Spell Effects
+========================================
+Attack
+Defend
+Meditate
+Parry
+Run

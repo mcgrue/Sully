@@ -1,0 +1,160 @@
+/// The autoexec function for  underwater.map
+void start()
+{
+	SaveDisable(); //cannot save in dungeons.
+	
+	arMapTemp[0] = 0;	//for the unstep.
+	
+	//do all the map init stuff (defined in system.vc)
+	InitMap();
+	
+	V1_StartMusic("res/music/MYSTWATR.S3M");
+}
+
+
+
+void blue_zone()
+{
+	if( arMapTemp[0] )
+	{
+		arMapTemp[0] = 0;
+		
+		SoundWarpZone();
+		
+		V1_MapSwitch("underwater.map", 26,25, TBOX);
+	}
+}
+
+
+void to_blue_cliff()
+{
+	V1_MapSwitch("underwater_1.map", 36,25, TNONE);
+}
+
+void blue_zone_unstep()
+{
+	arMapTemp[0] = 1;
+}
+
+void crystal_event_1()
+{
+	int darin, crystal;
+
+	if( !Flags[F_SEA_CRYSTAL_E1] )
+	{
+		darin	= GetPartyEntity( "Darin" );
+		crystal	= GetPartyEntity( "Crystal" );
+	
+		TextBox(T_CRYSTAL,	"Oooh!","Darin, Look!","");
+		
+		CutsceneOn();
+		Wait(10);
+		
+		EntityMove(crystal, "X86 Y38");
+		EntityMove(darin, "X86 Y38");
+		
+		EntityMove(crystal, "U4 L1 U4 X86 Y31");
+		EntityMove(darin, "U4 R1 U3 X87 Y31");
+		
+		WaitForEntity( crystal );
+		WaitForEntity( darin );
+		
+		Wait(100);
+		TextBox(T_CRYSTAL,	"This is *beautiful*!","","");
+		Wait(100);
+		TextBox(T_CRYSTAL,	"##sigh##","","");
+		Wait(100);
+		
+		EntityMove(crystal, "R0 W70 Z21 W40 Z22 W70");
+		WaitForEntity( crystal );
+		TextBox(T_CRYSTAL,	"Why have you never taken me here","before?","");
+		
+		EntityMove(darin, "L0 W70 Z23 W70");
+		WaitForEntity( darin );
+		TextBox(T_DARIN,	"Well, er... we've never really needed","to open the floodgate before, ","so we never went up here...");
+		TextBox(T_CRYSTAL,	"Hmph.  Excuses.","","");
+		
+		EntityMove(darin, "W70 Z0 L0 Z28 W70 Z0 W70 Z24 W70 Z0 W70 L0");
+		WaitForEntity( darin );
+		
+		TextBox(T_DARIN,	"...how are we even outside?!","This is an *undersea* cavern.","Under.  The sea.");
+		EntityMove(crystal, "Z0");
+		
+		TextBox(T_CRYSTAL,	"Hush dear.  You're ruining the moment.","","");
+		TextBox(T_DARIN,	"...","","");
+		TextBox(T_CRYSTAL,	"Besides, that warp pad could've taken","us anywhere...","");
+		TextBox(T_DARIN,	"...yeah.","I guess you're right...","");
+		Wait(50);
+		TextBox(T_CRYSTAL,	"Okay, I'm done for now!","","");
+		
+		EntityMove(darin, "R0");
+		EntityMove(crystal, "R1 D1 U0");
+		
+		WaitForEntity( crystal );
+		CutsceneOff();
+	
+		Flags[F_SEA_CRYSTAL_E1] = 1;
+	}
+}
+
+void crystal_event_2()
+{
+	int darin, crystal;
+
+	if( !Flags[F_SEA_CRYSTAL_E2] && Flags[F_SEA_LEVER_3] )
+	{
+		darin	= GetPartyEntity( "Darin" );
+		crystal	= GetPartyEntity( "Crystal" );
+		
+		entity.speed[crystal] = 400;	//make her real fast!
+		TextBox(T_CRYSTAL,	"Oh, just once more...","","");
+		
+		CutsceneOn();
+		Wait(10);
+		
+		EntityMove(crystal, "X104 Y31 L18 U0");
+		EntityMove(darin, "X104 Y31 L17 U0");
+		
+		WaitForEntity( darin );
+		
+		TextBox(T_CRYSTAL,	"##sigh##","","");
+		Wait(100);
+
+		EntityMove(darin, "L0");
+		WaitForEntity( darin );
+		Wait(40);
+		
+		TextBox(T_DARIN,	"...but we just went through a door and","were in the undersea cavern!","");
+		TextBox(T_CRYSTAL,	"Mmm?","","");
+		TextBox(T_DARIN,	"We're above ground now!","","");
+		TextBox(T_CRYSTAL,	"Mmm?","","");
+		TextBox(T_DARIN,	"This is impossible!","","");
+		
+		EntityMove(crystal, "R0 W70 Z22 W70");
+		WaitForEntity( crystal );
+		
+		TextBox(T_CRYSTAL,	"Hmph.","","");
+		TextBox(T_CRYSTAL,	"Just like a man to let logic get in","the way of a romantic moment...","");
+		Wait(50);
+		
+		EntityMove(darin, "L0 W70 Z28 W70");
+		WaitForEntity( darin );
+		TextBox(T_DARIN,	"...I'm just sayin', s'all...","","");			
+	
+		EntityMove(darin, "Z0");
+		EntityMove(crystal, "Z0 R2 L0");
+		WaitForEntity( darin );
+		WaitForEntity( crystal );
+		CutsceneOff();
+	
+		entity.speed[crystal] = 100;	//return her speed to normal...
+		
+		Flags[F_SEA_CRYSTAL_E2] = 1;
+	}
+}
+
+
+void ripe_crystal()
+{
+	TextBox(T_DARIN,	"Hrm.  This crystal isn't ripe yet.","","");	
+}

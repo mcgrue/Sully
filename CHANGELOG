@@ -1,0 +1,7 @@
+* Todo: Datafile parsing seems to have a chr limit on desc strings.  Look into this.
+
+
+2005.06.13	McGrue	Implementing changes to the Skill datatype and Skilltype datatype.
+			added save format 0.0.3.0
+--
+2005.04.27	McGrue	Added Cancel-button activated running.

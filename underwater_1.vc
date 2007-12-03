@@ -1,0 +1,124 @@
+/// The autoexec function for  underwater.map
+void start()
+{
+	SaveDisable(); //cannot save in dungeons.
+
+	if( Flags[F_SEA_WARPON] )
+	{
+		SetTile(20,26, 2, 601);
+		SetLeverAndZone();
+	}
+	
+	UpdateDoorTiles();
+	SetLeverAndZone();
+	
+	if( Flags[F_SEA_LEVER_1] )
+		SetTile(32,20, 4, 606);
+	if( Flags[F_SEA_LEVER_2] )
+		SetTile(33,23, 4, 606);
+	if( Flags[F_SEA_LEVER_3] )
+		SetTile(34,26, 4, 606);
+	
+	if (flags[CHEST_UNDERSEA_A]) SetTile(36, 14, 2, 568);
+	if (flags[CHEST_UNDERSEA_B]) SetTile(90, 75, 2, 568);	
+
+	//do all the map init stuff (defined in system.vc)
+	InitMap();
+	
+	V1_StartMusic("res/music/MYSTWATR.S3M");
+}
+
+
+/// Sets the lever and warp zone tiles as appropriate for the present flags[F_SEA_WARP] value
+void SetLeverAndZone()
+{
+	if( Flags[F_SEA_WARPON] )
+	{
+		switch( flags[F_SEA_WARP] )
+		{
+			case 1: // red
+				SetTile(24, 24, 2, 603);	//change the lever tile
+				SetTile(26, 25, 2, 515);	//change the warpzone tile
+
+			case 2: // green
+				SetTile(24, 24, 2, 604);	//change the lever tile
+				SetTile(26, 25, 2, 535);	//change the warpzone tile
+
+			case 0:	// blue
+				SetTile(24, 24, 2, 602);	//change the lever tile
+				SetTile(26, 25, 2, 555);	//change the warpzone tile
+		}
+	}
+}
+
+
+void red_zone_button()
+{
+	if( !Flags[F_SEA_LEVER_1] )
+	{
+		SetTile(32,20, 4, 606);
+		SoundSwitch();
+		Flags[F_SEA_LEVER_CNT]++;
+		Flags[F_SEA_LEVER_1] = 1;
+		UpdateDoorTiles();
+	}
+}
+
+void green_zone_button()
+{
+	if( !Flags[F_SEA_LEVER_2] )
+	{
+		SetTile(33, 23, 4, 606);
+		SoundSwitch();
+		Flags[F_SEA_LEVER_CNT]++;
+		Flags[F_SEA_LEVER_2] = 1;
+		UpdateDoorTiles();
+	}	
+}
+
+void blue_zone_button()
+{
+	if( !Flags[F_SEA_LEVER_3] )
+	{
+		SetTile(34,26, 4, 606);
+		SoundSwitch();
+		Flags[F_SEA_LEVER_CNT]++;
+		Flags[F_SEA_LEVER_3] = 1;
+		UpdateDoorTiles();
+	}	
+}
+
+void from_red_zone()
+{
+	V1_MapSwitch("underwater.map", 11, 63, TNONE);
+}
+
+void from_green_zone()
+{
+	V1_MapSwitch("underwater.map", 74, 77, TNONE);
+}
+
+void from_blue_zone()
+{
+	V1_MapSwitch("underwater_2.map", 104, 34, TNONE);
+}
+
+void UpdateDoorTiles()
+{
+	switch( Flags[F_SEA_LEVER_CNT] )
+	{
+		case 1: 
+			SetTile(29,24, 3, 368);	
+			SetTile(29,25, 3, 388);	
+			SetTile(29,26, 3, 408);	
+		case 2: 
+			SetTile(29,24, 3, 369);	
+			SetTile(29,25, 3, 389);	
+			SetTile(29,26, 3, 409);	
+		case 3: 
+			SetTile(29,24, 3, 0);	
+			SetTile(29,25, 3, 0);	
+			SetTile(29,26, 3, 0);	
+			SetObs(29,26,0);
+	}
+}

@@ -1,0 +1,65 @@
+// v1_mapswitch("dwarf.map",51,17,TBLACK);
+
+void Start()
+{
+	SaveDisable(); //cannot save in towns.
+	InitMap();
+	V1_StartMusic( "res/music/DWARVES.IT" );
+	
+	Banner("Dwarfville: City of Dwarfs.",300);
+}
+
+void warp_doorA_in() { warp(99,39,TCROSS); }		// 1
+void warp_doorA_out() { warp(38,20,TCROSS); }
+
+void warp_doorB_in() { warp(30,139,TCROSS); }		// 3
+void warp_doorB_out() { warp(49,24,TCROSS); }
+
+void warp_doorC_in() { warp(140,73,TCROSS); }	// 5
+void warp_doorC_out() { warp(60,20,TCROSS); }
+
+void warp_doorD_in() { warp(102,147,TCROSS); }	// 7
+void warp_doorD_out() { warp(38,33,TCROSS); }
+
+void warp_doorE_in() { warp(167,97,TCROSS); }	// 9
+void warp_doorE_out() { warp(69,29,TCROSS); }
+
+void warp_doorF_in() { warp(79,68,TCROSS); }		// 11
+void warp_doorF_out() { warp(76,27,TCROSS); }
+
+void warp_doorG_in() { warp(125,114,TCROSS); }	// 13
+void warp_doorG_out() { warp(76,38,TCROSS); }
+
+void warp_doorH_in() { warp(36,87,TCROSS); }		// 15
+void warp_doorH_out() { warp(29,35,TCROSS); }
+
+void warp_doorI_in() { warp(44,91,TCROSS); }		// 17
+void warp_doorI_out() { warp(34,37,TCROSS); }
+
+void warp_doorJ_in() { warp(17,61,TCROSS); }		// 19
+void warp_doorJ_out() { warp(40,39,TCROSS); }
+
+void warp_doorK_in() { warp(15,80,TCROSS); }		// 21
+void warp_doorK_out() { warp(53,31,TCROSS); }
+
+void warp_doorL_in() { warp(118,88,TCROSS); }	// 23
+void warp_doorL_out() { warp(42,50,TCROSS); }
+
+void warp_doorM_in() { warp(166,67,TCROSS); }	// 25
+void warp_doorM_out() { warp(46,48,TCROSS); }
+
+void warp_doorN_in() { warp(185,57,TCROSS); }	// 27
+void warp_doorN_out() { warp(51,44,TCROSS); }
+
+void warp_doorO_in() { warp(0,0,TCROSS); }		// 29
+void warp_doorO_out() { warp(55,43,TCROSS); }
+
+void warp_doorP_in() { warp(17,102,TCROSS); }	// 31
+void warp_doorP_out() { warp(53,51,TCROSS); }
+
+void warp_doorR_in() { warp(74,101,TCROSS); }		// 36
+void warp_doorR_out() { warp(70,48,TCROSS); }
+
+
+void warp_stairsInn_up() { warp(144,32,TCROSS); }
+void warp_stairsInn_down() { warp(114,29,TCROSS); }

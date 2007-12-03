@@ -1,0 +1,50 @@
+/// The autoexec function for mountain.map
+void Start()
+{
+	SaveDisable(); //cannot save in dungeons.
+
+/*	
+	if ( flags[F_MOUNT_DEX_JOIN] )
+		entity.x[0]=300000;	//if dexter has already joined, 
+							//warp his on-map doppleganger way off-screen
+	
+	if( flags[F_MNT_EVIL_SIGN] ) //if the sign's been destroyed,
+		DestroySign();			 //make sure it stays destroyed on revisits to this map.
+		
+	if( flags[F_LAB_BLOWN_UP] )
+		DestroyLab();
+		
+	if (flags[CHEST_JUJUBE_A]) SetTile(3, 31, 0, 271);
+	if (flags[CHEST_JUJUBE_B]) SetTile(5, 31, 0, 271);	
+	if (flags[CHEST_JUJUBE_C]) SetTile(7, 31, 0, 271);	
+	if (flags[CHEST_JUJUBE_D]) SetTile(9, 31, 0, 271);
+*/
+
+	InitMap();
+/*
+	if( !flags[F_LAB_BLOWN_UP] && flags[F_LAB_COUNTDOWN] )
+		DoLabBlowup();
+*/
+	V1_StartMusic( "res/music/DREAMS2.S3M" );
+	
+	Banner("Mount Jujube",300);
+}
+
+
+/// exit to the overworld
+void to_overworld()
+{
+	V1_MapSwitch("simpletype_overworld.map", 142,53, TBLACK);
+}
+
+
+void to_station_1()
+{
+	Warp( 84,79, TCROSS );
+}
+
+
+void to_station_2()
+{
+	Warp( 15,78, TCROSS );
+}
