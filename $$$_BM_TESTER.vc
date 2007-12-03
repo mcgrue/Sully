@@ -1,0 +1,127 @@
+int helpDH;
+
+int _imLeftActive, _imLeftInActive, _imRightActive, _imRightInActive;
+int _imMousePtr;
+int _imListUp, _imListDown;
+
+int _defaultWhiteBM, _defaultGreyBM, _defaultWhiteListBM, _defaultGreyListBM;
+int _defaultCursorBM, _blankCursorBM;
+
+void bm_autoexec()
+{
+
+	_imLeftActive		= LoadImage( "res\images\battle_menu\page_left_active.gif" );
+	_imLeftInActive		= LoadImage( "res\images\battle_menu\page_left_inactive.gif" );
+	_imRightActive		= LoadImage( "res\images\battle_menu\page_right_active.gif" );
+	_imRightInActive	= LoadImage( "res\images\battle_menu\page_right_inactive.gif" );
+	_imMousePtr		= LoadImage( "res\images\battle_menu\mousey.gif");
+	_imListUp		= LoadImage( "res\images\battle_menu\list_up.gif");
+	_imListDown		= LoadImage( "res\images\battle_menu\list_down.gif");
+
+	BM_SetMouseMode( 0 );
+
+	__battlemenu_interface_volume = 50;
+	__menuHelpMode = 0;
+		
+	_defaultWhiteBM 	= LoadFont( "res\images\battle_menu\font_white.png" );
+	_defaultGreyBM		= LoadFont( "res\images\battle_menu\font_grey.png" );
+	_defaultWhiteListBM	= LoadFont( "res\images\battle_menu\font_white.png" );
+	_defaultGreyListBM	= LoadFont( "res\images\battle_menu\font_grey.png" );
+	
+	_defaultCursorBM	= LoadImage( "res\images\battle_menu\carot.gif" );
+	_blankCursorBM		= LoadImage( "res\images\battle_menu\blank.gif" );
+	
+	int i,j;
+	
+	for( i=0; i<MAX_BATTLE_MENUS; i++ )
+	{
+		for( j=0; j<MAX_BATTLE_MENU_LEVELS; j++ )
+		{
+			master_battle_menus[i].scratch_img[j] = 0;
+		}	
+	}
+}
+
+void do_me_hard()
+{
+	int i = mcg_getClickedIdx();
+
+	ExecuteLove( mcgIV_heap[i].assoc_data );
+}
+
+
+
+void PassThroughTester()
+{
+/*
+	if( mcg_doclick() < 0 )
+	{
+		BattleMenuDeny();
+	}
+*/
+}
+
+
+void DoShit()
+{
+	if( master_battle_menus[0].mode_list )
+		UpdateBattleMenuListControls(0);
+	else
+		UpdateBattleMenuControls(0);
+		
+	CheckHelpMode( 0 );
+	
+	DrawBattleMenu(0,screen);
+}
+
+void ClearScreen()
+{
+	RectFill( 0,0, 320,240, 0, screen );
+}
+
+void SetupDefaultBM( int i )
+{
+//Log("1");
+	master_battle_menus[i].white_font	= _defaultWhiteBM;
+	master_battle_menus[i].grey_font	= _defaultGreyBM;
+	master_battle_menus[i].white_listfont	= _defaultWhiteListBM;
+	master_battle_menus[i].grey_listfont	= _defaultGreyListBM;
+//Log("2");
+
+//Log( " a: " + str(master_battle_menus[i].white_font) );
+//Log( " b: " + str(master_battle_menus[i].grey_font) );
+//Log( " c: " + str(master_battle_menus[i].white_listfont) );
+//Log( " d: " + str(master_battle_menus[i].grey_listfont) );
+
+	EnableVariableWidth(master_battle_menus[i].white_font);
+	EnableVariableWidth(master_battle_menus[i].grey_font);
+	EnableVariableWidth(master_battle_menus[i].white_listfont);
+	EnableVariableWidth(master_battle_menus[i].grey_listfont);
+//Log("3");
+	
+	if( BM_MouseMode() )
+		master_battle_menus[i].im_cursor = _imMousePtr;
+	else
+		master_battle_menus[i].im_cursor = _defaultCursorBM;	
+//Log("4");
+	master_battle_menus[i].cursor_offx	= 15;
+	master_battle_menus[i].cursor_offy	= 6;
+//Log("5");
+	master_battle_menus[i].content_offx	= 5;
+	master_battle_menus[i].content_offy	= 5;
+//Log("6");
+	master_battle_menus[i].lvl_offx 	= 20;
+	master_battle_menus[i].lvl_offy 	= 20;
+//Log("7");
+	master_battle_menus[i].x		= 0;
+	master_battle_menus[i].y		= 0;
+//Log("8");
+	master_battle_menus[i].submenu_chr 	= ">";
+	master_battle_menus[i].y_spacer 	= 1;
+//Log("9");
+	master_battle_menus[i].mode_modulus 	= 1;
+	master_battle_menus[i].mode_monobase 	= 1;
+//Log("10");
+	SetScrollBarColors( RGB(128,128,128), RGB(192,192,192) );
+//Log("11");
+}
