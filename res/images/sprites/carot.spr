@@ -1,0 +1,9 @@
+// Carot enemy, drawn by zeromus.
+//name		wd	ht	per_row	rows	padding
+carot.pcx	16	32	8	2	0
+anim idle F2 W20 F3 W20 F2 W20 F3 W20 F4 W20 F5 W20 F4 W20 F5 W20 F6 W20 F7 W20 F6 W20 F7 W20 F0 W20 F1 W20 F0 W20 F1 W20 B
+anim weak F2 W40 F3 W40 F2 W40 F3 W40 F4 W40 F5 W40 F4 W40 F5 W40 F6 W40 F7 W40 F6 W40 F7 W40 F0 W40 F1 W40 F0 W40 F1 W40 B
+anim attack F2 W4 F3 W4 F12 W4 F3 W4 F12 W4 F3 W4
+anim hit F12 W45
+anim death F15
+//

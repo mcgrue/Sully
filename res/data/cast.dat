@@ -1,0 +1,28 @@
+// Cast.dat
+//
+// This datafile contains definitions of all of the 
+// Castmembers this game has.  These are characters that can be added to the party.
+//
+// This data gets parsed into the master_cast[] array, defined in data.vc
+// The maximum number of items is controlled by MAX_CAST, defined in data.vc
+//    please change this number of you wish to add more items than it currently 
+//    allows.
+//
+// blank lines and commented lines are ignored.  Anything else will be treated as an entry.
+//
+// Entries go as follows:
+//
+// class must reference entries by name in class.dat  
+// statfile must reference a valid datafile.  Relative paths only.
+//
+// name		class		chrfile		overworld_chr	battle_sprite	statfile	"description"
+
+Darin		Knight		Darin.chr	lil_darin.chr	p_darin.spr	Darin.dat	"Unlikely hero, out for adventure.  Now with Headband! This is some extra stuff added to Darin's description to test the line limit and layout."
+Crystal		Priest		Crystal.chr	lil_crystal.chr	p_crystal.spr	Crystal.dat	"Stereotypical kidnapping fodder!"
+Dexter		Wizard		Dexter.chr	crono.chr	p_dexter.spr	Dexter.dat	"Neeeeeeeeeerd!"
+Sara		Engineer	Sara.chr	crono.chr	p_darin.spr	Sara.dat	"She has a tool!"
+Galfrey		Spearguy	Galfrey.chr	crono.chr	p_darin.spr	Galfrey.dat	"I like to poke things."
+Lance		Thief		Galfrey.chr	crono.chr	p_dexter.spr	Galfrey.dat	"How much, you say?"
+Paxton		Cleric		Galfrey.chr	crono.chr	p_dexter.spr	Galfrey.dat	"I'm totally holier than thou."
+Mr.E		Avatar		Galfrey.chr	crono.chr	p_dexter.spr	Galfrey.dat	"Shrouded in odd clothing... is this a man...? ...a woman...? ...or should we ask...?"
+END_OF_FILE

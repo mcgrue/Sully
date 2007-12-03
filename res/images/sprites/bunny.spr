@@ -1,0 +1,9 @@
+// Bunny enemy, drawn by Gayo.
+//name		wd	ht	per_row	rows	padding
+bunny.png	16	16	3	5	1
+anim idle F0W30F1W20F0W30F1W20F0W30F1W20F0W60F2W5F0W20F2W5F0W30B
+anim weak F3W1000B
+anim attack F9W10F10W10F11W20
+anim hit F6 W45
+anim death F12
+//

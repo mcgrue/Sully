@@ -1,0 +1,11 @@
+// Cockatrice enemy, drawn by zonker.
+// This sprite currently lacks a death frame. I've set it to an unused frame for now.
+
+//name		wd	ht	per_row	rows	padding
+cockatrice.gif	16	32	3	3	0
+anim idle F0W15F1W15B
+anim weak F6W20F7W20B
+anim attack F3W10F4W10F5W10F4W10F5W10
+anim hit F2 W45
+anim death F8
+//

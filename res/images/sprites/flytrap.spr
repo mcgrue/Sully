@@ -1,0 +1,9 @@
+// Flytrap enemy, drawn by zeromus.
+//name		wd	ht	per_row	rows	padding
+flytrap.gif	16	32	4	2	0
+anim idle F0W15F1W15B
+anim weak F4W15F5W15B
+anim attack F2W30F3W15
+anim hit F6 W45
+anim death F7
+//

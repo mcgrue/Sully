@@ -1,0 +1,9 @@
+// Succubus enemy, drawn by kelvin. 
+//name		wd	ht	per_row	rows	padding
+succubus.gif	32	32	10	1	1
+anim idle F0W15F1W15F2W15B
+anim weak F3W30F4W30B
+anim attack F5W15F6W5F7W15F5W10
+anim hit F8 W45
+anim death F9
+//

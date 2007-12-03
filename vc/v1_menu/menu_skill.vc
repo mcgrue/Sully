@@ -1,0 +1,156 @@
+// menu_skill.vc for Sully www.verge-rpg.com
+// Zip 05/09/2004
+// Last update 06/10/2004
+
+//        ---------------
+//       Skill Menu
+//        ---------------
+
+// Control function for the Skill screen of the menu
+// Called from MenuEntry() based on global menu_idx variable
+// Very simple at the moment, room for additions
+void MenuControlSkill()
+{
+	if( !___menu_skill_init )
+	{
+		menu_item = 0;
+		___menu_skill_textwid = TextWidth( menu_font[0], "Skill Groups:" );
+		___menu_skill_subscr_ptr = 0;
+		
+		___menu_skill_init = 1;
+		
+		___menu_skill_at_base = 1;
+		SetBMCursor( menu_cast, _blankCursorBM );
+	}
+
+	//Right now it's an angry buzz because the selector's sposta be there allowing you to choose a 
+
+	// skill group to view the contents of... but yeah, that's not like done or anything yet
+	// -Grue
+	Menu2ArrowSetSounds( "MenuPageTurn","MenuPageTurn" );
+	
+	
+	//monitor for changes in menu_cast
+	if( ___menu_skill_prevcast != menu_cast )
+	{
+		___menu_skill_prevcast = menu_cast;
+		menu_item = 0;
+			
+	}
+	
+	if( ___menu_skill_at_base )
+	{
+		if (MenuConfirm())
+		{
+			___menu_skill_at_base = 0;
+			SetBMCursor( menu_cast, _defaultCursorBM );
+		}
+		if (MenuCancel())
+		{
+			Menu2ArrowSetSounds( "","" );
+			MenuHappyBeep();
+			
+			SetBMCursor( menu_cast, _defaultCursorBM );
+
+			___menu_skill_init = 0;
+			MenuRoot();
+		}
+		
+		MenuControlTwoArrows("", 0, "menu_cast", PartySize());
+		
+		___menu_skill_desc = "Hit [Accept] to view/use this party member's skills...";
+	}
+	else
+	{
+		if( master_battle_menus[menu_cast].mode_list )
+		{
+			UpdateBattleMenuListControls(menu_cast);
+		}
+		else
+		{
+			UpdateBattleMenuControls(menu_cast);
+			
+			if( BMGetCancelBase() )
+			{
+				___menu_skill_at_base = 1;
+				SetBMCursor( menu_cast, _blankCursorBM );
+			}
+		}
+	}
+	
+	if( !equ(___menu_skill_descriptor,BM_GetCurrentItem( menu_cast )) )
+	{
+		___menu_skill_descriptor = BM_GetCurrentItem( menu_cast );
+		
+		if( equ(left(___menu_skill_descriptor,1),">") )
+			___menu_skill_descriptor = right(___menu_skill_descriptor, len(___menu_skill_descriptor)-1);
+		
+		___menu_skill_i = GetSkill(___menu_skill_descriptor);
+		
+		if( ___menu_skill_i < 0 )
+		{
+			___menu_skill_i = GetSkillType(___menu_skill_descriptor);
+			
+			if( ___menu_skill_i < 0 )
+			{
+				___menu_skill_desc = AuxiliaryHelpText(___menu_skill_descriptor);
+			}
+			else
+			{
+				___menu_skill_desc = master_skilltypes[___menu_skill_i].desc;
+			}
+		}
+		else
+		{
+			___menu_skill_desc = master_skills[___menu_skill_i].desc;
+		}	
+	}		
+}
+
+string ___menu_skill_descriptor;
+string ___menu_skill_desc;
+int ___menu_skill_i;
+
+int ___menu_skill_at_base;
+int ___menu_skill_prevcast;
+int ___menu_skill_init;
+int ___menu_skill_textwid;
+int ___menu_skill_yptr1;
+
+int ___menu_skill_subscr_ptr;
+
+// Drawing function for the Skill screen of the menu
+// Called from MenuEntry() based on global menu_idx variable
+// Very simple at the moment, room for additions
+void MenuDrawSkill()
+{
+	// Draw the background and title
+	MenuBlitRight(0, menu_option);
+	MenuDrawBackground(MENU_A_X1, MENU_A_Y1, MENU_A_X2, MENU_A_Y2, MenuIsActive("Skill"));
+	PrintString(80, 15, screen, menu_font[0], "Skill");
+
+	// Draw the current selected party member and skill type
+	MenuBlitCast(menu_cast, 0, 0);
+	
+	int y_ptr = 120;
+	int sg_count, tmp, i;
+		
+	//CheckHelpMode( menu_cast );
+	
+	if( ___menu_skill_at_base ) SetLucent(50);
+	DrawBattleMenu(menu_cast,screen);
+	if( ___menu_skill_at_base ) SetLucent(0);
+	
+	MenuPrintDescVar(menu_font[0], ___menu_skill_desc, 190);
+}
+
+/// replace this with a better define section.
+string AuxiliaryHelpText( string s )
+{
+	if( equ(s,"ATTACK") )
+		return "Does a plain old attack.  Delay 100.";
+	else if( equ(s,"ITEMS") )
+		return "Allows you to use an item from your inventory.  Delay 100.";	
+	else
+		return "undef: '"+s+"'";
+}

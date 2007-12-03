@@ -1,0 +1,9 @@
+// Evil bunny enemy, drawn by Gayo
+//name		wd	ht	per_row	rows	padding
+evil_bunny.png	16	16	3	5	1
+anim idle F0W30F1W20F0W30F1W20F0W30F1W20F0W60F2W5F0W20F2W5F0W30B
+anim weak F3W1000B
+anim attack F6W10F7W5F8W20F9W40
+anim hit F4W45
+anim death F3W15F10W10F11W10F12W10F13W10F14
+//

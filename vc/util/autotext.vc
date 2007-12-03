@@ -1,0 +1,259 @@
+/// Autotext system, to be used to make content for the box system
+///
+
+#define MAX_AUTOTEXT_LINES	24
+
+string _autotext_original;
+string _autotext_buf[MAX_AUTOTEXT_LINES];
+
+int _autotext_buf_wid[MAX_AUTOTEXT_LINES];
+int _autotext_buf_maxwid;
+
+int _autotext_buf_count;
+int _autotext_buf_overflow_flag;
+
+int _autotext_max_x;
+int _autotext_y_spacer;
+int _autotext_font;
+
+int _autotext_justification;
+
+/// Sets the max width in pixels per line for this autotexting box.
+void SetAutoTextMaxX( int max_x )
+{
+	_autotext_max_x = max_x;
+}
+
+/// Sets the y-spacing between rows of text for this autotexting box.
+void SetAutoTextYSpacer( int ys )
+{
+	_autotext_y_spacer = ys;
+}
+
+/// Sets the font for this autotexting box.
+void SetAutoTextFont( int f )
+{
+	_autotext_font = f;
+	_RecalcAutotextWidth();
+}
+
+/// Sets the text to be autotexted for this autotexting box.
+void SetAutoText( string s )
+{
+	_autotext_original = s;
+}
+
+/// Recalculates all of the line widths for this autotexting box.
+/// Called on SetAutoTextFont() and MakeAutoText() automatically.
+void _RecalcAutotextWidth()
+{
+	int i, tmp;
+	
+	if( _autotext_buf_count )
+	{
+		_autotext_buf_maxwid = 0;
+
+		for( i=0; i<_autotext_buf_count; i++ )
+		{
+			_autotext_buf_wid[i] = TextWidth(_autotext_font, _autotext_buf[i]);
+		
+			if( _autotext_buf_wid[i] > _autotext_buf_maxwid )
+			{
+				_autotext_buf_maxwid = _autotext_buf_wid[i];
+			}
+		}
+	}
+}
+
+void MakeAutoText()
+{
+	string wspace = " 	";
+	_autotext_buf_count = 0;
+	_autotext_buf_overflow_flag = 0;
+
+	if( !_autotext_max_x )
+	{
+		_autotext_max_x = 300;
+	}
+	
+	string templine_pre, templine_post;
+	string temp, last_token;
+	int done, i, j;
+	
+	for( i=0; i<TokenCount(_autotext_original,chr(10)); i++ )
+	{
+		temp = GetToken(_autotext_original,chr(10),i);
+
+		templine_pre = "";
+		for( j=0; j<TokenCount(temp,wspace); j++ )
+		{
+			last_token = GetToken(temp,wspace,j);	
+			templine_post = templine_pre + last_token;
+			if( !strcmp(templine_pre,"") )
+			{
+				templine_pre = templine_post + " ";
+			}
+			
+			if( TextWidth(_autotext_font, templine_post) > _autotext_max_x )
+			{
+				_autotext_buf[_autotext_buf_count] = templine_pre;
+				_autotext_buf_count++;
+				templine_pre = last_token;
+				templine_post = last_token;
+				
+				if( _autotext_buf_count >= MAX_AUTOTEXT_LINES )
+				{
+					_autotext_buf_overflow_flag = 1;
+					_autotext_buf_count = MAX_AUTOTEXT_LINES;
+					i = TokenCount(_autotext_original,chr(10));
+				}
+			}
+			
+			templine_pre = templine_post + " ";
+		}
+		
+		
+		if( strcmp(templine_pre,"") )
+		{
+			_autotext_buf[_autotext_buf_count] = templine_pre;
+			_autotext_buf_count++;
+			templine_pre = last_token;
+			templine_post = last_token;
+			
+			if( _autotext_buf_count >= MAX_AUTOTEXT_LINES )
+			{
+				_autotext_buf_count = MAX_AUTOTEXT_LINES;
+				_autotext_buf_overflow_flag = 1;
+			}
+		}		
+	}
+	
+	for( i=0; i<_autotext_buf_count; i++ )
+	{
+		_autotext_buf[i] = trim( _autotext_buf[i] );
+	}
+	
+	_RecalcAutotextWidth();
+}
+
+/// Gets how wide an image created by this autotexter would be.
+int GetAutoTextX()
+{
+	return _autotext_buf_maxwid;
+}
+
+/// Gets how tall an image created by this autotexter would be.
+int GetAutoTextY()
+{
+	return	(
+			( FontHeight(_autotext_font)*_autotext_buf_count ) 
+			+ 
+			((_autotext_buf_count-1)*_autotext_y_spacer)
+		);
+}
+
+/// Sets the text justification for this autotexter.  negative for left, 0 for center, non-zero positive for right.
+///
+void SetAutoTextJustification( int just )
+{
+	_autotext_justification = just;
+}
+
+/// Makes a lengthy report about this AutoText operation to the logfile.
+void LogAutoTextOutput()
+{
+	Log( "AutoTextOutput>>>>" );
+	Log( "=======================" );
+	Log( "START ORIGINAL TEXT>>>" );
+	Log( _autotext_original );
+	Log( "<<< END ORIGINAL TEXT" );
+	
+	Log( "max length set: " + str(_autotext_max_x) );
+	Log( "font set: " + str(_autotext_font) );
+	Log( "lines made: " + str(_autotext_buf_count) );
+	Log( "overflow tripped: " + str(_autotext_buf_overflow_flag) );
+	Log( "image content dimensions: ("+str(GetAutoTextX())+","+str(GetAutoTextY())+")" );
+	
+	if( !_autotext_justification )
+	{
+		Log( "text justification: center" );
+	}
+	else if( _autotext_justification < 0 )
+	{
+		Log( "text justification: left" );
+	}
+	else
+	{
+		Log( "text justification: right" );
+	}
+	
+	int i;
+	for( i=0; i<_autotext_buf_count; i++ )
+	{
+		Log( "["+str(i)+"]:	'"+_autotext_buf[i]+"'" );
+	}
+
+}
+
+/// Creates and returns an image handle based on the autotexting ops that have occurred.
+/// Generally you'll want to call MakeAutoText() before this function.
+int MakeAutoTextContentImage()
+{
+	int x = GetAutoTextX();
+	int y = GetAutoTextY();
+
+	int tmp = NewImage(x,y);
+	RectFill( 
+		0,0,	
+		x,y,
+		transcolor, tmp);
+	
+	int i, ys;
+	
+	ys=0;
+	
+	for(i=0; i<_autotext_buf_count; i++)
+	{
+
+		//center just.
+		if( !_autotext_justification )
+		{
+			PrintCenter(
+				(x/2), 
+				ys, 
+				tmp, 
+				_autotext_font, 
+				_autotext_buf[i]
+			);
+		}
+		
+		//left just.
+		else if( _autotext_justification < 0 )
+		{
+			PrintString(
+				0, 
+				ys, 
+				tmp, 
+				_autotext_font, 
+				_autotext_buf[i]
+			);
+		}
+		
+		//right just.
+		else
+		{
+			PrintRight(
+				x, 
+				ys, 
+				tmp, 
+				_autotext_font, 
+				_autotext_buf[i]
+			);
+		}
+		
+		ys += FontHeight(_autotext_font);
+		ys += _autotext_y_spacer;		
+	}
+	
+	return tmp;
+}

@@ -1,0 +1,388 @@
+// A general-use vc function library!
+//
+// This is the home for functions that could pretty much belong in
+// the builtins, but don't for one reason or another (usually duplication)
+//
+
+
+/************************** entity.face constants ****************************/
+
+// The valid values of Entity.Face[]
+//
+// These should really be predefined.
+#define FACE_UP			1
+#define FACE_DOWN		2
+#define FACE_LEFT		3
+#define FACE_RIGHT		4
+
+
+
+// These four functions return true if the player entity is facing in the specified
+// direction
+//
+// they all assume that GetPlayer() will return the current map entity index
+// of the player... which is a good thing to assume, IMO.
+int FacingUp() {	if( Entity.Face[GetPlayer()] == FACE_UP ) return 1;	return 0;	}
+int FacingDown() {	if( Entity.Face[GetPlayer()] == FACE_DOWN ) return 1;	return 0;	}
+int FacingLeft() {	if( Entity.Face[GetPlayer()] == FACE_LEFT ) return 1;	return 0;	}
+int FacingRight() {	if( Entity.Face[GetPlayer()] == FACE_RIGHT ) return 1;	return 0;	}
+
+
+/// Returns the size, in bytes, of a given file.
+int FileSize( string myfile )
+{
+	int f = FileOpen(myfile, FILE_READ);
+	FileSeekPos(f, 0, SEEK_END);
+	int size = FileCurrentPos(f);
+	FileClose(f);
+	return size;
+}
+
+/// Returns the contents of a file as one large string.
+/// Modified to take into account FileReadLn's 255-len buffer. 
+///
+/// I forget who wrote the original.  Someone tell me!
+///
+/// @param myfile the path to the text file to read in.
+/// @author mcgrue
+string FileToString( string myfile )
+{
+	string s, temp, longtemp;
+	int size = FileSize(myfile);
+	
+	int running_count, long_flag; 
+	
+	int f = FileOpen(myfile, FILE_READ);
+	long_flag = 0;
+	
+	while( FileCurrentPos(f) < size )
+	{
+		temp = FileReadLn(f);
+		
+		running_count += len(temp);
+		
+		/// if the running count + 2 equals the current file position,
+		/// then we are running within FileReadLn's buffer limit
+		if( 
+			(running_count+2) == FileCurrentPos(f) ||	//DOS file format
+			(running_count+1) == FileCurrentPos(f)		//Unix file format
+		)
+		{
+			running_count = FileCurrentPos(f);
+
+			///we're saving the end of a very long line.
+			if(long_flag)
+			{
+				longtemp = longtemp+temp;
+				long_flag = 0;
+				
+				s = s + longtemp + chr(10);
+				longtemp = "";
+			}
+			///we're saving a short line.
+			else
+			{
+				s = s + temp + chr(10);
+			}
+		}
+		/// If the running count didn't show the 2-byte newline signature,
+		/// then there was no newline, we've just run into FileReadLn's buffer limit.
+		/// So... raise a long-line flag and continue on.
+		else
+		{
+			longtemp = longtemp+temp;
+			long_flag = 1;
+		}
+	}
+	
+	FileClose(f);
+	
+	return s;
+}
+
+
+// Takes a string, returns the string with leading and trailing whitespace
+// removed.
+string trim( string s ) {
+	int fore, aft, i, hit;
+	string tmpchr;
+
+	for( i=0; i<len(s)-1; i++ ) { //seek the front!
+		tmpchr = mid( s, i, 1 );
+
+		if( !equ(tmpchr," ") && !equ(tmpchr,"	") ) { //if it's not whitespace
+			hit = 1; //true
+
+			fore = i;
+			i=len(s)-1;
+		}
+	}
+
+	if( !hit ) {
+		return "";
+	}
+
+	for( i=len(s); i>1; i-- ) { //seek the front!
+		tmpchr = mid( s, i-1, 1 );
+		if( !equ(tmpchr," ") && !equ(tmpchr,"	") ) { //if it's not whitespace
+			hit = 1; //true
+
+			aft = i;
+			i=1;
+		}
+	}
+
+	return mid( s, fore, (aft-fore) );
+}
+
+
+// Takes two strings.
+// Returns true if the two strings are the same.
+//
+// Note: This function ignores case,  IE "ABC" and "abc" will return true.
+int equ( string a, string b ) {
+	if( !strcmp(toUpper(a),toUpper(b)) ) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+
+// General-use entityhandler
+//
+//
+
+
+// returns the screen-relative x-position for the specified entity.
+// note: this is the x-coordinate of the top-left corner of the entity's image,
+//       *NOT* the x-coordinate of the top-left corner of the hotspot.
+int GetEntScrX( int ent_idx ) {
+	return entity.x[ent_idx] - xwin - entity.hotx[ent_idx];
+}
+
+// returns the screen-relative y-position for the specified entity.
+// note: this is the y-coordinate of the top-left corner of the entity's image,
+//       *NOT* the y-coordinate of the top-left corner of the hotspot.
+int GetEntScrY( int ent_idx ) {
+	return entity.y[ent_idx] - ywin - entity.hoty[ent_idx];
+}
+
+// Takes a tile's x-coordinate
+// returns the screen-relative x-position of that tile.
+int GetTileScrX( int tile_x ) {
+	return (tile_x*16) - xwin;
+}
+
+// Takes a tile's x-coordinate
+// returns the screen-relative x-position of that tile.
+int GetTileScrY( int tile_y ) {
+	return (tile_y*16) - ywin;
+}
+
+
+// Waits until an entity has finished its movecode
+// -Zip
+void WaitForEntity( int wait_entity ){
+
+	// Just incase we get stuck somewhere, set a timeout
+	int timeout = timer + 1000;
+
+	// While the entity is still doing stuff
+	while (entity.movecode[wait_entity])
+	{
+		Render(); // Render the map
+		ShowPage(); // Display to screen
+
+		// If they've got stuck
+		if (timeout < timer) {
+
+			// Stop the entity
+			EntityStop(wait_entity);
+			// Notify you so you can fix your code
+			ErrorHandler("Timeout for entity number "+str(wait_entity)); // Zip: Muxed for sully
+		}
+	}
+}
+
+
+
+// takes a mapentity index, and prints out all of the current information about 
+// it to the logfile.  Useful for diagnosing problems, or just for general 
+// education.
+void EntityDiagnose( int idx )
+{
+	log( "EntityDiagnose("+str(idx)+")" );
+	log( "====================" );
+	
+	if( idx < 0 || idx >= entities )
+	{
+		log( "error: " +str(idx)+ " is not a valid mapentity index on this map.  Current entity count: " + str(entities) );
+	}
+		
+	log( "(x,y): (" +str(entity.x[idx])+","+str(entity.y[idx])+")" );
+	log( "specframe: " + str(entity.specframe[idx]) );
+	log( "frame: " + str(entity.frame[idx]) );
+	log( "hotspot (x,y) (w,h): (" + str(entity.hotx[idx]) +","+str(entity.hoty[idx])+") ("+str(entity.hotw[idx])+","+str(entity.hoth[idx])+")" );
+	log( "movecode: " + str(entity.movecode[idx]) );
+	log( "face: " + str(entity.face[idx]) );
+	log( "speed: " + str(entity.speed[idx]) );
+	log( "visible: " + str(entity.visible[idx]) );
+	log( "obstruct: " + str(entity.obstruct[idx]) );
+	log( "obstructable: " + str(entity.obstructable[idx]) );
+	
+	log( "script: " + entity.script[idx] );	
+}
+
+/// for error reporting of terminally bad errors.
+void FATAL_ERROR( string s )
+{
+	Log( "FATAL_ERROR: '"+s+"'" );
+	Exit( "FATAL_ERROR: '"+s+"'" );
+}
+
+
+
+
+// 	Moves an entity into position to stalk another entity, so that if he is then set to stalk, he won't visibly "jump"
+// from one place to another. Does not actually set the entity to stalk, in case you want to hide it and replace it
+// with an equivalent, as in the party-adding system.
+// 	The entity will pass through any obstacles to take the shortest path. It moves at the speed at which it is set, so
+// if it's at speed 0 (for a scene, say) it will never arrive. Entities will move horizontally, then vertically.
+// 	Note that when this function has executed, the entity is NOT yet in the correct position, just set to move there. 
+// Wait until it has finished moving before actually setting it to stalk. If the stalkee moves in the meantime, it will
+// go stand behind his original position, not his new position, so keep him still while this happens.
+// 	This function always sets the entity in question to tile-based movement at the end of its movestring.
+//
+// 	Errors on invalid entity index or when stalker and stalkee are the same entity.
+// (by Gayo)
+void AlignStalker(int stalker, int stalkee)
+{
+	int goalx, goaly, curx, cury;
+	string goalmove;
+	// Sanity check on entity indices
+	if (stalker == stalkee) { ErrorHandler("AlignStalker: Tried to align entity " + str(stalker) + " with itself."); }
+	else if (stalker < 0 || stalker >= entities) { ErrorHandler("AlignStalker: Invalid stalker index (" + str(stalker) + ")."); }
+	else if (stalkee < 0 || stalkee >= entities) { ErrorHandler("AlignStalker: Invalid stalkee index (" + str(stalkee) + ")."); }
+	else {
+		curx = entity.x[stalker]; // Preserve initial coordinates
+		cury = entity.y[stalker];
+		
+		// Set the entity to stalk, check where it ends up, and then unset it and move it back.
+		// This is necessary because EntityStalk's results cannot be predicted easily.
+		EntityStalk(stalker, stalkee); // will move the entity into stalking position
+		EntityStalk(stalker, 0-1); // unstalk		
+		goalx = entity.x[stalker]; // Store goal coordinates
+		goaly = entity.y[stalker];
+		entity.x[stalker] = curx; // Restore initial coordinates
+		entity.y[stalker] = cury;
+		
+		entity.obstructable[stalker] = 0; // Allow stalker to pass through obstacles
+		// Now build the movestring.
+		goalmove = "P"; // Switch to pixel-based movement
+		if (curx > goalx) // If to the right, move left.
+			{ goalmove = goalmove + "L" + str(curx-goalx); }
+		else if (curx < goalx) // If to the left, move right.
+			{ goalmove = goalmove + "R" + str(goalx-curx); }
+		if (cury > goaly) // If below, move up.
+			{ goalmove = goalmove + "U" + str(cury-goaly); }
+		else if (cury < goaly) // If above, move down.
+			{ goalmove = goalmove + "D" + str(goaly-cury); }
+		goalmove = goalmove + "T"; // Switch to tile-based movement.
+		EntityMove(stalker, goalmove);		
+	}	
+}
+
+
+// Returns a token's position in the given string, or -1 if the token is not in the string.
+// sf_string is the thing you want to look for, si_string is the thing you want to look for
+// it in, toks is the token string.
+// Case-insensitive.
+int FindToken(string sf_string, string si_string, string toks)
+{
+	int ftcount, numtoks;
+	string search_for, search_in, tokens;
+	search_for = ToUpper(sf_string); // Convert everything to uppercase for case-insensitivity
+	search_in = ToUpper(si_string);
+	tokens = ToUpper(toks);
+	
+	numtoks = TokenCount(search_in, tokens);
+	for (ftcount=0;ftcount<numtoks;ftcount++)
+	{		
+		if (!strcmp(search_for, GetToken(search_in, tokens, ftcount))) return ftcount; // if this token is a match, return its index
+	}
+	
+	return 0-1; // If this point is reached, there was no match.
+}
+
+
+/// Just a wrapper around FunctionExists() and CallFunction()
+/// Calls callfunc if it exists, else errorhandler is called complaining that callfunc doesn't exist.
+void MandatoryCallFunction( string callfunc )
+{
+
+Log( "MandatoryCallFunction( '"+callfunc+"' )" );
+	if( FunctionExists(callfunc) )
+	{
+		CallFunction( callfunc );
+	}
+	else
+	{
+		ErrorHandler( "MandatoryCallFunction(), function '"+callfunc+"()' did not exist." );
+	}
+
+}
+
+// Sets all obstruction tiles on the rectangle between tiles (x1p,y1p) and (x2p,y2p) to specified tile.
+// To be clear, this only outlines the rectangle; it doesn't fill it.
+// You can use this to set a single line of obses by giving both x vals or both y vals the same.
+// Hasn't been tested very thoroughly. Yell at Gayo if it doesn't work.
+void SetObsRect(int x1p, int y1p, int x2p, int y2p, int obstile) 
+{
+	int i, x1, y1, x2, y2; // (x1,y1) will be top-left, (x2,y2) will be bottom-right
+	
+	// First, get top-left and bottom-right corners. (We don't know that the points were
+	// passed that way, after all).
+	if (x1p <= x2p) { x1 = x1p; x2 = x2p; }
+	else { x1 = x2p; x2 = x1p; }
+	if (y1p <= y2p) { y1 = y1p; y2 = y2p; }
+	else { y1 = y2p; y2 = y1p; }
+		
+	if (x1 == x2) // Vertical line
+	{
+		for (i=y1;i<=y2;i++) 
+		{
+			SetObs(x1,i,obstile);
+		}
+	}
+	else if (y1 == y2) // Horizontal line
+	{
+		for (i=x1;i<=x2;i++) 
+		{
+			SetObs(i,y1,obstile);
+		}
+	}
+	else // true rectangle
+	{
+		// First, draw the vertical lines.
+		for (i=y1;i<=y2;i++) 
+		{
+			SetObs(x1,i,obstile);
+			SetObs(x2,i,obstile);
+		}		
+		// Then draw the horizontal lines, except for the parts that intersect the verticals.
+		for (i=x1+1;i<=x2-1;i++) 
+		{
+			SetObs(i,y1,obstile);
+			SetObs(i,y2,obstile);
+		}		
+	}
+}
+
+// Takes a minimum, a maximum, and a number. If the number falls within the min-max range, it 
+// returns that number. If it's less than minVal, it returns minVal. If it's more than maxVal,
+// it returns maxVal.
+int bound(int minVal, int maxVal, int trueVal)
+{
+	return min(maxVal,max(minVal, trueVal));
+}

@@ -1,0 +1,9 @@
+// Slime enemy, drawn by overkill.
+//name		wd	ht	per_row	rows	padding
+red_slime.gif	38	22	5	7	1
+anim idle F0 W15 F5 W15 F0 W15 F5 W15 F25 W15 F30 W15 F25 W15 F30 W15 F10 W30 F15 W15 F20 W15 F15 W15 F20 W15 B
+anim weak F1 W30 F6 W30 F11 W30 B
+anim attack F25 W5 F3 W5 F29 W2 F3 W2 F29 W2 F3 W5 F25 W5
+anim hit F2 W45
+anim death F2 W4 F7 W4 F2 W4 F12 W4 F17 W4 F22 W4 F27
+//

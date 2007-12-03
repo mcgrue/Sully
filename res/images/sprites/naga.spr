@@ -1,0 +1,9 @@
+// Naga enemy, drawn by rpgking.
+//name		wd	ht	per_row	rows	padding
+naga.png	52	54	1	11	2
+anim idle F0W15F1W15F2W15F1W15B
+anim weak F0W15F4W15F5W15F4W15B
+anim attack F0W10F7W10F8W15F7W10
+anim hit F9 W45
+anim death F10
+//

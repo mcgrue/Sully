@@ -1,0 +1,9 @@
+// Hellhound (heckhound?) enemy, drawn by athocreft.
+//name		wd	ht	per_row	rows	padding
+hellhound.gif	32	32	2	4	1
+anim idle F0W15F2W15B
+anim weak F4W15F6W15B
+anim attack F1W10F3W10F1W10F3W10
+anim hit F5 W45
+anim death F7
+//

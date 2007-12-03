@@ -1,0 +1,614 @@
+#define SELECT_RIGHTMOST_ENEMY	0
+#define SELECT_LIVE_ALLY	1
+#define SELECT_DEAD_ALLY	2
+#define SELECT_ALLY		3
+
+
+/// This file contains the battle targetting functions for items, skills, and whatnot to use to acquire targets in Sully.
+///
+/// Grue, 2005.10.11
+
+
+void LIVE_OC_targ() {
+
+	///dear god, non-battle branch code.  This really needs to be improved upon.
+	if( !IsInBattle() )
+	{
+		LIVE_OC_targ_menu();
+		return;
+	}
+
+	_bt_ss_flags(1,0);
+	_bt_setup_selectmap();
+	
+	SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
+	
+//dump_all_selectnodes();
+//exit("");
+}
+
+void DEAD_OC_targ() {
+
+	///dear god, non-battle branch code.  This really needs to be improved upon.
+	if( !IsInBattle() )
+	{
+		DEAD_OC_targ_menu();
+		return;
+	}
+	
+	_bt_ss_flags(-1,0);
+	_bt_setup_selectmap();
+	
+	SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
+}
+
+/// the most fundamental targetting function, this allows every single battle entity, 
+/// friend or foe, to be targetted.
+void OC_targ() 
+{
+	_bt_ss_flags(0,0);
+	_bt_setup_selectmap();
+	
+	SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
+}
+
+void A_LIVE_OC_targ() {
+	_bt_ss_flags(1,1);
+	_bt_setup_selectmap();
+	
+	SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
+}
+
+void A_DEAD_OC_targ() {
+
+	setup_selectmap_init_target( SELECT_DEAD_ALLY );
+
+	_bt_ss_flags(-1,1);
+	_bt_setup_selectmap();
+	
+	SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
+}
+
+//void E_MP_OC_targ() {}
+//void E_HP_OC_targ() {}
+void E_LIVE_OC_targ() {
+	_bt_ss_flags(1,-1);
+	_bt_setup_selectmap();
+	
+	SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
+}
+
+
+void E_DEAD_OC_targ() {
+	_bt_ss_flags(-1,-1);
+	_bt_setup_selectmap();
+	
+	SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
+}
+
+void ALL_E_targ() {
+	_bt_ss_flags(0,-1);
+	_bt_setup_selectmap();
+	
+	SetActiveBattleMenuTargetting( "Targ_FlashAll_AcceptOrCancel" );
+}
+
+
+void ALL_A_targ() {
+	_bt_ss_flags(0,1);
+	_bt_setup_selectmap();
+	
+	SetActiveBattleMenuTargetting( "Targ_FlashAll_AcceptOrCancel" );
+}
+
+void ALL_targ() {
+	_bt_ss_flags(0,0);
+	_bt_setup_selectmap();
+	
+	SetActiveBattleMenuTargetting( "Targ_FlashAll_AcceptOrCancel" );
+}
+
+void A_MP_OC_targ() {
+	
+	/// menu branchcode.  Horrid!
+	if( !IsInBattle() )
+	{
+		MP_OC_targ_menu();
+		return;
+	}
+	
+	int i, idx;
+
+	selectmap_clear(0);
+	
+	for( i=0; i<PartySize(); i++ )
+	{
+		//commit = 0;
+		
+		if( bat_cur_mp(i, PARTY_ALLY) < bat_max_mp(i, PARTY_ALLY) )
+		{
+			idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ALLY) );
+			SM_setData( idx, bat_getName(i, PARTY_ALLY),"ALLY", i );
+		}
+	}
+	
+	SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
+}
+
+void A_HP_OC_targ() {
+
+	/// menu branchcode.  Horrid!
+	if( !IsInBattle() )
+	{
+		HP_OC_targ_menu();
+		return;
+	}
+	
+	int i, idx;
+
+	selectmap_clear(0);
+	
+	for( i=0; i<PartySize(); i++ )
+	{
+		//commit = 0;
+		
+		if( bat_cur_hp(i, PARTY_ALLY) < bat_max_hp(i, PARTY_ALLY) )
+		{
+			idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ALLY) );
+			SM_setData( idx, bat_getName(i, PARTY_ALLY),"ALLY", i );
+		}
+	}
+	
+	SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+int _bt_liveflag = 0; // -1 for dead, 1 for living, 0 for all
+int _bt_partyflag = 0; // -1 for enemy, 1 for living, 0 for all
+
+void _bt_ss_flags( int liveFlag, int partyFlag )
+{
+	_bt_liveflag = liveFlag;
+	_bt_partyflag = partyFlag;
+}
+
+void _bt_setup_selectmap()
+{
+	int i, idx, commit, tmp;
+
+	selectmap_clear(0);
+	
+	if( _bt_partyflag >= 0 )
+	{
+		for( i=0; i<PartySize(); i++ )
+		{
+			commit = 0;
+
+			switch( _bt_liveflag )
+			{
+				case -1: //dead allies only
+					if( bat_cur_hp(i, PARTY_ALLY) <= 0 )
+					{
+						idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ALLY) );
+						commit = 1;
+					}
+
+				case 0: //auto-accept
+
+					idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ALLY) );
+					commit = 1;
+
+				case 1: //living allies only
+					if( bat_cur_hp(i, PARTY_ALLY) > 0 )
+					{
+						idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ALLY) );
+						commit = 1;
+					}
+			}
+
+			if( commit )
+			{
+				SM_setData( idx, bat_getName(i, PARTY_ALLY),"ALLY", i );
+			}
+		}
+	}
+	
+	if( _bt_partyflag <= 0 )
+	{
+		for( i=0; i<enemyPartySize(); i++ )
+		{
+			commit = 0;
+
+			switch( _bt_liveflag )
+			{
+				case -1: //dead allies only
+					if( bat_cur_hp(i, PARTY_ENEMY) <= 0 )
+					{
+						idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ENEMY) );
+						commit = 1;
+					}
+
+				case 0: //auto-accept
+
+					idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ENEMY) );
+					commit = 1;
+
+				case 1: //living allies only
+					if( bat_cur_hp(i, PARTY_ENEMY) > 0 )
+					{
+						idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ENEMY) );
+						commit = 1;
+					}
+			}
+
+			if( commit )
+			{
+				SM_setData( idx, bat_getName(i, PARTY_ENEMY),"ENEMY", i );
+			}
+		}
+	}
+	
+	///default cursor behavior
+	if( __setup_selectmap_init_target_mode == SELECT_LIVE_ALLY )
+	{
+		tmp = _sm_find_living_ally_node();
+		if( tmp >= 0 )
+		{
+			selectmap_cursor = tmp;
+		}
+		else
+		{
+			__setup_selectmap_init_target_mode = SELECT_ALLY;
+		}
+	}
+	
+	if( __setup_selectmap_init_target_mode == SELECT_DEAD_ALLY )
+	{
+		tmp = _sm_find_dead_ally_node();
+		if( tmp >= 0 )
+		{
+			selectmap_cursor = tmp;
+		}
+		else
+		{
+			__setup_selectmap_init_target_mode = SELECT_ALLY;
+		}
+	}	
+	
+	if( __setup_selectmap_init_target_mode == SELECT_ALLY )
+	{
+		tmp = _sm_find_ally_node();
+		if( tmp >= 0 )
+		{
+			selectmap_cursor = tmp;
+		}
+	}
+	
+	if( tmp <= 0 )
+	{
+		/// if there's an enemy, default the inital cursor position to the rightmost one.
+		tmp = _sm_find_rightmost_enemy_node();
+		if( tmp >= 0 )
+		{
+			selectmap_cursor = tmp;
+		}
+	}
+	
+	__setup_selectmap_init_target_mode = SELECT_RIGHTMOST_ENEMY;
+}
+
+
+
+/// lets you tell the selectmap which target to initially have the cursor on.
+/// must be set before a call to _bt_setup_selectmap();
+///
+/// default targets the nearest enemy if nothing is set, or if the special mode tried and failed.
+/// 
+void setup_selectmap_init_target( int mode )
+{
+	__setup_selectmap_init_target_mode = mode;
+}
+
+int __setup_selectmap_init_target_mode = 0;
+
+
+int _sm_find_rightmost_enemy_node()
+{
+	int i, x, n;
+	
+	n = -1;
+
+
+	for( i=0; i<selectmap_count; i++ )
+	{
+		if( equ(master_selectmap[i].str_data, "ENEMY") )
+		{
+			if( master_selectmap[i].x > x )
+			{
+				x = master_selectmap[i].x;
+				n = i;
+			}
+		}
+	}
+	
+	if( n < 0 )
+	{
+		ErrorHandler( "_sm_find_rightmost_enemy_node(): There were no enemies on the selectmap, apparently.  Bad show." );
+		return -1;
+	}
+	
+	return n;
+}
+
+int _sm_find_living_ally_node()
+{
+	int i, x, n;
+	
+	n = -1;
+
+
+	for( i=0; i<selectmap_count; i++ )
+	{
+		if( equ(master_selectmap[i].str_data, "ALLY") )
+		{
+			if( !isDead(master_selectmap[i].int_data) )
+			{
+				return i;
+			}
+		}
+	}
+	
+	return -1;
+}
+
+int _sm_find_dead_ally_node()
+{
+	int i, x, n;
+	
+	n = -1;
+
+
+	for( i=0; i<selectmap_count; i++ )
+	{
+		if( equ(master_selectmap[i].str_data, "ALLY") )
+		{
+			if( isDead(master_selectmap[i].int_data) )
+			{
+				return i;
+			}
+		}
+	}
+	
+	return -1;
+}
+
+int _sm_find_ally_node()
+{
+	int i, x, n;
+	
+	n = -1;
+
+
+	for( i=0; i<selectmap_count; i++ )
+	{
+		if( equ(master_selectmap[i].str_data, "ALLY") )
+		{
+			return i;
+		}
+	}
+	
+	return -1;
+}
+
+
+/*
+void SetActiveBattleMenuTargetting( string s ) 
+{
+	__bm_targmode_on = 1;
+	__bm_targmode_callfunc = s;
+}
+
+void BattleMenuTargettingOff()
+{
+	__bm_targmode_on = 0;
+}
+*/
+
+/*
+i = SM_newnode( 30,30, 10,10 );
+SM_setData( i, "SE","SE", 5 );
+
+i = SM_newnode( 20,10, 1,1 );
+SM_setData( i, "N","N",43 );
+
+i = SM_newnode( 10,20, 1,1 );
+SM_setData( i, "W","W",666 );
+
+i = SM_newnode( 20,20, 1,1 );
+SM_setData( i, "C","C",1 );
+
+i = SM_newnode( 30,20, 1,1 );
+SM_setData( i, "E", "E", 1337 );
+
+i = SM_newnode( 20,30, 1,1 );
+SM_setData( i, "S","S", 5 );
+*/
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+void Targ_FlashAll_AcceptOrCancel()
+{
+	set_selectmap_actionfuncs( "saveOutAllAsTargets", "MenuAngryBuzz" );
+}
+
+void Targ_Select1_AcceptOrCancel()
+{
+	do_selectmap();
+	
+	if( ButtonAccept(1) )
+	{
+//Log("ACCEPT");
+		Unpress( 0 );
+		
+		CallFunction( selectmap_accept_callfunc );
+		
+		if( equ(SM_get_str_data(selectmap_cursor),"ENEMY") )
+			AddTarget( SM_get_int_data(selectmap_cursor), PARTY_ENEMY, "Target" );
+		else
+			AddTarget( SM_get_int_data(selectmap_cursor), PARTY_ALLY, "Target" );
+		
+		CommitBattleMenuChoice();
+		
+//Log( "***COMMITTED!***" );
+		return;
+	}
+	
+	if( ButtonCancel(1) )
+	{
+//Log("CANCEL");
+		Unpress( 0 );
+		
+		CallFunction( selectmap_cancel_callfunc );
+		BattleMenuTargettingOff();
+		UnpauseBattleMenu();
+	}
+}
+
+void saveOutAllAsTargets()
+{
+	MenuHappyBeep();
+	
+	int i, prty;
+	
+	for( i=0; i<selectmap_count; i++ )
+	{
+		if( equ(SM_get_str_data(i),"ENEMY") )
+			prty = PARTY_ENEMY;
+		else
+			prty = PARTY_ALLY;
+			
+		AddTarget( SM_get_int_data(i), prty, "Target" );
+	}	
+}
+
+void cancelBattleTargettingMode()
+{
+	MenuHappyBeep();
+	BattleMenuTargettingOff();
+	
+	/// if we were previously going to commit an item-use, cancel the fuck out of it.
+	UnsetTargettingItemDecr();
+	
+	/// if we were previously going to commit an skill with MP-use, cancel the fuck out of it.
+	UnsetTargettingSkillMPDecr();
+
+	/// same with reflecting and nulling
+	UnsetTargettingSkillReflectable();
+	UnsetTargettingSkillNullable();
+	
+	UnpauseBattleMenu();
+}
+
+int __new_valid_target;
+
+/// Simple little mod to the Targetting function.  
+/// Takes a battle index and a party index, makes sure that that target is still alive.  
+/// If the primary target is now dead, retargets a random member of that party.
+///
+/// returns 1 if a new target was selected, 0 if the old is still valid.
+///
+/// Note: not doing any checking if there's anyone still alive in the party.  
+///       That should've already been determined by the time this is called 
+///       (namely by the end of the previous action).
+int SingleTargetRevalidator( int b_idx, int p_idx )
+{
+	__new_valid_target = -1;
+
+	if( bat_cur_hp( b_idx, p_idx ) <= 0 )
+	{
+		if( p_idx == PARTY_ENEMY )
+		{
+			__new_valid_target = SelectRandomEnemy( 1 );
+		}
+		else if( p_idx == PARTY_ALLY )
+		{
+			__new_valid_target = SelectRandomAlly( 1 );
+		}
+		else
+		{
+			FATAL_ERROR( "SingleTargetRevalidator( "+str(b_idx)+", "+str(p_idx)+" ) : unknown party index." );
+		}
+		
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+/// Gets the new battle actor set by SingleTargetRevalidator()
+///
+int GetRetargetedBattleActorIndex()
+{
+	return __new_valid_target;
+}
+
+
+/// This is the function to call in any retargettable single-target effect.
+///
+void AttemptSingleLivingRetarget()
+{
+	int user_idx, target_idx;
+	
+	if( GetTargettingCount() == 2 )
+	{
+		user_idx = GetTargIdxByText( "Attacker" );
+		target_idx = GetTargIdxByText( "Target" );
+		
+		if( SingleTargetRevalidator(GetTargID(target_idx), GetTargMode(target_idx)) )
+		{
+Log( ">>  > > > > Retargetted!" );
+			master_targetting[target_idx].id = GetRetargetedBattleActorIndex();		
+		}		
+	}
+}
+
+
+/// if the specified battle actor has the Nullify condition, this function starts 
+/// a Nullify effect for him, and returns true.  Else, returns false.
+///
+/// @TODO incomplete, needs to start the nullify effect.
+int HandleNull( int bidx, int pidx )
+{
+	if( bat_hasStatus( bidx, pidx, "Nullify" ) )
+	{
+	
+		return 1;
+	}
+	
+	return 0;
+}
+
+/// if the specified battle actor has the Nullify condition, this function starts 
+/// a Nullify effect for him, and returns true.  Else, returns false.
+///
+/// @TODO incomplete, needs to start the reflect effect and queue the reflection into the reflect-handler.
+int HandleReflect( int bidx, int pidx )
+{
+	if( bat_hasStatus( bidx, pidx, "Reflect" ) )
+	{
+		
+		return 1;
+	}
+	
+	return 0;
+}

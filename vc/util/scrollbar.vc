@@ -1,0 +1,107 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Scrollbar lib.
+//
+// This library draws a vertical scrollbar with given dimensions that represent how far down a list 
+// a current pageview is.
+//
+// It is neat.
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+int _scrbr_border_color = RGB( 254,0,254 );
+int _scrbr_cursor_color = RGB( 254,0,254 );
+
+int _scrbr_img_target = screen;
+
+/// Sets the colors for the DrawScrollBar() function.  Advisable to initialize before it's use.
+///
+/// @param bordercolor	The color of the line around the scrollbar area.  RGB() defined.
+/// @param cursorcolor	The color of the scrollbar itself.  RGB() defined.
+///
+/// @see RGB()
+void SetScrollBarColors( int bordercolor, int cursorcolor )
+{
+	_scrbr_border_color = bordercolor;
+	_scrbr_cursor_color = cursorcolor;
+}
+
+/// Sets the destination image for this scrollbar to be drawn upon.  
+/// Defaults to the screen.
+/// @param dest_img an image reference.
+void SetScrollBarRenderDest( int dest_img )
+{
+	_scrbr_img_target = dest_img;
+}
+
+/// This function draws a scrollbar from (x1,y1) to (x2,y2) representing a list with the size and offset represented below.
+///
+/// @param	x1		the topright x-coordinate for the scrollbar.
+/// @param	y1		the topright y-coordinate for the scrollbar.
+/// @param	x2		the bottomleft x-coordinate for the scrollbar.
+/// @param	y2		the bottomleft y-coordinate for the scrollbar.
+/// @param	entry_perpage	the number of entries per visible page (if it's a 100 item list, and you can only see 15 at a time, this is 15).
+/// @param	entry_size	the size of a single row in this list ( if it's a text list with a fontheight of 10 and a y-spacer of 2, this is 12 )
+/// @param	entry_total	the absolute size of this list (if there are 100 items in the total list, but a page of '5', this is 100)
+/// @param	entry_start	the offset of this page ( if it's a 100-item list, and the topmost visible item is 16, this is 16 )
+///
+/// @see	SetScrollBarColors()		sets the various colors for the scrollbar lib.
+/// @see	SetScrollBarRenderDest()	sets the rendering destination for the scrollbar lib.
+void DrawScrollBar(	int x1, int y1, 
+			int x2, int y2, 
+	
+			int entry_perpage, 
+			int entry_size,
+			int entry_total, 
+			int entry_start )
+{	
+	int total_range = y2 - y1 - 4;
+	int item_fit = (total_range<<16) / entry_total;
+	int cursor_size = (item_fit*entry_perpage)>>16;
+	int cursor_offs = (item_fit*entry_start)>>16;
+
+	if( entry_perpage >= entry_total  )
+	{
+		Rect(	
+			x1,
+			y1,
+
+			x2,
+			y2, 
+
+			_scrbr_border_color, 
+			_scrbr_img_target);
+
+		RectFill(
+			x1 + 2,
+			y1 + 2,
+
+			x2 - 2, 
+			y2 - 2,
+
+			_scrbr_cursor_color, 
+			_scrbr_img_target);
+	}
+	else
+	{
+		Rect(	
+			x1,
+			y1,
+
+			x2,
+			y2, 
+
+			_scrbr_border_color, 
+			_scrbr_img_target);
+
+		RectFill(
+			x1 + 2,
+			y1 + 2 + cursor_offs,
+
+			x2 - 2, 
+			y1 + 2 + cursor_offs + cursor_size,
+
+			_scrbr_cursor_color, 
+			_scrbr_img_target);	
+	}
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// End Scrollbar lib.
+//////////////////////////////////////////////////////////////////////////////////////////////////////

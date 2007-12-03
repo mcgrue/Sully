@@ -1,0 +1,684 @@
+
+/// the maximum number of animation strands a sprite can have.
+#define MAX_STRANDS_PER_SPRITE	17	
+
+/// the construct for a animation that has predefined animation strands
+///
+struct sprite
+{
+	int 	sanim_t;	/// the animation index.
+	
+	string 	sprdef_file;	/// the path to the file this sprite was born from.
+	string 	image_file;	/// the path to the file this sprite's image was loaded from.
+	
+	int	anim_strand_count;			/// the total number of animation strands this sprite has.
+	string	strands[MAX_STRANDS_PER_SPRITE];	/// the validated animation strings for this sprite.  csv.
+	string	strand_names[MAX_STRANDS_PER_SPRITE];	/// the unique names for each animation strand (names only need to be unique internally.  Every sprite can have an 'idle', but a single sprite should not have two 'idle's.  uniqueness should be case insens.)
+	int	strand_length[MAX_STRANDS_PER_SPRITE];	/// the number of tokens in each strand.
+	
+	int	current_strand;		/// the strands-index of the currently animating strand.
+	int	current_operation;	/// the index of the current operation of the current strand being run.
+	int	time_for_next_op;	/// the systemtime value that must occur before the next operation of this strand is processed.
+	
+	int	active;		/// the status of this sprite on the heap (0 means the slot is free for plundering!)
+	
+	int	sprite_type;	/// Enemy, PC, or unsafe.
+	
+	int	done;	/// set to true if it's current animation strand has executed and it has been processed.
+}
+
+
+
+/// the maximum number of scripted sprites
+#define MAX_SPRITES 200
+sprite sprite_heap[MAX_SPRITES];
+
+
+#define SPRITETYPE_UNSAFE	0	/// This type of sprite has no required animation strands.
+#define SPRITETYPE_ENEMY	1	/// This type of sprite has a small number of required animation strands (defined elsewhere).
+#define SPRITETYPE_ALLY		2	/// This type of sprite has a large number of required animation strands (defined elsewhere).
+
+// Types of source image padding
+#define NO_PADDING		0	// No padding between frames
+#define FULL_PADDING		1	// Padding between frames and at top/left
+#define EDGELESS_PADDING	2	// Padding between frames, but not at top/left
+
+/// The path to the directory holding all of the sprite definition files.
+string sprite_definition_dir = "res/images/sprites/";
+
+/// Loads a sprite from a sprite definition file.  returns the sprite_heap idx of the newly allocated sprite.
+/// should error if anything unexpected happens.
+/// The sprite definition fileformat is defined elsewhere.  
+///
+/// @param filename The sprite definition file for this sprite.
+/// @param sprite_type Either SPRITETYPE_UNSAFE, SPRITETYPE_ENEMY, or SPRITETYPE_ALLY.  
+int LoadSprite( string filename, int sprite_type )
+{
+
+//MessageBox( filename+" ("+str(sprite_type)+") start: "+str(numimagehandles) );
+	/// make sure to have a lot of helper functions to decompose the work here.  
+	/// SPRITETYPE_ENEMY and SPRITETYPE_ALLY should definitly have seperate verification functions.  
+	/// All helpers should say their function name in any error message.
+
+	filename = sprite_definition_dir + filename;
+	
+	int ldsp_linenum = 1; // Start on line 1
+	string ldsp_token = "	 "; // Valid entry separation tokens
+	string ldsp_currline;		
+	string ldsp_file; // Holds the entire file contents as a string
+	int ldsp_image; // Handle for the image used by the sprite
+	int ldsp_numlines;
+	int ldsp_state = 0; // Tracks what the function is currently expecting on a line
+	int ldsp_idx = _getFreeSpriteIndex(); // Find the first free sprite slot.
+	if (ldsp_idx < 0) { ErrorHandler("Error in " + filename + ": No room for more sprites."); return 0-1; } // Stop and pass an error if the sprite array is full.
+
+	artemp[0] = FileOpen(filename, FILE_READ); // Try to open the file to confirm that it exists
+	if (!artemp[0]) { ErrorLoadFile(filename); return 0; } // Throws error on fail and aborts
+	FileClose(artemp[0]); // Close file again, since FileToString opens it itself. Kind of dumb, but FileToString doesn't do its own error-checking, so what can you do.
+	ldsp_file = FileToString(filename); // Load the entire contents of the file into ldsp_file
+
+	ldsp_numlines = TokenCount(ldsp_file,chr(10)); // Count the number of lines in the file.
+	if (ldsp_numlines <= 0) { ErrorHandler(filename + " contains no data."); return 0-1; } 
+
+	while (ldsp_state == 0 && ldsp_linenum <= ldsp_numlines) // First, go down until you find the data line
+	{
+		ldsp_currline = trim(GetToken(ldsp_file, chr(10), ldsp_linenum-1)); // Get line and strip beginning and end whitespace.
+		if (strcmp("//", left(ldsp_currline, 2)) != 0 && len(ldsp_currline) >= MIN_LINE_LENGTH) // If the line is not junk
+		{
+			ldsp_image = _verifySpriteImageData(ldsp_currline, filename); // Check image/image stat validity and load image.
+			// Ihe verify function will load image width into artemp[0], height into artemp[1], frames per row into artemp[2], rows into artemp[3]. and padding style into artemp[4].
+			// It loads the image specified and returns the image handle on success, or 0 on fail.
+			if (!ldsp_image) { return 0-1; } // image data line is invalid. error is handled in validation function.
+			// For now, just leave the image stuff as it is. If the animation strands check out, we'll go back and create a new animation using this image.			
+			sprite_heap[ldsp_idx].image_file = SPRFILE_DIR + GetToken(ldsp_currline,ldsp_token,0); // Load image file name into struct
+			ldsp_state = 1; // Now start looking for strands.
+		}
+		ldsp_linenum++;
+	}
+
+	sprite_heap[ldsp_idx].anim_strand_count = 0; // While loading, this will track # strands found so far
+	while (ldsp_state == 1 && ldsp_linenum <= ldsp_numlines) // Go down the list looking for animation strands.
+	{
+		ldsp_currline = trim(GetToken(ldsp_file, chr(10), ldsp_linenum-1)); // Get line and strip beginning and end whitespace.
+		if (strcmp("//", left(ldsp_currline, 2)) != 0 && len(ldsp_currline) >= MIN_LINE_LENGTH) // If the line is not junk
+		{
+			if (equ(GetToken(ldsp_currline, ldsp_token, 0), "anim")) // check first token -- if it's "anim", this is an animstrand
+			{
+				if (TokenCount(ldsp_currline, ldsp_token) < 3) { FreeImage(ldsp_image); ErrorHandler("Error in " + filename + ": Expected animation strand, but found: '" + ldsp_currline + "'."); return 0-1; } // If there aren't enough tokens for a strand definition, stop and pass an error.
+				
+				// Now validate this strand and load it into the struct.
+				if ( _setupAnimationStrand(ldsp_idx, GetToken(ldsp_currline, ldsp_token, 1), _stripWhiteSpace(ldsp_currline,2) ) )       
+				{
+					sprite_heap[ldsp_idx].anim_strand_count++;
+				}
+				else { FreeImage(ldsp_image); ErrorHandler("Error in " + filename + ": Animation strand: '" + GetToken(ldsp_currline, ldsp_token, 1) + "' is invalid."); return 0-1; } // If there's anything wrong with the strand, stop and pass an error.
+			}
+			else // Parser can't figure out what this line means. Stop and pass error. You could just comment this block out if you want it to ignore such lines.
+			{
+				FreeImage(ldsp_image);
+				ErrorHandler("Error in " + filename + ": Unparseable line: " + ldsp_currline);
+				return 0-1;
+			}
+		}
+		ldsp_linenum++;
+	}
+	if (!_checkMandatoryStrands(ldsp_idx, sprite_type)) { FreeImage(ldsp_image); ErrorHandler("Error in " + filename + ": Missing one or more mandatory animation strands for type specified."); return 0-1; } // If mandatory animation strands are missing, stop and pass back an error,
+	
+	// All animation strands have been validated and loaded. Now, use the base image and the stored statistics
+	// to generate the animation filmstrip.
+	
+	sprite_heap[ldsp_idx].sanim_t = _generateAnimationFromImage(ldsp_image); // Create filmstrip and animation. No need for errorchecking because LoadAnimation suicides on an error.	
+	// At this point, the info in artemp[] is no longer important.
+	FreeImage(ldsp_image); // Dealloc the source image now that the filmstrip is made.
+	
+	// Now just set the remaining sprite traits.
+	sprite_heap[ldsp_idx].sprdef_file = filename;
+	sprite_heap[ldsp_idx].sprite_type = sprite_type;
+	sprite_heap[ldsp_idx].active = 1;
+//MessageBox( filename+" ("+str(sprite_type)+") end: "+str(numimagehandles) );
+	return ldsp_idx; // Finally, pass back the index of this sprite.
+}
+
+
+
+/// deletes a sprite from the heap.  Deletes its associated anim_t object if free_animt is true.
+/// errors if spr_idx is out of bounds or the sprite is already inactive.
+///
+/// @param spr_idx	the sprite_heap index to be freed
+/// @param free_animt	flag indicating if the sprite's anim_t is to be deallocated too.
+void FreeSprite( int spr_idx, int free_animt )
+{
+	if(spr_idx >= MAX_SPRITES || spr_idx < 0 ) ErrorHandler("Sprite index passed to FreeSprite (" + str(spr_idx) + ") is out of bounds.");
+// 	else if (!sprite_heap[spr_idx].active) ErrorHandler("Sprite passed to FreeSprite (" + str(spr_idx) + ") is already free.");
+ 	else if( sprite_heap[spr_idx].active )
+ 	{
+		if( free_animt ) 
+		{
+			FreeAnimation( sprite_heap[spr_idx].sanim_t );
+		}
+		
+		sprite_heap[spr_idx].active = 0;
+	}
+}
+
+
+// --------------------------
+//      helper functions
+// --------------------------
+
+#define NUM_SPRITE_DATA_TOKS 6
+
+// Runs through the sprite array in order until it finds one that's available (ie, that has 
+// active = 0), then returns that index. Returns 0-1 if no slots are free.
+int _getFreeSpriteIndex() {
+	int _getcount;
+	for (_getcount = 0; _getcount < MAX_SPRITES; _getcount++)
+	{
+		if (!sprite_heap[_getcount].active) return _getcount;
+	}
+	return 0-1;
+}
+
+
+// This function takes the data line of a sprite file (the one that contains all the image specs) and 
+// reads the specifications into temporary variables. It loads the image and does a sanity check on its
+// size, then passes back the image handle. If anything weird happens, it unloads the image and passes
+// back 0.
+int _verifySpriteImageData(string _dataline, string _spritefile)
+{
+	string _imgfile;
+	string _vstok;
+	int _vscount;
+	int _imghandle;
+	
+	if (TokenCount(_dataline, "	 ") < NUM_SPRITE_DATA_TOKS) { ErrorHandler("Error in " + _spritefile + ": More information expected on image data line."); return 0; } // Stop and give an error if not enough tokens
+	// This part is hardcoded to treat specific tokens as specific things. You'll need to change it if you screw with the token order or the things the tokens mean.
+
+	_imgfile = SPRFILE_DIR + GetToken(_dataline,"	 ",0); // First token is filename.	
+	_imghandle = LoadImage(_imgfile);
+	if (!_imghandle) { ErrorHandler("Error in " + _spritefile + ": Can't find image entitled '" + _imgfile + "'."); return 0; } // If this isn't a real image file, stop and pass an error.
+	
+	// Now save the image stats to the temporary integer array.. 
+	// If any of these don't evaluate to numbers, there will be an error message.	
+	// Also, only the padding value is allowed to be 0, and none can be negative.
+	for (_vscount = 0; _vscount < NUM_SPRITE_DATA_TOKS - 1; _vscount++)
+	{
+		_vstok = GetToken(_dataline,"	 ",_vscount+1); // Get next token
+		artemp[_vscount] = val(_vstok); // Load the token into the nth temp integer spot.
+		
+		// This line here is basically what SafeVal() does -- check to confirm that the thing is actually a number. 
+		// However, I put it in here so the function can tell if there was a problem or not.
+		if (strcmp(_vstok, str(artemp[_vscount]))) { FreeImage(_imghandle); ErrorHandler("Error in " + _spritefile + ": Expected a number, got '" + _vstok + "'."); return 0; } // If a string of the number doesn't match the original halts and passes an error
+				
+		else if (artemp[_vscount] <= 0) // check range validity
+		{ 
+			// The sixth token (token 5, -1 since we're ignoring the first token in this look, so 4) is padding style, which is allowed to be 0, but not negative.
+			// The others aren't allowed to be 0 or negative.
+			if (_vscount != 4 || artemp[_vscount] != 0) { FreeImage(_imghandle); ErrorHandler("Error in " + _spritefile + ": Nonsensical image statistic (" + _vstok + ")."); return 0;  } // If the value is nonpositive (or strictly negative, for padding).
+		}				
+	}
+	
+	// At this point everything has been loaded up and the numbers have been validity-checked. 
+	// Now check to make sure the image is actually big enough for the values given.
+	if (!_spriteSufficientSize(_imghandle)) // If image is too small, stop and pass an error.
+	{  
+		FreeImage(_imghandle); 
+		ErrorHandler("Error in " + _spritefile + ": " + _imgfile + " is too small for the dimensions given."); 
+		return 0;
+	}
+	
+	// Everything looks good for the data line, and the variables have been loaded to artemp.
+	
+	return _imghandle;
+}
+
+
+// Checks that a sprite's source image is actually big enough to have the dimensions it says it does.
+// This is called after _verifySpriteImageData() has loaded image specs into artemp[], so all it takes
+// is the image handle. Note that a padding code of greater than 2 is trwated the same as a code of 2.
+// Returns 0 if the image is too small, 1 otherwise.
+int _spriteSufficientSize(int _spriteimg)
+{
+	int _exw, _exh;
+	if (artemp[4] == NO_PADDING) // no padding
+	{
+		_exw = artemp[0] * artemp[2]; // expected width = frame width * frames per row
+		_exh = artemp[1] * artemp[3]; // expected height = frame height * rows
+	}
+	else if (artemp[4] == FULL_PADDING) // padding all around
+	{
+		_exw = (artemp[0]+1) * artemp[2]; // expected width = frame width +1 * frames per row
+		_exh = (artemp[1]+1) * artemp[3]; // expected height = frame height +1 * rows
+	}
+	else { // padding except at leading edges
+		_exw = ((artemp[0]+1) * artemp[2])-1; // expected width = (frame width +1 * frames per row) - 1
+		_exh = ((artemp[1]+1) * artemp[3])-1; // expected height = (frame height +1 * rows) - 1
+	}	
+	
+	if (_exw > ImageWidth(_spriteimg)) return 0; // If image is too small across, return error.
+	if (_exh > ImageHeight(_spriteimg)) return 0; // If image is too small vertically, return error.
+	return 1; 
+}
+
+// Removes all tabs and space from a string. Begins at the _startpt-th word, omitting anything before it.
+// (startpt 0 is the whole string, startpt 1 is everything but first word, etc).
+string _stripWhitespace(string _whitestring, int _startpt)
+{
+	int _swi, _swnum;
+	string _stripstring = "";
+	_swnum = TokenCount(_whitestring,"	 ");
+	for (_swi = _startpt; _swi < _swnum; _swi++) 
+	{
+		// Concatenate all the white-delimited tokens together.
+		_stripstring = _stripstring + GetToken(_whitestring,"	 ",_swi);
+	}
+      return _stripstring;
+}
+ 
+// Loads an animation strand into the sprite struct specified, then returns 1.
+// On an error, returns 0 immediately.
+// The strand can have comments, but all whitespace should be stripped from it.
+int _setupAnimationStrand(int _idx, string _strandname, string _animstrand) 
+{	
+	string _strand = _animstrand;	
+	string _topchar;
+		
+	if (sprite_heap[_idx].anim_strand_count > 0) // If there are any strands already in, check for name collision..
+	{
+		if (!_confirmStrandNameUniqueness(_idx, _strandname)) { ErrorHandler("Duplicate animation strand name (" + _strandname + ")."); } // If name is a duplicate, stop and pass an error.
+	}	
+	sprite_heap[_idx].strand_names[sprite_heap[_idx].anim_strand_count] = _strandname; // Assign strand name
+      
+      sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] = ""; // start out with a blank strand	
+      sprite_heap[_idx].strand_length[sprite_heap[_idx].anim_strand_count] = 0; // Strand length starts at 0.
+	while (!equ(_strand, ""))
+	{
+		_topchar = left(_strand,1); // get leftmost char for analysis
+		// These helper functions will fill in the struct and set _strand to "err" if they encounter a problem.
+		if (equ(_topchar,"f")) { _strand = _f_strandcheck(_strand, _idx, artemp[2]*artemp[3]); } // Frame code
+		else if (equ(_topchar,"w")) { _strand = _w_strandcheck(_strand, _idx); } // Wait code
+		else if (equ(_topchar,"b")) { _strand = _b_strandcheck(_strand, _idx); } // Loop
+		else if (equ(_topchar,"[")) { _strand = _cf_strandcheck(_strand, _idx); } // Callfunc
+		else if (equ(_topchar,"<")) { _strand = _rcf_strandcheck(_strand, _idx); } // Required Callfunc
+		else if (equ(_topchar,"/")) { _strand = _com_strandcheck(_strand, _idx); } // Comments
+		if (equ(_strand,"err")) return 0;
+		sprite_heap[_idx].strand_length[sprite_heap[_idx].anim_strand_count]++;
+	} 		
+	return 1; // strand fully validated and loaded.
+}
+
+// Processes a frame token in an animation strand and loads it into the specified sprite.
+// Returns "err" on an invalid token.
+string _f_strandcheck(string _str, int _idx, int _numframes)
+{
+	int _sti = 1; // start at second character since first is definitely F
+	int _smax = len(_str); 
+	int _done = 0;	
+	while (!_done && _sti < _smax) // Validate this token
+	{	
+		// If this character is not a number		
+		if (!_charIsNumber(mid(_str,_sti,1))) 
+		{			
+			if (_sti == 1) { return "err"; } // If this is the first character after the F, pass back an error
+			_done = 1; // Otherwise, this is the end of the token. Move on to processing step.			
+			
+		}
+		else _sti++; 
+	}
+	// sti now points to the spot immediately after the end of the token
+
+	if (val(mid(_str,1,_sti-1)) >= _numframes) { ErrorHandler("Invalid frame index (" + mid(_str,1,_sti-2) + ")."); return "err"; }
+
+	// If this is not the beginning of the strand, start off with a comma.
+	if (!equ(sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count], "")) sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] = sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] + ",";
+	sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] = sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] + "F:" + mid(_str,1,_sti-1); // Convert and add the token
+	
+	if (_smax == _sti) return "";   // Now pass back the string with the front token removed.
+	return right(_str, _smax-_sti); 
+}
+
+// Processes a wait token in an animation strand and loads it into the specified sprite.
+// Returns "err" on an invalid token.
+string _w_strandcheck(string _str, int _idx)
+{
+	int _sti = 1; // start at second character since first is definitely W
+	int _smax = len(_str); 
+	int _done = 0;	
+	while (!_done && _sti < _smax) // Validate this token
+	{	
+		// If this character is not a number
+		if (!_charIsNumber(mid(_str,_sti,1))) 
+		{			
+			if (_sti == 1) { return "err"; } // If this is the first character after the W, pass back an error
+			_done = 1; // Otherwise, this is the end of the token. Move on to processing step.			
+		}
+		else _sti++; 
+	}
+	// sti now points to the spot immediately after the end of the token
+
+	// If this is not the beginning of the strand, start off with a comma.
+	if (!equ(sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count], "")) sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] = sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] + ",";
+	sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] = sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] + "W:" + mid(_str,1,_sti-1); // Convert and add the token
+	
+	if (_smax == _sti) return "";   // Now pass back the string with the front token removed.
+	return right(_str, _smax-_sti); 
+}
+
+// Processes a loop token in an animation strand and loads it into the specified sprite.
+// Never produces an error since the B is the entire token.
+string _b_strandcheck(string _str, int _idx)
+{		
+	// If this is not the beginning of the strand, start off with a comma.
+	if (!equ(sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count], "")) sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] = sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] + ",";
+	sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] = sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] + "B:-1"; // Convert and add the token
+	
+	return "";   // A loopback will always effectively end the strand, so ignore anything after it.
+}
+
+// Processes a callfunc token in an animation strand and loads it into the specified sprite.
+// Returns "err" on an invalid token.
+string _cf_strandcheck(string _str, int _idx)
+{
+	int _sti = 1; // start at second character since first is definitely [
+	int _smax = len(_str);
+	int _done = 0;	
+	while (!_done && _sti < _smax) // Validate this token
+	{	
+		// If this character is not a number
+		if (equ(mid(_str,_sti,1),"]")) 
+		{			
+			if (_sti == 1) { return "err"; } // If this is the first character after the [, pass back an error
+			_done = 1; // Otherwise, this is the end of the token. Move on to processing step.			
+		}
+		else _sti++; 
+	}
+	if (!_done) { return "err"; } // If there was no closing brace, return an error
+	
+	// // sti now points to the closing brace
+
+	// If this is not the beginning of the strand, start off with a comma.
+	if (!equ(sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count], "")) sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] = sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] + ",";
+	sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] = sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] + "C:0:" + mid(_str,1,_sti-1); // Convert and add the token
+	
+	if (_smax == _sti) return "";   // Now pass back the string with the front token removed.
+	return right(_str, _smax-_sti-1); 
+}
+
+
+// Processes a required callfunc token in an animation strand and loads it into the specified sprite.
+// Returns "err" on an invalid token.
+string _rcf_strandcheck(string _str, int _idx)
+{
+	int _sti = 1; // start at second character since first is definitely <
+	int _smax = len(_str);
+	int _done = 0;	
+	while (!_done && _sti < _smax) // Validate this token
+	{	
+		// If this character is not a number
+		if (equ(mid(_str,_sti,1),">")) 
+		{			
+			if (_sti == 1) { return "err"; } // If this is the first character after the <, pass back an error
+			_done = 1; // Otherwise, this is the end of the token. Move on to processing step.			
+		}
+		else _sti++; 
+	}
+	if (!_done) { return "err"; } // If there was no closing brace, return an error
+	
+	// sti now points to the closing brace
+	if (!FunctionExists(mid(_str,1,_sti-1))) {  return "err";  } // if this function doesn't exist, return an error.
+
+	// If this is not the beginning of the strand, start off with a comma.
+	if (!equ(sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count], "")) sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] = sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] + ",";
+	sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] = sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] + "C:1:" + mid(_str,1,_sti-1); // Convert and add the token
+	
+	if (_smax == _sti) return "";   // Now pass back the string with the front token removed.
+	return right(_str, _smax-_sti-1); 
+}
+
+// Processes a forward slash in an animation strand. If followed by another forward slash, this is
+// the start of a comment, and the rest of the strand is ignored. Otherwise, returns "err".
+string _com_strandcheck(string _str, int _idx)
+{
+	if (equ(mid(_str,1,1),"/")) return ""; // End of strand; do nothing and return blank strand
+	return "err";
+}
+
+// Returns 1 if the character is a number, 0 if not. This would be so much easier if verge had
+// a char-to-ascii function. Technically this also works on longer strings.
+int _charIsNumber(string _char)
+{
+	if (strcmp(_char, str(val(_char)))) return 0; // assumes not a number if its string and numeric representations differ
+	return 1;
+}
+
+// Checks to make sure there are no strands with _strandname in the specified sprite.
+// Returns 1 if the name is unique, 0 if there are duplicates.
+// Assumes that there's at least one strand in there already, and that the strandcount
+// variable in the struct is accurate.
+int _confirmStrandNameUniqueness(int _idx, string _strandname)
+{
+	int _cui;
+	for (_cui = 0; _cui < sprite_heap[_idx].anim_strand_count; _cui++)
+	{
+		if ( equ(sprite_heap[_idx].strand_names[_cui], _strandname ) ) return 0;
+	}
+	return 1;
+}
+
+
+// Generates an animation based on a filmstrip created using the image passed.
+// Assumes the image statistics are in artemp[] in the order width, height,
+// frames per row, rows, padding method.
+// Returns animation index.
+int _generateAnimationFromImage(int _image)
+{
+	int _fcount = 0; // frame currently being processed
+	int _filmstrip;
+	int _grow, _gcol; // Row and column being handled in source image.
+	int _gx, _gy;
+	
+	int im;
+	
+	_filmstrip = NewImage(artemp[0],artemp[1]*artemp[2]*artemp[3]); // Generate blank filmstrip
+
+	if (artemp[4] == FULL_PADDING) _gy = 1; // If using full padding, skip first line of pixels
+	else _gy = 0; // Otherwise, start at the top.
+	// Draw the source image to the filmstrip
+	for (_grow = 0; _grow < artemp[3]; _grow++) 	
+	{
+		if (artemp[4] == FULL_PADDING) _gx = 1; // If using full padding, skip first line of pixels
+		else _gx = 0; // Otherwise, start at the left.
+		
+		for (_gcol = 0; _gcol < artemp[2]; _gcol++) // Go through frames one at a time, copying to new image.
+		{
+
+			im = ImageShell(_gx,_gy,artemp[0],artemp[1],_image);
+			Blit(0, _fcount*artemp[1], im, _filmstrip); // Draw the frame to the filmstrip.
+			FreeImage(im);
+
+			if (artemp[4] == NO_PADDING) _gx += artemp[0];
+			else _gx += artemp[0] + 1;
+			_fcount++;
+		}		
+		if (artemp[4] == NO_PADDING) _gy += artemp[1];
+		else _gy += artemp[1] + 1;
+	}	
+	return LoadAnimationFromHandle(_filmstrip, artemp[0], artemp[1]);
+}
+
+
+// Confirms that the specified struct has all the strands expected for the given type.
+// (Currently, this defines PCs and enemies as having the same mandatory strands, since
+// I didn't know what the other ones for PCs were.)
+// Returns 1 if all's well, 0 if not.
+int _checkMandatoryStrands(int _idx, int _type) 
+{
+	if  (_type == SPRITETYPE_ENEMY)
+	{
+		if (getStrandIndex(_idx, "idle") < 0) return 0;
+		if (getStrandIndex(_idx, "weak") < 0) return 0;
+		if (getStrandIndex(_idx, "attack") < 0) return 0;
+		if (getStrandIndex(_idx, "hit") < 0) return 0;
+		if (getStrandIndex(_idx, "death") < 0) return 0;
+	}	
+	else if  (_type == SPRITETYPE_ALLY)
+	{
+		if (getStrandIndex(_idx, "idle") < 0) return 0;
+		if (getStrandIndex(_idx, "weak") < 0) return 0;
+		if (getStrandIndex(_idx, "attack") < 0) return 0;
+		if (getStrandIndex(_idx, "hit") < 0) return 0;
+		if (getStrandIndex(_idx, "death") < 0) return 0;
+	}	
+	return 1;
+}
+
+// Returns a strand's index when given its name, or -1 if there is no strand by that name.
+int getStrandIndex(int _idx, string _name)
+{
+	int _gsi;
+	
+	for (_gsi = 0; _gsi < sprite_heap[_idx].anim_strand_count; _gsi++)
+	{
+		if (equ(sprite_heap[_idx].strand_names[_gsi], _name)) return _gsi;
+	}
+	return 0-1;
+}
+
+
+
+
+// This works identically to LoadAnimation() in animation.vc, but it loads from 
+// an image handle rather than from a filename. 
+// Maybe this should be moved to animation.vc eventually? Seems like a good thing to have.
+int LoadAnimationFromHandle(int imagehandle, int sizex, int sizey)
+{
+	int i, index;
+	
+	// find a free animation slot thingy
+	index = NO_INDEX;
+	for (i=0; i<MAX_ANIMATIONS; i++)
+		if (!anims[i].active && i<index)
+			index = i;
+
+	// exit if none available
+	if (index == NO_INDEX)
+		Exit("LoadAnimationFromHandle: No free slots available! Increase MAX_ANIMATIONS!");
+
+	// load up this animation, detect number of frames
+	anims[index].image = imagehandle;
+	anims[index].active = 1;
+	anims[index].sizex = sizex;
+	anims[index].sizey = sizey;
+	anims[index].numframes = ImageHeight(anims[index].image) / sizey;
+	anims[index].bufimage = NewImage(sizex, sizey);
+	anims[index].bufferedframe = 65535;
+	return index;
+}
+
+int DumpSprite(int _idx)
+{
+	int _dsi;
+	log("---");
+	log ("SPRITE " + str(_idx) + " DUMP");
+	log("      sprdef_file: "+sprite_heap[_idx].sprdef_file);
+	log("       image_file: "+sprite_heap[_idx].image_file);
+	log("anim_strand_count: "+str(sprite_heap[_idx].anim_strand_count));
+	log("      sprite_type: "+str(sprite_heap[_idx].sprite_type));
+	
+	log("   current_strand:" +str(sprite_heap[_idx].current_strand));
+	
+	for (_dsi=0;_dsi<sprite_heap[_idx].anim_strand_count;_dsi++)
+	{
+		log( "strand["+str(_dsi) + "] (" + sprite_heap[_idx].strand_names[_dsi] + "): 	'" +sprite_heap[_idx].strands[_dsi]+ "'" );
+		log( "stored length: " + str(sprite_heap[_idx].strand_length[_dsi]) );
+	}	
+	log("---");
+}
+
+#define SPROP_FRAME	0
+#define SPROP_WAIT	1
+#define SPROP_CALLFUNC	2
+#define SPROP_REPEAT	3
+
+/// returns the defined type of operation op_idx of strand str_idx of sprite spr_idx.
+/// @error if it gets an invalid type, throws an error and returns -1.
+int GetSprOpType( int spr_idx, int str_idx, int op_idx )
+{
+
+	string s;
+	
+	s = GetToken( sprite_heap[spr_idx].strands[str_idx], ",", op_idx );	
+	s = GetToken( s, ":", 0 );
+	
+	if( equ(s,"F") )	return SPROP_FRAME;
+	if( equ(s,"W") )	return SPROP_WAIT;
+	if( equ(s,"C") )	return SPROP_CALLFUNC;
+	if( equ(s,"B") )	return SPROP_REPEAT;
+	
+	ErrorHandler("sprite.vc::GetSprOpType(): totally invalid Operation type '"+s+"'.  Passed arguments("+str(spr_idx)+","+str(str_idx)+","+str(op_idx)+")." );
+	
+	ErrorHandler("sprite.vc::GetSprOpType(): **CON'D** The dump of the sprite in question follows." );
+	
+	DumpSprite( spr_idx );
+	return -1;
+}
+
+/// returns the first argument of operation op_idx of strand str_idx of sprite spr_idx as an int.
+///
+int GetSprOpValue( int spr_idx, int str_idx, int op_idx )
+{
+	string s;
+	s = GetToken( sprite_heap[spr_idx].strands[str_idx], ",", op_idx );	
+	return val(GetToken( s, ":", 1 ));
+}
+
+/// returns the second argument of operation op_idx of strand str_idx of sprite spr_idx as a string.
+///
+string GetSprOpData( int spr_idx, int str_idx, int op_idx )
+{
+	string s;
+	s = GetToken( sprite_heap[spr_idx].strands[str_idx], ",", op_idx );	
+	return GetToken( s, ":", 2 );
+}
+
+/// Takes care of special processing needs when a 'flavored' sprite terminates an animation strand.
+///
+void sprite_endstrand_process( int idx )
+{
+	if( sprite_heap[idx].sprite_type != SPRITETYPE_UNSAFE )
+	{
+		if(  
+			getStrandIndex( idx, "death" ) == sprite_heap[idx].current_strand
+		)
+		{
+			sprite_heap[idx].done = 1;
+		}
+		else
+		{
+			SpriteChangeStrand( idx, "idle" );
+		}
+	}
+	else
+	{
+		sprite_heap[idx].done = 1;
+	}
+}
+
+/// Switches sprite idx to that active animation of strand_key
+///
+void SpriteChangeStrand( int idx, string strand_key )
+{
+	int i;
+	
+	i = getStrandIndex( idx, strand_key );
+	
+Log( "SpriteChangeStrand( "+str(idx)+", '"+strand_key+"' ): "+str(i)  );
+	
+	if( i >= 0 )
+	{
+		sprite_heap[idx].current_strand = i;
+		sprite_heap[idx].current_operation = -1;
+		sprite_heap[idx].time_for_next_op = 0;
+		sprite_heap[idx].done = 0;
+	}
+}

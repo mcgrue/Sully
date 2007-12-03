@@ -1,0 +1,239 @@
+/// A library for storing all HP changes during the current skill to be executed at once at
+/// the end of the action.
+///
+/// Grue, 2005.12.05
+
+#define BATSTAT_CHANGE_HP	1
+#define BATSTAT_CHANGE_MP	2
+#define BATSTAT_CHANGE_MISS	3
+#define BATSTAT_CHANGE_CRIT_HP	4
+
+/// arbitrary max.  Might need upping.
+#define MAX_BATTLESTAT_STATE_CHANGE 32
+
+struct battlestat_state_change {
+	int type_change; //1 for HP, 2 for MP
+	int amount;
+	int idx, party_idx;
+}
+
+/// The battle queue
+battlestat_state_change bs_statchange_queue[MAX_BATTLESTAT_STATE_CHANGE];
+
+/// the number of entries presently in the battle stat change queue.
+int bs_statchange_count;
+
+void EmptyBSStatQueue() {
+	bs_statchange_count = 0;
+}
+
+int IsValidBSStatChangeStat( int stat_type )
+{
+	if( 
+		stat_type == BATSTAT_CHANGE_HP ||
+		stat_type == BATSTAT_CHANGE_MP ||
+		stat_type == BATSTAT_CHANGE_MISS ||
+		stat_type == BATSTAT_CHANGE_CRIT_HP
+	) {
+		return 1;
+	}
+	
+	return 0;
+}
+
+void AddBSStatChange( int stat_type, int amount, int bidx, int pidx )
+{
+
+	if( bs_statchange_count >= MAX_BATTLESTAT_STATE_CHANGE )
+	{
+		FATAL_ERROR( "AddBSStatChange: tried to add too many stat changes. Try increasing MAX_BATTLESTAT_STATE_CHANGE or clearing a dirty BS Stat Queue." );
+		return;
+	}
+	
+	if( !IsValidBSStatChangeStat(stat_type) )
+	{
+		FATAL_ERROR( "AddBSStatChange: "+str(stat_type)+" is not a valid stat change type." );
+		return;	
+	}
+	
+	int i;
+	int idx = bs_statchange_count;
+	
+	for( i=0; i<idx; i++ )
+	{
+		if( 
+			bs_statchange_queue[i].type_change == stat_type &&
+			bs_statchange_queue[i].idx == bidx &&
+			bs_statchange_queue[i].party_idx == pidx
+		) {
+			bs_statchange_queue[idx].amount += amount;
+			return;
+		}
+	
+	}
+	
+	bs_statchange_queue[idx].type_change = stat_type;
+	bs_statchange_queue[idx].amount = amount;
+	bs_statchange_queue[idx].idx = bidx;
+	bs_statchange_queue[idx].party_idx = pidx;
+
+	bs_statchange_count++;
+}
+
+/// Performs all of the queued bounces and actually performs the stat changes.
+///
+void ExecuteBattleStatChanges()
+{
+	int i;
+	
+LOG( "ExecuteBattleStatChanges" );
+	
+	for( i=0; i<bs_statchange_count; i++ ) 
+	{
+		///
+		/// MISS
+		///
+		if( bs_statchange_queue[i].type_change == BATSTAT_CHANGE_MISS )
+		{
+			ChangeSpriteAnimation( 
+				bat_getRenderRef(
+					bs_statchange_queue[i].idx, 
+					bs_statchange_queue[i].party_idx,
+				),
+				"EVADE" 
+			);
+			
+			NewBounceText( 
+				bs_statchange_queue[i].idx, 
+				bs_statchange_queue[i].party_idx,
+				"MISS!", 
+				0 
+			);
+		}
+		///
+		/// HP CHANGE
+		///
+		else if(  
+			bs_statchange_queue[i].type_change == BATSTAT_CHANGE_CRIT_HP ||
+			bs_statchange_queue[i].type_change == BATSTAT_CHANGE_HP
+		)
+		{
+			
+			///
+			/// HEAL HP
+			///
+			if( bs_statchange_queue[i].amount > 0 )
+			{
+				NewBounceText( 
+					bs_statchange_queue[i].idx, 
+					bs_statchange_queue[i].party_idx,
+					str(bs_statchange_queue[i].amount), 
+					-1 
+				);
+			}
+			else
+			{
+				///
+				/// CRITICAL DAMAGE
+				///
+				if( bs_statchange_queue[i].type_change == BATSTAT_CHANGE_CRIT_HP )
+				{
+					NewBounceText( 
+						bs_statchange_queue[i].idx, 
+						bs_statchange_queue[i].party_idx,
+						str(bs_statchange_queue[i].amount), 
+						1 
+					);
+				}
+				
+				///
+				/// NORMAL DAMAGE
+				///
+				else
+				{
+					NewBounceText( 
+						bs_statchange_queue[i].idx, 
+						bs_statchange_queue[i].party_idx,
+						str(bs_statchange_queue[i].amount), 
+						0 
+					);
+				}
+			}
+			
+			bat_change_hp( 
+				bs_statchange_queue[i].idx, 
+				bs_statchange_queue[i].party_idx,
+				bs_statchange_queue[i].amount
+			);
+		}
+		
+		///
+		/// MP Damage
+		///
+		else if( bs_statchange_queue[i].type_change == BATSTAT_CHANGE_HP )
+		{
+			///
+			/// RECOVER MP
+			///
+			if( bs_statchange_queue[i].amount > 0 )
+			{
+				NewBounceText( 
+					bs_statchange_queue[i].idx, 
+					bs_statchange_queue[i].party_idx,
+					str(bs_statchange_queue[i].amount)+" MP", 
+					-1 
+				);
+			}
+			
+			///
+			/// MP DAMAGE
+			///
+			else
+			{
+				NewBounceText( 
+					bs_statchange_queue[i].idx, 
+					bs_statchange_queue[i].party_idx,
+					str(bs_statchange_queue[i].amount)+" MP", 
+					0
+				);
+			}
+			
+			bat_change_mp( 
+				bs_statchange_queue[i].idx, 
+				bs_statchange_queue[i].party_idx,
+				bs_statchange_queue[i].amount
+			);		
+		}
+		else
+		{
+			FATAL_ERROR( "ExecuteBattleStatChanges(): Encountered an unknown stat type ("+str(bs_statchange_queue[i].type_change)+").  DANGER." );
+			return;
+		}
+	}
+}
+
+/******** MISS
+
+*/
+
+/***** CRIT
+if( arTemp[i+GetTargettingCount()] >= 0 )
+{
+	NewBounceText( GetTargID(i), GetTargMode(i), str(arTemp[i+GetTargettingCount()]), 1 );
+}
+else
+{
+	NewBounceText( GetTargID(i), GetTargMode(i), str(arTemp[i+GetTargettingCount()]), -1 );
+}
+*/
+
+/****** HP
+if( arTemp[i+GetTargettingCount()] >= 0 )
+{
+	NewBounceText( GetTargID(i), GetTargMode(i), str(arTemp[i+GetTargettingCount()]), 0 );
+}
+else
+{
+	NewBounceText( GetTargID(i), GetTargMode(i), str(arTemp[i+GetTargettingCount()]), -1 );
+}
+*/

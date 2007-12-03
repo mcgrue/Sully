@@ -1,0 +1,407 @@
+// -------------------------------------------------------------------------------------------------------
+// EnemyGroup.vc
+// -------------------------------------------------------------------------------------------------------
+//  July31/2005, Shamus "Kildorf" Peveril
+//
+//  Loads the battle group definition file and parses it. See battle_group.dat for interface description.
+//  Call InitEnemyGroups() before calling any of the other stuff.
+// -------------------------------------------------------------------------------------------------------
+
+
+string EnemyGroup_Areas;
+string EnemyGroup_Master;
+string EnemyGroup_CurrentBattle_Master;
+
+string BATTLE_GROUP_FILE = "battle_group.dat";
+
+
+void eg_test() {
+	log("Testing EnemyGroup.vc");
+	log("~~~~~~~~~~~~~~~~~~~~~");
+	
+	initEnemyGroups();
+
+	log("---");
+	log(EnemyGroup_Master);
+	log("---");
+	log(EnemyGroup_Areas);
+	log("---");
+	
+	log("Initing battle for area: Overworld_A");
+	InitBattleSetup("Overworld_A");
+
+	log("getBattleGroupCount()       returns :" + str(GetBattleGroupCount()));
+	log("GetBattleGroupEnemy(0)      returns :" + str(GetBattleGroupEnemy(0)));
+	log("GetBattleGroupEnemyX(0)     returns :" + str(GetBattleGroupEnemyX(0)));
+	log("GetBattleGroupEnemyY(0)     returns :" + str(GetBattleGroupEnemyY(0)));
+	log("IsBattleGroupEnemyLeader(0) returns :" + str(IsBattleGroupEnemyLeader(0)));
+	log("BattleGroupSetupCallfunc()  returns :" + BattleGroupSetupCallfunc());
+	
+	exit("");
+}
+
+
+// Initializes the battle group system.
+void InitEnemyGroups() {
+	// Grab the battle group data file.
+	string eg_filedump = FileToString(dat_directory+BATTLE_GROUP_FILE);
+
+	EnemyGroup_Areas = "";
+	EnemyGroup_Master = "";
+	EnemyGroup_CurrentBattle_Master = "";
+	
+	// Lots of variables
+	int eg_numln = tokenCount(eg_filedump,chr(10));
+	int eg_curln_idx = 0;
+	int eg_curln_len = 0;
+	int eg_curch_idx = 0;
+	int eg_search_idx = 0;
+	int eg_search_maxidx = 0;
+	int eg_group_maxidx = 0;
+	int eg_curchance = -1;
+	int eg_totalchance;
+	string eg_curln;
+	string eg_curch;
+	string eg_curarea;
+	string eg_pieceA;
+	string eg_pieceB;
+	string eg_pieceC;
+	string eg_pieceD;
+	string eg_curgroup;
+	string eg_curfunc;
+	string eg_tempareastring;
+	int eg_flag_special = 0;
+	int eg_flag_add = 0;
+	
+	if( !num_enemies )
+	{
+		FATAL_ERROR(
+			"Cannot initialize Enemy Groups before you initialize the Enemies.  "+
+			"Please check the order of your inits."
+		);
+	}
+	
+	// Step through each line in the file.
+	for(eg_curln_idx = 0; eg_curln_idx < eg_numln; eg_curln_idx++) {
+		// Get the current line.
+		eg_curln = getToken(eg_filedump,chr(10),eg_curln_idx);
+		
+		// Handling for if the line is the end of a group definition
+		if(!strcmp(left(eg_curln,5),"=END=")) {
+			EnemyGroup_Master = EnemyGroup_Master + eg_curfunc + "," + left(eg_curgroup,len(eg_curgroup)-1) + ";";
+			eg_curgroup = "";
+			eg_curfunc = "-";
+			eg_curchance = -1;
+		} 
+		// Handling for if the line is the beginning of a group definition
+		else if(!strcmp(left(eg_curln,4),"Area") || !strcmp(left(eg_curln,7),"Special")) {
+			if(!strcmp(left(eg_curln,4),"Area")) {
+				eg_curch_idx = 4;
+			} else {
+				eg_curch_idx = 7;
+				eg_flag_special = 1;
+			}
+			eg_curln_len = len(eg_curln);
+			
+			// Break the line into pieces. Doing it this way instead of using GetToken()
+			// means that I can use spaces and tabs, rather than just one of them as the 
+			// token splitter.
+			eg_curch = mid(eg_curln,eg_curch_idx,1);			
+			while((!strcmp(eg_curch," ") || !strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
+				eg_curch_idx++;
+				eg_curch = mid(eg_curln,eg_curch_idx,1);
+			}
+			if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
+			while((strcmp(eg_curch," ") && strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
+				eg_pieceA = eg_pieceA + eg_curch;
+				eg_curch_idx++;
+				eg_curch = mid(eg_curln,eg_curch_idx,1);
+			}
+			if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
+			while((!strcmp(eg_curch," ") || !strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
+				eg_curch_idx++;
+				eg_curch = mid(eg_curln,eg_curch_idx,1);
+			}
+			if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
+			while((strcmp(eg_curch," ") && strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
+				eg_pieceB = eg_pieceB + eg_curch;
+				eg_curch_idx++;
+				eg_curch = mid(eg_curln,eg_curch_idx,1);
+			}
+			if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
+			while((!strcmp(eg_curch," ") || !strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
+				eg_curch_idx++;
+				eg_curch = mid(eg_curln,eg_curch_idx,1);
+			}
+			if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
+			while((strcmp(eg_curch," ") && strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
+				eg_pieceC = eg_pieceC + eg_curch;
+				eg_curch_idx++;
+				eg_curch = mid(eg_curln,eg_curch_idx,1);
+			}
+			
+			if(!eg_flag_special) {
+				eg_tempareastring = "";
+				eg_flag_add = 1;
+				eg_search_maxidx = tokenCount(EnemyGroup_Areas,";");
+				eg_curfunc = eg_pieceC;
+				if(!strcmp(eg_pieceB,"-")) {
+					eg_curchance = 1;
+				} else {
+					eg_curchance = val(eg_pieceB);
+				}
+				for(eg_search_idx = 0; eg_search_idx < eg_search_maxidx; eg_search_idx++) {
+					eg_curarea = getToken(EnemyGroup_Areas,";",eg_search_idx);
+					if(!strcmp(getToken(eg_curarea,"/",0),eg_pieceA)) {
+						eg_flag_add = 0;
+						eg_totalchance = val(getToken(eg_curarea,"/",1));
+						eg_totalchance = eg_totalchance + eg_curchance;
+						eg_curarea = eg_pieceA + "/" + str(eg_totalchance) + "/" + getToken(eg_curarea,"/",2) + "," + str(eg_group_maxidx) + ":" + str(eg_curchance);
+					}
+					eg_tempareastring = eg_tempareastring + eg_curarea + ";";
+				}
+				if(eg_flag_add) {
+					EnemyGroup_Areas = EnemyGroup_Areas + eg_pieceA + "/" + eg_pieceB + "/" + str(eg_group_maxidx) + ":" + str(eg_curchance) + ";";
+				} else {
+					EnemyGroup_Areas = eg_tempareastring;
+				}
+				eg_group_maxidx++;
+			} else {
+				EnemyGroup_Areas = EnemyGroup_Areas + eg_pieceA + "/1/" + str(eg_group_maxidx) + ":1;";
+				eg_curfunc = eg_pieceC;
+				eg_curchance = 1;
+				eg_group_maxidx++;
+			}			
+			eg_flag_special = 0;
+			eg_PieceA = "";
+			eg_PieceB = "";
+			eg_PieceC = "";
+			eg_PieceD = "";
+		} 
+		// Handling for any other line that isn't a comment or blank.
+		// (ie. a monster line)
+		else if(strcmp(mid(eg_curln,0,1),"#") && len(eg_curln) > 0) {
+			if(eg_curchance == -1) {
+				ErrorHandler("Load Error: Enemy line without area at line " + str(eg_curln_idx) + ".");	
+			}
+			
+			eg_curch_idx = 0;
+			eg_curln_len = len(eg_curln);
+			
+			eg_curch = mid(eg_curln,eg_curch_idx,1);
+			while((strcmp(eg_curch," ") && strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
+				eg_pieceA = eg_pieceA + eg_curch;
+				eg_curch_idx++;
+				eg_curch = mid(eg_curln,eg_curch_idx,1);
+			}
+			if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
+			while((!strcmp(eg_curch," ") || !strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
+				eg_curch_idx++;
+				eg_curch = mid(eg_curln,eg_curch_idx,1);
+			}
+			if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
+			while((strcmp(eg_curch," ") && strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
+				eg_pieceB = eg_pieceB + eg_curch;
+				eg_curch_idx++;
+				eg_curch = mid(eg_curln,eg_curch_idx,1);
+			}
+			if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
+			while((!strcmp(eg_curch," ") || !strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
+				eg_curch_idx++;
+				eg_curch = mid(eg_curln,eg_curch_idx,1);
+			}
+			if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
+			while((strcmp(eg_curch," ") && strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
+				eg_pieceC = eg_pieceC + eg_curch;
+				eg_curch_idx++;
+				eg_curch = mid(eg_curln,eg_curch_idx,1);
+			}
+			while((!strcmp(eg_curch," ") || !strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
+				eg_curch_idx++;
+				eg_curch = mid(eg_curln,eg_curch_idx,1);
+			}			
+			while((strcmp(eg_curch," ") && strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
+				eg_pieceD = eg_pieceD + eg_curch;
+				eg_curch_idx++;
+				eg_curch = mid(eg_curln,eg_curch_idx,1);
+			}
+
+			eg_pieceA = str(getEnemy(eg_pieceA));
+			
+			if(!strcmp(eg_pieceD,"Leader")) {
+				eg_pieceA = eg_pieceA + "!";
+			}
+		
+			eg_curgroup = eg_curgroup + eg_pieceA + "/" + eg_pieceB + "/" + eg_pieceC + ",";
+			eg_PieceA = "";
+			eg_PieceB = "";
+			eg_PieceC = "";
+			eg_PieceD = "";
+		}
+	}
+}
+
+
+// this function takes a Key.  If the key is to an area, calculate the area's randoms, and choose the 
+//   winning "battle group" entry in a global variable, for the rest of these functions to internally use.
+// if the key is for a special battle, set the global variable to it's lone index, no need to "roll dice".
+// if an invalid key is given, error.
+void InitBattleSetup( string ibs_key ) {
+	if(!strcmp(EnemyGroup_Master,"") || !strcmp(EnemyGroup_Areas,"")) {
+		ErrorHandler("Runtime Error: InitBattleSetup() called without InitEnemyGroups().");
+		return;
+	}
+	
+	int ibs_numareas = tokenCount(EnemyGroup_Areas,";");
+	int ibs_totalchance;
+	int ibs_rollchance;
+	int ibs_curchance;
+	int ibs_curgroup_idx;
+	int ibs_curarea_idx;
+	int ibs_curentry_idx;
+	string ibs_curarea;	
+	string ibs_curentry;
+	string ibs_possgroups;
+	
+	EnemyGroup_CurrentBattle_Master = "";
+		
+	for(ibs_curarea_idx = 0; ibs_curarea_idx < ibs_numareas; ibs_curarea_idx++) {
+		ibs_curarea = getToken(EnemyGroup_Areas,";",ibs_curarea_idx);
+		if(!strcmp(getToken(ibs_curarea,"/",0),ibs_key)) {
+			ibs_totalchance = val(getToken(ibs_curarea,"/",1));
+			ibs_rollchance = random(1,ibs_totalchance);
+			ibs_possgroups = getToken(ibs_curarea,"/",2);
+			for(ibs_curentry_idx = 0; ibs_curentry_idx < tokenCount(ibs_possgroups,","); ibs_curentry_idx++) {
+				ibs_curentry = getToken(ibs_possgroups,",",ibs_curentry_idx);
+				ibs_curgroup_idx = val(getToken(ibs_curentry,":",0));
+				ibs_curchance = val(getToken(ibs_curentry,":",1));
+				if(ibs_rollchance <= ibs_curchance) {
+					EnemyGroup_CurrentBattle_Master = getToken(EnemyGroup_Master,";",ibs_curgroup_idx);
+					return;
+				}
+				ibs_rollchance -= ibs_curchance;
+			}
+		}
+	}
+	
+	ErrorHandler("Runtime Error: Unrecognized area key passed to InitBattleSetup().");
+	
+	return;
+}
+
+// returns the number of enemies in the Battle Group set by InitBattleSetup()
+int GetBattleGroupCount() {
+	if(!strcmp(EnemyGroup_CurrentBattle_Master,"")) {
+		ErrorHandler("Runtime Error: GetBattleGroupCount() called without InitBattleSetup().");
+		return -1;
+	}
+	return (tokenCount(EnemyGroup_CurrentBattle_Master,",") - 1);
+}
+
+// returns the master_enemy[] index for the Nth enemy in the Battle Group set by InitBattleSetup() 
+int GetBattleGroupEnemy( int n ) {
+	if(!strcmp(EnemyGroup_CurrentBattle_Master,"")) {
+		ErrorHandler("Runtime Error: GetBattleGroupEnemy() called without InitBattleSetup().");
+		return -1;
+	}
+	if(n > tokenCount(EnemyGroup_CurrentBattle_Master,",") - 2 || n < 0) {
+		ErrorHandler("Runtime Error: GetBattleGroupEnemy() called with invalid index " + str(n) + ".");
+		return -1;
+	}
+	
+	string eg_enemy = getToken(EnemyGroup_CurrentBattle_Master,",",n+1);
+	string eg_idx = getToken(eg_enemy,"/",0);
+
+	if(!strcmp(left(eg_idx,1),"!")) {
+		return val(right(eg_idx,len(eg_idx)-2));
+	} else {
+		return val(eg_idx);
+	}
+}
+
+// returns the x coordinate for the Nth enemy in the Battle Group set by InitBattleSetup() 
+int GetBattleGroupEnemyX( int n ) {
+	if(!strcmp(EnemyGroup_CurrentBattle_Master,"")) {
+		ErrorHandler("Runtime Error: GetBattleGroupEnemyX() called without InitBattleSetup().");
+		return -1;
+	}
+	if(n > tokenCount(EnemyGroup_CurrentBattle_Master,",") - 2 || n < 0) {
+		ErrorHandler("Runtime Error: GetBattleGroupEnemyX() called with invalid index " + str(n) + ".");
+		return -1;
+	}
+	
+	string eg_enemy = getToken(EnemyGroup_CurrentBattle_Master,",",n+1);
+	string eg_x = getToken(eg_enemy,"/",1);
+	return val(eg_x);
+}
+
+// returns the y coordinate for the Nth enemy in the Battle Group set by InitBattleSetup() 
+int GetBattleGroupEnemyY( int n ) {
+	if(!strcmp(EnemyGroup_CurrentBattle_Master,"")) {
+		ErrorHandler("Runtime Error: GetBattleGroupEnemyY() called without InitBattleSetup().");
+		return -1;
+	}
+	if(n > tokenCount(EnemyGroup_CurrentBattle_Master,",") - 2 || n < 0) {
+		ErrorHandler("Runtime Error: GetBattleGroupEnemyY() called with invalid index " + str(n) + ".");
+		return -1;
+	}
+	
+	string eg_enemy = getToken(EnemyGroup_CurrentBattle_Master,",",n+1);
+	string eg_y = getToken(eg_enemy,"/",2);
+	return val(eg_y);
+}
+
+// returns true if the 'Leader' flag was set for Nth enemy in the Battle Group set by InitBattleSetup().  Otherwise False.  
+// Note, a battle group does not need a leader, and may have multiple leaders.
+int IsBattleGroupEnemyLeader( int n ) {
+	if(!strcmp(EnemyGroup_CurrentBattle_Master,"")) {
+		ErrorHandler("Runtime Error: IsBattleGroupEnemyLeader() called without InitBattleSetup().");
+		return -1;
+	}
+	if(n > tokenCount(EnemyGroup_CurrentBattle_Master,",") - 2 || n < 0) {
+		ErrorHandler("Runtime Error: IsBattleGroupEnemyLeader() called with invalid index " + str(n) + ".");
+		return -1;
+	}
+	
+	string eg_enemy = getToken(EnemyGroup_CurrentBattle_Master,",",n+1);
+	string eg_idx = getToken(eg_enemy,"/",0);
+	if(!strcmp(left(eg_idx,1),"!")) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+//returns the given string for a battle group's optional setup callfunc (just returns "" if there is none)
+string BattleGroupSetupCallfunc() {
+	if(!strcmp(EnemyGroup_CurrentBattle_Master,"")) {
+		ErrorHandler("Runtime Error: BattleGroupSetupCallFunc() called without InitBattleSetup().");
+		return "error";
+	}
+	if(!strcmp(getToken(EnemyGroup_CurrentBattle_Master,",",0),"-")) {
+		return "";
+	} else {
+		return getToken(EnemyGroup_CurrentBattle_Master,",",0);
+	}
+}
+
+/// dumps a readout of the parsed file.
+void dumpBattleGroups()
+{
+	Log( "dumpBattleGroups()..." );
+	Log( "=====================" );
+	Log( "=====================" );
+	Log( "EnemyGroup_Areas:" );
+	Log( EnemyGroup_Areas );
+	Log( "" );
+	Log( "EnemyGroup_Master:" );
+	Log( EnemyGroup_Master );
+	Log( "" );
+	Log( "EnemyGroup_CurrentBattle_Master:" );
+	Log( EnemyGroup_CurrentBattle_Master );
+	Log( "" );
+	Log( "" );
+	Log( "...dumpBattleGroups() done." );
+	Log( "=====================" );
+	Log( "=====================" );
+}

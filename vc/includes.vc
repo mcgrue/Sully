@@ -1,0 +1,119 @@
+// Just a master-include file...
+//
+//
+
+/*************************************************/
+/************* Non-library includes **************/
+/*************************************************/
+
+// A bunch of general-use functions that are awesome.
+// also, they're used by all three of the libraries, so 
+// where they go, so should this.
+#include "vc/util/general.vc" 			// Grue
+
+/// The McFAIL key configuration system!
+#include "vc/keyconf/keyconf.vc"
+#include "vc/keyconf/keys.vc"
+
+// Error-reporting and handling is good!
+#include "vc/util/error_handler.vc" 	// Zip
+
+// Oh yeah, a class to handle those sexy icons.
+#include "vc/util/icons.vc" 			// Grue
+
+#include "vc/util/camscroll.lib.vc"		// Kildorf
+
+//targetting!  Both menus and battle systems love targetting!
+#include "vc/util/targetting.vc"		// Grue
+
+// simple credits library
+#include "vc/util/credits.vc"			//Grue
+
+// simple animation library
+#include "vc/util/animation.vc"			//vecna
+
+// for map wrapping!
+#include "vc/util/wrapmap.vh"			// Kildorf	
+
+// can save a verge image as a bmp!
+#include "vc/util/file_to_img.vc"		// Geronimo	
+
+// for bouncing text yays.
+#include "vc/util/bounceytext.vc"	//Ness+grue
+
+// for weapon attack slashy anims
+#include "vc/util/slashy.vc"		//grue
+
+#include "vc/sfx.vc"	// resources
+
+
+
+
+/*************************************************/
+/******************* libraries *******************/
+/*************************************************/
+
+//Loads Grue's RPG Subsystems library. (Party/Items/Equip/Skills/Characters)
+#include "vc/simpletype_rpg/data.vc" 	// Grue
+#include "vc/simpletype_rpg/enemygroup.vc"
+
+////TESTING
+#include "vc/rendereng/sprite.vc"  // Gayo's sprite parser
+#include "vc/rendereng/mcgrender.vc"	
+////TESTING
+
+//loads Vec's Wonderous RPG-world Library! (Fades/vclayer/weather/special_Fx)
+#include "vc/v1_rpg/v1_rpg.vc" 			// Vec
+
+//loads Zip's Amazing V1-Compatibility Library (...menus!)
+#include "vc/v1_menu/menu_system.vc" // Zip
+
+//loads Grue's INEFFABLY COOL BATTLE SYSTEM
+#include "vc/v1_battle/battle.vc" // Grue
+
+///
+/// Just a stupid little library.  Needs the Speech-port defines at this time, so 
+/// it needs to come after v1_rpg's include
+///
+#include "vc/util/inet_talk.vc"			// Grue
+
+
+// THE MEGA-ULTRA FUNK EFFECT
+#include "vc/Special_effects/funk-o-rama.vc"	//RageCage
+#include "vc/Special_effects/blur.vc"		//RageCage
+#include "vc/Special_effects/bouncy.vc"		//Grue's crappy hack of the intro sequence
+//
+// These wrappers given to make a unified naming sceme for the 
+// resource-loading functions for clarity's sake to the user.
+//
+
+// the resource-loader for the Sully, Simple and Clean library
+void SSAC_LoadResources() {
+	SSAC_InitData(); //loads datafiles.
+	initInventories(); //cleans inventory
+}
+
+// the resource-loader for the Simple Menu library
+void SMENU_LoadResources() {
+	SMENU_InitMenus();
+}
+
+//for hahn
+#include "vc/sully/events.vc"	
+
+// testing
+#include "sys-v3console.vc"
+
+
+#include "vc/util/box.vc"
+#include "vc/util/autotext.vc"
+#include "vc/util/dirtyhash.vc"
+#include "vc/util/scrollbar.vc"
+#include "vc/battle_menu/battle_menu.vc"
+
+#include "vc/util/selectmap.vc"
+
+#include "$$$_BM_TESTER.vc"
+
+
+

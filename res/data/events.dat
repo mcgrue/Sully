@@ -1,0 +1,29 @@
+// Events.dat
+// 
+//
+// Lines starting with "//" or with no non-whitespace characters are ignored.
+// Parsing stops when the END_OF_FILE token is reached.  Bad things happen if it's not there.
+// Any other line is treated like valid data.  It'd better be!
+//
+//
+//
+// event	parent_event	"description"
+
+//EVENT_BOB	-		"Bob's event.  Has no parent."
+//EVENT_FRED	TOBIAS		"Fred's event.  Has tobias as a parent, to test backwards linking."
+//EVENT_TONY	-		"Tony's event.  Has no parent."
+//EVENT_BOB_1A	EVENT_BOB	"A new event.  Has bob as a parent."
+//EVENT_BOB_1B	EVENT_BOB	"A different event.  Has bob as a parent."
+//EVENT_BOB_2	EVENT_BOB_1A	"Bob's event.  Has no parent."
+//EVENT_JONAS	-		"MY NAME IS JONAS!"
+//TOBIAS	EVENT_JONAS	"Tobias's event.  Has no parent."
+//Oompalumpa	wonka		"I LIKE BIG BUTTS"
+//wonka		-		"I CANNOT LIE"
+
+EVENT_ADV	-		"Find adventure before you go crazy!"
+EVENT_CRYSTAL	-		"Recover Crystal from the fiendish Lord Stan."
+EVENT_DEXQUEST	-		"Dexter wants to find the Sage of Jujube."
+EVENT_SAGE1	EVENT_DEXQUEST	"The Sage wants bling... or a babe with a ponytail."
+
+
+END_OF_FILE

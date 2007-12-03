@@ -1,0 +1,360 @@
+#define STATUS_INFOLINE_NUMTOKS 4 // The number of tokens on the info line for a status effect. Currently the 4 are, in order, Icon, Default Duration, RenderFunc, and EffectFunc.
+#define STATUS_INFOLINE_ICON 0 // Token #0 is icon
+#define STATUS_INFOLINE_DUR 1  // Token #1 is default duration
+#define STATUS_INFOLINE_RENDER 2 // Token #2 is render callfunc
+#define STATUS_INFOLINE_EFFECT 3 // Token #3 is effect callfunc
+
+string status_removal_conditions; // a comma-delimited string of valid status removal conditions
+
+// Loads all statuses (stati!) into the master_status struct from status.dat. 
+int LoadStructStatus()
+{
+	int ls_linenum, ls_idx = 0-1, ls_numlines; // Index starts at -1 for the parser to look for the condition line.
+	string ls_file = FileToString(dat_directory + "status.dat"); // Holds the entire status data file in a string.
+	string ls_curdef = ""; // Holds the status definition currently being collected
+	string ls_curline; // Holds the line currently being checked
+	
+	ls_numlines = TokenCount(ls_file,chr(10)); // Number of lines in the entire file
+	// Run through each line one at a time...
+	for (ls_linenum=1; ls_linenum<=ls_numlines; ls_linenum++)
+	{
+		ls_curline = _stripComments(GetToken(ls_file,chr(10),ls_linenum-1)); // get next line
+		if (equ(left(GetToken(ls_curline," 	",0),1),"-")) // If the line begins (ignoring whitespace) with a dash, it means the end of this definition.
+		{			
+			if (!equ(ls_curdef,"")) // If there was a definition above this dash, process it.
+			{
+				// If load is successful, reset current definition and move on
+				if (_LoadSingleStatus(ls_curdef, TokenCount(ls_curdef,chr(10)), ls_idx))
+				{					
+					ls_curdef = "";
+					ls_idx++;
+				}
+				else { return 0; }
+			}
+		}		
+		else if (equ(GetToken(ls_curdef," 	",0),"END_OF_FILE")) // If EOF is hit, finish up
+		{
+			ls_linenum=ls_numlines+1; // End the loop prematurely -- the final definition will be handled below
+		}
+		else 
+		{			
+			if (len(trim(ls_curline)) > 0) // If this line actually has something on it besides whitespace
+			{
+				if (ls_idx < 0) // If index is a subzero value, we're still looking for the first line, which contains valid removal conditions.
+				{					
+					if (equ(left(GetToken(ls_curline," 	",0),4),"cond")) // If this line begins with condsomething, assume it's the condition definition file.
+					{
+						status_removal_conditions = _stripWhiteSpace(ls_curline, 1); // Strip first token (the "conditions:" part) and whitespace. Leave commas in.
+						if (equ(status_removal_conditions,"")) // If no removal conditions were set
+						{
+							ErrorHandler("Error in status datafile: You need to have at least one valid removal condition.");
+							return 0;							
+						}
+						ls_idx = 0; // Now start looking for actual statuses
+					}
+					else // Oh no! The first line wasn't what we expected. Now we'll go all to pieces.
+					{
+						ErrorHandler("Error in status datafile: First line should be a comma-separated list of valid removal conditions, but got '" + ls_curline + "' instead.");
+						return 0;
+					}
+					
+				}
+				else // Otherwise, assume this line is part of a status definition
+				{
+					ls_curdef = ls_curdef + chr(10) + ls_curline; // append this line to the status definition currently being collected.
+				}
+			}
+		}		
+	}
+	// If there was a definition above the end of the file, process it.
+	if (!equ(ls_curdef,"")) 
+	{
+		// If load is successful, finish
+		if (_LoadSingleStatus(ls_curdef, TokenCount(ls_curdef,chr(10)), ls_idx))
+		{
+			num_status = ls_idx+1;
+		}
+		else { return 0; }
+	}
+	else num_status = ls_idx; // If there wasn't a final definition, ls_idx is already the right number.
+	return 1;
+	
+}
+
+
+// --------------------------
+//      helper functions
+// --------------------------
+
+// Loads a status from a status definition. Returns 0 on trouble, 1 on success.
+// Errors on any sort of problem, though, so it usually won't get to return 0.
+//
+// @param ldst_data The entire status data block in a string
+// @param ldst_numlines The number of lines in the ldst_data string
+// @param ldst_idx The place in the master_status array to load into
+int _loadSingleStatus(string ldst_data, int ldst_numlines, int ldst_idx)
+{
+	int ldst_linenum = 1; // Start on line 1	
+	int ldst_state = 0; // Tracks what the function is currently expecting on a line
+	string ldst_currline, ldst_token; // Current line and token-within-line
+
+	while (ldst_state == 0 && ldst_linenum <= ldst_numlines) // Go down until you find the first line, which has the name
+	{
+		ldst_currline = trim(GetToken(ldst_data, chr(10), ldst_linenum-1)); // Get line and strip beginning and end whitespace.and comments
+		// Normally, the junk check compares a line against MIN_LINE_LENGTH. However, I realize some people might want really, 
+		// really short status names, so I've had this assume any line that's more than just whitespace and comments is the name.
+		// The downside is that if you have a weird character on a line, it'll get confused about things.
+		if (len(ldst_currline) > 0) 
+		{
+			if (!equ(GetToken(ldst_currline," 	",0),ldst_currline)) // If name contains spaces, error
+			{
+				ErrorHandler("Error in status datafile: '" + ldst_currline + "' is not a valid status name, as it contains whitespace.");
+				return 0;
+			}
+			if (!_statusNameIsUnique(ldst_idx, ldst_currline)) // If there's already a status with this name, error
+			{
+				ErrorHandler("Error in status datafile: There is more than one status named '" + ldst_currline + ".");
+				return 0;
+			}
+			master_status[ldst_idx].name = ldst_currline; // Store the name
+			ldst_state = 1; // Move on to check for data line
+		}		
+		ldst_linenum++;
+	}
+	if (ldst_state == 0) // If the entire file has been searched without finding a name, error.
+	{
+		ErrorHandler("Error in status datafile: LoadStatus passed an empty status definiton to _loadSingleStatus as status " + str(ldst_idx) + ". This means there is a bug in Loadstatus. Tell Gayo! It is his fault.");
+		return 0;
+	}
+
+	while (ldst_state == 1 && ldst_linenum <= ldst_numlines) // Next, find to the second meaningful line, which should be the info line
+	{
+		ldst_currline = trim(GetToken(ldst_data, chr(10), ldst_linenum-1)); // Get line and strip beginning and end whitespace.and comments
+		if (len(ldst_currline) >= MIN_LINE_LENGTH) // If the line is not junk (we already removed comments, so we needn't check for those)
+		{
+			if (_setStatusStats(ldst_currline, ldst_idx)) ldst_state = 2; // If stats were loaded properly, continue on to check for other params.
+			else return 0; // If _setStatusStats returned an error, this passes the error on..						
+
+		}		
+		ldst_linenum++;
+	}
+	if (ldst_state == 1) // If the entire file has been searched without finding a data line, error.
+	{
+		ErrorHandler("Error in status datafile: status '" + master_status[ldst_idx].name + "' has no data line. This means there is a bug in LoadStatus. Tell Gayo! It is his fault.");
+		return 0;
+	}		
+	_setupStatusDefaults(ldst_idx); // Set default values of optional fields and sentinel values of non-optional ones
+	while (ldst_linenum <= ldst_numlines)
+	{	
+		ldst_currline = trim(GetToken(ldst_data, chr(10), ldst_linenum-1)); // Get line and strip beginning and end whitespace.and comments
+		if (len(ldst_currline) >= MIN_LINE_LENGTH) // If the line is not junk (we already removed comments, so we needn't check for those)
+		{			
+			ldst_token = GetToken(ldst_currline, "	 ", 0); // Get the first word on the line
+			if (equ(ldst_token, "desc"))
+			{
+				ldst_token = GetToken(ldst_currline, chr(34), 1); // Get second "-delimited token. This should be the description string.
+				if (equ(ldst_token,"") && STATUS_DESCRIPTION_MANDATORY) // If there was no such token and descs are mandatory
+				{
+					ErrorHandler("Error in status datafile: status '" + master_status[ldst_idx].name + "'. Invalid description. Remember to enclose the description in quotes."); 
+					return 0; 
+				}
+				master_status[ldst_idx].desc = ldst_token;
+			}
+			else if (equ(ldst_token, "remove"))
+			{
+				// Pass control to a function that will set up removal conditions.
+				if (!_setupStatusRemove(ldst_idx, ldst_currline)) return 0;
+			}
+			else if (equ(ldst_token, "cancels"))
+			{
+				// Pass control to a function that will set up exclusive statuses.
+				if (!_setupStatusCancels(ldst_idx, ldst_currline)) return 0;
+			}
+			else  // Mystery line -- stop and error
+			{
+				ErrorHandler("Error in status datafile: Status '" + master_status[ldst_idx].name + "'. Unknown parameter '" + ldst_token + "'."); 
+				return 0; 
+			}			
+
+		}						
+		ldst_linenum++;
+	}
+	if (!_confirmMandatoryStatusTraits(ldst_idx)) { return 0; } // If any mandatory traits weren't defined, error.
+	DumpStatus(ldst_idx);
+	return 1;
+}
+
+
+// Takes the info line of a status and loads it into that status's struct.
+// Returns 1 if successful, 0 if an error. Also calls ErrorHandler on an
+// error, which will usually be set to kill the game outright.
+//
+// @param _infoline The line of whitespace-delimited info fields. Ordered Icon (number or X), Duration.(number), Render (string), Effect (string).
+// To indicate no icon, use "X". To indicate no callfunc of either type, use "--". Default duration is mandatory but can be 0 or negative.
+// @param _sidx The index of the master_status element where the data is to be loaded.
+int _setStatusStats(string _infoline, int _sidx)
+// Doesn't this function have an awesome name?
+{
+	int _sitok; // The token number currently being checked.
+	string _sistr; // The actual string currently being handled.
+	int _curval; // The numerical value of the token being checked
+	
+	// First, check that the line actually has at least as many tokens as it's supposed to.
+	// This will catch most weird gibberish or wrongly placed info.
+	if (TokenCount(_infoline," 	") < STATUS_INFOLINE_NUMTOKS ) // Error if there aren't as many tokens as there should be.
+	{
+		ErrorHandler("Error in status " + master_status[_sidx].name + ": Data line didn't contain enough information. Bad line was: " + _infoline + ". Remember, if there's no render or effect callfunc, enter -- in that column.");
+		return 0;
+	}
+	
+	for (_sitok=0; _sitok < STATUS_INFOLINE_NUMTOKS ; _sitok++) 
+	{
+		_sistr = GetToken(_infoline, " 	", _sitok); // Get the next token
+		
+		switch (_sitok) // Each token is handled separately since they're all different things. You'll have to add to this switch if you want to add more tokens.
+		{
+			CASE STATUS_INFOLINE_ICON: 
+				if (equ(_sistr,"X")) master_status[_sidx].icon = 0-1; // If X, no icon.
+				else 
+				{  
+					_curval = val(_sistr); // Convert token to number
+					// This line here is basically what SafeVal() does -- check to confirm that the thing is actually a number. 
+					// However, I put it in here so the function can tell if there was a problem or not.
+					if (strcmp(str(_curval), _sistr)) 
+					{ 
+						ErrorHandler("Error in status " + master_status[_sidx].name + ": Icon must be a number or X, but was '" + _sistr + "' instead.");
+						return 0;
+					}
+					master_status[_sidx].icon = _curval;
+
+				}
+			CASE STATUS_INFOLINE_DUR:
+				_curval = val(_sistr); // Convert token to number
+				// This line here is basically what SafeVal() does -- check to confirm that the thing is actually a number. 
+				// However, I put it in here so the function can tell if there was a problem or not.
+				if (strcmp(str(_curval), _sistr)) 
+				{ 
+					ErrorHandler("Error in status " + master_status[_sidx].name + ": Duration must be a number, but was '" + _sistr + "' instead.");
+					return 0;
+				}
+				master_status[_sidx].duration = _curval;
+			CASE STATUS_INFOLINE_RENDER:
+			      if (!_setupStatusCallfunc(_sidx, STATUS_CALLFUNC_RENDER, _sistr)) return 0; 
+			CASE STATUS_INFOLINE_EFFECT:
+			      if (!_setupStatusCallfunc(_sidx, STATUS_CALLFUNC_EFFECT, _sistr)) return 0;
+		}
+	}
+	return 1;
+}
+
+// Checks that the passed string is a valid function, and if so, sets it in the specified place in the specified status effect.
+// A string beginning with - is treated as no function and the spot is emptied.
+// Errors and returns 0 if there's a problem. Returns 1 otherwise.
+int _setupStatusCallfunc(int _sidx, int _callcode, string _funcname)
+{
+	if (equ(_funcname,"-")) master_status[_sidx].callfunc[_callcode] = ""; // If a dash, there is no callfunc
+	//else if (FunctionExists(_funcname)) 
+	master_status[_sidx].callfunc[_callcode] = _funcname; // If function exists, load it into struct
+	//else { ErrorHandler("Error in status datafile: Status '" + master_status[_sidx].name + "'. The specified callfunc '" + _funcname + "' does not exist. If there is no callfunc, enter '--'."); return 0; }
+	return 1;
+}
+
+
+// Takes the removal condition line (including first token) from a status definition and loads the removal conditions into
+// the master status struct, checking them all for validity against the master list defined at the top of status.dat.
+// There is no checking for duplicate conditions, but they won't do any harm.
+// Errors and passes back 0 on any problem; passes back 1 otherwise.
+int _setupStatusRemove(int _srid, string _srline)
+{
+	int _srnumtoks, _srcount; // Total # tokens and current token number
+	string _srstring, _srtok; // Holds the token currently being handled
+	_srstring = _stripWhiteSpace(_srline, 1); // Strip first token (the "REMOVE" part) and whitespace. Leave commas in. We already got rid of comments earlier.	
+	_srnumtoks = TokenCount(_srstring,",");
+	master_status[_srid].numremoves = 0; // Reset this, since we're building the remove list from scratch
+	
+	for (_srcount = 0; _srcount < _srnumtoks; _srcount++)
+	{
+		_srtok = GetToken(_srstring,",",_srcount); // Get next token
+		if (ValidRemoveCondition(_srtok)) // If this is in the list of remove conditions...
+		{
+			if (master_status[_srid].numremoves >= MAX_STATUS_REMOVES) { ErrorHandler("Error in status datafile: Status '" + master_status[_srid].name + "'. Too many status removal conditions for this status! Increase MAX_STATUS_REMOVES in Status.vc."); return 0; } // if there are too many removes, error and pass 0
+			master_status[_srid].remove[master_status[_srid].numremoves] = _srtok; // Put this at the current top of the list
+			master_status[_srid].numremoves++; // In the end, this will be set to the correct value.
+			// Note that it's possible, having done this, for there to be more than numremoves removes in the array, with the ones above the limit being relics from an earlier load.
+			// This is unlikely to happen, but because it's theoretically possible, it's important that when iterating through the remove array, you only check the first numremoves elements.
+		}
+		else { ErrorHandler("Error in status datafile: Status '" + master_status[_srid].name + "'. '" + _srtok + "' is not a valid status removal condition."); return 0; } // if invalid, error and pass 0
+	}
+	return 1;
+}
+
+// Takes the cancelled-effects line (including first token) from a status definition and loads the excluded statuses 
+// into the master_status struct. Because some of the effects might not have been defined yet at this point in the 
+// parsing, no validity-checking is performed. It also doesn't bother to cut out duplicate entries, though they won't
+// break anything.
+// Errors and passes back 0 on any problem; passes back 1 otherwise.
+int _setupStatusCancels(int _scid, string _scline)
+{
+	int _scnumtoks, _sccount; // Total # tokens and current token number
+	string _scstring, _sctok; // Holds the token currently being handled
+	_scstring = _stripWhiteSpace(_scline, 1); // Strip first token (the "CANCELS" part) and whitespace. Leave commas in. We already got rid of comments earlier.
+	_scnumtoks = TokenCount(_scstring,",");
+	master_status[_scid].numcancels = 0; // Reset this, since we're building the cancellation list from scratch
+	
+	for (_sccount = 0; _sccount < _scnumtoks; _sccount++)
+	{
+		_sctok = GetToken(_scstring,",",_sccount); // Get next token
+		if (master_status[_scid].numcancels >= MAX_STATUS_CANCELS) { ErrorHandler("Error in status datafile: Status '" + master_status[_scid].name + "'. Too many cancelled status effects for this status! Increase MAX_STATUS_CANCELS in Status.vc."); return 0; } // if there are too many statuses, error and pass 0
+		master_status[_scid].cancels[master_status[_scid].numcancels] = _sctok; // Put this at the current top of the list
+		master_status[_scid].numcancels++; // In the end, this will be set to the correct value.
+		// Note that it's possible, having done this, for there to be more than numcancels cancelled effects in the array, with the ones above the limit being relics from an earlier load.
+		// This is unlikely to happen, but because it's theoretically possible, it's important that when iterating through the cancel array, you only check the first numcancels elements.
+	}
+	return 1;
+}
+
+// Checks to make sure that there's no status *before* the given index with the given name.
+// Used to ensure that each status name is unique. Returns 1 for unique, 0 for duplicate.
+int _statusNameIsUnique(int _sidx, string _sline)
+{
+	int _stcount;
+	for (_stcount=0; _stcount<_sidx; _stcount++)
+	{
+		if (equ(master_status[_sidx].name, _sline)) return 0;
+	}
+	return 1;
+}
+
+
+// Sets up default status struct values. This is called *after* the name, icon, default value and
+// callfuncs have been put in so as not to waste time if an error is found while doing those. Thus, 
+// it does nothing to any of those things. Optional values are set to defaults, while mandatory ones 
+// are set to a sentinel value that can be checked to make sure they've been set later.
+void _setupStatusDefaults(int _sidx)
+{
+	int _sdcount;
+
+	master_status[_sidx].desc = ""; // This works as either a sentinel value or a default, depending on STATUS_DESCRIPTION_MANDATORY.
+	master_status[_sidx].numremoves = 0; // We needn't actually clear the array; if this value is 0, it simply won't be read during checks
+	master_status[_sidx].numcancels = 0; // ditto
+}
+
+// Checks that all mandatory traits not included in the info line are in. The info line traits
+// were checked when that was loaded. Returns 1 if everything's good, errors and returns 0 if
+// something's missing.
+// Currently, the only mandatory trait is description, and you can set it to optional by changing.
+// STATUS_DESCRIPTION_MANDATORY.to 0 in Status.vc
+int _confirmMandatoryStatusTraits(int _sidx)
+{
+	if (STATUS_DESCRIPTION_MANDATORY) // If descs need to be in...
+	{
+		if (equ(master_status[_sidx].desc,"")) // ...and this one ain't....
+		{
+			// Return 0 and error.
+			ErrorHandler("Error in status " + master_status[_sidx].name + ": DESC field was empty or not set. If you want status descs to be optional, change STATUS_DESCRIPTION_MANDATORY to 0 in.status.vc.");
+			return 0;
+		}
+	}
+	
+	return 1;
+}

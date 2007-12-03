@@ -1,0 +1,2484 @@
+#define MAX_BATTLE_MENUS	10
+#define MAX_BATTLE_MENU_PAGES	50
+#define MAX_BATTLE_MENU_LEVELS	5
+//#define MAX_BATTLE_MENU_PAGES	5
+#define BM_DEBUG 0
+
+#include "vc\battle_menu\battle_menu_mouse.vc"
+
+struct battle_menu 
+{
+	string src;	/// the source for this battle menu
+	int parsed;	/// true if the src has been parsed, false if not.
+	
+	int x,y;	/// coordinates of the topleft corner of the first level's window
+	int lvl_offx, lvl_offy;	///the offset from the first level that each subsequent level should be displayed at.
+	
+	int content_offx, content_offy;	///the offset from the x,y of the content
+	
+	int white_font, grey_font;		/// the fonts this menu uses.
+	int white_listfont, grey_listfont;	/// the fonts this menu uses.
+	
+	string submenu_chr;	//the string to put at the end of an entry that has a submenu.
+	int y_spacer;
+	
+	int is_memory;	///is this menu in memory-mode?
+	
+	int im_cursor;	/// the cursor's image reference
+	int cursor_offx, cursor_offy;	//the x,y offset of the cursor (so the pointy end points at the menu item!)
+	
+	int cur_page, cur_level, cursor;
+	int last_page; /*last_level, last_cursor;*/
+	int level_history[MAX_BATTLE_MENU_LEVELS];	//replacing the flawed last_level
+	int cursor_history[MAX_BATTLE_MENU_LEVELS];	//replacing the flawed last_cursor
+	
+	int scratch_img[MAX_BATTLE_MENU_LEVELS];		//image references
+	//int scratch_img_dirty[MAX_BATTLE_MENU_LEVELS];
+	
+	string	page_data[MAX_BATTLE_MENU_PAGES];
+	string	page_sub[MAX_BATTLE_MENU_PAGES];
+	int 	page_count;
+	
+	string	page_base;		//the indexes of the base pages.
+	int	page_base_count;	//the count of the base pages.
+	
+	//if menus wrap top to bottom.
+	int	mode_modulus;	
+	
+	//if we're in listmode, everything goes funky control-wise.
+	int	mode_list;
+	
+	//if we're in monobasemode, all bases will have the same dimensions (as big as the biggest in each)
+	int	mode_monobase, mode_monobase_x, mode_monobase_y;
+	
+	// if we're in mousemode, this is a workaround for the helpmode cursor
+	int	_mouse_helpcursor;
+}
+
+int __bm_visible = 0;
+
+battle_menu master_battle_menus[MAX_BATTLE_MENUS];
+//int master_battle_menu_count;
+
+int _list_count;
+int _list_cursor_offs;
+int _list_columns 	= 1;
+int _list_rows 		= 5;
+int _box_border_x	= 5;
+int _box_border_y 	= 5;
+int _data_width;
+int _cost_width;
+int _list_sidebar_width = 10;
+
+int __r, __g, __b;
+int __bm_mouseclick_passthrumode;
+string __bm_mouseclick_passthrumode_callfunc;
+int __bm_cancelbase;
+string __totallyTempExecute;
+
+int __menuHelpMode, __menuHelpModeIMG;
+string __menuHelpText;
+int __battlemenu_interface_volume;
+int _sfxBMBuzz, _sfxBMOpen, _sfxBMMove, _sfxBMFlip ,_sfxBMExectute;
+int __mouse_hlpr;
+int __volume_hack;
+
+//int 		arTemp[MAX_SCRATCH];
+//string 	arTempStr[MAX_SCRATCH];
+
+/// Initializes the rendering system to draw and handle a listing.
+/// Hard errors if you try to initialize a non-list page.
+///
+void InitializeListBM( int m_idx, int page )
+{
+	if( !IsListBM(m_idx, page) )
+	{
+		Exit( "InitializeListBM: specified page ("+str(page)+") is not a page." );
+	}
+	
+	_data_width = 0;
+	_cost_width = 0;
+	_list_cursor_offs = 0;
+	
+	string data = right( master_battle_menus[m_idx].page_data[page], len(master_battle_menus[m_idx].page_data[page])-1);
+	_list_count = TokenCount( data, "," );
+
+
+	string temp;
+	int i, item_wid, cost_wid;
+	for( i=0; i<_list_count; i++ )
+	{
+		temp = GetToken( data, ",", i );
+		arTempStr[i] 	= GetToken( temp, "	", 0 );
+		arTempStr[i+1]	= GetToken( temp, "	", 1 );
+		arTemp[i] 	= val(arTempStr[i+1]);
+
+		item_wid = TextWidth(master_battle_menus[m_idx].white_listfont, arTempStr[i]);
+		cost_wid = TextWidth(master_battle_menus[m_idx].white_listfont, arTempStr[i+1]);
+		
+		if( item_wid > _data_width )	
+		{
+			_data_width = item_wid;
+		}
+		
+		if( cost_wid > _cost_width )
+		{
+			_cost_width = cost_wid;
+		}
+	}
+
+/*	
+	for( i=0; i<_list_count; i++ )
+	{
+		Log( "["+str(i)+"]: '"+arTempStr[i]+"', ("+str(arTemp[i])+")" );
+	}
+	
+Log( "        _list_count: " + str(_list_count) );
+Log( "      _list_columns: " + str(_list_columns) );
+Log( "        _data_width: " + str(_data_width) );
+Log( "        _cost_width: " + str(_cost_width) );
+Log( "_list_sidebar_width: " + str(_list_sidebar_width) );
+*/	
+}
+
+int BM_LogList( string caca )
+{
+
+Log( "" );
+LOG( "====================================" );
+Log( "BM_LogList: " + caca );
+LOG( "====================================" );
+Log( "Mousemode: " + str(_battlemenu_mouse_mode) );
+
+	string temp;
+	int i, item_wid, cost_wid;
+	for( i=0; i<_list_count; i++ )
+	{
+		Log( str(i)+": '"+arTempStr[i]+"'"  );
+	}
+LOG( "====================================" );
+}
+
+int SpawnListPageIMG( int m_idx, int page_idx )
+{
+	int vagina = NewBox( "BoxLib_V1Border", "BoxLib_V1BG" );
+	
+	_data_width = _data_width + TextWidth( master_battle_menus[m_idx].white_listfont,"W" );
+	
+	int x = _data_width + _cost_width + _list_sidebar_width;
+	int y = (FontHeight( master_battle_menus[m_idx].white_listfont )+1)*5;
+	
+	SetTargetBox(vagina);
+
+	SetBoxPadding( 1,1,1,1 );
+	SetBoxBordersize( 5,5,5,5 );
+
+	SetBoxColor( 0, rgb(0, 0, 0) );
+	SetBoxColor( 1, rgb(112, 112, 112) );
+	SetBoxColor( 2, rgb(144, 144, 144) );
+	SetBoxColor( 3, rgb(0, 0, 255) );
+	
+	int my_content = NewImage( x,y );
+	RectFill( 0,0, x,y, transcolor, my_content);
+	
+	SetBoxContent(my_content);
+	int im = SaveBoxToIMG();
+	FreeBox(0);
+	
+	return im;
+}
+
+int SpawnHelpBoxIMG( int m_idx, string help_string )
+{
+	int vagina = NewBox( "BoxLib_V1Border", "BoxLib_V1BG" );
+	
+	int helpsign = NewImage( 23,11 );
+	int tmp_hlp;
+
+	tmp_hlp = LoadImage("res\images\battle_menu\help.gif");
+	RectFill( 0,0, 23,4, transcolor, helpsign);
+	RectFill( 0,4, 23,10, rgb(0, 0, 255), helpsign);
+	TBlit( 0, 0, tmp_hlp, helpsign);
+	FreeImage(tmp_hlp);
+	
+	
+	SetAutoTextMaxX( 250 );
+	SetAutoTextFont( master_battle_menus[m_idx].white_font );	
+	
+	SetAutoText( help_string );
+	SetAutoTextJustification( 0 );
+	MakeAutoText();
+
+//	LogAutoTextOutput();
+	
+	SetTargetBox(vagina);
+
+	//top, bottom,left, right
+	SetBoxPadding( 3,0,2,1 );
+	SetBoxBordersize( 5,5,5,5 );
+
+	SetBoxColor( 0, rgb(0, 0, 0) );
+	SetBoxColor( 1, rgb(112, 112, 112) );
+	SetBoxColor( 2, rgb(144, 144, 144) );
+	SetBoxColor( 3, rgb(0, 0, 255) );
+
+	SetBoxContent( MakeAutoTextContentImage() );
+	int im = SaveBoxToIMG();
+	
+	int im2 = NewImage( ImageWidth(im), (ImageHeight(im)+5) );
+	RectFill( 0,0, ImageWidth(im),(ImageHeight(im)+5), transcolor, im2);
+	
+	TBlit( 0, 5, im, im2);
+	TBlit( 10, 0, helpsign, im2);
+	
+	FreeBox(0);
+	FreeImage(im);
+	FreeImage(helpsign);
+	
+	return im2;
+}
+
+
+int getBasepage( int m_idx, int offs )
+{
+	return val( GetToken(master_battle_menus[m_idx].page_base, ",", offs) );
+}
+
+/// returns the page index for the new base page.  
+/// hard errors if it detects a curbase that isn't in the base list.
+/// @param m_idx The master_battle_menus index for this operation.
+/// @param direction <0 if left, >=0 if right
+int ChangeBasePageBM( int m_idx, int direction )
+{
+	int curbase;
+	int i;
+	
+	int prior, next;
+	
+	if( master_battle_menus[m_idx].cur_level == 0 )
+	{
+		curbase = master_battle_menus[m_idx].cur_page;
+	}
+	else
+	{
+		curbase = master_battle_menus[m_idx].level_history[0];
+	}
+	
+	if( master_battle_menus[m_idx].page_base_count == 1 )
+	{
+		return curbase;
+	}
+	else
+	{
+		for( i=0; i<master_battle_menus[m_idx].page_base_count; i++ )
+		{		
+			if( getBasepage(m_idx,i) == curbase )
+			{
+				if( i == 0 )
+				{
+					prior = getBasepage( m_idx, master_battle_menus[m_idx].page_base_count-1 );
+				}
+				else
+				{
+					prior = getBasepage( m_idx, i-1 );
+				}
+				
+				if( i==(master_battle_menus[m_idx].page_base_count-1) )
+				{
+					next = getBasepage( m_idx, 0 );
+				}
+				else
+				{
+					next = getBasepage( m_idx, i+1 );
+				}			
+
+				// set done.			
+				i = master_battle_menus[m_idx].page_base_count;
+			}
+		}
+	
+		if( direction < 0 )	//left
+		{
+			return prior;
+		}
+		else
+		{
+			return next;
+		}
+	}
+}
+
+void dump_bm(int idx)
+{
+	int i;
+	
+	log( "dump_bm("+str(idx)+")..." );
+	log( "========================" );
+	log( "bm.page_count: "+str(master_battle_menus[idx].page_count) );
+	log( " bm.page_base: '"+master_battle_menus[idx].page_base+"'" );
+	log( "" );
+	
+	for(i=0; i<master_battle_menus[idx].page_count; i++)
+	{
+		log( "  "+str(i)+" data: '"+master_battle_menus[idx].page_data[i]+"'" );
+		log( "  "+str(i)+"  sub: '"+master_battle_menus[idx].page_sub[i]+"'" );
+	}
+	
+	for(i=0; i<master_battle_menus[idx].cur_level; i++)
+	{
+		log( "  "+str(i)+"  level_history: '"+str(master_battle_menus[idx].level_history[i])+"'" );
+		log( "  "+str(i)+" cursor_history: '"+str(master_battle_menus[idx].cursor_history[i])+"'" );
+	}
+
+	log( "" );
+	log( "------------------------" );
+	log( "bm source follows:" );
+	log( "------------------------" );
+	log( master_battle_menus[idx].src );
+	log( "------------------------" );
+	log( "...done dump_bm("+str(idx)+")." );
+	log( "========================" );
+}
+
+
+void dump_all_bm()
+{
+	int i;
+
+	Log( "" );
+	Log( "-----------------------------" );
+	Log( "-----------------------------" );
+	Log( "----- START DUMP_ALL_BM -----" );
+	Log( "-----------------------------" );
+	Log( "-----------------------------" );
+	Log( "" );
+	
+	for( i=0; i<MAX_BATTLE_MENUS; i++ )
+	{
+		dump_bm( i );
+	}
+	
+	Log( "" );
+	Log( "-----------------------------" );
+	Log( "-----------------------------" );
+	Log( "----- DONE DUMP_ALL_BM  -----" );
+	Log( "-----------------------------" );
+	Log( "-----------------------------" );
+	Log( "" );
+}
+
+
+/// Simple Helper.  Adds the page_data and page_sub to the specified battle_menu
+/// returns the index of the newly added data, -664 if no data was added.
+///
+/// Errors if the maximum pagecount has been reached and returns -666
+/// Errors if the csv tokencount on non-list items is not equal in the two strings and returns -665
+int BM_AddPage( int mnu_idx, string data, string sub )
+{
+	
+//log("");
+//log(">>> BM_AddPage...");
+	
+	if( master_battle_menus[mnu_idx].page_count >= MAX_BATTLE_MENU_PAGES )
+	{
+		ErrorHandler( "Battle_Menu::BM_AddPage() attempted to add a new page while parsing when the menu was at maximum ("+str(master_battle_menus[mnu_idx].page_count)+" of "+str(MAX_BATTLE_MENU_PAGES)+").  Either revise your menu, or increase the MAX_BATTLE_MENU_PAGES define." );
+		return 0-666;
+	}
+	
+	if( strcmp(sub,"-65535") )	//if data's not a list...
+	{
+		//error if their csv tokencount is not the same.
+		if( TokenCount(data,",") != TokenCount(sub,",") )	
+		{
+			ErrorHandler( "Battle_Menu::BM_AddPage() the csv tokencount on a non-list entry did not match ("+str(TokenCount(data,","))+" != "+str(TokenCount(sub,","))+")." );
+			bm_dbg( "full debug data follows:" );
+			log( "	local data:" );
+			log( "     mnu_idx: "+str(mnu_idx) );
+			log( "        data:'"+data+"'" );
+			log( "         sub: '"+sub+"'" );
+			log( "---" );
+			return 0-665;
+		}
+	}
+	
+	//if there's nothing to add, save nothing, return -1.
+	if( !strcmp(sub,"") && !strcmp(data,"") )
+	{
+		ErrorHandler( "Battle_Menu::BM_AddPage() There was nothing to add." );
+		log( "	local data:" );
+		log( "     mnu_idx: "+str(mnu_idx) );
+		log( "        data:'"+data+"'" );
+		log( "         sub: '"+sub+"'" );
+		log( "---" );
+
+		return 0-664;
+	}
+	
+	int i = master_battle_menus[mnu_idx].page_count;
+	
+	master_battle_menus[mnu_idx].page_data[master_battle_menus[mnu_idx].page_count]	= data;
+	master_battle_menus[mnu_idx].page_sub[master_battle_menus[mnu_idx].page_count]	= sub;
+	
+	master_battle_menus[mnu_idx].page_count++;
+	
+//log( "...added: " + str(i) );
+//log("");
+
+	return i;
+}
+
+
+/// Simple helper.  returns the specified line from the source.
+/// returns"" if the line is invalid.
+string BM_GetLine( string src, int ln )
+{
+	if( ln >= TokenCount(src, chr(10)) )
+	{
+		return "";
+	}
+	else
+	{
+		return GetToken( src, chr(10), ln );
+	}
+}
+
+/// Simple helper.  Returns the levelcount of a string (how many tab characters there are at the head of the string).
+int BM_Level_Count( string src )
+{
+	int i, cnt;
+	for( i=0; i<len(src); i++ )
+	{
+		if( !strcmp("	", mid(src,i,1)) )
+		{
+			cnt++;
+		}
+		else
+		{
+			return cnt;
+		}
+	}
+	
+	return 0;
+}
+
+
+/// returns 1 if this line is a list, 0 if not.
+int BM_isList( string ln )
+{
+	if( !strcmp(left(trim(ln),1),"@") )
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+int glob_ln, glob_lvl;
+int glob_nxtln, glob_nxtlvl;
+string glob_this,glob_next;
+
+void bm_dbg( string msg )
+{
+	log( "+"+ msg );
+	
+	log( "+		"+str(glob_ln) +","+str(glob_lvl)+"			thisline: '"+glob_this+"'" );
+	log( "+		"+str(glob_nxtln) +","+str(glob_nxtlvl)+"			nextline: '"+glob_next+"'" );
+	log( "+==========================================================================");
+}
+
+
+string bm_g(int lvl)
+{
+	int i;
+	string gay;
+	for(i=0; i<lvl; i++)
+		gay = gay + "	";
+	
+	return gay;
+}
+
+int __bm_ln_helper, __bm_lvl_helper;
+
+/// takes a source string, starting line, and starting level.  builds and saves out lines.
+/// returns the index of a newly saved level 
+int BM_Parse( int mnu_idx, string src, int ln, int level )
+{
+	string thisline, nextline;		//the temp data for the lines we're currently probing.
+	string data, sub; 				//the strings being built to be saved into the menu heapstack!
+	int thislevel, nextlevel, done, next;	//helpers!
+	
+//log( bm_g(level)+"BM_Parse("+str(ln)+","+str(level)+")..." );
+	
+	while( !done )
+	{
+//log( "TOP OF LOOP: ln " + str(ln+1) );
+		
+		thisline = BM_GetLine( src, ln );
+		nextline = BM_GetLine( src, ln+1 );
+
+		thislevel = BM_Level_Count( thisline );
+		nextlevel = BM_Level_Count( nextline );
+		
+/*
+log( bm_g(level)+" thisline: '"+thisline+"'" );
+log( bm_g(level)+"thislevel: "+str(thislevel) );
+log( "" );
+log( bm_g(level)+" nextline: '"+nextline+"'" );
+log( bm_g(level)+"nextlevel: "+str(nextlevel) );
+log( "" );
+log( "" );
+*/
+glob_ln		= ln;
+glob_lvl	= thislevel;
+glob_nxtln	= ln+1;
+glob_nxtlvl	= nextlevel;
+glob_this	= thisline;
+glob_next	= nextline;
+
+		
+		if( !strcmp("", trim(thisline)) ) // if there is no thisline...
+		{
+			__bm_ln_helper = ln;
+			__bm_lvl_helper = level;
+			
+			if(BM_DEBUG) bm_dbg( "there is no thisline, saving this level out and return." );
+			return BM_AddPage( mnu_idx, data, sub );
+		}
+		else if( !strcmp("", trim(nextline)) ) // if there is no nextline...
+		{
+/*		
+			data	= data + trim( thisline );
+			sub		= sub + "-1";
+*/			
+			__bm_ln_helper = ln;
+			__bm_lvl_helper = level;
+			
+			if( BM_isList(thisline) )
+			{
+				if( strcmp("",data) || strcmp("",sub)  )
+				{
+					ErrorHandler( "Battle_Menu::BM_Parse(): There was a list item on a dirty line!  NOOOOOO!.");
+					return 0-662;
+				}
+				
+				return BM_AddPage( mnu_idx, trim(thisline), "-65535" );
+			}
+			else
+			{
+				data	= data + trim( thisline );
+				sub		= sub + "-1";	
+			}
+			
+			if(BM_DEBUG) bm_dbg( "there is no nextline, saving this level out and returning." );
+			return BM_AddPage( mnu_idx, data, sub );
+		} 
+		else if( thislevel > nextlevel )	//we're about to unwind...
+		{
+			__bm_ln_helper = ln;
+			__bm_lvl_helper = level;
+
+			
+			if( BM_isList(thisline) )
+			{
+				if( strcmp("",data) || strcmp("",sub)  )
+				{
+					ErrorHandler( "Battle_Menu::BM_Parse(): There was a list item on a dirty line!  NOOOOOO!.");
+					return 0-662;
+				}
+				
+				return BM_AddPage( mnu_idx, trim(thisline), "-65535" );
+			}
+			else
+			{
+				data	= data + trim( thisline );
+				sub		= sub + "-1";	
+			}
+			
+			if(BM_DEBUG) bm_dbg( "the nextline is backwards levels...saving this level out and returning." );
+			return BM_AddPage( mnu_idx, data, sub );
+		} 
+		else if( thislevel < nextlevel )
+		{
+			if( thislevel+1 != nextlevel ) //if it's more than a 1-level increment, throw an error.
+			{
+				ErrorHandler( "Battle_Menu::BM_Parse(): There was an increase in level of more than 1, which is an illegal format.");
+				return 0-663;
+			}
+			//else if( BM_isList(thisline) )
+			//{
+			//	
+			//	return BM_AddPage( mnu_idx, thisline, "-65535" );
+			//}
+
+//log(bm_g(level)+"this<next");
+
+			//save this to the data jobbie.
+			data	= data + trim( thisline ) +",";
+			
+			//recurse in a level starting with the next line, then save the resultant index when it unwinds back here.
+			sub		= sub + str( BM_Parse(mnu_idx, src, ln+1, nextlevel) ) + ",";	
+
+			ln = __bm_ln_helper; //update the line after the unwinding.
+			next = BM_Level_Count(BM_GetLine(src,ln+1));
+
+//log( "*****  lvl: " +str(level) );			
+//log( "***** from: " +str(__bm_lvl_helper) );
+			
+			while( next != level )	//while next != level
+			{
+				if( next > level )
+				{
+					ErrorHandler( "Battle_Menu::BM_Parse(): There was an increase in level while unwinding.");
+					return 0-661;	
+				}
+				else
+				{
+					__bm_ln_helper = ln;
+					__bm_lvl_helper = level;
+					return BM_AddPage( mnu_idx, data, sub );
+				}
+				
+				next = BM_Level_Count(BM_GetLine(src,ln+1));
+			}
+
+
+
+		}
+		else if( thislevel == nextlevel ) //add it to the list, continue on.
+		{
+//log(bm_g(level)+"this==next");
+			data	= data + trim( thisline ) +",";
+			sub		= sub + "-1,";
+		}		
+
+/*		
+log(bm_g(level)+"ln++");
+log(g(level)+" data: '"+data+"'");
+log(bm_g(level)+"  sub: '"+sub+"'");
+log(bm_g(level)+"");
+log(bm_g(level)+"NEXT ITERATION!");
+log(bm_g(level)+"");
+
+
+log( "BOTTOM OF LOOP: ln " + str(ln+1) + " incrementing..." );		
+*/
+		
+		ln++;
+	}
+}
+
+
+void BM_Parse_Base(int idx)
+{
+	int i;
+	
+//Log( "BM_Parse_Base("+str(idx)+").  Contents follow:" );
+//Log("---");
+//Log( master_battle_menus[idx].src );
+//Log("---");
+//Log("...done.");
+
+//Log( "BM_Parse_Base, Starting page base." );
+//Log( "page_base: '" + master_battle_menus[idx].page_base + "'" );
+
+	/// First, clear out the page_base.
+	master_battle_menus[idx].page_base = "";
+
+	for( i=0; i<TokenCount(master_battle_menus[idx].src, "~"); i++ )
+	{
+		master_battle_menus[idx].page_base = master_battle_menus[idx].page_base + str(BM_Parse(idx, GetToken(master_battle_menus[idx].src, "~",i), 0,0)) + ",";
+		
+//Log( "page_base after pass ["+str(i)+"]: '" + master_battle_menus[idx].page_base + "'" );
+	}
+
+//Log( "page_base (final): '" + master_battle_menus[idx].page_base + "'" );
+	master_battle_menus[idx].page_base_count = TokenCount(master_battle_menus[idx].src, "~");
+//Log( "page_base_count: " + str(master_battle_menus[idx].page_base_count) );
+}
+
+/// sets a battle menu at the specified index with the specified source, and sets it as unparsed.
+/// errors and terminates if an invalid index is passed.
+void SetBattleMenu( int m_idx, string src )
+{
+	if( m_idx < 0 || m_idx >= MAX_BATTLE_MENUS )
+	{
+		ErrorHandler( "SetBattleMenu(): bad index ("+str(m_idx)+" of "+str(MAX_BATTLE_MENUS)+")" );
+		return;
+	}
+	
+Log( "SetBattleMenu( "+str(m_idx)+", src ) PASSED IN: " );
+Log( src );
+	master_battle_menus[m_idx].src = src;
+Log( "=====" );
+Log( "Got set as: " );
+Log( "=====" );
+Log( master_battle_menus[m_idx].src );
+Log( "=====" );
+	master_battle_menus[m_idx].parsed = 0;
+	
+	SetupDefaultBM( m_idx );
+	
+//	int i;	
+//	for(i=0; i<MAX_BATTLE_MENU_LEVELS; i++)
+//	{
+//		master_battle_menus[m_idx].scratch_img_dirty[i] = 0;
+//	}
+}
+
+
+/// Set menu m_idx's cursor to image im.
+///
+void SetBMCursor( int m_idx, int im )
+{
+	master_battle_menus[m_idx].im_cursor = im;
+}
+
+
+/// Sets the position of the given menu.
+///
+void SetBattleMenuPos( int m_idx, int x, int y )
+{
+	master_battle_menus[m_idx].x = x;
+	master_battle_menus[m_idx].y = y;
+}
+
+
+/// returns the number of items 
+///
+int getPageCountBM( int m_idx, int page_idx )
+{
+	return TokenCount( master_battle_menus[m_idx].page_sub[page_idx], "," ); 
+}
+
+/// returns 1 if a specified page on a menu is a list, 0 if not.
+///
+int isListBM( int m_idx, int page_idx )
+{
+	if( !strcmp("-65535", master_battle_menus[m_idx].page_sub[page_idx]) ) return 1;
+	return 0;
+}
+
+
+/// returns 1 if a specified option on a page on a menu has a child, 0 if not.
+///
+int hasChildBM( int m_idx, int page_idx, int opt )
+{
+	if( val(GetToken(master_battle_menus[m_idx].page_sub[page_idx],",",opt)) == 0-1 ) return 0;
+	return 1;
+}
+
+
+/// returns the sub of a given page's option
+int getItemChildBM( int m_idx, int page_idx, int opt )
+{
+	return val(GetToken(master_battle_menus[m_idx].page_sub[page_idx],",",opt));
+}
+
+/// returns the text of a given page's option
+string getPageItem( int m_idx, int page_idx, int opt )
+{
+	return GetToken(master_battle_menus[m_idx].page_data[page_idx],",",opt);
+}
+
+int MenuLineIsInactive( string s )
+{
+	if( !strcmp( left(s,1), ">") )
+		return 1;
+	return 0;
+}
+
+int MenuLineIsImpasable( string s )
+{
+	if( !strcmp( left(s,4), ">___") )
+		return 1;
+	return 0;	
+}
+
+int CreateMenuContentImageBM( int m_idx, int page_idx )
+{
+//	int 	arTemp[MAX_SCRATCH];
+//	string 	arTempStr[MAX_SCRATCH];
+
+	int i, longest, tSize, ySize;
+	for( i=0; i<getPageCountBM(m_idx,page_idx); i++ )
+	{
+		arTempStr[i] = getPageItem( m_idx, page_idx, i );
+		if( hasChildBM(m_idx, page_idx, i) ) arTempStr[i] = arTempStr[i] + " " + master_battle_menus[m_idx].submenu_chr;
+		
+		tSize = TextWidth( master_battle_menus[m_idx].white_font, arTempStr[i] );
+		
+		if( longest < tSize )
+		{
+			longest = tSize;
+		}
+		
+		ySize += (FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer);
+	}
+	
+	ySize -= master_battle_menus[m_idx].y_spacer;
+	
+	int im = NewImage( longest, ySize );
+	
+	RectFill(0,0, longest,ySize, transcolor, im);
+	
+	for(i=0; i<getPageCountBM(m_idx,page_idx); i++)
+	{
+		if( MenuLineIsInactive(arTempStr[i]) )
+		{
+			PrintString(0, i*(FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer), im, master_battle_menus[m_idx].grey_font, right(arTempStr[i], len(arTempStr[i])-1));
+		}
+		else
+		{
+			PrintString(0, i*(FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer), im, master_battle_menus[m_idx].white_font, arTempStr[i]);
+		}
+	}
+	
+	return im;
+}
+
+
+
+/// returns a red-keyed clickmap of the current pane.
+int CreateMenuContentClickingImageBM( int m_idx, int page_idx )
+{
+//	int 	arTemp[MAX_SCRATCH];
+//	string 	arTempStr[MAX_SCRATCH];
+
+	int i, longest, tSize, ySize;
+	string list_temp;
+	
+	if( master_battle_menus[m_idx].mode_list )
+	{
+		list_temp = getPageItem( m_idx, page_idx, i );
+		
+		if( hasChildBM(m_idx, page_idx, i) ) list_temp = list_temp + " " + master_battle_menus[m_idx].submenu_chr;
+		
+		tSize = TextWidth( master_battle_menus[m_idx].white_font, list_temp );
+		
+		if( longest < tSize )
+		{
+			longest = tSize;
+		}
+		
+		ySize += (FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer);
+	}
+	else
+	{
+		for( i=0; i<getPageCountBM(m_idx,page_idx); i++ )
+		{
+			arTempStr[i] = getPageItem( m_idx, page_idx, i );
+
+			if( hasChildBM(m_idx, page_idx, i) ) arTempStr[i] = arTempStr[i] + " " + master_battle_menus[m_idx].submenu_chr;
+
+			tSize = TextWidth( master_battle_menus[m_idx].white_font, arTempStr[i] );
+
+			if( longest < tSize )
+			{
+				longest = tSize;
+			}
+
+			ySize += (FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer);
+		}
+	}
+	
+	ySize -= master_battle_menus[m_idx].y_spacer;
+	
+	int im = NewImage( longest, ySize );
+	
+	RectFill(0,0, longest,ySize, transcolor, im);
+	
+	for(i=0; i<getPageCountBM(m_idx,page_idx); i++)
+	{
+		RectFill(
+			0,i*(FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer),
+			longest, (i+1)*(FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer),		
+			RGB(255-i,0,0),
+			im
+		);
+	}
+
+
+	
+	return im;
+}
+
+/// initializes the monobase settings for the given menu index.
+/// Called by StartBattleMenu()
+void InitMonobaseBattleMenu( int m_idx )
+{
+	int i, tmp;
+	int biggest_x, biggest_y;
+	
+	for( i=0; i<TokenCount(master_battle_menus[m_idx].page_base,",");i++ )
+	{
+		tmp = CreateMenuContentImageBM( m_idx, val(GetToken(master_battle_menus[m_idx].page_base,",",i)) );
+		
+		if( ImageHeight(tmp) > biggest_y )
+			biggest_y = ImageHeight(tmp);
+		if( ImageWidth(tmp) > biggest_x )
+			biggest_x = ImageWidth(tmp);
+			
+		FreeImage(tmp);
+	}
+	
+	master_battle_menus[m_idx].mode_monobase_y = biggest_y;
+	master_battle_menus[m_idx].mode_monobase_x = biggest_x;
+}
+
+/// Frees the scratch images from the previous occupant of this master_battle_menus[] slot
+void CleanBattleMenu( int m_idx )
+{
+	int i;
+	
+	for( i=0; i<MAX_BATTLE_MENU_LEVELS; i++ )
+	{
+		if( master_battle_menus[m_idx].scratch_img[i] )
+		{
+			FreeImage( master_battle_menus[m_idx].scratch_img[i] );
+			master_battle_menus[m_idx].scratch_img[i] = 0;
+		}
+	}
+	
+	master_battle_menus[m_idx].parsed = 0;
+	
+	master_battle_menus[m_idx].page_count = 0;
+	master_battle_menus[m_idx].page_base_count = 0;
+	
+	master_battle_menus[m_idx].mode_list = 0;
+}
+
+/// initializes the specified Battle Menu by index.
+///
+void StartBattleMenu( int m_idx )
+{
+	int my_box, my_content;
+	
+	__bm_visible = 1;
+	
+	CleanBattleMenu(m_idx);
+	
+	if( master_battle_menus[m_idx].mode_monobase && !master_battle_menus[m_idx].mode_monobase_x )
+	{
+		InitMonobaseBattleMenu( m_idx );
+	}
+	
+	if( master_battle_menus[m_idx].is_memory ) 
+	{
+	
+exit( "memory mode needs fixing." );
+	
+		master_battle_menus[m_idx].cur_page	= master_battle_menus[m_idx].last_page;
+//		master_battle_menus[m_idx].cur_level	= master_battle_menus[m_idx]._last_level;
+//		master_battle_menus[m_idx].cursor	= master_battle_menus[m_idx].last_cursor;		
+	}
+	else
+	{	
+		master_battle_menus[m_idx].cur_page	= val(GetToken(master_battle_menus[m_idx].page_base, ",", 0));
+		master_battle_menus[m_idx].cur_level	= 0;
+		master_battle_menus[m_idx].cursor	= 0;
+				
+		master_battle_menus[m_idx].scratch_img[0] = SpawnPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
+	}
+	
+	BattleMenuMenuOpen();
+}
+
+
+void UpdateBattleMenuControls( int m_idx )
+{
+	if( _battlemenu_mouse_mode )
+	{
+		BM_MouseControl( m_idx );
+	}
+	else
+	{
+		BM_KeyControl( m_idx );
+	}
+}
+
+
+/// The mouseclick handling code for "special" clicks.
+/// 
+void BM_MouseHandleSpecialClick( int m_idx )
+{
+	switch( BM_MouseClickSpecial() )
+	{
+		case 0: //flip page left (B: 255)
+			master_battle_menus[m_idx].cursor = 0;
+			master_battle_menus[m_idx].cur_page = ChangeBasePageBM(m_idx, 0-1 );
+
+			FreeImage( master_battle_menus[m_idx].scratch_img[0] );
+			master_battle_menus[m_idx].scratch_img[0] = SpawnPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
+
+			BattleMenuPageFlip();
+		case 1: //flip page right (B: 254)
+			master_battle_menus[m_idx].cursor = 0;
+			master_battle_menus[m_idx].cur_page = ChangeBasePageBM(m_idx, 1 );
+
+			FreeImage( master_battle_menus[m_idx].scratch_img[0] );
+			master_battle_menus[m_idx].scratch_img[0] = SpawnPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
+
+			BattleMenuPageFlip();
+		case 2: //List Up (B: 253)
+			if( master_battle_menus[m_idx].mode_list )
+			{
+				BM_DoListUp(m_idx);
+				BM_MouseAcceptUnpress();
+				DrawBattleMenuListClickmap( m_idx,_battlemenu_mouse_clickmap );
+			}
+			else
+			{
+				MessageBox( "error in BM_MouseHandleSpecialClick( "+str(m_idx)+" ).  List Up, but not in Listmode. " );
+			}
+		
+		case 3: //List Down (B: 252)
+			if( master_battle_menus[m_idx].mode_list )
+			{
+				BM_DoListDown(m_idx);
+				BM_MouseAcceptUnpress();
+				DrawBattleMenuListClickmap( m_idx,_battlemenu_mouse_clickmap );
+			}
+			else
+			{
+				MessageBox( "error in BM_MouseHandleSpecialClick( "+str(m_idx)+" ).  List Down, but not in Listmode. " );
+			}
+			
+		default:
+			MessageBox( "error in BM_MouseHandleSpecialClick( "+str(m_idx)+" ).  Mouseclick value was: "+str(BM_MouseClickSpecial()) );
+			
+	}
+}
+
+
+/// If you wish battle menu mouse control to 'fall through' to another handler, 
+/// pass that function name into here.
+///
+/// user mouse.x and mouse.y within that function to determine the mouse-coordinates.
+///
+/// (that should be obvious, right?)
+void SetBMPassthruCallfunc( string callfunc )
+{
+	__bm_mouseclick_passthrumode_callfunc = callfunc;
+
+	if( !strcmp(callfunc,"") )
+	{
+		__bm_mouseclick_passthrumode = 0;
+	}
+	else
+	{
+		__bm_mouseclick_passthrumode = 1;
+	}	
+}
+
+/// Gets the function currently being called my the battle menu if a click is 
+/// made outside it's bounds.
+string GetBMPassthruCallfunc()
+{
+	return __bm_mouseclick_passthrumode_callfunc;
+}
+
+/// Forbid any clicking outside the menu from happening!
+///
+void SetBattleMenuPassthruOff()
+{
+	__bm_mouseclick_passthrumode = 0;
+	__bm_mouseclick_passthrumode_callfunc = "";
+}
+
+
+/// The mouseclick handling code for non-listmode
+///
+void BM_MouseControl( int m_idx )
+{
+	int i;
+
+	if( !__menuHelpMode )
+	{
+		if( BM_MouseAccept() )
+		{
+			MS_CaptureMousePixel();
+			BM_MouseAcceptUnpress();
+
+			if( BM_MouseClickCursor() < 0 )
+			{
+				if( BM_MouseClickLayer() < 0 )
+				{
+					if( BM_MouseClickSpecial() < 0 )
+					{
+						if( __bm_mouseclick_passthrumode )
+						{
+							CallFunction(__bm_mouseclick_passthrumode_callfunc);
+						}
+						else
+						{
+							BattleMenuDeny();
+						}
+					}
+					else
+					{
+						BM_MouseHandleSpecialClick(m_idx);
+					}					
+				}
+				else
+				{
+					while( master_battle_menus[m_idx].cur_level != BM_MouseClickLayer() )
+					{
+						FreeImage( master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] );
+
+						master_battle_menus[m_idx].cur_level--;
+					}
+
+					master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].level_history[master_battle_menus[m_idx].cur_level];
+
+					BattleMenuReturnALevel(m_idx);
+				}		
+
+			}
+			else
+			{
+				if( MenuLineIsInactive(getPageItem(m_idx, master_battle_menus[m_idx].cur_page, BM_MouseClickCursor())) )
+				{
+					BattleMenuDeny();
+				}
+				else
+				{
+					if( hasChildBM(m_idx, master_battle_menus[m_idx].cur_page, BM_MouseClickCursor()) )
+					{
+						master_battle_menus[m_idx].level_history[master_battle_menus[m_idx].cur_level] = master_battle_menus[m_idx].cur_page;
+
+						master_battle_menus[m_idx].cur_page = getItemChildBM(m_idx, master_battle_menus[m_idx].cur_page, BM_MouseClickCursor());
+
+						if( IsListBM(m_idx, master_battle_menus[m_idx].cur_page) )
+						{
+							master_battle_menus[m_idx].cur_level++;
+
+							InitializeListBM( m_idx, master_battle_menus[m_idx].cur_page );
+							master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = SpawnListPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
+							master_battle_menus[m_idx].mode_list = 1;
+							
+							BM_MouseScrollUnpress();
+							
+							//master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].last_page;
+
+							BattleMenuEnterALevel(m_idx);
+							
+							DrawBattleMenuListClickmap( m_idx,_battlemenu_mouse_clickmap );
+						}
+						else
+						{
+							master_battle_menus[m_idx].cur_level++;
+							master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = SpawnPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
+
+							BattleMenuEnterALevel(m_idx);
+						}
+					}
+					else
+					{
+Log( "EXEC 1" );
+						__current_menu_idx = m_idx;
+						ExecuteLove( getPageItem(m_idx, master_battle_menus[m_idx].cur_page, BM_MouseClickCursor()) );
+					}
+				}
+			}
+		} 
+		else if( BM_MouseCancel() )
+		{
+			if( master_battle_menus[m_idx].cur_level > 0 )
+			{
+				FreeImage( master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] );
+
+				master_battle_menus[m_idx].cur_level--;
+
+				master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].level_history[master_battle_menus[m_idx].cur_level];
+
+				BattleMenuReturnALevel(m_idx);
+			}
+
+			BM_MouseCancelUnpress();
+		}
+		else if( BM_MouseHelp() )
+		{
+			MS_CaptureMousePixel();
+
+			if( BM_MouseClickCursor() >= 0 )
+			{				
+				master_battle_menus[m_idx]._mouse_helpcursor = BM_MouseClickCursor();
+				
+				__mousehelp_trigger = 1;
+			}
+			
+			BM_MouseHelpUnpress();
+		}
+	}
+	else	/// we are in mouse menu mode
+	{
+		if( BM_MouseCancel() || BM_MouseAccept() || BM_MouseHelp() )
+		{
+			BM_MouseAcceptUnpress();
+			BM_MouseCancelUnpress();
+			BM_MouseHelpUnpress();			
+			
+			__mousehelp_trigger = 1;
+		}
+	}
+}
+
+
+
+void BM_KeyControl( int m_idx )
+{
+	if( !__bm_visible )
+		return;
+
+	BMSetCancelFromBase(0);
+
+	if( !__menuHelpMode )
+	{
+		//if we're on the ground floor...
+		if( master_battle_menus[m_idx].cur_level == 0 )
+		{
+			if(  master_battle_menus[m_idx].page_base_count > 1 )
+			{
+				if( ButtonLeftTop(1) )
+				{
+					master_battle_menus[m_idx].cursor = 0;
+					master_battle_menus[m_idx].cur_page = ChangeBasePageBM(m_idx, 0-1 );
+
+					FreeImage( master_battle_menus[m_idx].scratch_img[0] );
+					master_battle_menus[m_idx].scratch_img[0] = SpawnPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
+
+					BattleMenuPageFlip();
+				}
+				else if( ButtonRightTop(1) )
+				{
+					master_battle_menus[m_idx].cursor = 0;
+					master_battle_menus[m_idx].cur_page = ChangeBasePageBM(m_idx, 1 );
+
+					FreeImage( master_battle_menus[m_idx].scratch_img[0] );
+					master_battle_menus[m_idx].scratch_img[0] = SpawnPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
+
+					BattleMenuPageFlip();
+				}
+			}
+		}
+
+		if( ButtonUp(1) )
+		{
+			if( master_battle_menus[m_idx].cursor == 0 )
+			{
+				if( master_battle_menus[m_idx].mode_modulus )
+				{
+					master_battle_menus[m_idx].cursor = getPageCountBM(m_idx, master_battle_menus[m_idx].cur_page)-1;
+					BattleMenuCursorMove();
+				}
+				else
+				{
+					BattleMenuDeny();
+				}
+			}
+			else
+			{
+				master_battle_menus[m_idx].cursor--;
+				BattleMenuCursorMove();
+			}
+		} 
+		else if( ButtonDown(1) )
+		{
+
+			if( master_battle_menus[m_idx].cursor == (getPageCountBM(m_idx, master_battle_menus[m_idx].cur_page)-1) )
+			{
+				if( master_battle_menus[m_idx].mode_modulus )
+				{
+					master_battle_menus[m_idx].cursor = 0;
+					BattleMenuCursorMove();
+				}
+				else
+				{
+					BattleMenuDeny();
+				}
+			}
+			else
+			{
+				master_battle_menus[m_idx].cursor++;
+				BattleMenuCursorMove();
+			}
+		}
+
+		if( ButtonAccept(1) )
+		{
+			if( MenuLineIsInactive(getPageItem(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor)) )
+			{
+				BattleMenuDeny();
+			}
+			else
+			{
+
+				if( hasChildBM(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor) )
+				{
+					master_battle_menus[m_idx].level_history[master_battle_menus[m_idx].cur_level] = master_battle_menus[m_idx].cur_page;
+					master_battle_menus[m_idx].cursor_history[master_battle_menus[m_idx].cur_level] = master_battle_menus[m_idx].cursor;
+
+					//master_battle_menus[m_idx].last_page = master_battle_menus[m_idx].cur_page;
+					//master_battle_menus[m_idx].last_cursor = master_battle_menus[m_idx].cursor;
+
+					master_battle_menus[m_idx].cur_page = getItemChildBM(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor);
+
+					if( IsListBM(m_idx, master_battle_menus[m_idx].cur_page) )
+					{
+						master_battle_menus[m_idx].cursor = 0;
+						master_battle_menus[m_idx].cur_level++;
+
+						InitializeListBM( m_idx, master_battle_menus[m_idx].cur_page );
+						master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = SpawnListPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
+						master_battle_menus[m_idx].mode_list = 1;
+						
+						BM_MouseScrollUnpress();
+
+						//master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].last_page;
+
+						BattleMenuEnterALevel(m_idx);
+					}
+					else
+					{
+						master_battle_menus[m_idx].cursor = 0;
+						master_battle_menus[m_idx].cur_level++;
+						master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = SpawnPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
+
+						BattleMenuEnterALevel(m_idx);
+					}
+				}
+				else
+				{
+Log( "EXEC 2" );
+					__current_menu_idx = m_idx;
+					ExecuteLove( getPageItem(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor) );
+				}
+			}
+
+			//master_battle_menus[m_idx].cursor
+
+			Unpress(0);
+		}
+
+		if( ButtonCancel(1) )
+		{
+			if( master_battle_menus[m_idx].cur_level > 0 )
+			{
+				FreeImage( master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] );
+				master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = 0;
+
+				 //= master_battle_menus[m_idx].cur_page;
+
+				master_battle_menus[m_idx].cur_level--;
+				//master_battle_menus[m_idx].cur_page	= master_battle_menus[m_idx].last_page;
+				master_battle_menus[m_idx].cur_page	= master_battle_menus[m_idx].level_history[master_battle_menus[m_idx].cur_level];
+
+				master_battle_menus[m_idx].cursor 	= master_battle_menus[m_idx].cursor_history[master_battle_menus[m_idx].cur_level];
+
+				BattleMenuReturnALevel(m_idx);
+			} 
+			else
+			{
+				BMSetCancelFromBase(1);
+			}
+
+			Unpress(0);
+		}
+	}
+}
+
+/// returns true if an attempt was made to cancel from the base menu.
+///
+int BMGetCancelBase()
+{
+	return __bm_cancelbase;
+}
+
+void BMSetCancelFromBase( int _val )
+{
+	__bm_cancelbase = _val;
+}
+
+void BattleMenuToString( int x, int y, int f, int idx )
+{
+	int fy;
+	int bx;
+	
+	fy = FontHeight(f)+1;
+	bx = x+TextWidth(f, "         coord: ("+str(master_battle_menus[idx].x)+","+str(master_battle_menus[idx].y)+")");
+
+	RectFill(x,y, bx,y+(fy*17), RGB(100,0,0), screen);
+
+//	string	page_base;
+
+	PrintString(x, y, screen, f, "     page_base: '"+master_battle_menus[idx].page_base+"'" );
+	y+=fy;
+	PrintString(x, y, screen, f, "         coord: ("+str(master_battle_menus[idx].x)+","+str(master_battle_menus[idx].y)+")" );
+	y+=fy;
+	PrintString(x, y, screen, f, "  level offset: ("+str(master_battle_menus[idx].lvl_offx)+","+str(master_battle_menus[idx].lvl_offy)+")"	);
+	y+=fy;
+	PrintString(x, y, screen, f, "content offset: ("+str(master_battle_menus[idx].content_offx)+","+str(master_battle_menus[idx].content_offy)+")"	);
+	y+=fy;
+	PrintString(x, y, screen, f, "   submenu_chr: '"+master_battle_menus[idx].submenu_chr+"'"	);
+	y+=fy;
+	PrintString(x, y, screen, f, "      y_spacer: '"+str(master_battle_menus[idx].y_spacer)+"'"	);
+	y+=fy;
+	PrintString(x, y, screen, f, "     is_memory: '"+str(master_battle_menus[idx].is_memory)+"'"	);
+	y+=fy;
+	PrintString(x, y, screen, f, "     im_cursor: '"+str(master_battle_menus[idx].im_cursor)+"'"	);
+	y+=fy;
+	PrintString(x, y, screen, f, " cursor offset: ("+str(master_battle_menus[idx].cursor_offx)+","+str(master_battle_menus[idx].cursor_offy)+")"	);
+	y+=fy;
+	PrintString(x, y, screen, f, "      cur_page: '"+str(master_battle_menus[idx].cur_page)+"'"	);
+	y+=fy;
+	PrintString(x, y, screen, f, "     cur_level: '"+str(master_battle_menus[idx].cur_level)+"'"	);
+	y+=fy;
+	PrintString(x, y, screen, f, "        cursor: '"+str(master_battle_menus[idx].cursor)+"'"	);
+	y+=fy;
+	PrintString(x, y, screen, f, "     last_page: '"+str(master_battle_menus[idx].last_page)+"'"	);
+	y+=fy;
+//	PrintString(x, y, screen, f, "    last_level: '"+str(master_battle_menus[idx].last_level)+"'"	);
+	y+=fy;
+//	PrintString(x, y, screen, f, "   last_cursor: '"+str(master_battle_menus[idx].last_cursor)+"'"	);
+	y+=fy;
+	PrintString(x, y, screen, f, "    page_count: '"+str(master_battle_menus[idx].page_count)+"'"	);
+	y+=fy;
+	
+	string my_history = "    history["+str(MAX_BATTLE_MENU_LEVELS)+" ]: '";
+	int i;
+	
+	for( i=0; i<MAX_BATTLE_MENU_LEVELS; i++ )
+	{
+		my_history = my_history + str(master_battle_menus[idx].level_history[i]) + ",";
+	}
+	
+	PrintString(x, y, screen, f, my_history	);
+	y+=fy;	
+	
+
+
+/// variables not yet listed out:
+///
+//	string src;	/// the source for this battle menu
+//	int parsed;	/// true if the src has been parsed, false if not.
+//	string	page_data[MAX_BATTLE_MENU_PAGES];
+//	string	page_sub[MAX_BATTLE_MENU_PAGES];
+//	int 	page_count;
+//	int white_font, grey_font;	/// the fonts this menu uses.
+
+//	int scratch_img[MAX_BATTLE_MENU_LEVELS];		//image references
+	
+}
+
+void ListToString( int x, int y, int f, int idx )
+{
+	int fy;
+	int bx;
+	
+	fy = FontHeight(f)+1;
+	bx = x+TextWidth(f, " _list_columns: '"+master_battle_menus[idx].page_base+"'");
+
+	RectFill(x,y, bx,y+(fy*17), RGB(100,0,0), screen);
+
+//	string	page_base;
+
+	
+	
+	PrintString(x, y, screen, f, "      _list_count: '"+str(_list_count)+"'" );
+	y+=fy;
+	PrintString(x, y, screen, f, "    _list_columns: '"+str(_list_columns)+"'" );
+	y+=fy;
+	PrintString(x, y, screen, f, "       _list_rows: '"+str(_list_rows)+"'" );
+	y+=fy;
+	PrintString(x, y, screen, f, "      _data_width: '"+str(_data_width)+"'" );
+	y+=fy;
+	PrintString(x, y, screen, f, "      _cost_width: '"+str(_cost_width)+"'" );
+	y+=fy;
+	PrintString(x, y, screen, f, "_list_cursor_offs: '"+str(_list_cursor_offs)+"'" );
+	y+=fy;
+	PrintString(x, y, screen, f, "   menu["+str(idx)+"].cursor: '"+str(master_battle_menus[idx].cursor)+"'" );
+	y+=fy;
+/*
+int _list_count;
+int _list_cursor_offs;
+int _list_columns 	= 1;
+int _list_rows 		= 5;
+int _box_border_x	= 5;
+int _box_border_y 	= 5;
+int _data_width;
+int _cost_width;
+int _list_sidebar_width = 10;
+*/
+}
+
+
+void DrawBattleMenu( int m_idx, int targ_img )
+{
+	if( !__bm_visible )
+		return;
+
+	int i;
+	for( i=0; i<=master_battle_menus[m_idx].cur_level; i++ )
+	{
+		
+//log( "rendering "+str(i)+": "+str(master_battle_menus[m_idx].scratch_img[i]) );
+	 	TBlit( 	master_battle_menus[m_idx].x+(i*master_battle_menus[m_idx].lvl_offx), 
+			master_battle_menus[m_idx].y+(i*master_battle_menus[m_idx].lvl_offy), 
+			master_battle_menus[m_idx].scratch_img[i], 
+			targ_img );
+//log( "yay!" );
+	}
+			
+	if( master_battle_menus[m_idx].page_base_count > 1 )
+	{
+		if( master_battle_menus[m_idx].cur_level == 0 )
+		{
+			DrawBasepageFlipIndicators( m_idx, 1 );
+		}
+		else
+		{
+			DrawBasepageFlipIndicators( m_idx, 0 );
+		}
+	}
+	
+	if( master_battle_menus[m_idx].mode_list )
+	{
+		DrawBattleMenuList(m_idx,targ_img);
+	}
+		
+	if( __menuHelpMode )
+	{
+		TBlit( 10,14, __menuHelpModeIMG, targ_img );
+	}
+	
+	if( _battlemenu_mouse_mode )
+	{
+		TBlit( mouse.x, mouse.y, master_battle_menus[m_idx].im_cursor, targ_img );
+	}
+	else
+	{	
+		/// cursor!
+		TBlit(	master_battle_menus[m_idx].x+master_battle_menus[m_idx].content_offx-master_battle_menus[m_idx].cursor_offx + (master_battle_menus[m_idx].cur_level*master_battle_menus[m_idx].lvl_offx),
+				master_battle_menus[m_idx].y+master_battle_menus[m_idx].content_offy-master_battle_menus[m_idx].cursor_offy +
+				(master_battle_menus[m_idx].cursor * (FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer) ) + (master_battle_menus[m_idx].cur_level*master_battle_menus[m_idx].lvl_offy),
+				master_battle_menus[m_idx].im_cursor,
+				targ_img );
+	}
+}
+
+void DrawBattleMenuList( int m_idx, int targ_img )
+{
+	if( !__bm_visible )
+		return;
+		
+	int i, my_rows;
+	int my_base_x, my_base_y, my_entry_height, my_y;
+	
+	
+	if( _list_rows < _list_count )
+		my_rows = _list_rows;
+	else
+		my_rows = _list_count;
+	
+	my_base_x = 
+		_box_border_x + master_battle_menus[m_idx].x + 
+		
+		(
+			master_battle_menus[m_idx].cur_level *
+			master_battle_menus[m_idx].lvl_offx
+		);
+		
+	my_base_y = 
+		_box_border_y + 
+		master_battle_menus[m_idx].y + 
+		
+		(
+			master_battle_menus[m_idx].cur_level *
+			master_battle_menus[m_idx].lvl_offy
+		);
+		
+	my_entry_height = (
+			FontHeight(master_battle_menus[m_idx].white_font) + 
+			master_battle_menus[m_idx].y_spacer
+		);
+	
+	for( i=_list_cursor_offs; i<(_list_cursor_offs+my_rows); i++ )
+	{
+		my_y = my_base_y + ((i-_list_cursor_offs)*my_entry_height);
+	
+		if( MenuLineIsInactive(arTempStr[i]) )
+		{
+			PrintString( 
+				my_base_x,
+				my_y,
+				targ_img, 
+				master_battle_menus[m_idx].grey_font, 
+				right(arTempStr[i], len(arTempStr[i])-1)
+			);
+			
+			if( arTemp[i] > 0 )
+			{
+				PrintString( 
+					my_base_x+_data_width,
+					my_y,
+					targ_img, 
+					master_battle_menus[m_idx].grey_font, 
+					str(arTemp[i])
+				);
+			}
+		}
+		else
+		{
+			PrintString(
+				my_base_x,
+				my_y,
+				targ_img, 
+				master_battle_menus[m_idx].white_font, 
+				arTempStr[i]
+			);
+			
+			if( arTemp[i] > 0 ) 
+			{
+				PrintString(
+					my_base_x+_data_width,
+					my_y,
+					targ_img, 
+					master_battle_menus[m_idx].white_font, 
+					str(arTemp[i])
+				);
+			}
+		}
+	}
+
+	if( _battlemenu_mouse_mode )
+	{
+		//_imListUp, _imListDown
+		
+		DrawScrollBar(
+			my_base_x+_data_width+_cost_width,
+			my_base_y+ImageHeight(_imListUp)+1, 
+			my_base_x+_data_width+_cost_width+_list_sidebar_width,
+			my_base_y+(my_entry_height*_list_rows)-ImageHeight(_imListDown)-1, 
+
+			_list_rows,
+			my_entry_height,
+			_list_count,
+			_list_cursor_offs
+		);
+		
+		TBlit( my_base_x+_data_width+_cost_width, my_base_y, _imListUp, screen );
+		
+		TBlit( my_base_x+_data_width+_cost_width, my_base_y+(my_entry_height*_list_rows)-ImageHeight(_imListDown), _imListDown, screen );
+	}
+	else
+	{
+
+		DrawScrollBar(
+			my_base_x+_data_width+_cost_width,
+			my_base_y, 
+			my_base_x+_data_width+_cost_width+_list_sidebar_width,
+			my_base_y+(my_entry_height*_list_rows), 
+
+			_list_rows,
+			my_entry_height,
+			_list_count,
+			_list_cursor_offs
+		);
+	}
+}
+
+/// Blue 253 is List Up
+/// Blue 252 is List Down
+void DrawBattleMenuListClickmap( int m_idx, int targ_img )
+{
+
+	int i, my_rows;
+	int my_base_x, my_base_y, my_entry_height, my_y;
+	
+	
+	if( _list_rows < _list_count )
+		my_rows = _list_rows;
+	else
+		my_rows = _list_count;
+	
+	my_base_x = 
+		_box_border_x + master_battle_menus[m_idx].x + 
+		
+		(
+			master_battle_menus[m_idx].cur_level *
+			master_battle_menus[m_idx].lvl_offx
+		);
+		
+	my_base_y = 
+		_box_border_y + 
+		master_battle_menus[m_idx].y + 
+		
+		(
+			master_battle_menus[m_idx].cur_level *
+			master_battle_menus[m_idx].lvl_offy
+		);
+		
+	my_entry_height = (
+			FontHeight(master_battle_menus[m_idx].white_font) + 
+			master_battle_menus[m_idx].y_spacer
+		);
+	
+	for( i=_list_cursor_offs; i<(_list_cursor_offs+my_rows); i++ )
+	{
+		my_y = my_base_y + ((i-_list_cursor_offs)*my_entry_height);
+		
+		RectFill(
+			my_base_x,
+			my_y,
+			
+			my_base_x+_data_width+_cost_width,
+			my_y+my_entry_height,
+			
+			RGB( 255-i,0,0 ),
+			targ_img
+		);
+	}
+
+
+	/// list up/down buttons.
+	RectFill( 
+		my_base_x+_data_width+_cost_width, 
+		my_base_y, 
+		
+		my_base_x+_data_width+_cost_width + ImageWidth(_imListUp), 
+		my_base_y+ ImageHeight(_imListUp), 
+		
+		RGB(0,0,253),
+		
+		targ_img );
+
+	RectFill( 
+		my_base_x+_data_width+_cost_width, 
+		my_base_y+(my_entry_height*_list_rows)-ImageHeight(_imListDown), 
+		
+		my_base_x+_data_width+_cost_width+ ImageWidth(_imListDown), 
+		my_base_y+(my_entry_height*_list_rows), 
+		
+		RGB(0,0,252),
+		targ_img );
+}
+
+
+/// This funciton outlines what to do to draw the left/right paging option indicators (arrows or whatever).
+///
+void DrawBasepageFlipIndicators( int m_idx, int is_active )
+{
+	if( is_active )
+	{	
+		TBlit( 
+			master_battle_menus[m_idx].x,
+			(master_battle_menus[m_idx].y - 1 - ImageHeight(_imLeftActive)),
+			_imLeftActive,
+			screen );	
+		
+	
+		TBlit( 
+			master_battle_menus[m_idx].x + ImageWidth(master_battle_menus[m_idx].scratch_img[0]) - ImageWidth(_imRightActive),
+			master_battle_menus[m_idx].y - 1 - ImageHeight(_imRightActive),
+			_imRightActive,
+			screen );			
+	}
+	else
+	{			
+		TBlit( 
+			master_battle_menus[m_idx].x,
+			master_battle_menus[m_idx].y - 1 - ImageHeight(_imLeftInActive),
+			_imLeftInActive,
+			screen );
+	
+		TBlit( 
+			master_battle_menus[m_idx].x + ImageWidth(master_battle_menus[m_idx].scratch_img[0]) - ImageWidth(_imRightInActive),
+			master_battle_menus[m_idx].y - 1 - ImageHeight(_imRightInActive),
+			_imRightInActive,
+			screen );
+	}
+}
+
+/// This funciton outlines what to do to draw the left/right paging option indicators (arrows or whatever).
+/// Blue 255: Page Left.
+/// Blue 254: Page Right.
+void DrawBasepageFlipIndicatorsClickmap( int m_idx, int is_active, int clickmap )
+{
+	if( is_active )
+	{
+		RectFill( 
+			master_battle_menus[m_idx].x,
+			(master_battle_menus[m_idx].y - 1 - ImageHeight(_imLeftActive)),
+
+			master_battle_menus[m_idx].x+ImageWidth(_imLeftActive),
+			master_battle_menus[m_idx].y - 1,
+			
+			RGB(0,0,255),
+			clickmap );	
+		
+	
+		RectFill( 
+			master_battle_menus[m_idx].x + ImageWidth(master_battle_menus[m_idx].scratch_img[0]) - ImageWidth(_imRightActive),
+			master_battle_menus[m_idx].y - 1 - ImageHeight(_imRightActive),
+
+			master_battle_menus[m_idx].x + ImageWidth(master_battle_menus[m_idx].scratch_img[0]), 
+			master_battle_menus[m_idx].y - 1,
+			
+			RGB(0,0,254),
+			clickmap );
+	}
+}
+
+void BM_MouseListControls( int m_idx )
+{
+	if( !__menuHelpMode )
+	{
+		if( BM_MouseAccept() )
+		{
+			MS_CaptureMousePixel();
+			BM_MouseAcceptUnpress();
+
+			if( BM_MouseClickCursor() < 0 )
+			{
+				if( BM_MouseClickLayer() < 0 )
+				{
+					if( BM_MouseClickSpecial() < 0 )
+					{
+						__mouse_hlpr = mcg_findclick( mouse.x, mouse.y );
+					
+						if( __mouse_hlpr >= 0 )
+						{
+							mcg_doclick();
+						}
+						else
+						{
+							BattleMenuDeny();
+						}
+					}
+					else
+					{
+						BM_MouseHandleSpecialClick(m_idx);
+					}
+				}
+				else
+				{
+					while( master_battle_menus[m_idx].cur_level != BM_MouseClickLayer() )
+					{
+						FreeImage( master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] );
+						master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = 0;
+
+						master_battle_menus[m_idx].cur_level--;
+					}
+
+					master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].level_history[master_battle_menus[m_idx].cur_level];
+
+					BattleMenuReturnALevel(m_idx);
+				}		
+
+			}
+			else
+			{				
+				if( MenuLineIsInactive(getPageItem(m_idx, master_battle_menus[m_idx].cur_page, BM_MouseClickCursor())) )
+				{
+					BattleMenuDeny();
+				}
+				else
+				{
+Log( "EXEC 3"  );
+					__current_menu_idx = m_idx;
+					ExecuteLove( arTempStr[BM_MouseClickCursor()] );
+				}
+			}
+		} 
+		else if( BM_MouseCancel() )
+		{
+			if( master_battle_menus[m_idx].cur_level > 0 )
+			{
+				FreeImage( master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] );
+				master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = 0;
+
+				master_battle_menus[m_idx].cur_level--;
+
+				master_battle_menus[m_idx].cur_page	= master_battle_menus[m_idx].level_history [	master_battle_menus[m_idx].cur_level];
+
+				BattleMenuReturnALevel(m_idx);
+			}
+
+			BM_MouseCancelUnpress();
+		}
+		else if( BM_MouseHelp() )
+		{
+			MS_CaptureMousePixel();
+
+			if( BM_MouseClickCursor() >= 0 )
+			{				
+				master_battle_menus[m_idx]._mouse_helpcursor = BM_MouseClickCursor();
+				
+				__mousehelp_trigger = 1;
+			}
+			
+			BM_MouseHelpUnpress();
+		}
+		else if( BM_MouseScrollUp() )	//pageup.  Ignore modulus.
+		{
+			BM_MouseScrollUnpress();
+		
+			if( master_battle_menus[m_idx].cursor == 0 && _list_cursor_offs == 0 )
+			{
+				//BattleMenuDeny();
+			}
+			else
+			{
+				if( _list_cursor_offs == 0 )
+				{
+					master_battle_menus[m_idx].cursor = 0;
+					BattleMenuCursorMove();
+				}
+				else if( (_list_cursor_offs-_list_rows) >= 0 )
+				{
+					_list_cursor_offs -= _list_rows;
+					BattleMenuCursorMove();
+				}
+				else
+				{
+					_list_cursor_offs = 0;
+					master_battle_menus[m_idx].cursor = 0;
+					BattleMenuCursorMove();
+				}
+				
+				if( _list_cursor_offs || master_battle_menus[m_idx].cursor )
+				{
+					__volume_hack = __battlemenu_interface_volume;
+					__battlemenu_interface_volume = 0;
+					BM_DoListDown( m_idx );
+					BM_DoListUp( m_idx );
+					__battlemenu_interface_volume = __volume_hack;
+				}
+				
+				DrawBattleMenuListClickmap( m_idx,_battlemenu_mouse_clickmap );
+			}
+		}
+		else if( BM_MouseScrollDown() )	//pagedown.  Ignore modulus.
+		{
+			BM_MouseScrollUnpress();
+		
+			if( MenuListIsAtBottom(m_idx) )
+			{
+				//BattleMenuDeny();
+			}
+			else 
+			{				
+				if( _list_count < _list_rows )
+				{
+					master_battle_menus[m_idx].cursor = (_list_count-1);
+					BattleMenuCursorMove();
+				}
+				else if( (_list_cursor_offs+(_list_rows*2)) <= _list_count )
+				{
+					_list_cursor_offs += _list_rows;
+					BattleMenuCursorMove();
+				}
+				else
+				{
+					_list_cursor_offs = _list_count-_list_rows;
+					master_battle_menus[m_idx].cursor = _list_rows-1;
+					BattleMenuCursorMove();
+				}
+				
+				if( _list_cursor_offs || master_battle_menus[m_idx].cursor )
+				{
+					__volume_hack = __battlemenu_interface_volume;
+					__battlemenu_interface_volume = 0;
+					BM_DoListUp( m_idx );
+					BM_DoListDown( m_idx );
+					__battlemenu_interface_volume = __volume_hack;
+				}
+				
+				DrawBattleMenuListClickmap( m_idx,_battlemenu_mouse_clickmap );
+			}
+		}
+	}
+	else	/// we are in mouse menu mode
+	{
+		if( BM_MouseCancel() || BM_MouseAccept() || BM_MouseHelp() )
+		{
+			BM_MouseAcceptUnpress();
+			BM_MouseCancelUnpress();
+			BM_MouseHelpUnpress();			
+			
+			__mousehelp_trigger = 1;
+		}
+	}
+
+}
+
+/// returns the item currently being pointed to by the cursor.
+string BM_GetCurrentItem( int m_idx )
+{
+	if( master_battle_menus[m_idx].mode_list )
+	{
+		return arTempStr[master_battle_menus[m_idx].cursor+_list_cursor_offs];
+	}
+	else
+	{
+		return getPageItem(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor);
+	}
+
+}
+
+void BM_KeyListControls( int m_idx )
+{
+	if( !__bm_visible )
+		return;
+
+	if( !__menuHelpMode )
+	{
+		if( ButtonCancel(1) )
+		{
+			FreeImage( master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] );
+			master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = 0;
+
+			master_battle_menus[m_idx].cur_level--;
+
+			master_battle_menus[m_idx].cur_page	= master_battle_menus[m_idx].level_history [	master_battle_menus[m_idx].cur_level];
+			master_battle_menus[m_idx].cursor 	= master_battle_menus[m_idx].cursor_history[	master_battle_menus[m_idx].cur_level];
+			master_battle_menus[m_idx].mode_list 	= 0;
+
+			BattleMenuReturnALevel(m_idx);
+
+			Unpress(0);
+		} 
+		else if( ButtonAccept(1) )
+		{	
+			if( MenuLineIsInactive(arTempStr[master_battle_menus[m_idx].cursor+_list_cursor_offs]) )
+			{
+				BattleMenuDeny();
+			}
+			else
+			{
+Log( "EXEC 4" );
+				__current_menu_idx = m_idx;
+				ExecuteLove( arTempStr[master_battle_menus[m_idx].cursor+_list_cursor_offs] );
+			}
+		}
+		else if( ButtonUp(1) )
+		{
+			BM_DoListUp( m_idx );
+		} 
+		else if( ButtonDown(1) )
+		{
+			BM_DoListDown( m_idx );
+		}
+		else if( ButtonLeftTop(1) )	//pageup.  Ignore modulus.
+		{
+			if( master_battle_menus[m_idx].cursor == 0 && _list_cursor_offs == 0 )
+			{
+				BattleMenuDeny();
+			}
+			else
+			{
+				if( _list_cursor_offs == 0 )
+				{
+					master_battle_menus[m_idx].cursor = 0;
+					BattleMenuCursorMove();
+				}
+				else if( (_list_cursor_offs-_list_rows) >= 0 )
+				{
+					_list_cursor_offs -= _list_rows;
+					BattleMenuCursorMove();
+				}
+				else
+				{
+					_list_cursor_offs = 0;
+					master_battle_menus[m_idx].cursor = 0;
+					BattleMenuCursorMove();
+				}
+			}
+		}
+		else if( ButtonRightTop(1) )	//pagedown.  Ignore modulus.
+		{
+			if( MenuListIsAtBottom(m_idx) )
+			{
+				BattleMenuDeny();
+			}
+			else 
+			{
+				if( _list_count < _list_rows )
+				{
+					master_battle_menus[m_idx].cursor = (_list_count-1);
+					BattleMenuCursorMove();
+				}
+				else if( (_list_cursor_offs+(_list_rows*2)) <= _list_count )
+				{
+					_list_cursor_offs += _list_rows;
+					BattleMenuCursorMove();
+				}
+				else
+				{
+					_list_cursor_offs = _list_count-_list_rows;
+					master_battle_menus[m_idx].cursor = _list_rows-1;
+					BattleMenuCursorMove();
+				}
+			}
+		}
+	}
+}
+
+void BM_DoListUp( int m_idx )
+{
+	if( _battlemenu_mouse_mode )
+	{
+		master_battle_menus[m_idx].cursor = 0;
+	}
+
+	if( _list_cursor_offs > 0 )
+	{
+		if( master_battle_menus[m_idx].cursor > 0 )
+		{
+			master_battle_menus[m_idx].cursor--;
+			BattleMenuCursorMove();
+		}
+		else
+		{
+			_list_cursor_offs--;
+			BattleMenuCursorMove();
+		}
+	}
+	else if( master_battle_menus[m_idx].mode_modulus )
+	{
+		if( _list_count > _list_rows && master_battle_menus[m_idx].cursor == 0 )
+		{
+			master_battle_menus[m_idx].cursor = _list_rows - 1;
+			_list_cursor_offs = _list_count - _list_rows;
+			BattleMenuCursorMove();
+		}
+		else if( master_battle_menus[m_idx].cursor == 0 )
+		{
+			master_battle_menus[m_idx].cursor = _list_count - 1;
+			BattleMenuCursorMove();
+		}
+		else
+		{
+			master_battle_menus[m_idx].cursor--;
+			BattleMenuCursorMove();
+		}
+	}
+	else if( master_battle_menus[m_idx].cursor > 0 )
+	{
+		master_battle_menus[m_idx].cursor--;
+		BattleMenuCursorMove();
+	}
+	else
+	{
+		BattleMenuDeny();
+	}
+}
+
+void BM_DoListDown( int m_idx )
+{
+	if( _battlemenu_mouse_mode )
+	{
+		master_battle_menus[m_idx].cursor = (_list_rows-1);
+	}
+
+	if( master_battle_menus[m_idx].mode_modulus )
+	{	
+		if( (master_battle_menus[m_idx].cursor + _list_cursor_offs) >= (_list_count-1)  )
+		{
+			master_battle_menus[m_idx].cursor = 0;
+			_list_cursor_offs = 0;
+			BattleMenuCursorMove();
+		}
+		else
+		{
+			if( master_battle_menus[m_idx].cursor == (_list_rows-1) )
+			{
+				_list_cursor_offs++;
+				BattleMenuCursorMove();
+			}
+			else
+			{
+				master_battle_menus[m_idx].cursor++;
+				BattleMenuCursorMove();
+			}
+		}
+	}
+	else
+	{
+		if( MenuListIsAtBottom(m_idx) )
+		{
+			BattleMenuDeny();
+		}
+		else
+		{
+			if( master_battle_menus[m_idx].cursor == (_list_rows-1) )
+			{
+				_list_cursor_offs++;
+				BattleMenuCursorMove();
+			}
+			else
+			{
+				master_battle_menus[m_idx].cursor++;
+				BattleMenuCursorMove();
+			}
+		}
+	}
+}
+
+
+/// Deals with control handling while in list mode.
+///
+void UpdateBattleMenuListControls(int m_idx)
+{
+	if( !__bm_visible )
+		return;
+
+	if( _battlemenu_mouse_mode )
+	{
+		BM_MouseListControls(m_idx);
+	}
+	else
+	{
+		BM_KeyListControls(m_idx);
+	}	
+}
+
+/// Returns true if the current list is on the bottommost entry, false if not.
+///
+int MenuListIsAtBottom( int m_idx )
+{
+	if( (master_battle_menus[m_idx].cursor + _list_cursor_offs) >= (_list_count-1) )
+	{
+		return 1;
+	}
+	
+	return 0;
+}
+
+/// Returns true if page_idx is a basepage for m_idx
+int IsBasePage( int m_idx, int page_idx )
+{
+	int i;
+	for( i=0; i<TokenCount(master_battle_menus[m_idx].page_base,",");i++ )
+	{
+		if( val(GetToken(master_battle_menus[m_idx].page_base,",",i)) == page_idx )
+			return 1;
+	}
+	
+	return 0;
+}
+
+int SpawnPageIMG( int m_idx, int page_idx )
+{
+	int vagina = NewBox( "BoxLib_V1Border", "BoxLib_V1BG" );
+	SetTargetBox(vagina);
+
+	SetBoxPadding( 1,1,1,1 );
+	SetBoxBordersize( 5,5,5,5 );
+
+	SetBoxColor( 0, rgb(0, 0, 0) );
+	SetBoxColor( 1, rgb(112, 112, 112) );
+	SetBoxColor( 2, rgb(144, 144, 144) );
+	SetBoxColor( 3, rgb(0, 0, 255) );
+	
+	int my_content = CreateMenuContentImageBM( m_idx, page_idx );
+	int my_mono, im;
+	
+	if( master_battle_menus[m_idx].mode_monobase )
+	{
+		if( IsBasePage(m_idx, page_idx) )
+		{
+			my_mono = NewImage( master_battle_menus[m_idx].mode_monobase_x,
+						master_battle_menus[m_idx].mode_monobase_y );
+			RectFill( 0,0, ImageWidth(my_mono), ImageHeight(my_mono), transcolor, my_mono);
+			TBlit(0,0, my_content, my_mono);
+			
+			SetBoxContent(my_mono);
+			
+			im = SaveBoxToIMG();
+			FreeBox(0);
+			FreeImage(my_content);
+ 
+			return im;
+		}
+	}
+	
+	
+	SetBoxContent(my_content);
+	im = SaveBoxToIMG();
+	FreeBox(0);
+	
+	return im;
+}
+
+/// such a hack...
+/// Creating the mouse-clickable cheatsheet image fot this page.
+int SpawnClickPageIMG( int m_idx, int page_idx )
+{
+	int tmp_img = CreateMenuContentClickingImageBM( m_idx, page_idx );
+	
+	int im = NewImage( ImageWidth(tmp_img)+12, ImageHeight(tmp_img)+12 );
+	
+	RectFill( 0,0, ImageWidth(tmp_img)+12, ImageHeight(tmp_img)+12, RGB(255,0,255), im );
+	
+	Blit( 6,6, tmp_img, im );
+	
+	FreeImage(tmp_img);
+	
+	return im;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+void BattleMenuMenuOpen()
+{
+	if( !_sfxBMOpen )	_sfxBMOpen = LoadSound("res\sfx\battle_menu\MENUOPEN.WAV");
+	PlaySound( _sfxBMOpen, __battlemenu_interface_volume );
+}
+
+void BattleMenuCursorMove()
+{
+	if( !_sfxBMMove )	_sfxBMMove = LoadSound("res\sfx\battle_menu\CHIRP.WAV");
+	PlaySound( _sfxBMMove, __battlemenu_interface_volume );
+}
+
+void BattleMenuPageFlip()
+{
+	if( !_sfxBMFlip )	_sfxBMFlip = LoadSound("res\sfx\battle_menu\PAGETURN.WAV");
+	PlaySound( _sfxBMFlip, __battlemenu_interface_volume );
+}
+
+
+void BattleMenuDeny()
+{
+	if( !_sfxBMBuzz )	_sfxBMBuzz = LoadSound("res\sfx\battle_menu\BUZZ.WAV");
+	PlaySound( _sfxBMBuzz, __battlemenu_interface_volume );
+}
+
+void BattleMenuReturnALevel( int m_idx )
+{
+	if( !_sfxBMMove )	_sfxBMMove = LoadSound("res\sfx\battle_menu\CHIRP.WAV");
+	PlaySound( _sfxBMMove, __battlemenu_interface_volume );
+	
+	master_battle_menus[m_idx].mode_list 	= 0;
+	
+	if( _battlemenu_mouse_mode )
+	{
+		BM_UpdateMouseClickMap( m_idx );
+	}
+}
+
+void BattleMenuEnterALevel( int m_idx )
+{
+	if( !_sfxBMMove )	_sfxBMMove = LoadSound("res\sfx\battle_menu\CHIRP.WAV");
+	PlaySound( _sfxBMMove, __battlemenu_interface_volume );
+	
+	if( _battlemenu_mouse_mode )
+	{
+		BM_UpdateMouseClickMap( m_idx );
+	}
+}
+
+void CheckHelpMode( int m_idx )
+{
+
+	if( _battlemenu_mouse_mode )
+	{
+		if( __menuHelpMode )
+		{
+			if( __mousehelp_trigger )
+			{
+				__menuHelpMode = 0;
+				__mousehelp_trigger = 0;
+				
+				FreeImage(__menuHelpModeIMG);
+			}
+		}
+		else
+		{
+			if( __mousehelp_trigger )
+			{
+			
+				__menuHelpMode = 1;
+				__mousehelp_trigger = 0;
+				__menuHelpText = GetMenuHelpModeText( m_idx );
+				__menuHelpModeIMG = SpawnHelpBoxIMG( m_idx, __menuHelpText );
+			}
+		}
+	}
+	else
+	{
+		if( __menuHelpMode )
+		{
+			if( !ButtonAux(0) && !ButtonMenu(0) )
+			{
+				__menuHelpMode = 0;
+				FreeImage(__menuHelpModeIMG);
+			}
+		}
+		else
+		{
+			if( ButtonAux(0) || ButtonMenu(0) )
+			{
+				__menuHelpMode = 1;
+				__menuHelpText = GetMenuHelpModeText( m_idx );
+				__menuHelpModeIMG = SpawnHelpBoxIMG( m_idx, __menuHelpText );
+			}
+		}
+	}
+}
+
+string GetMenuHelpModeText( int m_idx )
+{
+	string s;
+
+	if( master_battle_menus[m_idx].mode_list )
+	{
+		if( _battlemenu_mouse_mode )
+		{
+			s = arTempStr[master_battle_menus[m_idx]._mouse_helpcursor];
+		}
+		else
+		{
+			s = arTempStr[master_battle_menus[m_idx].cursor+_list_cursor_offs];
+		}
+	}
+	else
+	{
+		if( _battlemenu_mouse_mode )
+		{
+			s = getPageItem(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx]._mouse_helpcursor);
+		}
+		else
+		{
+			s = getPageItem(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor);
+		}
+	}
+	
+	if( MenuLineIsInactive(s) )
+	{
+		s = right(s, len(s)-1);
+	}
+	
+	s = GetBattleMenuHelpText( s );
+	
+	return s;
+}
+
+void help_debug_listmode( int m_idx )
+{
+	PrintString( 10,230, screen, 0, "           cursor: " + str(master_battle_menus[m_idx].cursor) );
+	PrintString( 10,220, screen, 0, "_list_cursor_offs: " + str(_list_cursor_offs) );
+	PrintString( 10,210, screen, 0, "      _list_count: " + str(_list_count) );
+	PrintString( 10,200, screen, 0, "       _list_rows: " + str(_list_rows) );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include "vc\battle_menu\execute_love.vc"

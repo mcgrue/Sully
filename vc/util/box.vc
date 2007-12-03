@@ -1,0 +1,352 @@
+/// boxlib!
+
+#define BOX_MAXCOLORS	4
+
+#define BOX_COLOR_BORDER1	0	
+#define BOX_COLOR_BORDER2	1
+#define BOX_COLOR_INACTIVE	2
+#define BOX_COLOR_ACTIVE	3
+
+///The defines for Box.Border and Box.Padding
+#define BOX_UP		0
+#define BOX_DOWN	1
+#define BOX_LEFT	2
+#define BOX_RIGHT	3
+
+#define BOX_DRAWMODE_UNALLOC	0
+#define BOX_DRAWMODE_DEFAULT	1
+#define BOX_DRAWMODE_COLOR		2
+#define BOX_DRAWMODE_BGIMG		3
+
+struct Box
+{
+	int border[4];
+	int padding[4];
+	
+
+	int im_content;
+	int im_frame;
+
+	
+	int colors[BOX_MAXCOLORS];
+	int im_bg;
+	
+	int drawmode;
+	
+	string border_callfunc;
+	string bg_callfunc;
+	
+}
+
+#define MAX_BOXES	10
+Box master_box[MAX_BOXES];
+
+
+/// returns the id of an unallocated box, and sets that box to default drawmode thereby reserving it.
+/// takes the callfuncs for it's border generation and bg generation.
+/// errors if there are no unallocated boxes, returning -1.
+int NewBox( string borderfunc, string bgfunc )
+{
+	int i;
+	for(i=0; i<MAX_BOXES; i++)
+	{
+		if( master_box[i].drawmode == BOX_DRAWMODE_UNALLOC )
+		{
+			master_box[i].drawmode = BOX_DRAWMODE_DEFAULT;
+			
+			master_box[i].im_content	= 0-1;
+			master_box[i].im_bg			= 0-1;
+			master_box[i].im_frame		= 0-1;
+			
+			master_box[i].border_callfunc	= borderfunc;
+			master_box[i].bg_callfunc		= bgfunc;
+			
+			return i;
+		}
+	}	
+	
+	ErrorHandler( "Box::NewBox(): all boxes are already allocated.  Increase MAX_BOXES (currently: "+str(MAX_BOXES)+")" );
+	return 0-1;
+}
+
+int _bx;	/// The master_box[] index that the boxdrawing functions presently target.
+
+/// Selects the active box for all boxaltering functions to effect.
+///
+void SetTargetBox( int idx )
+{
+	_bx = idx;
+}
+
+/// returns the index of the presently active box.
+int GetTargetBoxIdx() { return _bx; }
+
+
+/// sets the padding for the active box.
+void SetBoxPadding( int u, int d, int l, int r )
+{
+	master_box[_bx].padding[BOX_UP]		= u;
+	master_box[_bx].padding[BOX_DOWN]	= d;
+	master_box[_bx].padding[BOX_LEFT]	= l;
+	master_box[_bx].padding[BOX_RIGHT]	= r;
+}
+
+/// sets the bordersize for this box.
+void SetBoxBordersize( int u, int d, int l, int r )
+{
+	master_box[_bx].border[BOX_UP]		= u;
+	master_box[_bx].border[BOX_DOWN]	= d;
+	master_box[_bx].border[BOX_LEFT]	= l;
+	master_box[_bx].border[BOX_RIGHT]	= r;
+}
+
+/// Sets the specified boxcolor to val.  val should be RGB() encoded.
+void SetBoxColor( int color, int value )
+{
+	master_box[_bx].colors[color] = value;
+}
+
+/// Gets the specified boxcolor from the active box.
+int GetBoxColor( int color )
+{
+	return master_box[_bx].colors[color];
+}
+
+
+/// Returns the offset from the top to the content in this box.
+int GetBoxTopOffset()
+{
+	return master_box[_bx].border[BOX_UP] + master_box[_bx].padding[BOX_UP];
+}
+
+/// Returns the offset from the bottom to the content in this box.
+int GetBoxBottomOffset()
+{
+	return master_box[_bx].border[BOX_DOWN] + master_box[_bx].padding[BOX_DOWN];
+}
+
+
+/// Returns the offset from the left to the content in this box.
+int GetBoxLeftOffset()
+{
+	return master_box[_bx].border[BOX_LEFT] + master_box[_bx].padding[BOX_LEFT];
+}
+
+
+/// Returns the offset from the right to the content in this box.
+int GetBoxRightOffset()
+{
+	return master_box[_bx].border[BOX_RIGHT] + master_box[_bx].padding[BOX_RIGHT];
+}
+
+
+/// frees any images loaded into the box, then unallocates the box.
+/// if del_bg is true, it frees the bg img if present.  If false, it leaves it alone.
+void FreeBox( int del_bg )
+{
+	if( ImageValid(master_box[_bx].im_content) )
+	{
+		freeimage( master_box[_bx].im_content );
+		master_box[_bx].im_content = 0-1;
+	}
+	
+	if( ImageValid(master_box[_bx].im_frame) )
+	{
+		freeimage( master_box[_bx].im_frame );
+		master_box[_bx].im_frame = 0-1;
+	}
+	
+	if( ImageValid(master_box[_bx].im_bg) )
+	{
+		if(del_bg)	freeimage( master_box[_bx].im_bg );
+		
+		master_box[_bx].im_bg = 0-1;
+	}
+	
+	int i;
+	for(i=0; i<4; i++)
+	{
+		master_box[_bx].border[i] = 0;
+		master_box[_bx].padding[i] = 0;
+	}
+	
+	for(i=0; i<BOX_MAXCOLORS; i++)
+	{
+		master_box[_bx].colors[i] = 0;
+	}
+
+	master_box[_bx].drawmode	= BOX_DRAWMODE_UNALLOC;
+	
+	_bx = 0-1;
+}
+
+/// sets the content image of this box.  required to draw out.
+void SetBoxContent( int im )
+{
+	master_box[_bx].im_content = im;
+}
+
+/// prerenders the box to it's stored internal image.
+/// errors if there is no content image, or if the callfuncs do not exist.
+void PrerenderBox()
+{
+	if( master_box[_bx].im_content < 0 )
+	{
+		ErrorHandler( "Box::RenderBox(): cannot render box, there is no content." );
+		return;
+	}
+	
+	if( !FunctionExists(master_box[_bx].border_callfunc) ) {
+		ErrorHandler( "Box::RenderBox(): cannot render box, there is no border callfunc of the name '"+master_box[_bx].border_callfunc+"'." );
+		return;
+	}
+	
+	if( !FunctionExists(master_box[_bx].bg_callfunc) ) {
+		ErrorHandler( "Box::RenderBox(): cannot render box, there is no border callfunc of the name '"+master_box[_bx].bg_callfunc+"'." );
+		return;
+	}
+	
+	int i = NewImage(GetBoxWidth(), GetBoxHeight());
+	RectFill(0, 0, GetBoxWidth(), GetBoxHeight(), transcolor, i);
+}
+
+/// Draws a box at x,y on img dest.
+/// If im_frame is set, it draws from that, else draws from the renderfunctions.
+void DrawBox( int x, int y, int dest )
+{
+	if( master_box[_bx].im_frame < 0 )
+	{
+		SetBoxRendDest( dest );
+		SetBoxX( x );
+		SetBoxy( y );
+		CallFunction( master_box[_bx].bg_callfunc );
+		CallFunction( master_box[_bx].border_callfunc );
+		TBlit( x+GetBoxLeftOffset(),y+GetBoxTopOffset(), master_box[_bx].im_content, dest );		
+	}
+	else
+	{
+		TBlit( x,y, master_box[_bx].im_frame, dest );		
+		TBlit( x+GetBoxLeftOffset(),y+GetBoxTopOffset(), master_box[_bx].im_content, dest );		
+	}
+}
+
+int SaveBoxToIMG()
+{
+	int im = NewImage( GetBoxWidth(), GetBoxHeight() );
+	RectFill(0,0, GetBoxWidth(),GetBoxHeight(), transcolor, im );
+	DrawBox( 0,0, im );
+	return im;
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+///////////
+/////////// Functions for the custom menu daring functions to use.
+
+int __bx_dest;	///global renderdest for the boxes.
+int __bx_x, __bx_y;	///global x/y for the boxes.
+
+void SetBoxRendDest( int im )
+{
+	__bx_dest = im;
+}
+
+int GetBoxRendDest()
+{
+	return __bx_dest;
+}
+
+void SetBoxX( int x )
+{
+	__bx_x = x;
+}
+
+int GetBoxX()
+{
+	return __bx_x;
+}
+
+void SetBoxY( int im )
+{
+	__bx_y = im;
+}
+
+int GetBoxY()
+{
+	return __bx_y;
+}
+
+int GetBoxWidth()
+{
+	return 	master_box[_bx].border[BOX_LEFT] + master_box[_bx].padding[BOX_LEFT] +
+			master_box[_bx].border[BOX_RIGHT] + master_box[_bx].padding[BOX_RIGHT] +
+			ImageWidth(master_box[_bx].im_content);
+}
+
+int GetBoxHeight()
+{
+	return 	master_box[_bx].border[BOX_UP] + master_box[_bx].padding[BOX_UP] +
+			master_box[_bx].border[BOX_DOWN] + master_box[_bx].padding[BOX_DOWN] +
+			ImageHeight(master_box[_bx].im_content);	
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////
+///////////
+/////////// Custom Drawing Functions
+
+void BoxLib_V1Border()
+{
+	int _0 = GetBoxColor(0);
+	int _1 = GetBoxColor(1);
+	int _2 = GetBoxColor(2);
+	
+	int x1 = GetBoxX();
+	int y1 = GetBoxY();
+	
+	int x2 = x1 + GetBoxWidth();
+	int y2 = y1 + GetBoxHeight();
+	
+	int dest = GetBoxRendDest();
+
+	Line(x1, y1 + 2, x1, y2 - 3, _0, dest); // TL -> BL
+	Line(x1 + 2, y1, x2 - 3, y1, _0, dest); // TL -> TR
+
+	Line(x2 - 1, y2 - 3, x2 - 1, y1 + 2, _0, dest); // BR -> TR
+	Line(x2 - 3, y2 - 1, x1 + 2, y2 - 1, _0, dest); // BR -> BL
+
+
+	Rect(x1 + 1, y1 + 1, x2 - 2, y2 - 2, _1, dest);
+	 SetPixel(x1 + 1, y1 + 1, _0, dest); // TL
+	 SetPixel(x2 - 2, y1 + 1, _0, dest); // TR
+	 SetPixel(x1 + 1, y2 - 2, _0, dest); // BL
+	 SetPixel(x2 - 2, y2 - 2, _0, dest); // BR
+
+
+	Rect(x1 + 2, y1 + 2, x2 - 3, y2 - 3, _2, dest);
+	 SetPixel(x1 + 2, y1 + 2, _1, dest); // TL
+	 SetPixel(x2 - 3, y1 + 2, _1, dest); // TR
+	 SetPixel(x1 + 2, y2 - 3, _1, dest); // BL
+	 SetPixel(x2 - 3, y2 - 3, _1, dest); // BR
+
+
+	Rect(x1 + 3, y1 + 3, x2 - 4, y2 - 4, _0, dest);
+	 SetPixel(x1 + 3, y1 + 3, _2, dest); // TL
+	 SetPixel(x2 - 4, y1 + 3, _2, dest); // TR
+	 SetPixel(x1 + 3, y2 - 4, _2, dest); // BL
+	 SetPixel(x2 - 4, y2 - 4, _2, dest); // BR
+	
+}
+
+void BoxLib_V1BG()
+{
+	int x1 = GetBoxX();
+	int y1 = GetBoxY();
+	
+	int x2 = x1 + GetBoxWidth();
+	int y2 = y1 + GetBoxHeight();
+	
+	RectFill(x1 + 4, y1 + 4, x2 - 5 , y2 - 5, GetBoxColor(3), GetBoxRendDest());
+}
+

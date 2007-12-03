@@ -1,0 +1,183 @@
+int _battlemenu_mouse_mode;
+int _battlemenu_mouse_clickmap;
+int __mousehelp_trigger;
+
+/// returns 1 if the battle menu system is expecting mousey input.  0 if not.
+int BM_MouseMode()
+{
+	return _battlemenu_mouse_mode;
+}
+
+/// Sets the Battle Menu Mouse Mode on or off.
+int BM_SetMouseMode( int i )
+{
+	_battlemenu_mouse_mode = i;
+}
+
+int BM_MouseAccept()
+{
+	return mouse.l;
+}
+
+void BM_MouseAcceptUnpress()
+{
+	mouse.l = 0;
+}
+
+int BM_MouseHelp()
+{
+	return mouse.m;
+}
+
+void BM_MouseHelpUnpress()
+{
+	mouse.m = 0;
+}
+
+int BM_MouseCancel()
+{
+	return mouse.r;
+}
+
+void BM_MouseCancelUnpress()
+{
+	mouse.r = 0;
+}
+
+int BM_MouseScrollUp()
+{
+	if( mouse.w > 0 )
+	{
+		return 1;
+	}
+	
+	return 0;
+}
+
+int BM_MouseScrollDown()
+{
+	if( mouse.w < 0 )
+	{
+		return 1;
+	}
+		
+	return 0;
+}
+
+void BM_MouseScrollUnpress()
+{
+	mouse.w = 0;
+}
+
+
+
+int __bm_mouse_pixel;
+
+void MS_CaptureMousePixel()
+{
+	__bm_mouse_pixel = GetPixel( mouse.x, mouse.y, _battlemenu_mouse_clickmap );
+		
+	__r = GetR(__bm_mouse_pixel);
+	__g = GetG(__bm_mouse_pixel);
+	__b = GetB(__bm_mouse_pixel);
+}
+
+/// returns the cursor index of the item clicked upon if a cursor pane was clicked upon, -1 if it's not a menu item.
+///
+int BM_MouseClickCursor()
+{
+	if( !GetG(__bm_mouse_pixel) && !GetB(__bm_mouse_pixel) )
+	{
+		return 255-GetR(__bm_mouse_pixel);
+	}
+	
+	return 0-1;
+}
+
+/// returns the level index of the level to be returned to a previous layer pane was clicked upon, -1 if it's not a layer item.
+///
+int BM_MouseClickLayer()
+{
+	if( !GetR(__bm_mouse_pixel) && !GetB(__bm_mouse_pixel) )
+	{
+		return 255-GetG(__bm_mouse_pixel);
+	}
+	
+	return 0-1;
+}
+
+/// returns the level index of the level to be returned to a previous layer pane was clicked upon, -1 if it's not a layer item.
+///
+int BM_MouseClickSpecial()
+{
+	if( !GetR(__bm_mouse_pixel) && !GetG(__bm_mouse_pixel) )
+	{
+		return 255-GetB(__bm_mouse_pixel);
+	}
+	
+	return 0-1;
+}
+
+
+/// Nothingness is done in 0,255,255
+/// Previous levels are done in 0,255-lvl,0
+
+void BM_UpdateMouseClickMap( int m_idx )
+{
+	int tmp_img;
+
+	if( ImageValid(_battlemenu_mouse_clickmap) )
+	{
+		FreeImage( _battlemenu_mouse_clickmap );
+	}
+	
+	_battlemenu_mouse_clickmap = NewImage( ImageWidth(screen), ImageHeight(screen) );
+	RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(255,0,255), _battlemenu_mouse_clickmap );
+	
+	if( !master_battle_menus[m_idx].cur_level )
+	{
+		DrawBasepageFlipIndicatorsClickmap( m_idx, 1, _battlemenu_mouse_clickmap );
+	}
+	
+	int i;
+	for( i=0; i<master_battle_menus[m_idx].cur_level; i++ )
+	{
+	 	RectFill(
+	 		master_battle_menus[m_idx].x+(i*master_battle_menus[m_idx].lvl_offx), 
+			master_battle_menus[m_idx].y+(i*master_battle_menus[m_idx].lvl_offy),
+			
+			master_battle_menus[m_idx].x+(i*master_battle_menus[m_idx].lvl_offx) + ImageWidth(master_battle_menus[m_idx].scratch_img[i]),
+			master_battle_menus[m_idx].y+(i*master_battle_menus[m_idx].lvl_offx) + ImageHeight(master_battle_menus[m_idx].scratch_img[i]),
+			RGB(0,255-i,0), 
+			_battlemenu_mouse_clickmap
+		);
+	}
+	
+	tmp_img = SpawnClickPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
+	
+	TBlit(
+		master_battle_menus[m_idx].x+(i*master_battle_menus[m_idx].lvl_offx), 
+		master_battle_menus[m_idx].y+(i*master_battle_menus[m_idx].lvl_offy),
+		tmp_img, 
+		_battlemenu_mouse_clickmap
+	);
+	
+	FreeImage( tmp_img );
+	
+	/// Previous levels are done in 0,255-lvl,0
+
+
+/*			
+	if( master_battle_menus[m_idx].page_base_count > 1 )
+	{
+		if( master_battle_menus[m_idx].cur_level == 0 )
+		{
+			DrawBasepageFlipIndicators( m_idx, 1 );
+		}
+		else
+		{
+			DrawBasepageFlipIndicators( m_idx, 0 );
+		}
+	}
+*/	
+}

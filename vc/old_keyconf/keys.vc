@@ -1,0 +1,544 @@
+
+int imKeyboard;
+
+/// Extended information for the key[] array, specifically for the included keyboard config settings.
+struct keybd_info
+{
+	string name;	//the name of this key.
+	int x,y,w,h;	//the x,y coords and w,h size of this key on the imagemap.
+	int dbl_x, dbl_y, dbl_w, dbl_h;	/// the x,y and w,h of any doubled-key.  Space-wasting, but I don't care.  Neener.
+}
+
+/// the extended-info array for 
+keybd_info arKeybd[255];
+
+/// Helper for init_keyconfig()
+void addSimpleKey( int i, int x, int y, string name )
+{
+	arKeybd[i].x = x;
+	arKeybd[i].y = y;
+	arKeybd[i].w = 11;
+	arKeybd[i].h = 11;
+	arKeybd[i].name = name;
+	
+	arKeybd[i].dbl_x = 0-1;
+	arKeybd[i].dbl_y = 0-1;
+	arKeybd[i].dbl_w = 0-1;
+	arKeybd[i].dbl_h = 0-1;
+}
+
+/// Helper for init_keyconfig()
+void addWeirdKey( int i, int x, int y, int w, int h, string name )
+{
+	arKeybd[i].x = x;
+	arKeybd[i].y = y;
+	arKeybd[i].w = w;
+	arKeybd[i].h = h;
+	arKeybd[i].name = name;
+	
+	arKeybd[i].dbl_x = 0-1;
+	arKeybd[i].dbl_y = 0-1;
+	arKeybd[i].dbl_w = 0-1;
+	arKeybd[i].dbl_h = 0-1;	
+}
+
+/// Helper for init_keyconfig()
+void addSecondKey( int i, int x, int y, int w, int h )
+{
+	arKeybd[i].dbl_x = x;
+	arKeybd[i].dbl_y = y;
+	arKeybd[i].dbl_w = w;
+	arKeybd[i].dbl_h = h;	
+}
+
+/// Initializes the arKeybd[] array and loads all images needed by the keyboard config system
+///
+///
+void init_keyconfig()
+{
+	int i;
+	
+	// blank'm all with a non-empty string so that if anyone ever hits a weird 
+	// non-standard key, we'll know it's not yet in this system and can add it
+	// later.
+	for( i=0; i<255; i++ )
+	{
+		arKeybd[i].name = "UNKNOWN";
+	}
+	
+	addSimpleKey( 1,  0,0, "ESC" );
+	
+
+	addSimpleKey( 2,  11,22, "1" );
+	addSimpleKey( 3,  22,22, "2" );
+	addSimpleKey( 4,  33,22, "3" );
+	addSimpleKey( 5,  44,22, "4" );
+	addSimpleKey( 6,  55,22, "5" );
+	addSimpleKey( 7,  66,22, "6" );
+	addSimpleKey( 8,  77,22, "7" );
+	addSimpleKey( 9,  88,22, "8" );
+	addSimpleKey( 10, 99,22, "9" );
+	addSimpleKey( 11, 110,22, "0" );
+	addSimpleKey( 12, 121,22, "-" );
+	addSimpleKey( 13, 132,22, "+" );
+
+	addWeirdKey( 14, 143,22, 22,11, "Backspace" );
+	
+	addWeirdKey( 15, 0,33,16,11,   "Tab" );
+	addSimpleKey( 16, 16,33,  "Q" );
+	addSimpleKey( 17, 27,33,  "W" );
+	addSimpleKey( 18, 38,33,  "E" );
+	addSimpleKey( 19, 49,33,  "R" );
+	addSimpleKey( 20, 60,33,  "T" );
+	addSimpleKey( 21, 71,33,  "Y" );
+	addSimpleKey( 22, 82,33,  "U" );
+	addSimpleKey( 23, 93,33,  "I" );
+	addSimpleKey( 24, 104,33, "O" );
+	addSimpleKey( 25, 115,33, "P" );
+	addSimpleKey( 26, 126,33, "[" );
+	addSimpleKey( 27, 137,33, "]" );
+	
+	addWeirdKey( 28, 143,44, 22,11, "Enter" );
+	addSecondKey( 28, 242, 55, 11, 22 );
+	
+	addWeirdKey( 29, 0,66, 16,11, "Left Ctrl" );
+	
+	addSimpleKey( 30, 22,44, 		"A" );
+	addSimpleKey( 31, 22+11,44, 	"S" );
+	addSimpleKey( 32, 22+22,44, 	"D" );
+	addSimpleKey( 33, 22+33,44, 	"F" );
+	addSimpleKey( 34, 22+44,44, 	"G" );
+	addSimpleKey( 35, 22+55,44, 	"H" );
+	addSimpleKey( 36, 22+66,44, 	"J" );
+	addSimpleKey( 37, 22+77,44, 	"K" );
+	addSimpleKey( 38, 22+88,44, 	"L" );
+	addSimpleKey( 39, 22+99,44, 	":" );
+	addSimpleKey( 40, 22+99+11,44,	chr(34) );
+
+	
+	addSimpleKey( 41, 0,22, "~" );
+	addWeirdKey( 42, 0,55, 25,11, "Left Shift" );
+	addWeirdKey( 43, 148,33,17,11, "\" );
+	
+	addSimpleKey( 44, 25,55, 	"Z" );
+	addSimpleKey( 45, 25+11,55, "X" );
+	addSimpleKey( 46, 25+22,55, "C" );
+	addSimpleKey( 47, 25+33,55, "V" );
+	addSimpleKey( 48, 25+44,55, "B" );
+	addSimpleKey( 49, 25+55,55, "N" );
+	addSimpleKey( 50, 25+66,55, "M" );
+	addSimpleKey( 51, 25+77,55, "<" );
+	addSimpleKey( 52, 25+88,55, ">" );
+	addSimpleKey( 53, 25+99,55, "?" );
+	
+
+	addWeirdKey( 54, 135,55, 30,11, "Right Shift" );
+	addSimpleKey( 55, 231,22, "PAD *" );
+	addWeirdKey( 56, 29,66, 16,11, "Alt" );
+	addSecondKey( 56, 120, 66, 16, 11 );
+	addWeirdKey( 57, 45,66, 75,11, "Space" );
+	
+
+	addWeirdKey( 58, 0,44,22,11, "Caps Lock" );
+	
+	addSimpleKey( 59, 22,0, "F1" );
+	addSimpleKey( 60, 33,0, "F2" );
+	addSimpleKey( 61, 44,0, "F3" );
+	addSimpleKey( 62, 55,0, "F4" );
+	addSimpleKey( 63, 72,0, "F5" );
+	addSimpleKey( 64, 83,0, "F6" );
+	addSimpleKey( 65, 94,0, "F7" );
+	addSimpleKey( 66, 105,0, "F8" );
+	addSimpleKey( 67, 122,0, "F9" );
+	addSimpleKey( 68, 133,0, "F10" );
+	addSimpleKey( 69, 209,22,"NUM LOCK" );
+	addSimpleKey( 70, 183,0, "SCROLL LOCK" );
+	addSimpleKey( 71, 209,33, "PAD 7" );
+	
+	addSimpleKey( 72, 182,55, "UP" );
+	addSecondKey( 72, 220,33,11,11  );
+	
+	addSimpleKey( 73, 231,33, "PAD 9" );
+	addSimpleKey( 74, 242,22, "PAD -" );
+	
+
+	addSimpleKey( 75, 171,66, "LEFT" );
+	addSecondKey( 75, 209,44,11,11  );
+	
+	addSimpleKey( 76, 220,44, "PAD 5" );
+	
+	addSimpleKey( 77, 193,66, "RIGHT" );
+	addSecondKey( 77, 231,44,11,11  );
+	
+	addWeirdKey( 78, 242,33,11,22, "PAD +" );
+	addSimpleKey( 79, 209,55, "PAD 1" );
+
+	addSimpleKey( 80, 182,66, "DOWN" );
+	addSecondKey( 80, 220,55,11,11  );
+	
+	addSimpleKey( 81, 231,55, "PAD 3" );
+	addWeirdKey( 82, 209,66,22,11, "PAD 0" );
+
+	addSimpleKey( 83, 231,66, "PAD ." );
+	
+	addSimpleKey( 87, 144,0, "F11" );
+	addSimpleKey( 88, 155,0, "F12" );
+	
+	addWeirdKey( 157, 149,66, 17,11, "Right Ctrl" );
+	
+	addSimpleKey( 181, 220,22, "PAD /" );
+	
+	addSimpleKey( 183, 172,0, "PRNTSCRN" );
+	
+	addSimpleKey( 187, 183,0, "SCROLL LOCK" );
+	
+	addSimpleKey( 199, 182,22, "HOME" );
+
+	addSimpleKey( 201, 193,22, "PAGE UP" );
+
+
+	addSimpleKey( 207, 182,33, "END" );
+
+	addSimpleKey( 209, 193,33, "PAGE DOWN" );
+	addSimpleKey( 210, 171,22, "INSERT" );
+	addSimpleKey( 211, 171,33, "DELETE" );
+		
+	imKeyboard = LoadImage( "vc\keyconf\keyboard.pcx" );	
+}
+
+
+int _keycount;
+
+void do_custom_keyboard_menu( string bg_render_func )
+{
+	int i;
+	
+	_keycount = 0;
+	_keymode = 1;
+	
+	///unpress everything first
+	for( i=0; i<255; i++ ) 
+	{
+		key[i] = 0; 
+	}
+	
+	//null out the old selections too
+	for( i=0; i<CURRENT_KEYCOUNT; i++ )
+	{
+		_my_keys[i] = 0;
+	}
+	
+	while( _keycount < CURRENT_KEYCOUNT )
+	{
+		Render();
+		CallFunction(bg_render_func);
+		
+		DrawKeyboard( 30, 30, _keycount );
+		
+		PrintString(10, 110, screen, fnt_kyconf, "Please press an unused key for: "+GetKeyConfName(_keycount)+".");
+		
+		for( i=0; i<CURRENT_KEYCOUNT; i++ )
+		{			
+			PrintRight(120, 120+(i*10), screen, fnt_kyconf, GetKeyConfName(i)+":");
+			
+			if( i < _keycount )
+			{
+				PrintString(120, 120+(i*10), screen, fnt_kyconf, arKeybd[_my_keys[i]].name);
+			}
+		}
+		
+		ShowPage();
+	}
+}
+
+void DrawKeyboard( int xoff, int yoff, int keynum ) 
+{
+	int i,j, taint;
+	RectFill( xoff,yoff, xoff+ImageWidth(imKeyboard),yoff+ImageHeight(imKeyboard), RGB(255,255,255), screen);
+	
+	for( i=0; i<255; i++ ) 
+	{
+		for( j=0; j<keynum; j++ )
+		{
+			_DrawBlueKey( _my_keys[j], xoff, yoff );
+			
+			/*
+			RectFill( xoff+arKeybd[_my_keys[j]].x, yoff+arKeybd[_my_keys[j]].y, xoff+arKeybd[_my_keys[j]].x+arKeybd[_my_keys[j]].w, yoff+arKeybd[_my_keys[j]].y+arKeybd[_my_keys[j]].h, RGB(0,0,255), screen);
+			
+			if( arKeybd[_my_keys[j]].dbl_w >= 0  )
+			{
+				RectFill( xoff+arKeybd[_my_keys[j]].dbl_x, yoff+arKeybd[_my_keys[j]].dbl_y, xoff+arKeybd[_my_keys[j]].dbl_x+arKeybd[_my_keys[j]].dbl_w, yoff+arKeybd[_my_keys[j]].dbl_y+arKeybd[_my_keys[j]].dbl_h, RGB(0,0,255), screen);
+			}
+			*/
+		}
+		
+		_DrawBlueKey( 72, xoff, yoff );
+		_DrawBlueKey( 75, xoff, yoff );
+		_DrawBlueKey( 77, xoff, yoff );
+		_DrawBlueKey( 80, xoff, yoff );
+		
+		//RectFill( xoff+arKeybd[_my_keys[j]].x, yoff+arKeybd[_my_keys[j]].y, xoff+arKeybd[_my_keys[j]].x+arKeybd[_my_keys[j]].w, yoff+arKeybd[_my_keys[j]].y+arKeybd[_my_keys[j]].h, RGB(0,0,255), screen);
+		
+		if( key[i] ) 
+		{
+			taint = 0;
+			
+			for( j=0; j<keynum; j++ )
+			{
+				if( i == _my_keys[j] )
+				{
+					PlaySound(sfx_keyconf_buzz, GetKeyConfVol());
+					taint = 1;
+				}
+			}
+			
+			if( i == 72 ) taint = 1;
+			if( i == 75 ) taint = 1;
+			if( i == 77 ) taint = 1;
+			if( i == 80 ) taint = 1;
+			
+			if( !taint )
+			{
+				RectFill( xoff+arKeybd[i].x, yoff+arKeybd[i].y, xoff+arKeybd[i].x+arKeybd[i].w, yoff+arKeybd[i].y+arKeybd[i].h, RGB(255,0,0), screen);
+
+				if( arKeybd[i].dbl_w >= 0  )
+				{
+					RectFill( xoff+arKeybd[i].dbl_x, yoff+arKeybd[i].dbl_y, xoff+arKeybd[i].dbl_x+arKeybd[i].dbl_w, yoff+arKeybd[i].dbl_y+arKeybd[i].dbl_h, RGB(255,0,0), screen);
+				}
+				
+				_my_keys[keynum] = i;
+				
+				if( keynum < 4 )
+				{
+					SetButtonKey(keynum+1, i);
+				}
+				
+				_keycount++;
+			}
+		}
+	}
+	
+	TBlit( xoff, yoff, imKeyboard, screen );
+}
+
+void _DrawBlueKey( int idx, int xoff, int yoff )
+{
+	RectFill( xoff+arKeybd[idx].x, yoff+arKeybd[idx].y, xoff+arKeybd[idx].x+arKeybd[idx].w, yoff+arKeybd[idx].y+arKeybd[idx].h, RGB(0,0,255), screen);
+			
+	if( arKeybd[idx].dbl_w >= 0  )
+	{
+		RectFill( xoff+arKeybd[idx].dbl_x, yoff+arKeybd[idx].dbl_y, xoff+arKeybd[idx].dbl_x+arKeybd[idx].dbl_w, yoff+arKeybd[idx].dbl_y+arKeybd[idx].dbl_h, RGB(0,0,255), screen);
+	}
+}
+
+
+void do_custom_joystick_menu( string bg_render_func )
+{
+	int x = 20;
+	int y = 20;
+	int i;
+	
+	if( !_initJoyConf( bg_render_func, x, y ) ) return;
+	
+	_keycount = 0;
+	_keymode = 2;
+	while( _keycount < CURRENT_KEYCOUNT )
+	{
+		Render();
+		CallFunction(bg_render_func);
+		
+		DrawJoystick( x,y, _keycount );
+		
+		PrintString(x+10, 110, screen, fnt_kyconf, "Please press an unused button for: " );
+		PrintString(x+40, 130, screen, fnt_kyconf, GetKeyConfName(_keycount) );
+		
+		for( i=0; i<CURRENT_KEYCOUNT; i++ )
+		{
+			PrintString(x, y+(i*10), screen, fnt_kyconf, GetKeyConfName(i)+":");
+			
+			if( i < _keycount )
+			{
+				PrintString(x+100, y+(i*10), screen, fnt_kyconf, str(_my_keys[i]) );
+			}
+		}
+		
+		ShowPage();
+	}
+}
+
+int _joyConf[4][32];
+int _joy_selector;
+
+/// returns 0 if cancelled out, 1 if continuing.
+int _initJoyConf( string bg_render_func, int xoff, int yoff )
+{
+	key[SCAN_ENTER] = 0;
+	
+	
+	while( !key[SCAN_ENTER] )
+	{
+		Render();
+		CallFunction( bg_render_func );
+		PrintString( xoff, yoff, screen, fnt_kyconf, "Please do not touch any controllers." );
+		PrintString( xoff, yoff+10, screen, fnt_kyconf, "Press [Enter] on the keyboard to continue." );
+		ShowPage();
+	}
+	
+	_initJoyStates();
+	
+	key[SCAN_ESC] = 0;
+	while( !ReportJoyButtonPress() )
+	{
+		Render();
+		CallFunction( bg_render_func );
+		PrintString( xoff, yoff, screen, fnt_kyconf, "You have "+str(_joy_selector)+" active joysticks/gamepads." );
+		PrintString( xoff, yoff+10, screen, fnt_kyconf, "Please press a button on one to continue." );
+		PrintString( xoff, yoff+20, screen, fnt_kyconf, "Please press [ESC] to quit." );
+		ShowPage();
+		
+		if( key[SCAN_ESC] ) return 0;
+	}
+	
+	key[SCAN_ENTER] = 0;
+	
+	
+	while( !key[SCAN_ENTER] )
+	{
+		Render();
+		CallFunction( bg_render_func );
+		PrintString( xoff, yoff, screen, fnt_kyconf, "You selected joystick #"+str(joystick)+"." );
+		PrintString( xoff, yoff+10, screen, fnt_kyconf, "Press [Enter] on the keyboard to continue." );
+		ShowPage();
+	}
+	
+	return 1;
+}
+
+/// Records the current state of all four joysticks, and sets _joy_selector = to the number of active joysticks.
+void _initJoyStates()
+{
+	int i,j;
+	
+	for( i=0; i<4; i++ )
+	{
+		joystick = i;
+		
+		if( joy.active ) _joy_selector++;
+	}
+	
+	for( i=0; i<4; i++ )
+	{
+		joystick = i;
+		
+		for(j=0; j<32; j++)
+		{
+			_joyConf[i][j] = joy.button[j];
+		}
+	}
+}
+
+/// returns 1 if a joystick button state changes from what was recorded in _initJoyStates(), and sets that as the active joystick
+///
+int ReportJoyButtonPress()
+{
+	int i,j;
+	
+	for( i=0; i<4; i++ )
+	{
+		joystick = i;
+		
+		for(j=0; j<32; j++)
+		{
+			if( _joyConf[i][j] != joy.button[j] )
+			{
+				joystick = i;
+				
+				return 1;
+			}
+		}
+	}
+	
+	return 0;
+}
+
+void DrawJoystick( int xoff, int yoff, int keynum )
+{
+	int i, taint, j;
+	
+	for( i=0; i<32; i++ ) 
+	{
+	
+		/// If the joystick button is different from the 'at rest' state and is also 1
+		if( _joyConf[joystick][i] != joy.button[i]  && joy.button[i] ) 
+		{
+			taint = 0;
+
+			for( j=0; j<keynum; j++ )
+			{
+				if( i == _my_keys[j] )
+				{
+					PlaySound(sfx_keyconf_buzz, GetKeyConfVol());
+					taint = 1;
+				}
+			}
+
+			if( !taint )
+			{
+				_my_keys[keynum] = i;
+
+				if( keynum < 4 )
+				{
+					Log( "SetButtonJB("+str(keynum+1)+", "+str(i)+");" );
+					SetButtonJB(keynum+1, i);
+				}
+
+				_keycount++;
+			}
+		}
+	}
+}
+
+/// Sets the keymode and all button bindings to listen to the default b1-b4
+///
+void ResetToDefaultKeymapping()
+{
+	_keymode = 0;
+	
+	SetButtonJB(1, 0);
+	SetButtonJB(2, 1);
+	SetButtonJB(3, 2);
+	SetButtonJB(4, 3);
+	
+	SetButtonKey(1, SCAN_ENTER);
+	SetButtonKey(2, SCAN_ALT);
+	SetButtonKey(3, SCAN_ESC);
+	SetButtonKey(4, SCAN_SPACE);
+	
+		
+}
+
+/// Reset all keymaps based on _keymode and the contents of _my_keys[]
+///
+void ReinforceKeymapping()
+{
+	int i;
+	
+	if( _keymode == 1 ) //keyboard
+	{
+		for( i=0; i<4; i++ )
+		{
+			SetButtonKey(i+1, _my_keys[i]);
+		}
+	}
+	else if( _keymode == 2 ) //joystick
+	{
+		for( i=0; i<4; i++ )
+		{
+			SetButtonJB(i+1, _my_keys[i]);
+		}	
+	}
+	else
+	{
+		ResetToDefaultKeymapping();
+	}
+}

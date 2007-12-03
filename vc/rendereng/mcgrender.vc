@@ -1,0 +1,1187 @@
+/// Grue's dumb and probably extraneous render engine, mark 3!
+///
+/// "The McGrender Engine!"
+///
+/// Stupider and simpler than it's older brothers!!!
+///
+///
+/// Cons:
+/// * doesn't take care of sorting issues
+/// * doesn't handle overflows kindly
+/// * leaves a lot up to the programmer for custom things
+/// * doesn't nativly support frame-animations
+///
+/// Pros:
+/// * handles movement of sprites while persistantly drawing them
+/// * ...
+/// * man I need to recode this.
+///
+///
+/// one at the tail for temp!
+#define MCGRENDER_MAX 		127
+#define MCG_TEMP 		127
+#define MCGRENDER_STACKSIZE 	128
+
+#define MCGRENDER_MAXLAYERS	10
+
+/// fixed point MADNESS!
+#define MC_MULTIPLIER 1000
+
+
+/// an instance of an auto-rendering image in the mcgrender engine.
+struct mcg_image_mkIV 
+{
+	int image;		// the image handle for this mcg_image_mkIV.  Only autorendered if is_callfunc == 0.  
+				// note that the image object is used for the clickable area of this mcg_image_mkIV, so if you want a callfunc'd
+				// mcg_image_mkIV to be clickable, make sure it has a scratch image of the dimensions you want present.
+	
+	int sprite_ref;		// If you want a static image, this needs to be 0.  If you want a scripted sprite, this needs to be a valid sprite_heap index.
+				// The sprite-processor will set the .image reference to the sprite's currently needed frame.
+	
+	int x,y;		// the present coordinates for this image, inflated by MC_MULTIPLIER
+	int start_x, start_y;	// the starting coordinates for this image, if it is moving.
+	int final_x, final_y;	// the destination coordinates for this image, if it is moving.
+	
+	int is_moving;		// true if the image is presently altering it's location via the mcgrender engine's machinations.
+	int is_on;		// true if the image is presently visible.
+	int is_callfunc;	// true if the image is being rendered via a special function.
+	
+	int x_chunk, y_chunk;	// the amount of x and y to move this image per tick.  distorted by MC_MULTIPLIER for fixed pointedness.
+	int last_time;		// the last time this image was moved.
+	int delay;		// delay how many hundreds of a second this image should take in getting from (start_x, start_y) to (final_x, final_y)
+	
+	string callfunc;	// optional callfunc for special rendering of this mcg_image_mkIV.  Good for throwing code-generated effects into the renderstack.
+	string delete_callfunc;	// called when a destruction function is called on this mcg_image_mkIV.  For deallocation purposes and such.
+	
+	int delete_on_stop;		// flag to remove this item if is_moving is ever false.  CURRENTLY NOT WORKING.
+
+	/// for clickable objects
+	int clickable;		// true if this mcg_image_mkIV can be clicked upon.
+	string click_callfunc;	// function to be called if clicked upon.
+	string assoc_data;	// string to associate with this clickable object
+	int assoc_idx;		// int to associate with this clickable object
+	
+	///layer infoz
+	int prev_idx;	// the index of the previous mcg_image_mkIV in this layer ( this would be an image 'below' the current one, when rendering. )
+	int next_idx;	// the index of the next mcg_image_mkIV in this layer ( this would be an image 'above' the current one, when rendering. )
+	int layer_idx;	// the index of the mcg_mkIV_layer that this image belongs to.
+}
+
+/// an instance of a layer in the mcgrender engine.
+struct mcg_mkIV_layer
+{
+	int head_idx;
+	int tail_idx;
+	
+	int count;
+}
+
+
+mcg_image_mkIV mcgIV_heap[MCGRENDER_STACKSIZE];
+int mcgIV_heap_count = 0;
+
+int mcgIV_sprites[MCGRENDER_STACKSIZE];
+int mcgIV_sprite_count = 0;
+
+mcg_mkIV_layer McGrender_layers[MCGRENDER_MAXLAYERS];
+int McGrender_layer_count;
+int McGrender_active_layer;
+
+/// Initializes the system.  Call this or die.
+///
+void InitMcgrender()
+{
+	int i;
+	for( i=0; i<MCGRENDER_MAXLAYERS; i++ )
+	{
+		McGrender_layers[i].count 	= 0;
+		McGrender_layers[i].head_idx 	= -1;
+		McGrender_layers[i].tail_idx 	= -1;
+	}
+	
+	McGrender_layer_count 	= 0;
+	McGrender_active_layer	= -1;
+}
+
+
+/// returns the real x position of a node on the render engine heap.
+///
+int mcg_getX( int heap_idx )
+{
+	return mcgIV_heap[heap_idx].x/MC_MULTIPLIER;
+}
+
+/// returns the real y position of a node on the render engine heap.
+///
+int mcg_getY( int heap_idx )
+{
+	return mcgIV_heap[heap_idx].y/MC_MULTIPLIER;
+}
+
+
+/// Spawns a new layer for the McGrender engine, and returns that layer's indice.
+///
+int McgSpawnLayer()
+{
+	if( McGrender_layer_count >= MCGRENDER_MAXLAYERS )
+	{
+		exit( "McgSpawnLayer(): maximum layer count ("+str(MCGRENDER_MAXLAYERS)+") reached.  Maybe you should increase MCGRENDER_MAXLAYERS?" );
+	}
+	
+	int i;
+	i = McGrender_layer_count;
+	McGrender_layer_count++;	
+	return i;
+}
+
+
+
+void McgSetActiveLayer( int i )
+{
+	if( i<0 || i> McGrender_layer_count )
+	{
+		exit( "McgSetActiveLayer(): specified layer ("+str(i)+") is invalid.  There are presently ("+str(McGrender_layer_count)+") valid layers." );
+	}
+	
+	McGrender_active_layer = i;
+}
+
+void McgLayerAddImg( int img_heap_idx )
+{
+	int old_tail;
+
+	if( McGrender_active_layer < 0 || McGrender_active_layer >= MCGRENDER_MAXLAYERS )
+	{
+		exit( "McgLayerAddImg(): supposedly active layer ("+str(McGrender_active_layer)+") is invalid.  There are presently ("+str(McGrender_layer_count)+") valid layers." );
+	}
+	
+	if( McGrender_layers[McGrender_active_layer].head_idx < 0 )
+	{
+		if( McGrender_layers[McGrender_active_layer].count )
+		{
+			exit( "McgLayerAddImg(): there was no head, yet there was a count of ("+str(McGrender_layers[McGrender_layer_count].count)+").  Something foul is afoot! (active layer ("+str(McGrender_active_layer)+"))" );
+		}
+		else
+		{
+			McGrender_layers[McGrender_active_layer].head_idx = img_heap_idx;
+			McGrender_layers[McGrender_active_layer].tail_idx = img_heap_idx;
+			
+			McImgSetPrevLink( img_heap_idx, -1 );
+			McImgSetNextLink( img_heap_idx, -1 );
+			McImgSetLayer( img_heap_idx, McGrender_active_layer );
+			
+			McGrender_layers[McGrender_active_layer].count++;
+		}
+	}
+	else
+	{
+		old_tail = McGrender_layers[McGrender_active_layer].tail_idx;
+		McGrender_layers[McGrender_active_layer].tail_idx = img_heap_idx;
+		
+		McImgSetNextLink( old_tail, img_heap_idx );
+		McImgSetPrevLink( img_heap_idx, old_tail );
+		McImgSetNextLink( img_heap_idx, -1 );
+		
+		McImgSetLayer( img_heap_idx, McGrender_active_layer );
+		
+		McGrender_layers[McGrender_active_layer].count++;
+	}
+	
+
+}
+
+/// sets idx's previous link to prev.
+/// if prev is < 0, sets idx as it's layer's head.
+void McImgSetPrevLink( int idx, int prev )
+{
+	if( idx < 0 ) return;
+
+	mcgIV_heap[idx].prev_idx = prev;
+	
+	if( prev < 0 )
+	{
+		McGrender_layers[McGrender_active_layer].head_idx = idx;		
+	}
+}
+
+/// sets idx's next link to next.
+/// if next is < 0, sets idx as it's layer's tail.
+void McImgSetNextLink( int idx, int next )
+{
+	if( idx < 0 ) return;
+
+	mcgIV_heap[idx].next_idx = next;
+	
+	if( next < 0 )
+	{
+		McGrender_layers[McGrender_active_layer].tail_idx = idx;		
+	}
+}
+
+void McImgSetLayer( int idx, int layer )
+{
+	mcgIV_heap[idx].layer_idx = layer;
+}
+
+int mcg_valid_img_cnt;
+int mcg_count_valid_imgs()
+{
+	int i;
+	mcg_valid_img_cnt = 0;
+	for( i=0; i<MCGRENDER_STACKSIZE; i++ ) 
+	{
+		if( ImageValid(mcgIV_heap[i].image) )
+		{
+			mcg_valid_img_cnt++;
+		}
+	}
+	
+	return mcg_valid_img_cnt;
+}
+
+/// destroys everything on this mcgrender
+void mcg_destroy() 
+{
+	int i;
+
+//Log( "mcg 1" );
+	for( i=0; i<MCGRENDER_STACKSIZE; i++ ) 
+	{
+		//CallFunction( mcgIV_heap[i].delete_callfunc );
+//Log( "mcg_destroy["+str(i)+"] ': "+mcgIV_heap[i].delete_callfunc+"'" );
+		mcg_delete( i );
+		mcgIV_heap[i].is_on = 0;
+	}
+//Log( "mcg 2" );	
+	for( i=0; i<mcgIV_sprite_count; i++ )
+	{
+		FreeSprite( mcgIV_sprites[i], 1 );
+	}
+
+//Log( "mcg 3" );
+//MessageBox( str(numimagehandles) );
+	
+	McGrender_layer_count = 0;
+	mcgIV_sprite_count = 0;
+	mcgIV_heap_count = 0;
+}
+
+/// copies a mcgIV_heap entry from index 'pimp' into entry 'bitch'.
+/// currently disabled.
+void mcg_copy( int bitch, int pimp ) 
+{
+	exit( "CURRENTLY DISABLED: mcg_copy( "+str(bitch)+", "+str(pimp)+" ) " );
+	
+	mcgIV_heap[bitch].image 		= mcgIV_heap[pimp].image;
+	mcgIV_heap[bitch].sprite_ref 		= mcgIV_heap[pimp].sprite_ref;
+	mcgIV_heap[bitch].x 			= mcgIV_heap[pimp].x;
+	mcgIV_heap[bitch].y 			= mcgIV_heap[pimp].y;
+	mcgIV_heap[bitch].start_x 		= mcgIV_heap[pimp].start_x;
+	mcgIV_heap[bitch].start_y 		= mcgIV_heap[pimp].start_y;
+	mcgIV_heap[bitch].final_x 		= mcgIV_heap[pimp].final_x;
+	mcgIV_heap[bitch].final_y 		= mcgIV_heap[pimp].final_y;
+	mcgIV_heap[bitch].is_moving		= mcgIV_heap[pimp].is_moving;
+	mcgIV_heap[bitch].is_on 		= mcgIV_heap[pimp].is_on;
+	mcgIV_heap[bitch].is_callfunc		= mcgIV_heap[pimp].is_callfunc;
+	mcgIV_heap[bitch].x_chunk 		= mcgIV_heap[pimp].x_chunk;
+	mcgIV_heap[bitch].y_chunk 		= mcgIV_heap[pimp].y_chunk;
+	mcgIV_heap[bitch].last_time 		= mcgIV_heap[pimp].last_time;
+	mcgIV_heap[bitch].callfunc 		= mcgIV_heap[pimp].callfunc;
+	mcgIV_heap[bitch].delete_on_stop 	= mcgIV_heap[pimp].delete_on_stop;	
+	mcgIV_heap[bitch].delete_callfunc 	= mcgIV_heap[pimp].delete_callfunc;	
+}
+
+/// switches the contents of mcgIV_heap[a] and mcgIV_heap[b]
+/// currently disabled.
+void mcg_switch( int a, int b ) 
+{
+	exit( "CURRENTLY DISABLED: mcg_switch( "+str(a)+", "+str(b)+" ) " );
+
+	mcg_copy( MCG_TEMP , a );
+	mcg_copy( a, b );
+	mcg_copy( b, MCG_TEMP );
+}
+
+/// Calls the specified mcgIV_heap entry's delete function, and erases it's image from memory.
+///
+/// Note, deleting from the stack will likely corrupt any index references.
+/// Delete with caution! :)
+void mcg_delete( int idx ) 
+{
+	int i;
+	CallFunction( mcgIV_heap[idx].delete_callfunc );
+	
+	// if there's a previous image, 
+	if( mcgIV_heap[idx].prev_idx > 0 ) 
+	{
+		//if there's a next image.
+		if( mcgIV_heap[idx].next_idx > 0 )
+		{
+			McImgSetNextLink( mcgIV_heap[idx].prev_idx, mcgIV_heap[idx].next_idx );
+			McImgSetPrevLink( mcgIV_heap[idx].next_idx, mcgIV_heap[idx].prev_idx );
+		}
+		else	//we were the tail.
+		{
+		
+			McImgSetNextLink( mcgIV_heap[idx].prev_idx, -1 );			
+		}
+	}
+	else // we were the head, make the next one the layer's head instead.
+	{
+		McImgSetNextLink( mcgIV_heap[idx].next_idx, -1 );
+	}
+	
+	mcgIV_heap[idx].prev_idx = -1;
+	mcgIV_heap[idx].next_idx = -1;
+	mcgIV_heap[idx].layer_idx = -1;
+	
+	if( ImageValid(mcgIV_heap[idx].image) )
+	{
+		FreeImage( mcgIV_heap[idx].image );
+	}
+	
+	/// traverse heap, and set all references to this image to the new proper image.
+	/// 
+	/// THESE THINGS NEED TO BE SUPER-DUPER OPTIMIZED AND THEY ARE NOT NOW BECAUSE I
+	/// AM TOTALLY LAZY HAHA
+
+/*	if( idx < mcgIV_heap_count ) 
+	{
+		//
+		// Collapse everything down a slot
+		// NO BAD BAD BAD
+		//for( i=idx; i<mcgIV_heap_count-1; i++ ) 
+		//{
+		//	mcg_copy( i, i+1 );
+		//}
+		
+		//mcgIV_heap_count--; //and decrement the end-of-stack cursor
+	}
+*/
+}
+
+/// Adds a simple image to the renderstack.
+///
+/// @param start_x the starting x coordinate for this image.
+/// @param start_y the starting y coordinate for this image.
+/// @param end_x the ending x coordinate for this image.
+/// @param end_y the ending y coordinate for this image.
+/// @param delay how many hundreds of a second this image should take in getting from (start_x, start_y) to (end_x, end_y)
+/// @param image the image reference to do all of this magically moving blitting.
+int mcg_add_image( int start_x, int start_y, int end_x, int end_y, int delay, int image ) 
+{
+	if( McGrender_active_layer < 0 )
+	{
+		exit( "mcg_add_image(): there is no current active layer!" );
+	}
+
+	int i;
+	
+	//
+	// Basic error checking.
+	//
+	if( mcgIV_heap_count >= MCGRENDER_MAX ) {
+		exit( "mcg_add_image: tried to add too many images, old bean." );
+		return -1;
+	}
+
+	// The image reference
+	mcgIV_heap[mcgIV_heap_count].image = image;
+	mcgIV_heap[mcgIV_heap_count].sprite_ref = -1;
+	
+	mcgIV_heap[mcgIV_heap_count].delay = delay;
+	
+
+	// Set up the coordinates
+	mcgIV_heap[mcgIV_heap_count].x = start_x * MC_MULTIPLIER;
+	mcgIV_heap[mcgIV_heap_count].y = start_y * MC_MULTIPLIER;
+	
+	mcgIV_heap[mcgIV_heap_count].start_x = mcgIV_heap[mcgIV_heap_count].x;
+	mcgIV_heap[mcgIV_heap_count].start_y = mcgIV_heap[mcgIV_heap_count].y;
+
+	mcgIV_heap[mcgIV_heap_count].final_x = end_x * MC_MULTIPLIER;
+	mcgIV_heap[mcgIV_heap_count].final_y = end_y * MC_MULTIPLIER;
+
+	mcgIV_heap[mcgIV_heap_count].is_on = 1;
+	mcgIV_heap[mcgIV_heap_count].is_callfunc = 0;
+	mcgIV_heap[mcgIV_heap_count].callfunc = "";
+	
+	mcgIV_heap[mcgIV_heap_count].delete_on_stop = 0;
+	
+
+	// calculate the chunks.
+	mcg_calc_chunk( mcgIV_heap_count, delay );
+
+	// init the time
+	mcgIV_heap[mcgIV_heap_count].last_time = systemtime;
+	
+	McgLayerAddImg(mcgIV_heap_count);
+
+	//and we're spent!
+	i = mcgIV_heap_count;
+	mcgIV_heap_count++;
+	return i;
+}
+
+
+/// Adds a simple sprite to the renderstack.
+///
+/// @param start_x the starting x coordinate for this image.
+/// @param start_y the starting y coordinate for this image.
+/// @param end_x the ending x coordinate for this image.
+/// @param end_y the ending y coordinate for this image.
+/// @param delay how many hundreds of a second this image should take in getting from (start_x, start_y) to (end_x, end_y)
+/// @param sprite the sprite reference to add to this renderstack.
+int mcg_add_sprite( int start_x, int start_y, int end_x, int end_y, int delay, int sprite_ref ) 
+{
+	if( McGrender_active_layer < 0 )
+	{
+		exit( "mcg_add_sprite(): there is no current active layer!" );
+	}
+
+	int i;
+	
+	//
+	// Basic error checking.
+	//
+	if( mcgIV_heap_count >= MCGRENDER_MAX ) {
+		exit( "mcg_add_sprite: tried to add too many images, old bean." );
+		return -1;
+	}
+
+	i = mcg_add_image( start_x, start_y, end_x, end_y, delay, 0 );
+	mcgIV_heap[i].image = NewImage( anims[sprite_heap[sprite_ref].sanim_t].sizex, anims[sprite_heap[sprite_ref].sanim_t].sizey );
+	
+	RectFill( 	0,0, 
+			anims[sprite_heap[sprite_ref].sanim_t].sizex, anims[sprite_heap[sprite_ref].sanim_t].sizey,
+			transcolor, mcgIV_heap[i].image 
+	);	
+	
+	mcgIV_heap[i].sprite_ref = sprite_ref;
+
+	mcgIV_sprites[mcgIV_sprite_count] = i;
+
+	TBlitFrame( 0,0, sprite_heap[sprite_ref].sanim_t, 0, mcgIV_heap[i].image );
+
+	mcgIV_sprite_count++;
+
+	return i;
+}
+
+
+
+/// Reverses direction of the image's motion without altering the chunk's scalar value or the current position.
+///
+/// @param idx the index of the mcgIV_heap entry to reverse the direction of motion of.
+void mcg_reverse( int idx ) 
+{
+	int temp_x, temp_y;
+	
+	//reverse the chunks
+	mcgIV_heap[idx].x_chunk = 0 - mcgIV_heap[idx].x_chunk;
+	mcgIV_heap[idx].y_chunk = 0 - mcgIV_heap[idx].y_chunk;
+	
+	temp_x = mcgIV_heap[idx].final_x;
+	temp_y = mcgIV_heap[idx].final_y;
+	
+	mcgIV_heap[idx].final_x = mcgIV_heap[idx].start_x;
+	mcgIV_heap[idx].final_y = mcgIV_heap[idx].start_y;
+
+	mcgIV_heap[idx].start_x = temp_x;
+	mcgIV_heap[idx].start_y = temp_y;
+	
+	if( !mcgIV_heap[idx].x_chunk && !mcgIV_heap[idx].y_chunk ) {
+		mcg_calc_chunk( idx, mcgIV_heap[idx].delay );
+	}
+	
+	mcgIV_heap[idx].is_moving = 1;
+}
+
+
+
+
+/// Takes a mcgrender heap index and makes it clickable with the given params.
+///
+/// @param idx the index of the mcgIV_heap entry to make into a clickable object.
+/// 
+void mcg_clickable( int idx, string callfunc, string assocdata, int associdx )
+{
+	/// for clickable objects
+	int clickable;		// true if this mcg_image_mkIV can be clicked upon.
+	string click_callfunc;	// function to be called if clicked upon.
+	string assoc_data;	// string to associate with this clickable object
+	int assoc_idx;		// int to associate with this clickable object
+}
+
+
+
+/// Helper function.  Recalculates chunks.  
+/// If there's a new directional vector, sets the object to on and moving.  
+void mcg_calc_chunk( int idx, int delay ) 
+{
+	mcgIV_heap[idx].x_chunk = (mcgIV_heap[idx].final_x-mcgIV_heap[idx].x) / delay;
+	mcgIV_heap[idx].y_chunk = (mcgIV_heap[idx].final_y-mcgIV_heap[idx].y) / delay;	
+	
+	if( mcgIV_heap[idx].x_chunk || mcgIV_heap[idx].y_chunk ) 
+	{
+		mcgIV_heap[idx].is_on = 1;
+		mcgIV_heap[idx].is_moving = 1;
+	}
+}
+
+/// Add an image to the render engine in "complex" mode.  Which means it calls the sepcified callfunc instead of mcg_draw when it's turn comes up to be drawn.
+///
+/// @param callfunc the custom 
+int mcg_add_complex( string callfunc, int image ) 
+{
+	if( McGrender_active_layer < 0 )
+	{
+		exit( "mcg_add_complex(): there is no current active layer!" );
+	}
+
+	int i;
+	if( mcgIV_heap_count >= MCGRENDER_MAX ) {
+		exit( "mcg_add_complex: tried to add too many images. BAD CODER NO COFFEW." );
+		return -1;
+	}
+	
+	mcgIV_heap[mcgIV_heap_count].image		= image;
+	mcgIV_heap[mcgIV_heap_count].last_time		= systemtime;
+	mcgIV_heap[mcgIV_heap_count].callfunc		= callfunc;
+
+	mcgIV_heap[mcgIV_heap_count].is_moving		= 1;
+	mcgIV_heap[mcgIV_heap_count].is_on		= 1;
+	mcgIV_heap[mcgIV_heap_count].is_callfunc	= 1;
+
+	// Turn these off.  The callfunc may use them, but it's up to the user to override them.
+	
+	mcgIV_heap[mcgIV_heap_count].x = 0;
+	mcgIV_heap[mcgIV_heap_count].y = 0;
+	mcgIV_heap[mcgIV_heap_count].start_x = 0;
+	mcgIV_heap[mcgIV_heap_count].start_y = 0;
+	mcgIV_heap[mcgIV_heap_count].final_x = 0;
+	mcgIV_heap[mcgIV_heap_count].final_y = 0;
+	mcgIV_heap[mcgIV_heap_count].x_chunk = 0;
+	mcgIV_heap[mcgIV_heap_count].y_chunk = 0;
+
+	McgLayerAddImg(mcgIV_heap_count);
+
+	//and we're spent!
+	i = mcgIV_heap_count;
+	mcgIV_heap_count++;
+	return i;
+}
+
+void mcg_set_x( int idx, int n ) { mcgIV_heap[idx].x = (n * MC_MULTIPLIER); }
+void mcg_set_y( int idx, int n ) { mcgIV_heap[idx].y = (n * MC_MULTIPLIER); }
+
+void mcg_set_final_x( int idx, int n ) { mcgIV_heap[idx].final_x = (n * MC_MULTIPLIER); }
+void mcg_set_final_y( int idx, int n ) { mcgIV_heap[idx].final_y = (n * MC_MULTIPLIER); }
+
+
+int mcg_get_x( int idx ) { return mcgIV_heap[idx].x / MC_MULTIPLIER; }
+int mcg_get_y( int idx ) { return mcgIV_heap[idx].y / MC_MULTIPLIER; }
+
+
+//
+// encapsulates the drawing mechanisms of a non-callfunc image
+//
+int mcg_ticks;
+void mcg_draw( int idx ) 
+{
+	//it's not moving...
+	if( !mcgIV_heap[idx].is_moving ) 
+	{ 
+		TBlit( (mcgIV_heap[idx].x/MC_MULTIPLIER), (mcgIV_heap[idx].y/MC_MULTIPLIER), mcgIV_heap[idx].image, screen );
+//log( "  still "+str(mcgIV_heap[idx].image)+" at ("+str((mcgIV_heap[idx].x/MC_MULTIPLIER))+","+str((mcgIV_heap[idx].y/MC_MULTIPLIER))+")" );
+		mcgIV_heap[idx].last_time = systemtime;
+	} else { //it's moving!
+		
+		mcg_ticks = systemtime - mcgIV_heap[idx].last_time;
+		
+		mcgIV_heap[idx].x += (mcg_ticks * mcgIV_heap[idx].x_chunk);
+		mcgIV_heap[idx].y += (mcg_ticks * mcgIV_heap[idx].y_chunk);
+		
+		mcgIV_heap[idx].last_time = systemtime;
+		
+		mcg_moving_helper(idx);
+		
+		TBlit( (mcgIV_heap[idx].x/MC_MULTIPLIER), (mcgIV_heap[idx].y/MC_MULTIPLIER), mcgIV_heap[idx].image, screen );
+//log( "moving "+str(mcgIV_heap[idx].image)+" at ("+str((mcgIV_heap[idx].x/MC_MULTIPLIER))+","+str((mcgIV_heap[idx].y/MC_MULTIPLIER))+")" );	
+		if( !mcg_moveCheck(idx) ) {
+			mcgIV_heap[idx].is_moving = 0;
+		}
+	}
+}
+
+
+/// Helper function.  checks for overspill.  
+/// Not really sure what it does at this moment.  
+/// But whatever it does, it does it.
+///
+/// @param idx the mcgIV_heap index to do this mysterious check to.
+/// @author mcgrue (befuddled)
+void mcg_moving_helper( int idx ) 
+{
+	//true if moving in x;
+	if( mcgIV_heap[idx].x_chunk ) 
+	{
+		//moving forward
+		if( mcgIV_heap[idx].x_chunk > 0 ) 
+		{ 
+			if( mcgIV_heap[idx].x > mcgIV_heap[idx].final_x ) 
+			{
+				mcgIV_heap[idx].x = mcgIV_heap[idx].final_x;
+				mcgIV_heap[idx].x_chunk = 0;
+			} 
+		} 
+		
+		//moving backwards
+		else 
+		{ 
+			if( mcgIV_heap[idx].x < mcgIV_heap[idx].final_x ) 
+			{
+				mcgIV_heap[idx].x = mcgIV_heap[idx].final_x;
+				mcgIV_heap[idx].x_chunk = 0;
+			} 
+		}
+		
+	} //done with x-moving block
+
+
+	//true if moving in y;
+	if( mcgIV_heap[idx].y_chunk ) 
+	{ 
+		//moving forward
+		if( mcgIV_heap[idx].y_chunk > 0 ) 
+		{ 
+			if( mcgIV_heap[idx].y > mcgIV_heap[idx].final_y ) 
+			{
+				mcgIV_heap[idx].y = mcgIV_heap[idx].final_y;
+				mcgIV_heap[idx].y_chunk = 0;
+			} 
+
+		} 
+		
+		//moving backwards
+		else 
+		{ 
+			if( mcgIV_heap[idx].y < mcgIV_heap[idx].final_y ) 
+			{
+				mcgIV_heap[idx].y = mcgIV_heap[idx].final_y;
+				mcgIV_heap[idx].y_chunk = 0;
+			} 
+		}
+		
+	} //done with y-moving block
+}
+
+/// Helper function.  Checks to see if a moving image should be set to unmoving.
+/// Called in mcg_draw();
+/// @param idx the mcgIV_heap index to check.
+/// @see mcg_draw()
+int mcg_moveCheck( int idx ) {
+	
+	if( mcgIV_heap[idx].x != mcgIV_heap[idx].final_x || mcgIV_heap[idx].y != mcgIV_heap[idx].final_y ) 
+	{
+		return 1;
+	} 
+	else 
+	{
+		return 0;
+	}
+}
+
+/// for reference's sake. DEPRE-FUCKIN-CATED, BEYOTCH.
+///
+void mcgrender_old() {
+	
+	int i;
+	for( i=0; i<mcgIV_heap_count; i++ ) {
+		if( mcgIV_heap[i].is_on ) {
+			if( mcgIV_heap[i].is_callfunc ) {
+				callfunction( mcgIV_heap[i].callfunc );
+			} else {
+				mcg_draw(i);
+			}
+		}
+		
+//		if( !mcgIV_heap[i].is_callfunc )
+//			PrintString(mcgIV_heap[i].x/MC_MULTIPLIER,mcgIV_heap[i].y/MC_MULTIPLIER, screen, textfont, "#"+str(i)+": "+str(mcgIV_heap[i].delete_on_stop));
+		
+//		if( !mcgIV_heap[i].is_callfunc )
+//			PrintString(10, 10+(i*10), screen, textfont, "#"+str(i)+": ("+str((mcgIV_heap[i].x)/MC_MULTIPLIER)+		 ","+str((mcgIV_heap[i].y)/MC_MULTIPLIER)+") ("+str(ImageWidth(mcgIV_heap[i].image))+","+str(ImageHeight(mcgIV_heap[i].image))+")"  );
+
+		if( mcgIV_heap[i].delete_on_stop ) {
+			if( mcgIV_heap[i].is_moving == 0 ) {
+				mcg_delete(i);
+				i--;
+			}
+		}
+	}	
+}
+
+int getCurrentMcGIdx()
+{
+	return __mcg_cur_node;
+}
+
+int __mcg_cur_node;
+
+void mcgrender()
+{
+	int i;
+	
+	for( i=0; i<McGrender_layer_count; i++ ) 
+	{
+		if( McGrender_layers[i].count )
+		{
+			__mcg_cur_node = McGrender_layers[i].head_idx;
+			
+			while( __mcg_cur_node >= 0 )
+			{
+				if( mcgIV_heap[__mcg_cur_node].is_on ) 
+				{
+					if( mcgIV_heap[__mcg_cur_node].is_callfunc ) {
+						callfunction( mcgIV_heap[__mcg_cur_node].callfunc );
+					} else {
+						mcg_draw(__mcg_cur_node);
+					}
+				}
+				
+				__mcg_cur_node = mcgIV_heap[__mcg_cur_node].next_idx;
+			}
+		}
+	}
+}
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// DEBUGGING STUFF
+///////////////////////////////////////////////////////////////////////////////
+
+
+
+/// Debug function.  Logs out all of the vitals for mcgIV_heap[idx].
+/// @param idx the mcgIV_heap[] entry to print out to the log.
+void mcg_print( int idx ) 
+{
+	log( "mcgIV_heap["+str(idx)+"]" );
+	log( "======================" );
+
+	log( "          image: " + str(mcgIV_heap[idx].image) );
+	log( "     sprite_ref: " + str(mcgIV_heap[idx].sprite_ref) );
+	log( "            x,y: " + str(mcgIV_heap[idx].x) + "," + str(mcgIV_heap[idx].y) 				+ " ("+str((mcgIV_heap[idx].x)/MC_MULTIPLIER)+		 ","+str((mcgIV_heap[idx].y)/MC_MULTIPLIER)+")" );
+	log( "final_x,final_y: " + str(mcgIV_heap[idx].final_x) + "," + str(mcgIV_heap[idx].final_y) 	+ " ("+str((mcgIV_heap[idx].final_x)/MC_MULTIPLIER)+","+str((mcgIV_heap[idx].final_y)/MC_MULTIPLIER)+")" );
+	log( "start_x,start_y: " + str(mcgIV_heap[idx].start_x) + "," + str(mcgIV_heap[idx].start_y) 	+ " ("+str((mcgIV_heap[idx].start_x)/MC_MULTIPLIER)+","+str((mcgIV_heap[idx].start_y)/MC_MULTIPLIER)+")" );
+	log( "x_chunk,y_chunk: " + str(mcgIV_heap[idx].x_chunk) + "," + str(mcgIV_heap[idx].y_chunk) 	+ " ("+str((mcgIV_heap[idx].x_chunk)/MC_MULTIPLIER)+","+str((mcgIV_heap[idx].y_chunk)/MC_MULTIPLIER)+")" );
+	log( "" );
+	log( "      is_moving: " + str(mcgIV_heap[idx].is_moving) );
+	log( "          is_on: " + str(mcgIV_heap[idx].is_on) );
+	log( "    is_callfunc: " + str(mcgIV_heap[idx].is_callfunc) );
+	log( "" );
+	log( "      last_time; " + str(mcgIV_heap[idx].last_time) );
+	log( "       callfunc: " + mcgIV_heap[idx].callfunc );
+	
+	log( "       prev_idx: " + str(mcgIV_heap[idx].prev_idx) );
+	log( "       next_idx: " + str(mcgIV_heap[idx].next_idx) );
+	log( "      layer_idx: " + str(mcgIV_heap[idx].layer_idx) );
+	log("");
+	log("");
+}
+
+/// Logs out all mcgIV_heap entries that are presently 'on'
+void mcg_print_all() 
+{
+	int i;
+	
+	Log( "mcg_print_all" );
+	Log( "==================================" );
+	Log( "mcgIV_heap_count: " + str(mcgIV_heap_count) );
+	
+	for( i=0; i<mcgIV_heap_count; i++ ) {
+		
+		if( mcgIV_heap[i].is_on ) 
+		{
+			mcg_print( i );
+		}
+	}
+}
+
+
+void McRenderToString( string title )
+{
+	int i;
+
+	Log( "McRenderToString: " + title );
+	Log( "=========================" );
+	Log( "Number of images on heap: " + str(mcgIV_heap_count) );
+	Log( "Number of sprites in heap: " + str(mcgIV_sprite_count) );
+	Log( "Number of layers in eng: " + str(McGrender_layer_count) );
+	Log( "active layer: " + str(McGrender_active_layer) );
+	
+	for( i=0; i<McGrender_layer_count; i++ )
+	{
+		McLayerToString( i );
+	}
+	Log( "" );
+	Log( "</"+title+">" );
+	Log( "" );
+	Log( "" );
+}
+
+
+
+
+void McLayerToString( int idx )
+{
+	Log( "mcg_mkIV_layer["+str(idx)+"]..." );
+	Log( "=========================" );
+	Log( "  head_idx: " + str(McGrender_layers[idx].head_idx) );
+	Log( "  tail_idx: " + str(McGrender_layers[idx].tail_idx) );
+	Log( "     count: " + str(McGrender_layers[idx].count) );
+	
+	int node, cnt;
+	node = McGrender_layers[idx].head_idx;
+	
+	while( node >= 0 )
+	{
+		mcg_print( node );
+		cnt++;
+		
+		if( cnt > McGrender_layers[idx].count )
+		{
+			Log( "     OMG COUNT EXCEEDED! " );
+		}
+		
+		node = mcgIV_heap[node].next_idx;
+	}
+	Log( "=========================" );
+	Log( "...mcg_mkIV_layer["+str(idx)+"] done!" );
+	Log( "=========================" );
+	Log( "" );
+}
+
+
+
+// Check for mouse within rectangular area
+int DetectMyCollision( 
+	int my_x, int my_y,
+	int x1, int y1, 
+	int x2, int y2
+)
+{
+
+Log( "Detect, me: ("+str(my_x)+","+str(my_y)+")" );
+Log( "Detect, you: ("+str(x1)+","+str(y1)+"),("+str(x2)+","+str(y2)+")" );
+
+	if(my_x >= x1 && my_x < x2 && my_y >= y1 && my_y < y2) return 1;
+	return 0;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CLICKABLE STUFF
+///////////////////////////////////////////////////////////////////////////////
+
+/// searches all layers backwards until it finds an image that is visible and clickable that the mouse coordinates are within, and returns that image's mcgIV_heap[] index.  If nothing is clickable, returns -1.
+///
+/// @TODO add an optional flag to skip over images with transparent sections that you clicked on.
+int mcg_findclick( int x, int y )
+{
+	int i, cur_node;
+	for( i=McGrender_layer_count; i>=0; i-- ) 
+	{
+		if( McGrender_layers[i].count )
+		{
+
+			cur_node = McGrender_layers[i].tail_idx;
+
+			while( cur_node >= 0 )
+			{
+				if( mcgIV_heap[cur_node].is_on ) 
+				{
+					if( mcgIV_heap[cur_node].clickable )
+					{
+						if( mcgIV_heap[cur_node].image )
+						{
+							if( 
+								DetectMyCollision(
+									x,y,
+									mcg_getX(cur_node), mcg_getY(cur_node), 
+									mcg_getX(cur_node)+ImageWidth(mcgIV_heap[cur_node].image), mcg_getY(cur_node)+ImageHeight(mcgIV_heap[cur_node].image) 
+								) 
+							) 
+							{
+
+								/* Transparent pixel detection would go here.
+								if(  )
+								{
+
+								}
+								else
+								{
+
+								}
+								*/
+
+								return cur_node;
+							}
+						}
+					}
+				}
+				
+				cur_node = mcgIV_heap[cur_node].prev_idx;
+			}
+		}
+	}
+	
+	return -1;
+}
+
+
+/// fires a click-checking event.  If it hits a clickable image, sets all of the proper variables and calls the image's clicking callfunc.
+/// returns the results of the clickcheck for good measure (-1 if false, >=0 if true)
+int mcg_doclick()
+{
+	int myclick = mcg_findclick( mouse.x, mouse.y );
+	
+	if( myclick >= 0 )
+	{
+		mcg_setClickedIdx( myclick );
+		CallFunction( mcgIV_heap[myclick].click_callfunc );
+	}
+	
+	return myclick;
+}
+
+int __mcg_clicked_idx;
+
+int mcg_setClickedIdx( int i )
+{
+	__mcg_clicked_idx = i;
+}
+
+int mcg_getClickedIdx()
+{
+	return __mcg_clicked_idx;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SPRITE STUFF
+///////////////////////////////////////////////////////////////////////////////
+
+/// This function triggers the sprite animation string update handling for all sprites currently being rendered on the mcgrenderstack.
+///
+void mcg_process_sprites()
+{
+	int i, cur, spr;
+	
+	for( i=0; i<mcgIV_sprite_count; i++ )
+	{
+		cur = mcgIV_sprites[i];
+		
+		if( mcgIV_heap[cur].is_on )
+		{
+			spr = mcgIV_heap[cur].sprite_ref;
+			
+			/// 'done' sprites are out of the autoanimation loop and need to be brought back in by independant action. 
+			if( !sprite_heap[spr].done )
+			{
+		
+				/// if the current time is equal or greater than the sprite's time_for_next_op, it's time to execute the next op.
+				if( systemtime >= sprite_heap[spr].time_for_next_op )
+				{
+					///check if there's another operation to process...
+					if( sprite_heap[spr].strand_length[sprite_heap[spr].current_strand] > sprite_heap[spr].current_operation+1 )
+					{
+						switch( GetSprOpType(spr,sprite_heap[spr].current_strand,sprite_heap[spr].current_operation+1) )
+						{
+							case SPROP_FRAME:
+								RectFill(0,0,ImageWidth(mcgIV_heap[cur].image),ImageHeight(mcgIV_heap[cur].image), transcolor, mcgIV_heap[cur].image);
+								TBlitFrame(0, 0, sprite_heap[spr].sanim_t, GetSprOpValue(spr,sprite_heap[spr].current_strand,sprite_heap[spr].current_operation+1), mcgIV_heap[cur].image);
+								sprite_heap[spr].current_operation++;
+							case SPROP_WAIT:
+								sprite_heap[spr].time_for_next_op = systemtime + GetSprOpValue(spr,sprite_heap[spr].current_strand,sprite_heap[spr].current_operation+1);
+								sprite_heap[spr].current_operation++;
+							case SPROP_CALLFUNC:
+
+								/// if the OpValue of an callfunc oper is true, it's callfunc is not optional.  Throw an error if the OpData isn't a valid callfunc.
+								if( GetSprOpValue(spr,sprite_heap[spr].current_strand,sprite_heap[spr].current_operation+1) )
+								{
+									if( !FunctionExists( GetSprOpData(spr,sprite_heap[spr].current_strand,sprite_heap[spr].current_operation+1) ) )
+									{
+										ErrorHandler("mcgrender.vc::mcg_process_sprites(): recieved a required callfunc as a sprite's next op ('"+GetSprOpData(spr,sprite_heap[spr].current_strand,sprite_heap[spr].current_operation+1)+"'), and it TOTALLY DID NOT EXIST.  got from GetSprOpData("+str(spr)+","+str(sprite_heap[spr].current_strand)+","+str(sprite_heap[spr].current_operation+1)+")");
+									}
+								}
+
+								SetMcgrenderCallfuncIdx(cur);
+								CallFunction( GetSprOpData(spr,sprite_heap[spr].current_strand,sprite_heap[spr].current_operation+1) );
+								SetMcgrenderCallfuncIdx(-1);				
+							case SPROP_REPEAT:
+								sprite_heap[spr].current_operation = -1;
+
+							default:
+								ErrorHandler("mcgrender.vc::mcg_process_sprites(): unknown operation type '"+str(GetSprOpType(spr,sprite_heap[spr].current_strand,sprite_heap[spr].current_operation+1))+"'");
+
+						}
+					}
+					else /// let's do the strand-processing 
+					{
+						sprite_endstrand_process( spr );
+					}
+				}
+			}
+
+/*
+/// returns the defined type of operation op_idx of strand str_idx of sprite spr_idx.
+/// @error if it gets an invalid type, throws an error and returns -1.
+int Get Spr Op Type( int spr_idx, int str_idx, int op_idx )
+		
+	int	current_strand;		/// the strands-index of the currently animating strand.
+	int	current_operation;	/// the index of the current operation of the current strand being run.
+	int	time_for_next_op
+*/		
+		}		
+	}
+}
+
+/// returns the frameheight of this heap entry.
+int mcg_height( int idx )
+{
+	if( mcgIV_heap[idx].sprite_ref >= 0 )
+	{	
+		return anims[sprite_heap[mcgIV_heap[idx].sprite_ref].sanim_t].sizey;
+	}
+	else
+	{
+		if( ImageValid(mcgIV_heap[idx].image) )
+		{
+			return ImageHeight( mcgIV_heap[idx].image );
+		}
+		
+		return 0;
+	}
+}
+
+/// returns the frameheight of this heap entry.
+int mcg_width( int idx )
+{
+	if( mcgIV_heap[idx].sprite_ref >= 0 )
+	{	
+		return anims[sprite_heap[mcgIV_heap[idx].sprite_ref].sanim_t].sizex;
+	}
+	else
+	{
+		if( ImageValid(mcgIV_heap[idx].image) )
+		{
+			return ImageWidth( mcgIV_heap[idx].image );
+		}
+		
+		return 0;
+	}
+}
+
+
+
+int __McgrenderCallfuncIdx;
+
+/// Sets the index of the mcgIV_heap image that's currently invoking a callfunc.
+void SetMcgrenderCallfuncIdx( int idx )
+{
+	__McgrenderCallfuncIdx = idx;
+}
+
+/// returns the index of the mcgIV_heap image that's currently invoking a callfunc.  For use within callfuncs!
+/// returns -1 if nothing is calling a callfunc atm.
+int GetMcgrenderCallfuncIdx( int idx )
+{
+	return __McgrenderCallfuncIdx;
+}
+
+void ChangeSpriteAnimation( int mcg_idx, string anim )
+{
+	if( mcgIV_heap[mcg_idx].sprite_ref >= 0 )
+	{
+		SpriteChangeStrand( mcgIV_heap[mcg_idx].sprite_ref, anim );
+	}
+	else
+	{
+		ErrorHandler( "ChangeSpriteAnimation( "+str(mcg_idx)+",'"+anim+"'): that mcgrender heap entry didn't have a valid sprite reference." );
+	}	
+}
+
+string GetCurrentSpriteStrand( int mcg_idx )
+{
+	int spr_idx;
+
+	if( mcgIV_heap[mcg_idx].sprite_ref >= 0 )
+	{
+		spr_idx = mcgIV_heap[mcg_idx].sprite_ref;
+	
+		if( sprite_heap[spr_idx].current_strand < 0 || sprite_heap[spr_idx].current_strand > sprite_heap[spr_idx].anim_strand_count )
+		{
+			return "";
+		}
+
+		return sprite_heap[spr_idx].strand_names[sprite_heap[spr_idx].current_strand];
+	}
+	else
+	{
+		ErrorHandler( "GetCurrentSpriteStrand( "+str(mcg_idx)+" ): that mcgrender heap entry didn't have a valid sprite reference." );
+	}	
+}
+
+/// DEPRECATED.  ALSO DUMB.
+///
+/// Set a sprite to "hit"
+/// ignore this if they're dead, or stoned, 
+/// or some condition where they really shouldn't be hit.
+///
+/// This only takes into account basic 1-frame hits.  
+/// This function will be unnecessary if a proper 'stop' command is 
+/// implemented in the sprite definition system
+void SetSpriteHit( int mcg_idx )
+{
+	int spr_idx;
+
+	if( mcgIV_heap[mcg_idx].sprite_ref >= 0 )
+	{
+		spr_idx = mcgIV_heap[mcg_idx].sprite_ref;
+	
+		if(
+			getStrandIndex( spr_idx, "death" ) == sprite_heap[spr_idx].current_strand ||
+			getStrandIndex( spr_idx, "stoned" ) == sprite_heap[spr_idx].current_strand
+		) {
+
+			/// do nothing!
+		}
+		else
+		{
+			ChangeSpriteAnimation( mcg_idx, "hit" );
+			sprite_heap[spr_idx].done = 1;
+		}		
+	}
+	else
+	{
+		ErrorHandler( "SetSpriteHit( "+str(mcg_idx)+" ): that mcgrender heap entry didn't have a valid sprite reference." );
+	}
+}
+
+/// Unpauses a frozen sprite.
+void SetSpriteUnpause( int mcg_idx )
+{
+	int spr_idx;
+
+	if( mcgIV_heap[mcg_idx].sprite_ref >= 0 )
+	{
+		spr_idx = mcgIV_heap[mcg_idx].sprite_ref;
+	
+		sprite_heap[spr_idx].done = 0;
+	}
+	else
+	{
+		ErrorHandler( "SetSpriteUnpause( "+str(mcg_idx)+" ): that mcgrender heap entry didn't have a valid sprite reference." );
+	}
+}

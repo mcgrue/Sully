@@ -1,0 +1,10 @@
+// Orc enemy, drawn by athocreft.
+
+//name		wd	ht	per_row	rows	padding
+orc.gif		30	45	4	4	1
+anim idle F0W15F1W15B
+anim weak F4W15F5W15B
+anim attack F8W15F9W15F10W10F11W15
+anim hit F12 W45
+anim death F13
+//

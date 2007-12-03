@@ -1,0 +1,174 @@
+// The first line is the name of the enemy. The second line is the enemy's stats, 
+// whitespace-delimited,in this exact order: MHP, MMP, STR, END, MAG, MGR, HIT, DOD, STK, FER, REA, CTR, 
+// MON (money dropped), EXP (exp given).
+// The rest of the stuff is entered in a "FIELDNAME value" format and can be in any order. None of these
+// fields should include quotation marks.
+// Mandatory fields are AI SPRITE, and ICON (icon is used for battle roster).
+// Optional fields are NEGATE, ABSORB, HALVE, and DOUBLE (the elemental resistances, which take comma-delimited
+// lists of elements). ELEMENT (attack element -- just one), STEAL (steal item, followed by a comma, followed by 
+// percent chance), DROP (same as steal, but for drop item), IMMUNE and AUTO (status effects that are always and
+// never on, respectively, in a comma-delimited list). 
+// There are also two optional fields that don't take parameters -- BOSS and LEADER. If either of these shows up
+// in a spec, the appropriate flag is set for the enemy.
+// A single dash indicates the end of each enemy definition. 
+
+-
+
+McGrue // name goes here
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+1000	100	20	1001	10	12	21	20	4	2	20	5	100	40
+
+SPRITE	vampire.spr
+ICON	0
+AI	DefaultEnemyAI  // I just picked this as an example
+STEAL	Starlight, 100
+DROP	Starlight, 50
+
+ELEMENT Dark
+IMMUNE 	Confuse, Poison, Death
+
+NEGATE	Dark
+ABSORB  Fire
+HALVE 	Lightning
+DOUBLE	Ice
+BOSS
+
+- // end of this enemy, start of next
+
+Sperm 
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+600	102	0	14	9	12	21	20	4	2	20	5	100	40
+
+SPRITE	poltergeist.spr
+ICON	2
+AI	DefaultEnemyAI 
+DROP	pooh, 12
+AUTO	Might
+
+-
+
+Tatsumi 
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+65000	0	99	99	3	4	11	7	4	2	10	5	10000	40
+
+SPRITE	cyclops.spr
+ICON	2
+AI	DefaultEnemyAI 
+STEAL	miracle_brew, 43
+LEADER
+BOSS
+IMMUNE	Enlighten
+
+-
+
+Drama_Clubber
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+600	102	0	14	9	12	21	20	4	2	20	5	100	40
+
+SPRITE	vampire.spr
+ICON	2
+AI	DefaultEnemyAI 
+DROP	pooh, 12
+AUTO	Might
+
+-
+
+Evil_Carot
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+600	102	0	14	9	12	21	20	4	2	20	5	100	40
+
+SPRITE	carot.spr
+ICON	2
+AI	DefaultEnemyAI 
+DROP	pooh, 12
+AUTO	Might
+ELEMENT Dark
+
+-
+
+Slime
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+600	102	0	14	9	12	21	20	4	2	20	5	100	40
+
+SPRITE	green_slime.spr
+ICON	2
+AI	DefaultEnemyAI 
+DROP	pooh, 12
+AUTO	Might
+
+-
+
+Red_Slime
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+600	102	0	14	9	12	21	20	4	2	20	5	100	40
+
+SPRITE	red_slime.spr
+ICON	2
+AI	DefaultEnemyAI 
+DROP	pooh, 12
+AUTO	Might
+ELEMENT Fire
+-
+
+Blue_Slime
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+600	102	0	14	9	12	21	20	4	2	20	5	100	40
+
+SPRITE	blue_slime.spr
+ICON	2
+AI	DefaultEnemyAI 
+DROP	pooh, 12
+AUTO	Might
+ELEMENT Ice
+
+-
+
+Bunny
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+600	102	0	14	9	12	21	20	4	2	20	5	100	40
+
+SPRITE	bunny.spr
+ICON	2
+AI	DefaultEnemyAI 
+DROP	pooh, 12
+AUTO	Might
+
+-
+
+Evil_Bunny
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+600	102	0	14	9	12	21	20	4	2	20	5	100	40
+
+SPRITE	evil_bunny.spr
+ICON	2
+AI	DefaultEnemyAI 
+DROP	pooh, 12
+AUTO	Might
+ELEMENT Dark
+
+-
+
+Naughty_Bunny
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+600	102	0	14	9	12	21	20	4	2	20	5	100	40
+
+SPRITE	evil_bunny.spr
+ICON	2
+AI	DefaultEnemyAI 
+DROP	pooh, 12
+AUTO	Might
+
+-
+
+Mother_Bunny
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+600	102	0	14	9	12	21	20	4	2	20	5	100	40
+
+SPRITE	momma_bunny.spr
+ICON	2
+AI	DefaultEnemyAI 
+DROP	pooh, 12
+AUTO	Might
+
+
+END_OF_FILE

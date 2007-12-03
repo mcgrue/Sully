@@ -1,0 +1,914 @@
+string bat_partyname( int pidx )
+{
+	if( pidx == PARTY_ALLY )
+	{
+		return "ally";
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return "enemy";
+	}
+	
+	ErrorHandler( "bat_partyname() invalid party index '"+str(pidx)+"'");
+	return "";
+}
+
+int bat_max_hp( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return getMaxHP( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_max_hp( bidx );
+	}
+	
+	ErrorHandler( "bat_max_hp() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+int bat_max_mp( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return getMaxMP( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_max_mp( bidx );
+	}
+	
+	ErrorHandler( "bat_max_mp() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+/// returns a success code.  0 if nothing changed, 1 if something changed, -1 if errored.
+/// this function is, btw, retarded.
+int bat_change_hp( int bidx, int pidx, int amt )
+{
+
+//Log( "bat_change_hp( "+bat_getName(bidx, pidx)+", "+str(amt)+" )" );
+//Log( "starting HP: " + str(bat_cur_hp(bidx,pidx)) );
+	if( !amt ) return 0;
+
+	if( pidx == PARTY_ALLY )
+	{
+		if( amt < 0 )
+		{	
+			HurtHP( bidx, amt );
+		}
+		else
+		{
+			HealHP( bidx, abs(amt) );
+		}
+		
+//Log( "ending HP: " + str(bat_cur_hp(bidx,pidx)) );
+		return 1;
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		if( amt < 0 )
+		{	
+			nme_HurtHP( bidx, amt );
+		}
+		else
+		{
+			nme_HealHP( bidx, abs(amt) );
+		}
+		
+//Log( "ending HP: " + str(bat_cur_hp(bidx,pidx)) );		
+		return 1;
+	}
+	
+	ErrorHandler( "bat_change_hp() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+/// returns a success code.  0 if nothing changed, 1 if something changed, -1 if errored.
+/// this function is, btw, retarded.
+int bat_change_mp( int bidx, int pidx, int amt )
+{
+	if( !amt ) return 0;
+
+	if( pidx == PARTY_ALLY )
+	{
+		if( amt < 0 )
+		{	
+			HurtMP( bidx, abs(amt) );
+		}
+		else
+		{
+			HealMP( bidx, abs(amt) );
+		}
+		
+		return 1;
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		if( amt < 0 )
+		{	
+			nme_HurtMP( bidx, abs(amt) );
+		}
+		else
+		{
+			nme_HealMP( bidx, abs(amt) );
+		}
+		
+		return 1;
+	}
+	
+	ErrorHandler( "bat_change_mp() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+void bat_toggle_deadflag( int bidx, int pidx, int is_dead )
+{
+	if( pidx == PARTY_ALLY )
+	{
+		changeDeadFlag( bidx, is_dead );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		if( is_dead )
+		{
+			nme_setDead( bidx );
+		}
+		else
+		{
+			nme_setAlive( bidx );
+		}
+	}
+	
+	ErrorHandler( "bat_toggle_deadflag() invalid party index '"+str(pidx)+"'");
+}
+
+
+void bat_revive( int bidx, int pidx, int amt )
+{
+	int success;
+
+	if( !(pidx == PARTY_ALLY||pidx == PARTY_ENEMY) )
+	{
+		ErrorHandler( "bat_revive() invalid party index '"+str(pidx)+"'");
+		return;
+	}
+
+	if( amt <= 0 )
+	{
+		ErrorHandler( "bat_revive() tried to revive with a negative or zero amount of HP ("+str(amt)+").");
+		return;
+	}
+	
+	if( !bat_was_dead(bidx,pidx) )
+	{
+		ErrorHandler( "bat_revive() "+bat_getName(bidx, pidx)+" wasn't even marked as dead!" );
+		return;
+	}
+	
+	/// if the character has "Grave", they cannot be revived.
+	if( bat_hasStatus(bidx, pidx, "Grave") )
+	{
+		return;
+	}
+	
+	/// toggle the deadflag off so we can heal.  Also so we don't count as dead anymore.
+	bat_toggle_deadflag( bidx, pidx, 0 );
+	
+	/// physician, heal thyself!
+	success = bat_change_hp( bidx, pidx, amt );
+	
+	if( success <= 0 ) //if bat_change_hp() returns a non-1 value, something didn't work.  let's report it, but not quit-out.
+	{
+		ErrorHandler( "bat_revive() tried to revive with "+str(amt)+" HP but bat_change_hp() gave an errorcode.  Currently has "+str(bat_cur_hp(bidx, pidx))+" HP." );
+	}
+	
+	/// call the do-this-on-ressurect trigger.
+	trigger_on_life( bidx, pidx );
+}
+
+
+int bat_was_dead( int bidx, int pidx )
+{
+	if( pidx == PARTY_ALLY )
+	{
+		return wasDead( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_getDeadFlag( bidx );
+	}	
+
+	ErrorHandler( "bat_was_dead() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+int bat_is_dead( int bidx, int pidx )
+{
+	if( bat_cur_hp(bidx, pidx) > 0 )
+		return 0;
+		
+	return 1;
+}
+
+
+int bat_cur_hp( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return getCurHP( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_cur_hp( bidx );
+	}
+	
+	ErrorHandler( "bat_cur_hp() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+int bat_cur_mp( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return getCurMP( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_cur_mp( bidx );
+	}
+	
+	ErrorHandler( "bat_cur_mp() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+int bat_str( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return getSTR( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_str( bidx );
+	}
+	
+	ErrorHandler( "bat_str() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+int bat_end( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return getEND( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_end( bidx );
+	}
+	
+	ErrorHandler( "bat_end() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+int bat_mag( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return getMAG( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_mag( bidx );
+	}
+	
+	ErrorHandler( "bat_mag() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+int bat_mgr( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return getMGR( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_mgr( bidx );
+	}
+	
+	ErrorHandler( "bat_mgr() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+int bat_hit( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return getHIT( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_hit( bidx );
+	}
+	
+	ErrorHandler( "bat_hit() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+int bat_dod( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return getDOD( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_dod( bidx );
+	}
+	
+	ErrorHandler( "bat_dod() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+int bat_stk( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return getSTK( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_stk( bidx );
+	}
+	
+	ErrorHandler( "bat_stk() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+int bat_fer( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return getFER( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_fer( bidx );
+	}
+	
+	ErrorHandler( "bat_fer() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+int bat_rea( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return getREA( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_rea( bidx );
+	}
+	
+	ErrorHandler( "bat_rea() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+int bat_ctr( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return getCTR( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_ctr( bidx );
+	}
+	
+	ErrorHandler( "bat_ctr() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+/// derived stats yay.
+int bat_AtV( int bidx, int pidx ) {
+	
+	if( pidx == PARTY_ALLY )
+	{
+		return getAtV( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_AtV( bidx );
+	}
+	
+	ErrorHandler( "bat_AtV() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+/// this maybe should use fixed point
+int bat_DfV( int bidx, int pidx ) {
+	
+	if( pidx == PARTY_ALLY )
+	{
+		return getDfV( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_DfV( bidx );
+	}
+	
+	ErrorHandler( "bat_DfV() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+int bat_getIcon( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return master_cast[bidx].icon;
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_getIcon( bidx );
+	}
+	
+	ErrorHandler( "bat_getIcon() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+int bat_getRenderRef( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{	
+		return master_cast[party[FindPartyPosI(bidx)]].battle_ref;
+		//return bs_ally_sprite_ref[FindPartyPosI(bidx)];
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return battle_enemies[bidx].render_idx;
+		//return bs_enemy_sprite_ref[bidx];
+	}
+	
+	ErrorHandler( "bat_getRenderRef() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+string bat_getName( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return master_cast[bidx].name;
+	}	
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_getName( bidx );
+	}
+	
+	ErrorHandler( "bat_getName() invalid party index '"+str(pidx)+"'");
+	return "";
+}
+
+
+int bat_attackElementCount( int bidx, int pidx )
+{
+	if( pidx == PARTY_ALLY )
+	{
+		return GetAttackElementCount( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		if( equ(bat_attackElement(bidx,pidx,0),"") )
+			return 0;
+		else
+			return 1;		
+	}
+	
+	ErrorHandler( "bat_attackElementCount() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+/// gives a single specific attack element.  SORTA USELESS.
+string bat_attackElement( int bidx, int pidx, int aidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return GetAttackElement( bidx, aidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_attackElement( bidx );
+	}
+	
+	ErrorHandler( "bat_attackElement() invalid party index '"+str(pidx)+"'");
+	return "";
+}
+
+///returns the csv of the attack elements that battle actor had
+string bat_attackElementList( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return add_unique_modifier( master_cast[bidx].e_element, master_cast[bidx].o_element );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_attackElement( bidx );
+	}
+	
+	ErrorHandler( "bat_attackElement() invalid party index '"+str(pidx)+"'");
+	return "";
+}
+
+
+
+int bat_ImmuneCount( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return GetImmuneCount( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_ImmuneCount( bidx );
+	}
+	
+	ErrorHandler( "bat_ImmuneCount() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+string bat_getImmune( int bidx, int pidx, int immune_idx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return GetImmune( bidx, immune_idx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_getImmune( bidx, immune_idx );
+	}
+	
+	ErrorHandler( "bat_getImmune() invalid party index '"+str(pidx)+"'");
+	return "";
+}
+
+
+
+int bat_AutoCount( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return GetAutoCount( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_AutoCount( bidx ); 
+	}
+	
+	ErrorHandler( "bat_AutoCount() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+string bat_getAuto( int bidx, int pidx, int auto_idx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return GetAuto( bidx, auto_idx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_GetAuto( bidx, auto_idx );
+	}
+	
+	ErrorHandler( "bat_getAuto() invalid party index '"+str(pidx)+"'");
+	return "";
+}
+
+
+
+int bat_ElemAbsorbCount( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return GetElemAbsorbCount( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_ElemAbsorbCount( bidx );
+	}	
+	
+	ErrorHandler( "bat_ElemAbsorbCount() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+string bat_getElemAbsorb( int bidx, int pidx, int elem_idx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return GetElemAbsorb( bidx, elem_idx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_getElemAbsorb( bidx, elem_idx ); 
+	}
+	
+	ErrorHandler( "bat_getElemAbsorb() invalid party index '"+str(pidx)+"'");
+	return "";
+}
+
+
+
+int bat_ElemNegateCount( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return GetElemNegateCount( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_ElemNegateCount( bidx );
+	}
+	
+	ErrorHandler( "bat_ElemNegateCount() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+string bat_getElemNegate( int bidx, int pidx, int elem_idx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return GetElemNegate( bidx, elem_idx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_getElemNegate( bidx, elem_idx ); 
+	}
+	
+	ErrorHandler( "bat_getElemNegate() invalid party index '"+str(pidx)+"'");
+	return "";
+}
+
+
+
+int bat_ElemHalfCount( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return GetElemHalfCount( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_ElemHalfCount( bidx );
+	}
+	
+	ErrorHandler( "bat_ElemHalfCount() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+string bat_getElemHalf( int bidx, int pidx, int elem_idx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return GetElemHalf( bidx, elem_idx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_getElemHalf( bidx, elem_idx ); 
+	}
+	
+	ErrorHandler( "bat_getElemHalf() invalid party index '"+str(pidx)+"'");
+	return "";
+}
+
+
+
+int bat_ElemDoubleCount( int bidx, int pidx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return GetElemDoubleCount( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_ElemDoubleCount( bidx );
+	}
+	
+	ErrorHandler( "bat_ElemDoubleCount() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+string bat_getElemDouble( int bidx, int pidx, int elem_idx ) { 
+	if( pidx == PARTY_ALLY )
+	{
+		return GetElemDouble( bidx, elem_idx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_getElemDouble( bidx, elem_idx ); 
+	}
+	
+	ErrorHandler( "bat_getElemDouble() invalid party index '"+str(pidx)+"'");
+	return "";
+}
+
+
+
+int bat_isImmune( int bidx, int pidx, string ailment )
+ { 
+	if( pidx == PARTY_ALLY )
+	{
+		return IsImmune( bidx, ailment );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_isImmune( bidx, ailment );
+	}
+	
+	ErrorHandler( "bat_isImmune() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+
+int bat_hasElemAbsorb( int bidx, int pidx, string element )
+ { 
+	if( pidx == PARTY_ALLY )
+	{
+		return HasElemAbsorb( bidx, element );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_hasElemAbsorb( bidx, element );
+	}
+	
+	ErrorHandler( "bat_hasElemAbsorb() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+
+int bat_hasElemNegate( int bidx, int pidx, string element )
+ { 
+	if( pidx == PARTY_ALLY )
+	{
+		return HasElemNegate( bidx, element );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_hasElemNegate( bidx, element );
+	}
+	
+	ErrorHandler( "bat_hasElemNegate() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+
+
+int bat_hasElemHalf( int bidx, int pidx, string element )
+ { 
+	if( pidx == PARTY_ALLY )
+	{
+		return HasElemHalf( bidx, element );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_hasElemHalf( bidx, element );
+	}
+	
+	ErrorHandler( "bat_hasElemHalf() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+
+
+int bat_hasElemDouble( int bidx, int pidx, string element )
+{ 
+	if( pidx == PARTY_ALLY )
+	{
+		return HasElemDouble( bidx, element );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_hasElemDouble( bidx, element );
+	}
+	
+	ErrorHandler( "bat_hasElemDouble() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+int bat_hasStatus( int bidx, int pidx, string cond )
+{	
+	if( pidx == PARTY_ALLY )
+	{
+		return castHasStatus( bidx, cond );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_hasStatus( bidx, cond );
+	}
+	
+	ErrorHandler( "bat_hasStatus() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+int bat_getStatusCount( int bidx, int pidx )
+{
+	if( pidx == PARTY_ALLY )
+	{
+		return GetCastStatusCount( bidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_GetStatusCount( bidx );
+	}
+	
+	ErrorHandler( "bat_getStatusCount() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+string bat_getStatus( int bidx, int pidx, int sidx )
+{
+	if( pidx == PARTY_ALLY )
+	{
+		return GetCastStatus( bidx, sidx );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_GetStatus( bidx, sidx );
+	}
+	
+	ErrorHandler( "bat_getStatus() invalid party index '"+str(pidx)+"'");
+	return "";
+}
+
+int bat_addStatus( int bidx, int pidx, string cond )
+{
+	if( pidx == PARTY_ALLY )
+	{	
+		castRemoveCancelledStatus( bidx, cond );
+	
+		return castAddStatus( bidx, cond );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		nme_RemoveCancelledStatus( bidx, cond );
+		
+		return nme_addStatus( bidx, cond );
+	}
+	
+	ErrorHandler( "bat_addStatus() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+int bat_removeOneInstanceOfStatus( int bidx, int pidx, string cond )
+{
+	if( pidx == PARTY_ALLY )
+	{
+		return castRemoveStatus( bidx, cond );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_removeStatus( bidx, cond );
+	}
+	
+	ErrorHandler( "bat_removeOneInstanceOfStatus() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+int bat_removeAllInstancesOfStatus( int bidx, int pidx, string cond )
+{
+	if( pidx == PARTY_ALLY )
+	{
+		return castRemoveAllStatus( bidx, cond );
+	}
+	else if( pidx == PARTY_ENEMY )
+	{
+		return nme_removeAllStatus( bidx, cond );
+	}
+	
+	ErrorHandler( "bat_removeAllInstancesOfStatus() invalid party index '"+str(pidx)+"'");
+	return -1;
+}
+
+/// returns false if the given battle actor is able to use the named skill as far as disabling-status-ailments go.  
+/// returns true if the given battle actor has a status ailment that prevents the skill's use.
+int bat_checkSkillForDisableDueToStatus( int bidx, int pidx, string skill_name )
+{
+	return bat_checkSkillForDisableDueToStatusI( bidx, pidx, GetSkill(skill_name) );
+}
+
+int bat_checkSkillForDisableDueToStatusI( int bidx, int pidx, int skill_idx )
+{
+	int i=0;
+	int cnt = GetSkillDisablingStatusCount( skill_idx );
+	
+	for( i=0; i<cnt; i++ )
+	{
+		if( 
+			bat_hasStatus(
+				bidx,
+				pidx,
+				GetSkillDisablingStatusByIdx(skill_idx, 0)
+			)
+		) {
+			return 1;
+		}
+	}
+	
+	return 0;
+}
+
+
+
+

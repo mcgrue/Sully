@@ -1,0 +1,9 @@
+// Skeleton enemy, drawn by athocreft.
+//name		wd	ht	per_row	rows	padding
+skeleton.gif	16	32	1	8	1
+anim idle F0W20F1W20B
+anim weak F2W20F3W20B
+anim attack F5W15F4W15F5W15F4W15
+anim hit F6 W45
+anim death F7
+//

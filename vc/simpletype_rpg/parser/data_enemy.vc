@@ -1,0 +1,430 @@
+/// The enemy data parser, by Gay O'Gayo
+///
+
+
+// Loads all enemies into the master_enemy struct from enemy.dat. 
+int LoadStructEnemies()
+{
+	int le_linenum, le_idx = 0, le_numlines; 
+	string le_file = FileToString(dat_directory + "enemies.dat"); // Holds the entire enemy data file in a string.
+	string le_curdef = ""; // Holds the enemy definition currently being collected
+	string le_curline; // Holds the line currently being checked
+	
+
+	le_numlines = TokenCount(le_file,chr(10)); // Number of lines in the entire file
+	// Run through each line one at a time...
+	for (le_linenum=1; le_linenum<=le_numlines; le_linenum++)
+	{
+		le_curline = _stripComments(GetToken(le_file,chr(10),le_linenum-1)); // get next line
+		if (equ(left(GetToken(le_curline," 	",0),1),"-")) // If the line begins (ignoring whitespace) with a dash, it means the end of this definition.
+		{			
+			if (!equ(le_curdef,"")) // If there was a definition above this dash, process it.
+			{
+				// If load is successful, reset current definition and move on
+				if (_LoadSingleEnemy(le_curdef, TokenCount(le_curdef,chr(10)), le_idx))
+				{					
+					le_curdef = "";
+					le_idx++;
+				}
+				else { return 0; }
+			}
+		}
+		else if (equ(GetToken(le_curdef," 	",0),"END_OF_FILE")) // If EOF is hit, finish up
+		{
+			le_linenum=le_numlines+1; // End the loop prematurely -- the final definition will be handled below
+		}
+		else 
+		{
+			if (len(trim(le_curline)) > 0) // If this line actually has something on it besides whitespace
+			{
+				le_curdef = le_curdef + chr(10) + le_curline; // append this line to the enemy definition currently being collected.
+			}
+		}		
+	}
+	// If there was a definition above the end of the file, process it.
+	if (!equ(le_curdef,"")) 
+	{
+		// If load is successful, finish
+		if (_LoadSingleEnemy(le_curdef, TokenCount(le_curdef,chr(10)), le_idx))
+		{
+			num_enemies = le_idx+1;
+		}
+		else { return 0; }
+	}
+	else num_enemies = le_idx; // If there wasn't a final definition, le_idx is already the right number.
+	return 1;
+}
+
+
+// --------------------------
+//      helper functions
+// --------------------------
+
+
+// Loads an enemy from an enemy definition. Returns 0 on trouble, 1 on success.
+// Errors on any sort of problem, though, so it usually won't get to return 0.
+//
+// @param lden_data The entire enemy data block in a string
+// @param lden_numlines The number of lines in the lden_data string
+// @param lden_idx The place in the master_enemy array to load into
+int _loadSingleEnemy(string lden_data, int lden_numlines, int lden_idx)
+{
+	int lden_linenum = 1; // Start on line 1	
+	int lden_state = 0; // Tracks what the function is currently expecting on a line
+	string lden_currline, lden_token; // Current line and token-within-line
+
+	while (lden_state == 0 && lden_linenum <= lden_numlines) // Now! Go down until you find the first line, which has the name
+	{
+		lden_currline = trim(GetToken(lden_data, chr(10), lden_linenum-1)); // Get line and strip beginning and end whitespace.and comments
+		// Normally, the junk check compares a line against MIN_LINE_LENGTH. However, I realize some people might want really, 
+		// really short enemy names, so I've had this assume any line that's more than just whitespace and comments is the name.
+		// The downside is that if you have a weird character on a line, it'll get confused about things.
+		if (len(lden_currline) > 0) 
+		{
+			if (!equ(GetToken(lden_currline," 	",0),lden_currline)) // If name contains spaces, error
+			{
+				ErrorHandler("Error in enemy datafile: '" + lden_currline + "' is not a valid enemy name, as it contains whitespace.");
+				return 0;
+			}
+			if (!_enemyNameIsUnique(lden_idx, lden_currline)) // If there's already an enemy with this name, error
+			{
+				ErrorHandler("1 Error in enemy datafile: There is more than one enemy named '" + lden_currline + "'.");
+				return 0;
+			}
+			master_enemy[lden_idx].name = lden_currline; // Store the name
+			lden_state = 1; // Move on to check for data line
+		}		
+		lden_linenum++;
+	}
+	if (lden_state == 0) // If the entire file has been searched without finding a name, error.
+	{
+		ErrorHandler("Error in enemy datafile: LoadEnemies passed an empty enemy definiton to _loadSingleEnemy as enemy " + str(lden_idx) + ". This means there is a bug in LoadEnemies. Tell Gayo! It is his fault.");
+		return 0;
+	}
+
+	while (lden_state == 1 && lden_linenum <= lden_numlines) // Next, find to the second meaningful line, which should be enemy stats
+	{
+		lden_currline = trim(GetToken(lden_data, chr(10), lden_linenum-1)); // Get line and strip beginning and end whitespace.and comments
+		if (len(lden_currline) >= MIN_LINE_LENGTH) // If the line is not junk (we already removed comments, so we needn't check for those)
+		{
+			if (_setEnemyStats(lden_currline, lden_idx)) lden_state = 2; // If stats were loaded properly, continue on to check for other params.
+			else return 0; // If _setEnemyStats returned an error, this passes the error on..						
+		}		
+		lden_linenum++;
+	}
+	if (lden_state == 1) // If the entire file has been searched without finding a data line, error.
+	{
+		ErrorHandler("Error in enemy datafile: Enemy '" + master_enemy[lden_idx].name + "' has no data line. This means there is a bug in LoadEnemies. Tell Gayo! It is his fault.");
+		return 0;
+	}		
+	_setupEnemyDefaults(lden_idx); // Set default values of optional params and sentinel values of non-optional ones
+	while (lden_linenum <= lden_numlines)
+	{	
+		lden_currline = trim(GetToken(lden_data, chr(10), lden_linenum-1)); // Get line and strip beginning and end whitespace.and comments
+		if (len(lden_currline) >= MIN_LINE_LENGTH) // If the line is not junk (we already removed comments, so we needn't check for those)
+		{			
+			lden_token = GetToken(lden_currline, "	 ", 0); // Get the first word on the line
+			if (equ(lden_token, "sprite"))
+			{
+				lden_token = GetToken(lden_currline, "	 ", 1); // Get the sprite name
+				// First, confirm that the referenced file actually exists.
+				artemp[0] = FileOpen(SPRFILE_DIR + lden_token, FILE_READ);				
+				if (!artemp[0]) { ErrorHandler("Error in enemy datafile: Enemy '" + master_enemy[lden_idx].name + "'. The specified sprite file '" + SPRFILE_DIR + lden_token + "' does not exist or cannot be read."); return 0; }
+				FileClose(artemp[0]);
+				master_enemy[lden_idx].sprite = lden_token; 
+			}
+			else if (equ(lden_token, "icon"))
+			{
+				lden_token = GetToken(lden_currline, "	 ", 1); // Get the icon number
+				if (val(lden_token) < 0) { ErrorHandler("Error in enemy datafile: Enemy '" + master_enemy[lden_idx].name + "'. Invalid icon number " + lden_token + "."); return 0; }
+				master_enemy[lden_idx].icon = val(lden_token);
+			}
+			else if (equ(lden_token, "ai"))
+			{				
+				lden_token = GetToken(lden_currline, "	 ", 1); // Get the function name
+				// First, confirm that the ai function exists.
+				if (FunctionExists(lden_token)) master_enemy[lden_idx].ai = lden_token; 
+				else { ErrorHandler("Error in enemy datafile: Enemy '" + master_enemy[lden_idx].name + "'. The specified AI function '" + lden_token + "' does not exist."); return 0; }
+			}
+			else if (equ(lden_token, "steal"))
+			{
+				// Pass control to a function that will do validity checking and set things up.
+				if (!_setupEnemyItem(lden_idx, ITEM_STOLEN, GetToken(lden_currline, "	 ", 1), GetToken(lden_currline, "	 ", 2) )) return 0;
+			}
+			else if (equ(lden_token, "drop"))
+			{
+				// Pass control to a function that will do validity checking and set things up.
+				if (!_setupEnemyItem(lden_idx, ITEM_DROPPED, GetToken(lden_currline, "	 ", 1), GetToken(lden_currline, "	 ", 2) )) return 0;
+			}
+			else if (equ(lden_token, "element"))
+			{
+				lden_token = GetToken(lden_currline, "	 ", 1); // Get the element
+				master_enemy[lden_idx].element = lden_token; 
+			}
+			else if (equ(lden_token, "immune"))
+			{	
+				// Pass control to a function that will set up the string.
+				if (!_setupEnemyImmune(lden_idx, lden_currline)) return 0;
+			}
+			else if (equ(lden_token, "auto"))
+			{
+				// Pass control to a function that will set up the string.
+				if (!_setupEnemyAuto(lden_idx, lden_currline)) return 0;
+			}			
+			else if (equ(lden_token, "absorb"))
+			{
+				// Pass control to a function that will set up the string.
+				if (!_setupEnemyResist(lden_idx, ABSORB_ELEMENT, lden_currline)) return 0;
+			}
+			else if (equ(lden_token, "negate"))
+			{
+				// Pass control to a function that will set up the string.
+				if (!_setupEnemyResist(lden_idx, NEGATE_ELEMENT, lden_currline)) return 0;
+			}
+			else if (equ(lden_token, "halve"))
+			{
+				// Pass control to a function that will set up the string.
+				if (!_setupEnemyResist(lden_idx, HALVE_ELEMENT, lden_currline)) return 0;
+			}
+			else if (equ(lden_token, "double"))
+			{
+				// Pass control to a function that will set up the string.
+				if (!_setupEnemyResist(lden_idx, DOUBLE_ELEMENT, lden_currline)) return 0;				
+			}
+			else if (equ(lden_token, "boss")) // Enemy is a boss
+			{
+				master_enemy[lden_idx].e_flags[ENEMYFLAG_BOSS] = 1; // Flag on!
+			}
+			else if (equ(lden_token, "leader")) // Enemy is a leader
+			{
+				master_enemy[lden_idx].e_flags[ENEMYFLAG_LEADER] = 1; // Flag on!
+			}
+			else  // Mystery line -- stop and error
+			{
+				ErrorHandler("Error in enemy datafile: Enemy '" + master_enemy[lden_idx].name + "'. Unknown parameter '" + lden_token + "'."); 
+				return 0; 
+			}			
+
+		}						
+		lden_linenum++;
+	}
+	if (!_confirmMandatoryEnemyTraits(lden_idx)) { return 0; } // If one or more mandatory traits weren't defined, error.
+//	DumpEnemy(lden_idx);
+	return 1;
+}
+
+// Takes the stat dataline of an enemy and loads it into that enemy's struct.
+// Returns 1 if successful, 0 if an error. Also calls ErrorHandler on an
+// error, which will usually be set to kill the game outright.
+// WARNING: If you, whoever you might be, ever change the number of stats, keep 
+// note of the way this works -- all the stats are loaded in the same order as 
+// for PCs, *then* money and EXP last, so you should keep those at the end if 
+// you alter the number of stats.
+// 
+// @param _statline The line of whitespace-delimited stat values. Ordered MHP, MMP, STR, END, MAG, MGR, HIT, DOD, STK, FER, REA, CTR, MON, EXP. 
+//	 Note that the first 12 share the order of the growable stats defined in data.vc -- this is essential to the operating of the function.
+// @param _eidx The index of the master_enemy element where the data is to be loaded.
+int _setEnemyStats(string _statline, int _eidx)
+{
+	int _estok; // The token number currently being checked. Not to be confused with an estoc, which is an archaic thrusting weapon.
+	string _esstr; // The actual string currently being handled.
+	int _curval; // The numerical value of the token being checked
+	int _esmin, _esmax; // The bounds on the values the stat is allowed to assume
+	
+	// First, check that the line actually has at least as many tokens as it's supposed to.
+	// This will catch most weird gibberish or wrongly placed info.
+	if (TokenCount(_statline," 	") < MAX_GROWABLE_STATS + 2) // Error if there aren't as many tokens as there should be -- the +2 is to accomodate the money and EXP pseudo-stats.
+	{
+		ErrorHandler("Error in enemy " + master_enemy[_eidx].name + ": Data line didn't contain enough information. Bad line was: " + _statline);
+		return 0;
+	}
+	
+	for (_estok=0; _estok<MAX_GROWABLE_STATS+2; _estok++) // The +2 is because money/exp are also included
+	{
+		_esstr = GetToken(_statline, " 	", _estok); // Get the next token
+		_curval = val(_esstr); // Convert token to number
+		
+		// This line here is basically what SafeVal() does -- check to confirm that the thing is actually a number. 
+		// However, I put it in here so the function can tell if there was a problem or not.
+		if (strcmp(str(_curval), _esstr)) 
+		{ 
+			ErrorHandler("Error in enemy " + master_enemy[_eidx].name + ": token '" + _esstr + "' is not a number.");
+			return 0;
+		}
+		
+		// Okay, this bit is little messy. Here's the deal. For enemies, HP, MP, money, and EXP have no maximum.
+		// All the rest have maximum 999. MMP, CTR, money, and EXP have a minimum of 0, while everything else
+		// has a minimum of 1. If something exceeds the maximum, this sets it to the maximum. If something is too
+		// low, it sets it to the minimum. 
+		if (_estok == STAT_MAX_HP) { _esmin = 1; _esmax = 0-1; } // MHP
+		else if (_estok == STAT_MAX_MP || _estok >= MAX_GROWABLE_STATS ) { _esmin = 0; _esmax = 0-1; } // MMP, money, or EXP
+		else if (_estok == STAT_CTR) { _esmin = 0; _esmax = MAXIMUM_STAT_VALUE; } // CTR
+		else { _esmin = 1; _esmax = MAXIMUM_STAT_VALUE; } // Everything else
+		if (_esmax > 0 && _curval > _esmax) _curval = _esmax; // If bigger than max, set to max (_esmax -1 means no max)
+		else if (_curval < _esmin) _curval = _esmin; // If smaller than min, set to min
+		// OK, looks good! Load in the value and move on to the next one
+		if (_estok<MAX_GROWABLE_STATS) // Normal stat 
+			master_enemy[_eidx].stats[_estok] = _curval;
+		else if (_estok=MAX_GROWABLE_STATS) // money
+			master_enemy[_eidx].e_money = _curval;
+		else // exp
+			master_enemy[_eidx].e_exp = _curval;			
+		// STR is duplicated to make ATK; END is duplicated to make DEF.
+		if (_estok == STAT_STR) master_enemy[_eidx].stats[STAT_ATK] = _curval;
+		else if (_estok == STAT_END) master_enemy[_eidx].stats[STAT_DEF] = _curval;
+	}
+	return 1;
+}
+
+// Sets up default enemy struct values. This is called *after* the name and stats have been
+// put in so as not to waste time if an error is found while doing those. Thus, it does nothing
+// to name or stats. Optional values are set to defaults, while mandatory ones are set to a
+// sentinel value that can be checked to make sure they've been set later.
+void _setupEnemyDefaults(int _eidx)
+{
+	int _edcount;
+	// Set mandatory sentinel values (name is assumed to be set already)
+	master_enemy[_eidx].sprite = ""; 
+	master_enemy[_eidx].icon = 0-1;
+	master_enemy[_eidx].ai = ""; 
+
+	// Set non-optional values to defaults
+	master_enemy[_eidx].auto = ""; 
+	master_enemy[_eidx].immune = ""; 	
+	master_enemy[_eidx].element = ""; 	
+	for (_edcount = 0; _edcount < MAX_RESISTS; _edcount++) { master_enemy[_eidx].resist[_edcount] = ""; }
+	for (_edcount = 0; _edcount < ENEMY_FLAGS; _edcount++) { master_enemy[_eidx].e_flags[_edcount] = 0; }
+	for (_edcount = 0; _edcount < ENEMY_ITEMS; _edcount++) { master_enemy[_eidx].items[_edcount] = 0-1; master_enemy[_eidx].itemchance[_edcount] = 0; }
+
+}
+
+
+// Loads item (dropped or stolen) information into the given enemy struct. Returns a 1 if everything
+// goes right or 0 and an error if something bad happens.
+// Params: enemy struct index, dropped/stolen #define, item name, item % chance in string form.
+// Does NOT check that enemy index or item type (drop/steal) are valid numbers -- giving a weird
+// number will produce the usual array-oob crashes.
+int _setupEnemyItem(int _eidx, int _itype, string _iname, string _ichance)
+{
+	int _iidx, _getrate;
+	_iidx = IsItem(GetToken(_iname,",",0)); // Get item index
+	if (_iidx < 0) // If it's not a real item, break with an error.
+	{
+		ErrorHandler("Error in enemy " + master_enemy[_eidx].name + ": There is no item called '" + _iname + "'.");
+		return 0;
+	}
+	_getrate = val(_ichance);
+
+	// This line here is basically what SafeVal() does -- check to confirm that the thing is actually a number. 
+	// However, I put it in here so the function can tell if there was a problem or not.
+	if (strcmp(str(_getrate), _ichance)) 
+	{ 
+		ErrorHandler("Error in enemy " + master_enemy[_eidx].name + ": token '" + _ichance + "' is not a number.");
+		return 0;
+	}
+
+	// Okay, everything looks good, so load the data into the struct.
+	master_enemy[_eidx].items[_itype] = _iidx;
+	master_enemy[_eidx].itemchance[_itype] = _getrate;
+
+	return 1;
+}
+
+
+// Grabs an enemy's elemental resistances of the appropriate type and loads them into the specified
+// enemy struct. 
+int _setupEnemyResist(int _eidx, int _rtype, string _rline)
+{
+	// Strip comments and whitespace and remove the first token (which says the resist type)
+	string _erstring = _stripWhiteSpace(_rline, 1); 
+	master_enemy[_eidx].resist[_rtype] = _erstring;
+	return 1;
+}
+
+// Goes through a string until it finds // or #, then cuts of everything after and including that.
+// If those characters don't occur, it just sends back the entire string.
+string _stripComments(string _stripstring)
+{
+	int _stlen, _stplace; // The overall string length and current position
+	int _oneslash = 0; // Set to 1 when the previous character was a /.
+	string _stchar;
+	
+	_stlen = len(_stripstring);
+	
+	for (_stplace = 0; _stplace < _stlen; _stplace++ )
+	{
+		_stchar = mid(_stripstring,_stplace,1); // get nth character
+		// If a slash...
+		if (equ("/",_stchar))
+		{
+			// Did a slash precede this? If so, return everything up to that.
+			if (_oneslash) { return left(_stripstring,_stplace-1); }
+			// Otherwise, make note of the slash and keep going
+			else { _oneslash=1; }
+		}
+		else
+		{
+			_oneslash = 0; // Not a slash, so it no longer matters it the previous char was a slash.
+			
+			// If a pound sign, the rest is comments -- return everything up to now.
+			if (equ("#",_stchar)) return left(_stripstring,_stplace);
+		}
+	}
+	return _stripstring; // If it gets this far, there were no comments, so return everything.
+}
+
+// Loads in an enemy's immunity string. Right now there's no way for it to error.
+int _setupEnemyImmune(int _eidx, string _eiline)
+{
+	// Strip comments and whitespace and remove the first token (which is just IMMUNE)
+	string _eistring = _stripWhiteSpace(_eiline, 1); 
+	master_enemy[_eidx].immune = _eistring;
+	return 1;
+}
+
+// Loads in an enemy's auto-status string. Right now there's no way for it to error.
+int _setupEnemyAuto(int _eidx, string _ealine)
+{
+	// Strip comments and whitespace and remove the first token (which is just AUTO)
+	string _eastring = _stripWhiteSpace(_ealine, 1); 
+	master_enemy[_eidx].auto = _eastring;
+	return 1;
+}
+
+// Checks to make sure that there's no enemy *before* the given index with the given name.
+// Used to ensure that each enemy name is unique. Returns 1 for unique, 0 for duplicate.
+int _enemyNameIsUnique(int _eidx, string _eline)
+{
+	int _encount;
+	for (_encount=0; _encount<_eidx; _encount++)
+	{
+		if (equ(master_enemy[_eidx].name, _eline)) return 0;
+	}
+	return 1;
+}
+
+
+// Checks to make sure that an enemy's mandatory fields (currently sprite, icon, and 
+// AI) have been changed from the dummy values that _setupEnemyDefaults sets them to.
+// Returns 0 if one or more haven't been changed, 1 otherwise.
+int _confirmMandatoryEnemyTraits(int _eidx)
+{
+	if (equ(master_enemy[_eidx].sprite,""))
+	{
+		ErrorHandler("Error in enemy " + master_enemy[_eidx].name + ": SPRITE field was not set..");
+		return 0;
+	}
+	if (equ(master_enemy[_eidx].ai,""))
+	{
+		ErrorHandler("Error in enemy " + master_enemy[_eidx].name + ": AI field was not set..");
+		return 0;
+	}
+	if (master_enemy[_eidx].icon < 0)
+	{
+		ErrorHandler("Error in enemy " + master_enemy[_eidx].name + ": ICON field was not set..");
+		return 0;
+	}
+
+	
+	return 1;
+}

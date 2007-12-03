@@ -1,0 +1,10 @@
+// Cyclops enemy, drawn by zonker.
+// This sprite currently lacks a death frame. I've set it to an empty frame for now.
+//name		wd	ht	per_row	rows	padding
+cyclops.gif	32	64	4	4	0
+anim idle F0W30F1W30[FakeFunction]B // take that callfunc out, it's just here for show
+anim weak F8W80F9W50B 
+anim attack F4W30F5<BM_MouseHelp>W10F6W20 // that one too.
+anim hit F12 
+anim death F13
+//

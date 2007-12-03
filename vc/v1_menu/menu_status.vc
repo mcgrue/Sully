@@ -1,0 +1,142 @@
+// menu_status.vc for Sully www.verge-rpg.com
+// Zip 05/09/2004
+// Last update 06/07/2005 (by Gayo)
+
+//        -----------------
+//       Status Menu
+//        -----------------
+
+#define MENU_LINESEP 5 // Space between some lines in menus
+#define MAX_DESC_LINES 3 // The most lines a character's status description can take up. Anything beyond this is cut off.
+
+// Control function for the Status screen of the menu
+// Called from MenuEntry() based on global menu_idx variable
+// Very simple at the moment, room for additions
+void MenuControlStatus()
+{
+	//setting the angry buzz here as a reminder that it does, in fact, 
+	// have room for additions.
+	Menu2ArrowSetSounds( "MenuAngryBuzz","MenuPageTurn" );
+	MenuControlTwoArrows("menu_item", 1, "menu_cast", PartySize());
+	if (MenuConfirm())
+	{
+		Menu2ArrowSetSounds( "","" );
+		MenuRoot();
+	}
+	if (MenuCancel())
+	{
+		Menu2ArrowSetSounds( "","" );
+		MenuHappyBeep();
+		MenuRoot();
+	}
+}
+
+// Drawing function for the Status screen of the menu
+// Called from MenuEntry() based on global menu_idx variable
+// Very simple at the moment, room for additions
+void MenuDrawStatus()
+{
+	int i;
+
+	// Draw the background and title
+	MenuBlitRight(0, menu_option);
+	MenuDrawBackground(MENU_A_X1, MENU_A_Y1, MENU_A_X2, MENU_A_Y2, MenuIsActive("Status"));
+	PrintRight(220, 15, screen, menu_font[0], "Status");
+
+	// Draw the current selected party member and stats
+	MenuBlitCast(menu_cast, 0, 0);
+	for (i = 0; i < MAX_STATS; i++)
+	{
+		MenuPrintStat(	MENU_CAST_X, 
+					MENU_CAST_Y, 
+					i, 
+					0, 
+					GetRealStat(party[menu_cast], i)					
+					);		
+	}
+
+	// Print total EXP and EXP to next level
+	MenuPrintEXP( MENU_CAST_X, menu_fonth * 3 + MENU_LINESEP + 45 + MENU_CAST_Y, party[menu_cast] ); // The 2 there is because there are two lines of stats above this.
+	// Print party member description
+	MenuPrintDescVar(menu_font[0], master_cast[party[menu_cast]].desc, 190);
+}
+
+// Draws the EXP line of the menu (cur exp and exp to level)..The positioning's a touch weird since it
+// relies on zip's magic-numbery menus. Takes the top left coord of the line as x/y coords, and also
+// the master_cast (NOT party) index of the character.
+// Ridiculously huge EXP numbers will run into the "next" field, and ridiculously high "next" numbers will
+// run off the screen. But we're talking REALLY huge. It shouldn't be a problem.
+void MenuPrintEXP(int mpe_x, int mpe_y, int mpe_id)
+{
+	PrintString(mpe_x, mpe_y, screen, menu_font[0], "EXP " + str(GetXP(mpe_id))); // Print total EXP
+	if (GetLevel(mpe_id) >= MAX_LEVELS) // If lev is maxed out, print -- as next lev.
+		PrintString(mpe_x + 96, mpe_y, screen, menu_font[0], "NEXT --"); // Can't level further
+	else PrintString(mpe_x + 96, mpe_y, screen, menu_font[0], "NEXT " + str(GetXPRequired(mpe_id, GetLevel(mpe_id)+1) - GetXP(mpe_id))); // Print EXP to next level
+}
+
+//        -------------------------------
+//       Description Functions
+//        -------------------------------
+// A few functions for wrapping and displaying short lines of text
+
+// Gives the number of lines a description needs
+int MenuLenDesc(int desc_font, string desc_text, int desc_width)
+// Pass: The font that will be used, the text to be displayed, and the width available
+// Return: The number of lines needed to display the description
+// No error checking
+{
+	desc_text = WrapText(menu_font[0], desc_text, desc_width);
+	return TokenCount(desc_text, chr(10));
+}
+
+// Displays a description of up to two lines, at position set by defines
+int MenuPrintDesc(int desc_font, string desc_text, int desc_width)
+// Pass: The font that will be used, the text to be displayed, and the width available
+// Return: The number of lines that were displayed
+// No error checking
+{
+	return MenuPrintDescFull(MENU_DESCRIPTION_X, MENU_DESCRIPTION_Y, desc_font, desc_text, desc_width);
+}
+
+// Displays a description of up to two lines, at position set by defines
+int MenuPrintDescFull(int x, int y, int desc_font, string desc_text, int desc_width)
+// Pass: The x,y coords of the bottom left had corner, the font that will be used, the text to be displayed, and the width available
+// Return: The number of lines that were displayed
+// No error checking
+{
+	String delim = chr(10);  // was previously "|"
+
+	desc_text = WrapText(menu_font[0], desc_text, desc_width);
+	int lines = TokenCount(desc_text, delim);
+	if (lines == 1)
+	{
+		PrintString(x, y - (3 * (menu_fonth + 2) / 2), screen, desc_font, GetToken(desc_text, delim, 0));
+	}
+	else
+	{
+		PrintString(x, y - ((menu_fonth + 2) * 2), screen, desc_font, GetToken(desc_text, delim, 0));
+		PrintString(x, y - ((menu_fonth + 2) * 1), screen, desc_font, GetToken(desc_text, delim, 1));
+	}
+	return lines;
+}
+
+// Prints description of any number of lines, working upwards. You get a free line with this one.
+int MenuPrintDescVar(int desc_font, string desc_text, int desc_width)
+// Pass: The font that will be used, the text to be displayed, and the width available
+// Return: The number of lines that were displayed
+// No error checking
+{
+	String delim = chr(10);  // was previously "|"
+	
+	int i;
+	desc_text = WrapText(menu_font[0], desc_text, desc_width);
+	// lines is the number of lines in the desc OR the maximum number of lines, whichever is less.
+	int lines = min(TokenCount(desc_text, delim), MAX_DESC_LINES); 
+	for (i = 0; i < lines; i++)
+	{
+		PrintString(MENU_DESCRIPTION_X, MENU_DESCRIPTION_Y - ((menu_fonth + 2) * (lines - i)), screen, desc_font, GetToken(desc_text, delim, i));
+	}
+	Line(MENU_DESCRIPTION_X - 5, MENU_DESCRIPTION_Y - 4 - (lines * (menu_fonth + 2)),
+		MENU_DESCRIPTION_X + desc_width + 5, MENU_DESCRIPTION_Y - 4 - (lines * (menu_fonth + 2)), menu_colour[2], screen);
+	return lines;
+}

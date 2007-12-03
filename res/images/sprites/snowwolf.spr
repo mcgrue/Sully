@@ -1,0 +1,9 @@
+// Snow wolf enemy, drawn by kelvin. Awoo!
+//name		wd	ht	per_row	rows	padding
+snowwolf.gif	32	32	9	1	1
+anim idle F0W15F1W15B
+anim weak F2W15F3W15B
+anim attack F4W20F5W10F6W10F4W10
+anim hit F7 W45
+anim death F8
+//

@@ -1,0 +1,10 @@
+// Lizardogre enemy, drawn by immortalowl.
+// How exactly does a lizardogre differ from a lizardman, anyway?
+//name		wd	ht	per_row	rows	padding
+lizardogre.png	98	98	1	12	1
+anim idle F0W15F1W15F2W15F1W15B
+anim weak F3W15F4W15F5W15F4W15B
+anim attack F6W15F7W15F8W15F9W15F6W15
+anim hit F10 W45
+anim death F11
+//

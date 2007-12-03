@@ -1,0 +1,9 @@
+// Vampire enemy, drawn by kelvin. 
+//name		wd	ht	per_row	rows	padding
+vampire.gif	16	32	15	1	1
+anim idle F0W15F1W15B
+anim weak F2W15F3W15B
+anim attack F5W15F6W15F7W15F8W20
+anim hit F4 W45
+anim death F9W5F10W5F11W5F12W5F13W5F14
+//

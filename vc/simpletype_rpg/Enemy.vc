@@ -1,0 +1,138 @@
+#define ITEM_DROPPED 0 // Dropped item index
+#define ITEM_STOLEN 1 // Stolen item index
+#define ENEMY_ITEMS 2 // Number of types of items an enemy can hold
+#define ENEMYFLAG_BOSS 0 // Boss flag
+#define ENEMYFLAG_LEADER 1 // Leader flag
+#define ENEMY_FLAGS 2 // Number of enemy flags
+#define MAX_ENEMIES 200 // Maximum number of distinct enemy types
+
+#define ENEMY_FILE "enemy.dat" // The name of the enemy data file. Don't include the path.
+
+/// where the enemy parsers live
+#include "vc/simpletype_rpg/parser/data_enemy.vc"
+
+struct enemy
+{
+	string name; // The name of the enemy
+	string sprite; // The location of the enemy's sprite
+	int icon; // Icon used for battle roster
+	
+	int stats[MAX_STATS]; // Enemy stats go here!	
+
+	int e_flags[ENEMY_FLAGS]; // Enemy flags go here. All default to 0.
+	string ai; // AI callfunc
+
+	int items[ENEMY_ITEMS]; // Index of dropped and stolen item (empty if none)
+	int itemchance[ENEMY_ITEMS]; // Percent chance of dropping/stealing item
+	int e_money; // The money this enemy drops
+	int e_exp; // The exp this enemy gives
+	
+	string immune; // Comma-delimited list of immune statuses
+	string auto; // Comma-delimited list of automatic statuses
+	string resist[MAX_RESISTS]; // Comma-delimited lists of elemental affinities
+	string element; // Element of enemy's normal attack
+}
+
+enemy master_enemy[MAX_ENEMIES];
+int num_enemies;
+
+/// Takes a name of an enemy.
+/// returns the master_enemy[] index of that enemy, -1 if it doesn't exist.
+///
+/// @param name the master_enemy[] name of a enemy.
+int GetEnemy( string name ) {
+	int i;
+	
+	for( i=0; i<num_enemies; i++ )
+	{
+		if( equ(master_enemy[i].name,name) )
+			return i;
+	}
+	
+	return -1;
+}
+
+/// Takes a name of an enemy.
+/// Returns true if it's a valid name, false if not.
+int IsEnemy( string name )
+{
+	if( GetEnemy(name) < 0 )
+		return 0;
+	return 1;
+}
+
+// Pass an enemy item slot define (eg ITEM_STOLEN or ITEM_DROPPED)
+// Returns a string representation
+// Throws error if define is unrecognised
+string GetEnemyItemName(int itmdef)
+{
+	if (itmdef == ITEM_DROPPED) return "Dropped";
+	if (itmdef == ITEM_STOLEN) return "Stolen";
+	ErrorHandler("Runtime error: Getting enemy item slot name for def: "+str(itmdef));
+	return "error";
+}
+
+// Pass an enemy flag define.
+// Returns a string representation
+// Throws error if define is unrecognised
+string GetEnemyFlagName(int efldef)
+{
+	if (efldef == ENEMYFLAG_BOSS) return "Boss";
+	if (efldef == ENEMYFLAG_LEADER) return "Leader";
+	ErrorHandler("Runtime error: Getting enemy flag name for def: "+str(efldef));
+	return "error";
+}
+
+
+
+
+
+
+
+// Dumps all enemy data into the log for checking. Might take a while on long enemy lists.
+void DumpStructEnemies()
+{
+	int dae_counter;
+	for (dae_counter=0;dae_counter<num_enemies;dae_counter++) DumpEnemy(dae_counter);	
+}
+
+// Dumps a single enemy's data into the log.
+void DumpEnemy( int dumpen_idx )
+{
+	int dumpen_count; // counter for iterating through arrays
+	string dumpen_string = ""; // string built up by for loops
+	log("-----");
+	log("Dump of enemy #" + str(dumpen_idx)); // Enemy index
+	log("NAME: '" + master_enemy[dumpen_idx].name+"'"); // Enemy name
+	log("SPRITE: '" + master_enemy[dumpen_idx].sprite+"'"); // Enemy sprite (sans path)
+	log("ICON: " + str(master_enemy[dumpen_idx].icon)); // Enemy icon #
+	log("AI: '" + master_enemy[dumpen_idx].ai+"'"); // Enemy AI function
+	for (dumpen_count=0;dumpen_count<MAX_STATS;dumpen_count++) // Collect stats
+	{
+		dumpen_string ==  dumpen_string + GetStatName(dumpen_count) + ":" + str(master_enemy[dumpen_idx].stats[dumpen_count]) + "  ";
+	}
+	log(dumpen_string); // Enemy stat block
+	log("IMMUNE: " + master_enemy[dumpen_idx].immune); // Enemy status immunities
+	log("AUTO: " + master_enemy[dumpen_idx].auto); // Enemy automatic statuses	
+	log("ELEMENT: " + master_enemy[dumpen_idx].element); // Enemy attack element	
+	for (dumpen_count=0;dumpen_count<MAX_RESISTS;dumpen_count++) // Print each resist string in turn
+	{
+		log(ToUpper(GetResistName(dumpen_count)) + ": " + master_enemy[dumpen_idx].resist[dumpen_count]);
+	}
+	dumpen_string = "";
+	for (dumpen_count=0;dumpen_count<ENEMY_FLAGS;dumpen_count++) // Gather list of true enemy flags
+	{
+		if (master_enemy[dumpen_idx].e_flags[dumpen_count]) dumpen_string = dumpen_string + GetEnemyFlagName(dumpen_count) + " "; // Add flag to list if true
+	}
+	log("FLAGS: " + dumpen_string); // True enemy flags (blank if all false)
+	for (dumpen_count=0;dumpen_count<ENEMY_ITEMS;dumpen_count++) // Print each item in turn
+	{		
+		if (master_enemy[dumpen_idx].items[dumpen_count] >= 0) // If there is an item of this kind
+			{ log(ToUpper(GetEnemyItemName(dumpen_count)) + ": " + master_items[master_enemy[dumpen_idx].items[dumpen_count]].name + " (" + str(master_enemy[dumpen_idx].itemchance[dumpen_count]) + "%)"); }
+		else // if not, don't list anything
+			{ log(ToUpper(GetEnemyItemName(dumpen_count)) + ":"); }
+	}
+	log("MONEY: " + str(master_enemy[dumpen_idx].e_money)); // Enemy money dropped
+	log("EXP: " + str(master_enemy[dumpen_idx].e_exp)); // Enemy experience given
+	log("-----");	
+}

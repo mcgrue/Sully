@@ -1,0 +1,44 @@
+// Skilltypes.dat
+//
+// This datafile contains definitions of all of the 
+// Skill Groups this game has.  A skill must belong to a group.
+//
+// This data gets parsed into the master_skilltypes[] array, defined in data.vc
+// The maximum number of skillgroups is controlled by MAX_SKILLTYPES, defined in data.vc
+//    please change this number of you wish to add more skill types than it currently 
+//    allows.
+//
+// blank lines and commented lines are ignored.  Anything else will be treated as an entry.
+//
+// VISIBILITY is either NORMAL, HIDDEN, or MENU
+// * If it's NORMAL, all of the character's known skills in that group will be visible in battle menus as a subgroup listing.
+// * If it's HIDDEN or MENU, the skillgroup will be selectable as a command function, with no listing of the known subgroups (good for roulette-type groups)
+// * If it's MENU, the known skills of that group will be visible from the main menu.
+//
+// DISABLING_STATUSES is a list of all of the status ailments that disable that skill group.  
+// This list needs to be comma-seperated without any whitespace inbetween names.  For example,
+// If you want the status ailements MUTE, NUMBNESS, and HERPES to diable your Sex_Appeal skillset, you'd
+// enter...
+//
+// MUTE,NUMBNESS,HERPES
+//
+// ...under that skilltype's Disabling_Statuses entry.  If no ailment can disable a given skilltype, enter a -
+//
+// Field order:
+// Name		Icon	Visibility	Disabling_Statuses	"Description"
+
+Black_Magic	1	NORMAL		Silence			"The magic dealing in hurting!"
+White_Magic	2	NORMAL		Silence			"The magic dealing in anti-hurting!"
+Fuschia_Magic	3	NORMAL		Silence			"The magic of interior decorating!"
+Swordsmanship	4	NORMAL		Seal			"Masterful techniques for swordsmen."
+Jive		5	NORMAL		-			"Secret arts known only to funkmasters."
+Gadgetry	6	NORMAL		Seal			"Engineering skills."
+Summon		7	NORMAL		Silence			"Talk to the gods and make them hit stuff for you."
+Fortune		8	HIDDEN		-			"Favored skills of the bold."
+Trickery	9	NORMAL		Seal			"Chicanery.  Flim-flamery.  Shenanegans."
+Shake_Spear	10	NORMAL		Seal			"Skills dealing with neither slings nor arrows."
+
+END_OF_FILE
+
+
+

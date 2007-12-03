@@ -1,0 +1,9 @@
+// Poltergeist enemy, drawn by Gayo. 
+//name		wd	ht	per_row	rows	padding
+poltergeist.png	24	32	5	4	1
+anim idle F0W15F1W15F2W15F1W15F0W15F3W15F4W15F3W15B
+anim weak F6W15F7W15F8W15F7W15F6W15F9W15F10W15F9W15B
+anim attack F10W10F11W10F12W10F13W20F14W20
+anim hit F15 W45
+anim death F16
+//
