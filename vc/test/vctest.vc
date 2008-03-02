@@ -1,0 +1,167 @@
+String _assertation_results = "";
+
+void _testPre( String testName )
+{
+	_testlog( "setting up for '"+testName+"'..." );
+
+	_assertation_results = "";
+}
+
+void _test( String testName )
+{
+	_testlog( "calling '"+testName+"'..." );
+	
+	if( !FunctionExists(testName) )
+	{
+		_testAllStop( "Attempted to call '"+testName+"' in test, which plainly doesn't exist." );
+	}
+	
+	CallFunction( testName );
+	_testlog( "leaving '"+testName+"'..." );
+}
+
+
+void _testPost( String testName )
+{
+	_testlog( "cleaning up from '"+testName+"'..." );
+	
+	if( len(_assertation_results) <= 0 )
+	{
+		_testAllStop( "test '"+testName+"' apparently had no assertations.  Thus: it's dumb and fails." );
+	}
+	
+	int i = 0;
+	
+	int fails = 0;
+	int passes = 0;
+	
+	int first_fail = -1;
+	
+	string thisChar = "";
+	
+	for( i=0; i<len(_assertation_results); i++ )
+	{
+		thisChar = mid(_assertation_results,i,1);
+			
+		if( strcmp("F",thisChar) == 0 )
+		{
+			if( first_fail == -1 )
+			{
+				first_fail = i; 
+			}
+			
+			fails++;
+		}
+		else if( strcmp("P",thisChar) == 0 )
+		{
+			passes++;
+		}	
+		else
+		{
+			_testAllStop( "Unexpected character from test running ('"+thisChar+"').  WTF. " );
+		}
+	}
+	
+	if( fails != 0 )
+	{
+		_testAllStop( "FAILURES! test '"+testName+"' had "+str(fails)+" failure(s), the first of which was assertation #"+str( (first_fail+1) )+" in the function." );
+	}
+	else if( len(_assertation_results) != passes )
+	{
+		_testAllStop( "Holy shit!  there were "+str(len(_assertation_results))+" assertations hypotetically in the test but only "+str(passes)+" recorded as passing and it didn't fail before this check.  WHAT THE SHITFUCK GODDAMN?" );
+	}
+	else
+	{
+		_testlog( "test '"+testName+"' passed "+str(passes)+" out of "+str(len(_assertation_results))+" assertations." );
+	}
+}
+
+void assertTrue( int i ) {
+	if(i)
+	{
+		_assertation_results = _assertation_results + "P";
+	}
+	else
+	{
+		_assertation_results = _assertation_results + "F";	
+	}
+}
+void assertFalse( int i ) {
+	if(!i)
+	{
+		_assertation_results = _assertation_results + "P";
+	}
+	else
+	{
+		_assertation_results = _assertation_results + "F";	
+	}
+}
+
+void _testlog( String s )
+{
+	Log( "TEST: " + s );
+}
+
+void _testAllStop( String s )
+{
+	Exit( "TEST: " + s );
+}
+
+
+
+void runTests()
+{
+	int funkCount = GetUserSystemVcFunctionCount();
+	
+	
+	_testlog( "There are "+str(funkCount)+" user-defined functions in this verge game." );
+
+	
+	String curFunc = "";
+
+	int i = 0;
+	int numTests = 0;
+	for( i=0; i<funkCount; i++ )
+	{
+		curFunc = GetUserSystemVcFunctionByIndex(i);
+	
+		if( len(curFunc) > 4 && strcmp("test",left(curFunc,4)) == 0 )
+		{
+			numTests++;
+		}
+	}
+	
+	_testLog( "There are "+str(numTests)+" tests to run." );	
+	
+	if( numTests == 0 )
+	{
+		_testAllStop( "We found no tests.  Fucking christ.  Why call runtests() if you have no tests?  DO YOU KNOW WHAT'S GOING ON?!" );
+	}
+	
+	for( i=0; i<funkCount; i++ )
+	{
+		curFunc = GetUserSystemVcFunctionByIndex(i);
+	
+		if( len(curFunc) > 4 && strcmp("test",left(curFunc,4)) == 0 )
+		{			
+			_testPre( curFunc );
+			_test( curFunc );
+			_testPost( curFunc );
+		}
+	}	
+}
+
+
+void testTest()
+{
+	assertTrue( 1 );
+	assertFalse( 0 );
+}
+
+/* only uncomment this to fail.
+void testTestFail()
+{
+	assertTrue( 0 );
+	assertFalse( 1 );
+}
+*/

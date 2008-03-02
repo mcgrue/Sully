@@ -1,0 +1,23 @@
+
+/// include all testing files here.
+#include "vc\test\verge-c_tests\01_general_functions.vc"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/// sully system tests
+#include "vc\test\sully_tests\party_setup.vc"
+

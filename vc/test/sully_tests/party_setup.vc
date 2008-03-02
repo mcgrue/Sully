@@ -1,0 +1,34 @@
+
+
+void _test_clear_party()
+{
+	/// Setup.
+	int i = 0;
+	curpartysize = 0;
+	for( i=0; i<MAX_PARTY_SIZE; i++ )
+	{
+		party[i] = -1;
+	}
+}
+
+void test_party_setup()
+{
+	_test_clear_party();
+
+	/// instance 
+	JoinPartyAtLevel( "Darin", 5 ) ;
+	JoinPartyAtLevel( "Dexter", 6 );
+	JoinPartyAtLevel( "Crystal", 10 );
+	
+	assertTrue( curpartysize==3 );
+	
+	assertTrue( CharInParty("Darin") );
+	assertTrue( CharInParty("Dexter") );
+	assertTrue( CharInParty("Crystal") );
+	
+	assertFalse( CharInParty("Onam") );
+	assertFalse( CharInParty("Tanata") );
+		
+	_test_clear_party();
+}
+

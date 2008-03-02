@@ -1,0 +1,61 @@
+/// Not under test:
+/// Exit() Quits the VERGE Engine with the supplied message.
+/// FlushKeyBuffer() Clears the key buffer for future GetKeyBuffer() calls.
+/// GetKeyBuffer() Returns a buffer of recent keys pressed in string form.
+
+int ___testCallFunction = 0;
+void _testCallFunction()
+{
+	___testCallFunction = 17;
+}
+
+/// CallFunction() Executes a function by the name it's given.
+void testCallFunction()
+{
+	___testCallFunction = 0;
+	
+	CallFunction("_testCallFunction");
+	
+	assertTrue( ___testCallFunction==17 );
+}
+
+void testFunctionExists()
+{
+	assertTrue( FunctionExists("testFunctionExists") );
+	assertFalse( FunctionExists("This_Is_A_fake_function_name_that_shouldnt_exist") );
+}
+
+
+
+
+/*
+
+GetInt() Returns the value of a global non-array integer variable.
+GetIntArray() Returns the value of a global, one-dimensional integer array index.
+GetString() Returns the value of a global non-array string variable.
+GetStringArray() Returns the value of a global, one-dimensional string array index.
+GetUserSystemVcFunctionByIndex() Returns a user-defined system-scope vc function name by int index
+GetUserSystemVcFunctionCount() Returns the number of system-vc scope functions the current compiled game has.
+HookButton() Calls the specified function on every discrete press of the specified button
+HookKey() Calls the specified function on every discrete press of the specified key
+HookRetrace() Calls the specified function everytime an R is hit in the renderstring.
+HookTimer() Calls the specified function once every timer tick.
+ListBuiltinDefines() Returns a list of all of v3's builtin defines.
+ListBuiltinFunctions() Returns a list of all of v3's builtin functions.
+ListBuiltinVariables() Returns a list of all of v3's builtin variables.
+Log() Write a line of text to your logfile. Essential for debugging.
+MessageBox() Pops up a windows Messagebox.
+Random() Returns a random integer between min and max, inclusive.
+SetAppName() Set the window's application name for your program.
+SetButtonJB() Sets an internal VERGE button to a joystick button.
+SetButtonKey() Binds an internal VERGE button to a key
+SetInt() Sets the value of a global non-array integer variable.
+SetIntArray() Sets the value of an index in a global one-dimensional integer array.
+SetKeyDelay() Sets a delay for repeating key presses with GetKeyBuffer()
+SetRandSeed() Initializes the random number generator
+SetResolution() Sets the screen's resolution.
+SetString() Sets the value of an index in a global one-dimensional string array.
+SetStringArray() Sets the value of an index of a string array
+Unpress() Causes a button to show as released until it is pressed again
+UpdateControls() Updates all keyboard, joystick, and verge system input variables.
+*/
