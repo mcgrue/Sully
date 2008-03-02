@@ -99,21 +99,6 @@ int PartySize() {
 	return curpartysize;
 }
 
-/// returns the indice of the player entity.  
-/// this indice is only set by SpawnParty().  
-/// If SetPlayer is called after SpawnParty(), 
-/// the index will point the the party's leader, 
-/// *not* the current player-controlled entity.
-///
-/// It's just a protective sheild around playerent for those of you 
-/// who do not trust yourself with read/write vars. ;)
-///
-/// @return the index of the current player entity
-int GetPlayer() {
-	return playerent;
-}
-
-
 /// calls trigger_on_rest() for the whole party
 ///
 void PartyRest()

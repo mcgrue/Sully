@@ -67,6 +67,10 @@ void f8_debug_set_stepmode_or_step()
 }
 
 
+#include "vc/test/vctest.vc"
+#include "vc/test/tests-to-run.vc"
+
+
 /// The AutoExec Function: The first function that gets called.
 ///  Everything starts right here when you start up a game.
 ///
