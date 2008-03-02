@@ -1,0 +1,43 @@
+// Not under test:
+// FlagCount() - returns the maximum flag number
+// FlagLook(x) - returns value of flag <x>
+//  If this doesn't work I have no way of testing anything else. 
+
+void test_flags()
+{
+	int i, num_flags = FlagCount();
+
+	// start out with zeroed flags (hopefully)
+	// if hope fails and FlagWipe() doesn't work, it will get caught at the end
+	FlagWipe();
+	
+	// check FlagSet()
+	//  after FlagSet(x), flag <x> should be on
+	FlagSet(0);
+	assertTrue(flagLook(0));
+	
+	// check FlagClear()
+	//  after FlagClear(x), flag <x> should be off
+	FlagClear(0);
+	assertFalse(flagLook(0));
+	
+	// check FlagToggle()
+	//  after FlagToggle(x), flag <x> should be different from before the call
+	i = FlagLook(0);
+	FlagToggle(0);
+	assertFalse(flagLook(0) == i);
+	
+	// check FlagWipe()
+	//  after FlagWipe(), all flags should be zeroed
+	/// set three flags on: the first, the last, and the middle
+	FlagSet(0);
+	FlagSet(num_flags / 2);
+	FlagSet(num_flags - 1);
+	/// do the wip
+	FlagWipe();
+	/// check every flag
+	for (i = 0; i < num_flags; i++)
+	{
+		assertFalse(FlagLook(i));
+	}
+}

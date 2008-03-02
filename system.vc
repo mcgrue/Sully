@@ -76,6 +76,9 @@ void f8_debug_set_stepmode_or_step()
 ///
 void AutoExec()
 {
+	// run tests
+	runTests();
+
 	InitMcgrender();
 
 	//the following functions initialize things in the various libraries

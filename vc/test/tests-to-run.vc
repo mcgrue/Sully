@@ -20,4 +20,5 @@
 
 /// sully system tests
 #include "vc\test\sully_tests\party_setup.vc"
-
+#include "vc\test\sully_tests\data_parsers.vc"
+#include "vc\test\sully_tests\flags.vc"

@@ -5,6 +5,12 @@
 // Array for flags - all nice and small
 int flag_array[FLAGS_MAX_SPA];
 
+int FlagCount()
+// Return the number of available flags.
+{
+	return FLAGS_MAX_NUM;
+}
+
 int FlagLook(int flgl_num)
 // Returns current value of a flag
 {

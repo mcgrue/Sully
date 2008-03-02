@@ -683,7 +683,7 @@ void LogTestStatusAbilities( String lbl )
 	Log( "" );
 }
 
-void testStatusAbilities()
+void _testStatusAbilities()
 {
 	int i;
 	
