@@ -74,7 +74,8 @@ void cottage()
 void mountain()
 {
 	_mapwrap_on = 0;
-	V1_MapSwitch("jujube.map", 84, 97, TBLACK);
+	//V1_MapSwitch("jujube.map", 84, 97, TBLACK);
+	V1_MapSwitch("jujube.map", 41, 33, TBLACK);
 }
 
 /// The mapswitch to Chasm.map's west entrace
