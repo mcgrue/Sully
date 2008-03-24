@@ -48,3 +48,13 @@ void to_station_2()
 {
 	Warp( 15,78, TCROSS );
 }
+
+void to_station_3()
+{
+	Warp( 41, 34, TCROSS );
+}
+
+void s3_to_s2()
+{
+	Warp( 49, 78, TCROSS );
+}
