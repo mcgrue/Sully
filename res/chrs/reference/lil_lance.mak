@@ -1,6 +1,6 @@
 chr_version 5
-in lil_darin.pcx
-out lil_darin.chr
+in lil_lance.pcx
+out lil_lance.chr
 
 hotspot_x  0 
 hotspot_y  5 
