@@ -1,60 +1,130 @@
 /// The autoexec function for mountain.map
 void Start()
 {
-	SaveDisable(); //cannot save in dungeons.
+    SaveDisable(); //cannot save in dungeons.
 
-/*	
-	if ( flags[F_MOUNT_DEX_JOIN] )
-		entity.x[0]=300000;	//if dexter has already joined, 
-							//warp his on-map doppleganger way off-screen
-	
-	if( flags[F_MNT_EVIL_SIGN] ) //if the sign's been destroyed,
-		DestroySign();			 //make sure it stays destroyed on revisits to this map.
-		
-	if( flags[F_LAB_BLOWN_UP] )
-		DestroyLab();
-		
-	if (flags[CHEST_JUJUBE_A]) SetTile(3, 31, 0, 271);
-	if (flags[CHEST_JUJUBE_B]) SetTile(5, 31, 0, 271);	
-	if (flags[CHEST_JUJUBE_C]) SetTile(7, 31, 0, 271);	
-	if (flags[CHEST_JUJUBE_D]) SetTile(9, 31, 0, 271);
-*/
 
-	InitMap();
+    if ( flags[F_MOUNT_DEX_JOIN] )
+        entity.x[0]=300000; //if dexter has already joined,
+                            //warp his on-map doppleganger way off-screen
+
 /*
-	if( !flags[F_LAB_BLOWN_UP] && flags[F_LAB_COUNTDOWN] )
-		DoLabBlowup();
+    if( flags[F_MNT_EVIL_SIGN] ) //if the sign's been destroyed,
+        DestroySign();           //make sure it stays destroyed on revisits to this map.
+
+    if( flags[F_LAB_BLOWN_UP] )
+        DestroyLab();
+
+    if (flags[CHEST_JUJUBE_A]) SetTile(3, 31, 0, 271);
+    if (flags[CHEST_JUJUBE_B]) SetTile(5, 31, 0, 271);
+    if (flags[CHEST_JUJUBE_C]) SetTile(7, 31, 0, 271);
+    if (flags[CHEST_JUJUBE_D]) SetTile(9, 31, 0, 271);
 */
-	V1_StartMusic( "res/music/DREAMS2.S3M" );
-	
-	Banner("Mount Jujube",300);
+
+    InitMap();
+/*
+    if( !flags[F_LAB_BLOWN_UP] && flags[F_LAB_COUNTDOWN] )
+        DoLabBlowup();
+*/
+    V1_StartMusic( "res/music/DREAMS2.S3M" );
+
+    Banner("Mount Jujube",300);
 }
 
 
 /// exit to the overworld
 void to_overworld()
 {
-	V1_MapSwitch("simpletype_overworld.map", 142,53, TBLACK);
+    V1_MapSwitch("simpletype_overworld.map", 142,53, TBLACK);
 }
 
 
 void to_station_1()
 {
-	Warp( 84,79, TCROSS );
+    Warp( 84,79, TCROSS );
 }
 
 
 void to_station_2()
 {
-	Warp( 15,78, TCROSS );
+    Warp( 15,78, TCROSS );
 }
 
 void to_station_3()
 {
-	Warp( 41, 34, TCROSS );
+    Warp( 41, 34, TCROSS );
 }
 
 void s3_to_s2()
 {
-	Warp( 49, 78, TCROSS );
+    Warp( 49, 78, TCROSS );
+}
+
+void to_summit()
+{
+    Warp( 185, 61, TCROSS );
+}
+
+void from_summit_to_s3()
+{
+    Warp( 76, 20 TCROSS );
+}
+
+void dexter_intro()
+{
+    EntStart();
+    entity.speed[0]=0;  //stop the map-dexter from pacing.
+
+    TextBox(T_DEXTER,   "Hello? Oh, Darin my good friend!",
+                        "It's been such a long time, hasn't it?","");
+    TextBox(T_DARIN,    "Dexter! You're the last person I expected",
+                        "to find here.","");
+
+    VCPutIMG( "res/images/cells/dexter.gif" ,80,30 );
+
+    TextBoxM(T_DEXTER,  "I left home after my father disapproved",
+                        "of my studies. I am searching for a sage.","");
+    TextBoxM(T_DEXTER,  "Bumsville no longer gets water from the",
+                        "earth, and Rodne has no water from the",
+                        "sky.");
+    TextBoxM(T_DEXTER,  "I am hoping the sage in these mountains",
+                        "may know who is responsible.", "");
+    TextBoxM(T_DEXTER,  "Darin, what are you doing here? Don't you",
+                        "know that hiking is dangerous?","");
+    TextBox(T_DARIN,    "I'm exploring this world. I am on a quest",
+                        "to defeat Lord Stan and restore peace.","");
+    TextBoxM(T_DEXTER,  "I see... well, it's too risky to tread",
+                        "around here by yourself.","");
+    TextBoxM(T_DEXTER,  "My investigations have shown some Lord",
+                        "Stan activity around this area.","");
+    TextBox(T_DARIN,    "Good. Then perhaps I can find some clue or",
+                        "lead that will help me in this quest.","");
+    TextBox(T_DEXTER,   "Then I'll come with you. You can always",
+                        "use some extra help!","");
+
+    ClearVCLayer();
+
+    TextBox(T_DARIN,    "That's a good idea, Dexter.",
+                        "Thank you.","");
+
+/*
+    //move the map-dexter onto darin (map-dexter is entity 0 on this map)
+    entity.speed[0]=100;
+    EntityMove(0, "L1");
+    while(entity.movecode[0])
+    {
+        Render();
+        ShowPage();
+    }
+*/
+    //add dexter to the party at level 4.
+    JoinPartyAtLevel("Dexter", 4);
+
+    //...and move the map-dexter out into never-never land.
+    entity.x[0]=300000;
+
+    //set this event flag.
+    flags[F_MOUNT_DEX_JOIN]=1;
+
+    EntFinish();
 }

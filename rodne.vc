@@ -303,12 +303,13 @@ void warning_sign()
 	TextBox(0,	"WARNING!",
 			"The forest is dangerous! Stay out!","");
 			
-	if(1 || CharInParty("Galfrey") )
+	if( CharInParty("Galfrey") )
 	{
 		TextBox(T_GALFREY,	"You can't tell me what to do!",
 						"You're just a sign.","");
 	}
 	
+	EntFinish();
 }
 
 

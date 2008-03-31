@@ -2,157 +2,158 @@
 ///
 void start()
 {
-	SaveEnable(); //can save on the overworld.
-	_mapwrap_on = 1;
-	
-	entity.specframe[0] = 20;
+    SaveEnable(); //can save on the overworld.
+    _mapwrap_on = 1;
+
+    entity.specframe[0] = 20;
 
 /*
-	//if galfrey's joined, the bridge is fixed!
-	if( flags[F_HECK_GALFREY_JOIN] )
-	{
-		SetTile( 22,26,0,272 );
-		SetObs( 22,26,0 );
-	}
+    //if galfrey's joined, the bridge is fixed!
+    if( flags[F_HECK_GALFREY_JOIN] )
+    {
+        SetTile( 22,26,0,272 );
+        SetObs( 22,26,0 );
+    }
 */
 
 /*
-	if(  )
-	{
-		SetChasmModeObs();
-	}
+    if(  )
+    {
+        SetChasmModeObs();
+    }
 */
-	
-	SetWeather(WEATHER_CLOUDS);
-	
-	InitMap_SetOverworldMode( 1 );
-	InitMap();
-	InitMap_SetOverworldMode( 0 );
-		
-	if( flags[F_RODNE_FLASHBACK] )
-	{
-		V1_StartMusic("res/music/VANGELIS.MOD");
-	}
-	else
-	{
-		V1_StartMusic( "res/music/aurora.mod" );
-	}
+
+    SetWeather(WEATHER_CLOUDS);
+
+    InitMap_SetOverworldMode( 1 );
+    InitMap();
+    InitMap_SetOverworldMode( 0 );
+
+    if( flags[F_RODNE_FLASHBACK] )
+    {
+        V1_StartMusic("res/music/VANGELIS.MOD");
+    }
+    else
+    {
+        V1_StartMusic( "res/music/aurora.mod" );
+    }
 }
 
 /// The mapswitch to Undersea.map
 void undersea()
 {
-	_mapwrap_on = 0;
- 	V1_MapSwitch("UNDERWATER.MAP",29,34,TBLACK);
+    _mapwrap_on = 0;
+    V1_MapSwitch("UNDERWATER.MAP",29,34,TBLACK);
 }
 
 /// The mapswitch to cottage.map
 void cottage()
 {
-	// on the cottage map, arMapTemp[0] and arMapTemp[1] control the stae of the 
-	// front and back doors... so we set them as they should be before getting 
-	// in there
+    // on the cottage map, arMapTemp[0] and arMapTemp[1] control the stae of the
+    // front and back doors... so we set them as they should be before getting
+    // in there
 
-	_mapwrap_on = 0;
-	if (entity.face[playerent] == 2)
-	{
-		//open the doors if we're coming from the top.
-		arMapTemp[0] = 1;
-		arMapTemp[1] = 1;
-		V1_MapSwitch("mcdarin_cottage.map", 75,14, TBLACK);
-	}
-	else
-	{
-		//close the doors if we're coming from the top.
-		arMapTemp[0] = 0;
-		arMapTemp[1] = 0;
-		V1_MapSwitch("mcdarin_cottage.map", 48,61, TBLACK);
-	}
+    _mapwrap_on = 0;
+    if (entity.face[playerent] == 2)
+    {
+        //open the doors if we're coming from the top.
+        arMapTemp[0] = 1;
+        arMapTemp[1] = 1;
+        V1_MapSwitch("mcdarin_cottage.map", 75,14, TBLACK);
+    }
+    else
+    {
+        //close the doors if we're coming from the top.
+        arMapTemp[0] = 0;
+        arMapTemp[1] = 0;
+        V1_MapSwitch("mcdarin_cottage.map", 48,61, TBLACK);
+    }
 }
 
 /// The mapswitch to Mountain.map
 void mountain()
 {
-	_mapwrap_on = 0;
-	V1_MapSwitch("jujube.map", 84, 97, TBLACK);
-	//V1_MapSwitch("jujube.map", 41, 33, TBLACK);
+    _mapwrap_on = 0;
+
+    V1_MapSwitch("jujube.map", 84, 97, TBLACK);
 }
 
 /// The mapswitch to Chasm.map's west entrace
 void chasm_west()
 {
-	_mapwrap_on = 0;
-	V1_MapSwitch("chasm.map", 4, 1, TBLACK);
+    _mapwrap_on = 0;
+    V1_MapSwitch("chasm.map", 4, 1, TBLACK);
 }
 
 /// The mapswitch to Chasm.map's east entrace
 void chasm_east()
 {
-	_mapwrap_on = 0;
-	V1_MapSwitch("chasm.map", 97, 40, TBLACK);
+    _mapwrap_on = 0;
+    V1_MapSwitch("chasm.map", 97, 40, TBLACK);
 }
 
 /// The mapswitch to bumville.map
 void bumsville()
 {
-	_mapwrap_on = 0;
-	V1_MapSwitch("bumville.map", 118, 93, TBLACK);
+    _mapwrap_on = 0;
+    V1_MapSwitch("RODNE.MAP",32,2,TBLACK);
+    //V1_MapSwitch("bumville.map", 118, 93, TBLACK);
 }
 
 /// The mapswitch to rodne.map
 void rodne_main()
 {
-	_mapwrap_on = 0;
-	if( flags[F_RODNE_FLASHBACK] )
-	{
-		V1_MapSwitch("OLDVILLE.MAP",21,1,TBLACK);
-	}
+    _mapwrap_on = 0;
+    if( flags[F_RODNE_FLASHBACK] )
+    {
+        V1_MapSwitch("OLDVILLE.MAP",21,1,TBLACK);
+    }
 
-	V1_MapSwitch("RODNE.MAP",32,2,TBLACK);
+    V1_MapSwitch("RODNE.MAP",32,2,TBLACK);
 }
 
 /// The mapswitch to rodne.map's backdoor
 void rodne_forest()
 {
-	_mapwrap_on = 0;
-	V1_MapSwitch("RODNE.MAP",109,29,TBLACK);
+    _mapwrap_on = 0;
+    V1_MapSwitch("RODNE.MAP",109,29,TBLACK);
 }
 
 /// The mapswitch to Shack.map
 void loveshack()
 {
-	_mapwrap_on = 0;
-	V1_MapSwitch("SHACK.MAP",1,29,TBLACK);
+    _mapwrap_on = 0;
+    V1_MapSwitch("SHACK.MAP",1,29,TBLACK);
 }
 
 /// The mapswitch to Castle.map
 void castle_heck()
 {
-	_mapwrap_on = 0;
-	V1_MapSwitch("CASTLE.MAP",20,36,TBLACK);
+    _mapwrap_on = 0;
+    V1_MapSwitch("CASTLE.MAP",20,36,TBLACK);
 }
 
 /// The mapswitch to Seaview.map
 void seaview()
 {
-	_mapwrap_on = 0;
-	V1_MapSwitch("SEAVIEW.MAP",12,34,TBLACK);
+    _mapwrap_on = 0;
+    V1_MapSwitch("SEAVIEW.MAP",12,34,TBLACK);
 }
 
 
 void SetChasmModeObs()
 {
-	int i;
-	
-	for(i=88; i<=96; i++)
-	{
-		SetObs( i,79,1 );
-		SetObs( i,80,0 );
-		SetObs( i,81,1 );
-	}
-	
-	SetObs( 88,80,1 );
-	SetObs( 96,80,1 );
+    int i;
+
+    for(i=88; i<=96; i++)
+    {
+        SetObs( i,79,1 );
+        SetObs( i,80,0 );
+        SetObs( i,81,1 );
+    }
+
+    SetObs( 88,80,1 );
+    SetObs( 96,80,1 );
 }
 
 void airship()
@@ -171,7 +172,7 @@ Log("5");
 int D=8;
 
 /**
- * When we make this into it's own happy-function, remember to change all of the 
+ * When we make this into it's own happy-function, remember to change all of the
  * [0] references to [topmost_active_actor] references.  Bitch.
  *
  * Maybe.
@@ -180,91 +181,91 @@ int D=8;
  */
 while( 8==D )
 {
-	Render();
-	RenderBattle();
-	ShowPage();
-	
-	if( key[SCAN_Q] )
-	{
-		D=0113;
-		__sully_battle_flag = 0;
-		
-		endOfBattle();
-	}
-	
-//	BasicTohit( SelectRandomAlly(1), PARTY_ALLY, SelectRandomEnemy(1), PARTY_ENEMY, Random(0,1) );
-//	BasicTohit( SelectRandomEnemy(1), PARTY_ENEMY, SelectRandomAlly(1), PARTY_ALLY, Random(0,1) );
-	
-	if( !battle_queue_zero_count() )
-	{
+    Render();
+    RenderBattle();
+    ShowPage();
 
-		/// we must wait until the pretty battle effects from the previous
-		/// action are done before trying to resolve the next action!
-		if( !AreBattleEffectsRendering() )
-		{
-			advance_battle_queue_to_next_action();
-		}
-	}
-	else
-	{
-		/// if the top zero-time dude is inactive, 
-		/// knock him up to time 1 for my sanity's sake.
-		if( !BattleQueueActorIsActive(0) )
-		{
-			battle_queue[0].time = 1;
-		}
+    if( key[SCAN_Q] )
+    {
+        D=0113;
+        __sully_battle_flag = 0;
 
-		else if( battle_queue[0].action == BACT_CHARGE )
-		{
-			ResolveAction( battle_queue[0].batent_ref, battle_queue[0].batent_party, battle_queue[0].data );
-			pop_battle_queue();
-		}
+        endOfBattle();
+    }
 
-		/// if the top zero-time dude is an enemy, trigger their AI.
-		else if( battle_queue[0].batent_party == PARTY_ENEMY )
-		{
-			if( strcmp( master_enemy[battle_queue[0].batent_ref].ai,"") )
-			{
-				if( FunctionExists(master_enemy[battle_queue[0].batent_ref].ai) )
-				{
-					SetCurrentQueueIdxForAI(0);
-					CallFunction( master_enemy[battle_queue[0].batent_ref].ai );
-				}
-			}
-			else
-			{
-				SetCurrentQueueIdxForAI(0);
-				DefaultEnemyAI();
-			}
-/*			
-			if( !CheckForAISet(battle_queue[0].batent_ref) )
-			{
-				Errorhandler( "Main Battle Loop: There was a mis-set AI.  BAD." );
-				DefaultEnemyAI( 0 );
-			}
-*/							
-			pop_battle_queue();	
-		}
-		else if( battle_queue[0].batent_party == PARTY_ALLY )
-		{	
-			if( BattleMenuIsOff() )
-			{
-				TurnBattleMenuOn( battle_queue[0].batent_ref );
-			}
+//  BasicTohit( SelectRandomAlly(1), PARTY_ALLY, SelectRandomEnemy(1), PARTY_ENEMY, Random(0,1) );
+//  BasicTohit( SelectRandomEnemy(1), PARTY_ENEMY, SelectRandomAlly(1), PARTY_ALLY, Random(0,1) );
 
-			//MessageBox( "Ally turn: "+bat_getName( battle_queue[0].batent_ref, battle_queue[0].batent_party )+"!!!" );
-			//pop_battle_queue();	
-		}
-		else if( battle_queue[0].batent_party == PARTY_NULL )
-		{
-			/// something, like a status ailment, just expired.  Deal with it.
-			HandleBattleQueueSpecialEffectExpiry( 0 );
-		}
-		else
-		{
-			ErrorHandler( "Main battle loop: unknown party ("+str(battle_queue[0].batent_party)+") is trying to take an action!  onoes!" );
-		}
-	}
+    if( !battle_queue_zero_count() )
+    {
+
+        /// we must wait until the pretty battle effects from the previous
+        /// action are done before trying to resolve the next action!
+        if( !AreBattleEffectsRendering() )
+        {
+            advance_battle_queue_to_next_action();
+        }
+    }
+    else
+    {
+        /// if the top zero-time dude is inactive,
+        /// knock him up to time 1 for my sanity's sake.
+        if( !BattleQueueActorIsActive(0) )
+        {
+            battle_queue[0].time = 1;
+        }
+
+        else if( battle_queue[0].action == BACT_CHARGE )
+        {
+            ResolveAction( battle_queue[0].batent_ref, battle_queue[0].batent_party, battle_queue[0].data );
+            pop_battle_queue();
+        }
+
+        /// if the top zero-time dude is an enemy, trigger their AI.
+        else if( battle_queue[0].batent_party == PARTY_ENEMY )
+        {
+            if( strcmp( master_enemy[battle_queue[0].batent_ref].ai,"") )
+            {
+                if( FunctionExists(master_enemy[battle_queue[0].batent_ref].ai) )
+                {
+                    SetCurrentQueueIdxForAI(0);
+                    CallFunction( master_enemy[battle_queue[0].batent_ref].ai );
+                }
+            }
+            else
+            {
+                SetCurrentQueueIdxForAI(0);
+                DefaultEnemyAI();
+            }
+/*
+            if( !CheckForAISet(battle_queue[0].batent_ref) )
+            {
+                Errorhandler( "Main Battle Loop: There was a mis-set AI.  BAD." );
+                DefaultEnemyAI( 0 );
+            }
+*/
+            pop_battle_queue();
+        }
+        else if( battle_queue[0].batent_party == PARTY_ALLY )
+        {
+            if( BattleMenuIsOff() )
+            {
+                TurnBattleMenuOn( battle_queue[0].batent_ref );
+            }
+
+            //MessageBox( "Ally turn: "+bat_getName( battle_queue[0].batent_ref, battle_queue[0].batent_party )+"!!!" );
+            //pop_battle_queue();
+        }
+        else if( battle_queue[0].batent_party == PARTY_NULL )
+        {
+            /// something, like a status ailment, just expired.  Deal with it.
+            HandleBattleQueueSpecialEffectExpiry( 0 );
+        }
+        else
+        {
+            ErrorHandler( "Main battle loop: unknown party ("+str(battle_queue[0].batent_party)+") is trying to take an action!  onoes!" );
+        }
+    }
 }
 
 Log("6");
@@ -272,7 +273,7 @@ Log("6");
 start();
 
 return;
-	int i, ent;
+    int i, ent;
 
 GrantSkill( "Darin", "Sword_Dance" );
 GrantSkill( "Darin", "Cleave" );
@@ -294,94 +295,94 @@ Log( BM_MakeCastMenu( GetCast("Darin"), 0) );
 Log( "==========" );
 
 MessageBox( "CHOWN'D!" );
-	
+
 return;
-	
+
 _mapwrap_on = 0;
 V1_MapSwitch("CAVE.MAP",56,182,TBLACK);
 return;
 
-	for( i=0; i<PartySize(); i++ )
-	{
-		ent = master_cast[party[i]].entity;
-		entity.visible[ent] = 0;
-	}
-	
-	entity.obstructable[0] = 0;
-	entity.speed[0] = 45;
+    for( i=0; i<PartySize(); i++ )
+    {
+        ent = master_cast[party[i]].entity;
+        entity.visible[ent] = 0;
+    }
 
-	SetPlayer(0);
-	playerent = 0;
-	
-	V1_StartMusic( "res/music/Flight3.it" );
+    entity.obstructable[0] = 0;
+    entity.speed[0] = 45;
 
-	HookKey(SCAN_ENTER, "airship_land");
-	
-	entity.specframe[0] = 20;
-	wait(10);
-	entity.specframe[0] = 21;
-	wait(10);
-	entity.specframe[0] = 22;
-	wait(10);
-	entity.specframe[0] = 23;
-	wait(10);
-	entity.specframe[0] = 0;
-	wait(10);
-	
-	SetVehicle( VEHICLE_AIRSHIP );
+    SetPlayer(0);
+    playerent = 0;
+
+    V1_StartMusic( "res/music/Flight3.it" );
+
+    HookKey(SCAN_ENTER, "airship_land");
+
+    entity.specframe[0] = 20;
+    wait(10);
+    entity.specframe[0] = 21;
+    wait(10);
+    entity.specframe[0] = 22;
+    wait(10);
+    entity.specframe[0] = 23;
+    wait(10);
+    entity.specframe[0] = 0;
+    wait(10);
+
+    SetVehicle( VEHICLE_AIRSHIP );
 }
 
 void airship_land()
 {
-	int i, ent;
-	int my_tile = GetTile(entity.x[0]/16, entity.y[0]/16, 0);
-	
-	if( my_tile == 744 || my_tile == 69 )
-	{
-		entity.specframe[0] = 23;
-		wait(10);
-		entity.specframe[0] = 22;
-		wait(10);
-		entity.specframe[0] = 21;
-		wait(10);
-		entity.specframe[0] = 20;
-		wait(10);
-		
-		for( i=0; i<PartySize(); i++ )
-		{
-			ent = master_cast[party[i]].entity;
-			
-			entity.x[ent] = entity.x[0];
-			entity.y[ent] = entity.y[0];
-			
-			entity.visible[ent] = 1;			
-		}
-		
-		SetPlayer(master_cast[party[0]].entity);
-		playerent = master_cast[party[0]].entity;
-		
-		HookKey(SCAN_ENTER, "");
-	
-		V1_StartMusic( "res/music/aurora.mod" );
-		
-		SetVehicle( VEHICLE_NONE );
-	}
-	else
-	{
-		entity.specframe[0] = 23;
-		wait(10);
-		entity.specframe[0] = 22;
-		wait(10);
-		entity.specframe[0] = 21;
-		wait(10);
-		entity.specframe[0] = 20;
-		wait(10);
-		entity.specframe[0] = 21;
-		wait(10);
-		entity.specframe[0] = 22;
-		wait(10);
-		entity.specframe[0] = 23;
-		wait(10);
-		entity.specframe[0] = 0;
-	}
+    int i, ent;
+    int my_tile = GetTile(entity.x[0]/16, entity.y[0]/16, 0);
+
+    if( my_tile == 744 || my_tile == 69 )
+    {
+        entity.specframe[0] = 23;
+        wait(10);
+        entity.specframe[0] = 22;
+        wait(10);
+        entity.specframe[0] = 21;
+        wait(10);
+        entity.specframe[0] = 20;
+        wait(10);
+
+        for( i=0; i<PartySize(); i++ )
+        {
+            ent = master_cast[party[i]].entity;
+
+            entity.x[ent] = entity.x[0];
+            entity.y[ent] = entity.y[0];
+
+            entity.visible[ent] = 1;
+        }
+
+        SetPlayer(master_cast[party[0]].entity);
+        playerent = master_cast[party[0]].entity;
+
+        HookKey(SCAN_ENTER, "");
+
+        V1_StartMusic( "res/music/aurora.mod" );
+
+        SetVehicle( VEHICLE_NONE );
+    }
+    else
+    {
+        entity.specframe[0] = 23;
+        wait(10);
+        entity.specframe[0] = 22;
+        wait(10);
+        entity.specframe[0] = 21;
+        wait(10);
+        entity.specframe[0] = 20;
+        wait(10);
+        entity.specframe[0] = 21;
+        wait(10);
+        entity.specframe[0] = 22;
+        wait(10);
+        entity.specframe[0] = 23;
+        wait(10);
+        entity.specframe[0] = 0;
+    }
 }
