@@ -1,147 +1,147 @@
 void setRString( string s )
 {
-	curmap.rstring = s;
+    curmap.rstring = s;
 }
 
 int checkX() {
-	return entity.x[GetPlayer()];
+    return entity.x[GetPlayer()];
 }
 
 int checkY() {
-	return entity.y[GetPlayer()];
+    return entity.y[GetPlayer()];
 }
 
 int checkTX() {
-	return (entity.x[GetPlayer()]/16);
+    return (entity.x[GetPlayer()]/16);
 }
 
 int checkTY() {
-	return (entity.y[GetPlayer()]/16);
+    return (entity.y[GetPlayer()]/16);
 }
 
 
 void Warp_ChangeFace(int x, int y, int nofade, int face )
 {
-	SetFaceMidWarp( face );
-	Warp( x, y, nofade );
+    SetFaceMidWarp( face );
+    Warp( x, y, nofade );
 }
 
 
 void moveEnt( int ent, int xVal, int yVal ) {
 
-	entity.x[ent] = xVal*16;
-	entity.y[ent] = yVal*16;
+    entity.x[ent] = xVal*16;
+    entity.y[ent] = yVal*16;
 }
 
 void slideTowards( int howFar, int slideSpeed ) {
-	switch( entity.face[GetPlayer()] ) {
-		case FACE_DOWN: slideDown( howFar, slideSpeed );
-		case FACE_UP: slideUp( howFar, slideSpeed );
-		case FACE_RIGHT: slideRight( howFar, slideSpeed );
-		case FACE_LEFT: slideLeft( howFar, slideSpeed );
-	}
+    switch( entity.face[GetPlayer()] ) {
+        case FACE_DOWN: slideDown( howFar, slideSpeed );
+        case FACE_UP: slideUp( howFar, slideSpeed );
+        case FACE_RIGHT: slideRight( howFar, slideSpeed );
+        case FACE_LEFT: slideLeft( howFar, slideSpeed );
+    }
 }
 
 
 void slideAway( int howFar, int slideSpeed ) {
-	switch( entity.face[GetPlayer()] ) {
-		case FACE_DOWN: slideUp( howFar, slideSpeed );
-		case FACE_UP: slideDown( howFar, slideSpeed );
-		case FACE_RIGHT: slideLeft( howFar, slideSpeed );
-		case FACE_LEFT: slideRight( howFar, slideSpeed );
-	}
+    switch( entity.face[GetPlayer()] ) {
+        case FACE_DOWN: slideUp( howFar, slideSpeed );
+        case FACE_UP: slideDown( howFar, slideSpeed );
+        case FACE_RIGHT: slideLeft( howFar, slideSpeed );
+        case FACE_LEFT: slideRight( howFar, slideSpeed );
+    }
 }
 
 
 void slideDownLeft( int howFar, int slideSpeed ) {
-	switch( entity.face[GetPlayer()] ) {
-		case FACE_DOWN: slideDown( howFar, slideSpeed );
-		case FACE_UP: slideLeft( howFar, slideSpeed );
-		case FACE_RIGHT: slideRight( howFar, slideSpeed );
-		case FACE_LEFT: slideLeft( howFar, slideSpeed );
-	}
+    switch( entity.face[GetPlayer()] ) {
+        case FACE_DOWN: slideDown( howFar, slideSpeed );
+        case FACE_UP: slideLeft( howFar, slideSpeed );
+        case FACE_RIGHT: slideRight( howFar, slideSpeed );
+        case FACE_LEFT: slideLeft( howFar, slideSpeed );
+    }
 }
 
 
 void slideDownRight( int howFar, int slideSpeed ) {
-	switch( entity.face[GetPlayer()] ) {
-		case FACE_DOWN: slideDown( howFar, slideSpeed );
-		case FACE_UP: slideRight( howFar, slideSpeed );
-		case FACE_RIGHT: slideRight( howFar, slideSpeed );
-		case FACE_LEFT: slideLeft( howFar, slideSpeed );
-	}
+    switch( entity.face[GetPlayer()] ) {
+        case FACE_DOWN: slideDown( howFar, slideSpeed );
+        case FACE_UP: slideRight( howFar, slideSpeed );
+        case FACE_RIGHT: slideRight( howFar, slideSpeed );
+        case FACE_LEFT: slideLeft( howFar, slideSpeed );
+    }
 }
 
 void slideLeft( int howFar, int slideSpeed ) {
-		int goal, n;
-		goal = checkTX() - howFar;
+        int goal, n;
+        goal = checkTX() - howFar;
 
-		while( checkTX() != goal )
-		{
-			entity.x[GetPlayer()]-=slideSpeed;
+        while( checkTX() != goal )
+        {
+            entity.x[GetPlayer()]-=slideSpeed;
 
-			n = timer+1;
-			while (n>timer) {animate_freaking(); render(); showpage();}
-		}
-		
-		entity.specframe[GetPlayer()] = 0;
+            n = timer+1;
+            while (n>timer) {animate_freaking(); render(); showpage();}
+        }
+
+        entity.specframe[GetPlayer()] = 0;
 }
 
 
 void slideRight( int howFar, int slideSpeed ) {
-		int goal, n;
-		goal = checkTX() + howFar;
+        int goal, n;
+        goal = checkTX() + howFar;
 
-		while( checkTX() != goal )
-		{
-			entity.x[GetPlayer()]+=slideSpeed;
+        while( checkTX() != goal )
+        {
+            entity.x[GetPlayer()]+=slideSpeed;
 
-			n = timer+1;
-			while (n>timer) {animate_freaking(); render(); showpage();}
-		}
-		
-		entity.specframe[GetPlayer()] = 0;
+            n = timer+1;
+            while (n>timer) {animate_freaking(); render(); showpage();}
+        }
+
+        entity.specframe[GetPlayer()] = 0;
 }
 
 
 void slideUp( int howFar, int slideSpeed ) {
-		int goal, n;
-		goal = checkTY() - howFar;
+        int goal, n;
+        goal = checkTY() - howFar;
 
-		while( checkTY() != goal )
-		{
-			entity.y[GetPlayer()]-=slideSpeed;
+        while( checkTY() != goal )
+        {
+            entity.y[GetPlayer()]-=slideSpeed;
 
-			n = timer+1;
-			while (n>timer) {animate_freaking(); render(); showpage();}
-		}
-		
-		entity.specframe[GetPlayer()] = 0;
+            n = timer+1;
+            while (n>timer) {animate_freaking(); render(); showpage();}
+        }
+
+        entity.specframe[GetPlayer()] = 0;
 }
 
 
 void slideDown( int howFar, int slideSpeed ) {
-		int goal, n;
-		goal = checkTY() + howFar;
+        int goal, n;
+        goal = checkTY() + howFar;
 
-		while( checkTY() != goal )
-		{
-			entity.y[GetPlayer()]+=slideSpeed;
+        while( checkTY() != goal )
+        {
+            entity.y[GetPlayer()]+=slideSpeed;
 
-			n = timer+1;
-			while (n>timer) {animate_freaking(); render(); showpage();}
-		}
-		
-		entity.specframe[GetPlayer()] = 0;
+            n = timer+1;
+            while (n>timer) {animate_freaking(); render(); showpage();}
+        }
+
+        entity.specframe[GetPlayer()] = 0;
 }
 
 
 void changeTile(int tilex, int tiley, int tile_, int obstr, int layer)
 {
-	SetTile(tilex, tiley, (layer-1), tile_);
+    SetTile(tilex, tiley, (layer-1), tile_);
 
-	if(obstr != 2) //if it's 2, keep it whatever it was before (ie, don't change it...)
-	  	SetObs(tilex, tiley, obstr);
+    if(obstr != 2) //if it's 2, keep it whatever it was before (ie, don't change it...)
+        SetObs(tilex, tiley, obstr);
 }
 
 
@@ -158,248 +158,248 @@ void changeObs(int tilex, int tiley, int obstr)
 
 
 void delay(int time) {
-	wait( time );
+    wait( time );
 }
 
 
 void cavePrep() {
 
-	arTemp[0] = loadImage( "res\images\story_fx\splash01.pcx" );
-	arTemp[1] = loadImage( "res\images\story_fx\splash02.pcx" );
-	arTemp[2] = loadImage( "res\images\story_fx\splash03.pcx" );
-	arTemp[3] = loadImage( "res\images\story_fx\splash04.pcx" );
+    arTemp[0] = loadImage( "res\images\story_fx\splash01.pcx" );
+    arTemp[1] = loadImage( "res\images\story_fx\splash02.pcx" );
+    arTemp[2] = loadImage( "res\images\story_fx\splash03.pcx" );
+    arTemp[3] = loadImage( "res\images\story_fx\splash04.pcx" );
 }
 
 
 
 void sandtrap( String direction, int yCoordinate ) {
-	int n;
+    int n;
 
-	if( !strcmp(direction, "left") ) {
+    if( !strcmp(direction, "left") ) {
 
-		while( checkTY() != yCoordinate )
-		{
-			entity.x[GetPlayer()]-=3;
-			entity.y[GetPlayer()]+=3;
+        while( checkTY() != yCoordinate )
+        {
+            entity.x[GetPlayer()]-=3;
+            entity.y[GetPlayer()]+=3;
 
-			n = timer+5;
-			while (n>timer) {animate_freaking(); render(); showpage();}
-		}
-		
-	} else if(!strcmp(direction, "right")) {
+            n = timer+5;
+            while (n>timer) {animate_freaking(); render(); showpage();}
+        }
 
-		while( checkTY() != yCoordinate )
-		{
-			entity.x[GetPlayer()]+=3;
-			entity.y[GetPlayer()]+=3;
+    } else if(!strcmp(direction, "right")) {
 
-			n = timer+5;
-			while (n>timer) {animate_freaking(); render(); showpage();}
-		}
-	}
-	
-	entity.specframe[GetPlayer()] = 0;
+        while( checkTY() != yCoordinate )
+        {
+            entity.x[GetPlayer()]+=3;
+            entity.y[GetPlayer()]+=3;
+
+            n = timer+5;
+            while (n>timer) {animate_freaking(); render(); showpage();}
+        }
+    }
+
+    entity.specframe[GetPlayer()] = 0;
 }
 
 
 void fall( int yCoordinate ) {
-	int n;
+    int n;
 
-	while( checkTY() != yCoordinate ) {
-		entity.y[GetPlayer()] += 4;
-		n = timer+1;
-		while (n>timer) {animate_freaking(); render(); showpage();}
-	}
-	
-	entity.specframe[GetPlayer()] = 0;
+    while( checkTY() != yCoordinate ) {
+        entity.y[GetPlayer()] += 4;
+        n = timer+1;
+        while (n>timer) {animate_freaking(); render(); showpage();}
+    }
+
+    entity.specframe[GetPlayer()] = 0;
 }
 
 
 void fallspin( int yCoordinate ) {
-	int n;
+    int n;
 
-	while( checkTY() != yCoordinate ) {
-		entity.y[GetPlayer()] += 4;
-		n = timer+1;
-		while (n>timer) {animate_spinning(); render(); showpage();}
-	}
-	
-	entity.specframe[GetPlayer()] = 0;
+    while( checkTY() != yCoordinate ) {
+        entity.y[GetPlayer()] += 4;
+        n = timer+1;
+        while (n>timer) {animate_spinning(); render(); showpage();}
+    }
+
+    entity.specframe[GetPlayer()] = 0;
 }
 
 void animate_bobbing() {
 
-	if( timer%20 < 10 )
-		entity.specframe[GetPlayer()] = 25;
-	else
-		entity.specframe[GetPlayer()] = 26;
+    if( timer%20 < 10 )
+        entity.specframe[GetPlayer()] = 25;
+    else
+        entity.specframe[GetPlayer()] = 26;
 }
 
 void animate_freaking() {
-	if( timer%2 == 0 )
-		entity.specframe[GetPlayer()] = 20;
-	else
-		entity.specframe[GetPlayer()] = 21;
+    if( timer%2 == 0 )
+        entity.specframe[GetPlayer()] = 20;
+    else
+        entity.specframe[GetPlayer()] = 21;
 }
 
 
 void animate_spinning() {
-	switch( timer%4 ) {
-		case 0: entity.specframe[GetPlayer()] = 0;
-		case 1: entity.specframe[GetPlayer()] = 10;
-		case 2: entity.specframe[GetPlayer()] = 5;
-		case 3: entity.specframe[GetPlayer()] = 15;
-	}
+    switch( timer%4 ) {
+        case 0: entity.specframe[GetPlayer()] = 0;
+        case 1: entity.specframe[GetPlayer()] = 10;
+        case 2: entity.specframe[GetPlayer()] = 5;
+        case 3: entity.specframe[GetPlayer()] = 15;
+    }
 }
 
 
 void cave_plunge() {
-	moveEnt( GetPlayer(), 0, 0 );  //get the player disappeared for now.
+    moveEnt( GetPlayer(), 0, 0 );  //get the player disappeared for now.
 
-	int a = timer;
-	int b = 0;
-	
-	while( timer < a+50 ) {
+    int a = timer;
+    int b = 0;
 
-		render();
+    while( timer < a+50 ) {
 
-		if( timer<a+27 ) {
-			switch( ( timer - a ) / 7 ) {
-				case 0: TBlit(129, 84, arTemp[0], screen);
-				case 1: TBlit(129, 84, arTemp[1], screen);
-				case 2: TBlit(129, 84, arTemp[2], screen);
-				case 3: TBlit(129, 84, arTemp[3], screen);
-			}
-		} else if( timer<a+160 ){
-			if( b = 0 ) { //this executes only the first time this branch executes...
-				moveEnt( GetPlayer(), 157, 56 ); //move the player back, mid-splash
-				b = 1;
-			}
+        render();
 
-			switch( ( timer - a ) / 7 ) {
-				case 4: TBlit(129, 84, arTemp[2], screen);
-				case 5: TBlit(129, 84, arTemp[1], screen);
-				case 6: TBlit(129, 84, arTemp[0], screen);
-			}
-		}
+        if( timer<a+27 ) {
+            switch( ( timer - a ) / 7 ) {
+                case 0: TBlit(129, 84, arTemp[0], screen);
+                case 1: TBlit(129, 84, arTemp[1], screen);
+                case 2: TBlit(129, 84, arTemp[2], screen);
+                case 3: TBlit(129, 84, arTemp[3], screen);
+            }
+        } else if( timer<a+160 ){
+            if( b = 0 ) { //this executes only the first time this branch executes...
+                moveEnt( GetPlayer(), 157, 56 ); //move the player back, mid-splash
+                b = 1;
+            }
 
-		animate_bobbing();
-		showpage();
-	}
+            switch( ( timer - a ) / 7 ) {
+                case 4: TBlit(129, 84, arTemp[2], screen);
+                case 5: TBlit(129, 84, arTemp[1], screen);
+                case 6: TBlit(129, 84, arTemp[0], screen);
+            }
+        }
+
+        animate_bobbing();
+        showpage();
+    }
 }
 
 
 void cave_afterplunge() {
-	int n;
+    int n;
 
-//	if( !getFlag( CAVE_FALLEN ) ) {
-		TextBox(T_DARIN,	"What the...",
-					"",
-					"" );
-
-
-		TextBox(T_DARIN,	"An underground lake?",
-					"Under mount Jujube?!",
-					"" );
+//  if( !getFlag( CAVE_FALLEN ) ) {
+        TextBox(T_DARIN,    "What the...",
+                    "",
+                    "" );
 
 
-		TextBox(T_DEXTER,	"This must be where Lord Stan is",
-					"storing all of the land's water!",
-					"How fiendish!" );
-//	}
+        TextBox(T_DARIN,    "An underground lake?",
+                    "Under mount Jujube?!",
+                    "" );
 
-	cameratracking = 1;
-//	incFlag( CAVE_FALLEN );
 
-	while( checkTY() != 78 ) {
-		n = timer+3;
-		while (n>timer) {
-			animate_bobbing();
-			entity.y[GetPlayer()] += 1;
-			render();
-			showpage();
-		}
-	}
+        TextBox(T_DEXTER,   "This must be where Lord Stan is",
+                    "storing all of the land's water!",
+                    "How fiendish!" );
+//  }
 
-	entity.specframe[GetPlayer()] = 27;
-	delay(25);
-	entity.specframe[GetPlayer()] = 0;
-	
-	int darin	= GetPartyEntity( "Darin" );
-	EntityMove(darin, "d2");
-	WaitForEntity( darin );
+    cameratracking = 1;
+//  incFlag( CAVE_FALLEN );
+
+    while( checkTY() != 78 ) {
+        n = timer+3;
+        while (n>timer) {
+            animate_bobbing();
+            entity.y[GetPlayer()] += 1;
+            render();
+            showpage();
+        }
+    }
+
+    entity.specframe[GetPlayer()] = 27;
+    delay(25);
+    entity.specframe[GetPlayer()] = 0;
+
+    int darin   = GetPartyEntity( "Darin" );
+    EntityMove(darin, "d2");
+    WaitForEntity( darin );
 }
 
 
 
 int tileModulo( int yPosi, int colPos ) {
-	int fooTemp;
+    int fooTemp;
 
-	if( colPos == 1 ) { //left column
-		switch( yPosi % 4 ) {
-			case 0: fooTemp = 235;
-			case 1: fooTemp = 236;
-			case 2: fooTemp = 237;
-			case 3: fooTemp = 238;
-		}
-	} else { //right column
-		switch( yPosi % 4 ) {
-			case 0: fooTemp = 239;
-			case 1: fooTemp = 240;
-			case 2: fooTemp = 241;
-			case 3: fooTemp = 242;
-		}
-	}
+    if( colPos == 1 ) { //left column
+        switch( yPosi % 4 ) {
+            case 0: fooTemp = 235;
+            case 1: fooTemp = 236;
+            case 2: fooTemp = 237;
+            case 3: fooTemp = 238;
+        }
+    } else { //right column
+        switch( yPosi % 4 ) {
+            case 0: fooTemp = 239;
+            case 1: fooTemp = 240;
+            case 2: fooTemp = 241;
+            case 3: fooTemp = 242;
+        }
+    }
 
-	return fooTemp;
+    return fooTemp;
 }
 
 
 void removeSandColumns() {
-	int i, j;
+    int i, j;
 
-	for(i=59; i<=60; i++) {
-		for(j=155; j<=180; j++) {
-			changeTile(i, j, 0, 2, 2);
-		}
-	}
+    for(i=59; i<=60; i++) {
+        for(j=155; j<=180; j++) {
+            changeTile(i, j, 0, 2, 2);
+        }
+    }
 
-	for(i=67; i<=68; i++) {
-		for(j=167; j<=180; j++) {
-			changeTile(i, j, 0, 2, 2);
-		}
-	}
+    for(i=67; i<=68; i++) {
+        for(j=167; j<=180; j++) {
+            changeTile(i, j, 0, 2, 2);
+        }
+    }
 
-	for(i=74; i<=75; i++) {
-		for(j=167; j<=180; j++) {
-			changeTile(i, j, 0, 2, 2);
-		}
-	}
+    for(i=74; i<=75; i++) {
+        for(j=167; j<=180; j++) {
+            changeTile(i, j, 0, 2, 2);
+        }
+    }
 }
 
 
 
 void replaceSandColumns()
 {
-	int i, j;
+    int i, j;
 
-	for(i=59; i<=60; i++) {
-		for(j=155; j<=180; j++) {
-			changeTile(i, j, tileModulo( j, i-58 ), 2, 2); //
-		}
-	}
+    for(i=59; i<=60; i++) {
+        for(j=155; j<=180; j++) {
+            changeTile(i, j, tileModulo( j, i-58 ), 2, 2); //
+        }
+    }
 
-	for(i=67; i<=68; i++) {
-		for(j=167; j<=180; j++) {
-			changeTile(i, j, tileModulo( j, i-66 ), 2, 2); //
-		}
-	}
+    for(i=67; i<=68; i++) {
+        for(j=167; j<=180; j++) {
+            changeTile(i, j, tileModulo( j, i-66 ), 2, 2); //
+        }
+    }
 
-	for(i=74; i<=75; i++) {
-		for(j=167; j<=180; j++) {
-			changeTile(i, j, tileModulo( j, i-73 ), 2, 2);  //
-		}
-	}
+    for(i=74; i<=75; i++) {
+        for(j=167; j<=180; j++) {
+            changeTile(i, j, tileModulo( j, i-73 ), 2, 2);  //
+        }
+    }
 }
 
 
@@ -420,433 +420,412 @@ void replaceSandColumns()
 
 void start()
 {
-	cavePrep();
-	
-	InitMap();
-	
-	SaveDisable();
+    cavePrep();
 
-	//InitializeMap();
+    InitMap();
 
-	//These statements in the autoexec event make sure that 
-	//tresure chests that were opened always stay open after
-	//they've been changed. 
-	//if( getFlag( CAVE_PLOT ) >= 1 ) moveEnt(1,0,0);
-	//if( getFlag( CAVE_PLOT ) >= 2 ) moveEnt(0,0,0);
-	//else entity.specframe[0] = 23;
-	
-	//	Z_FreeMovePerpetual();
-	//	MapChange();
+    SaveDisable();
+
+    V1_StartMusic( "res/music/OVER4A.IT" );
+
+    Banner( "Sand Cavern",300 );
+
+    //InitializeMap();
+
+    //These statements in the autoexec event make sure that
+    //tresure chests that were opened always stay open after
+    //they've been changed.
+    //if( getFlag( CAVE_PLOT ) >= 1 ) moveEnt(1,0,0);
+    //if( getFlag( CAVE_PLOT ) >= 2 ) moveEnt(0,0,0);
+    //else entity.specframe[0] = 23;
+
+    //  Z_FreeMovePerpetual();
+    //  MapChange();
 }
 
-void event_1()
+void to_mount_jujube()
 {
-	V1_MapSwitch("simpletype_overworld.map",80,65,TBLACK);
+    V1_MapSwitch( "jujube.map", 34, 76,TBLACK );
 }
 
-void event_34()//, the summit
+void to_jujube_summit_left()//, the summit
 {
-	//warp_ChangeFace();
+
+    V1_MapSwitch( "jujube.map", 124, 61, TBLACK );
 }
-
-
 
 
 void event_2()
-{	
-	Warp_ChangeFace(127, 120, TCROSS, FACE_DOWN);
-	replaceSandColumns();	//remember to replace *after* leaving
+{
+    Warp_ChangeFace(127, 120, TCROSS, FACE_DOWN);
+    replaceSandColumns();   //remember to replace *after* leaving
 }
 
 void event_3()
 {
-	warp(20, 52, TCROSS);
-	replaceSandColumns();// _remember to replace *after* leaving
+    warp(20, 52, TCROSS);
+    replaceSandColumns();// _remember to replace *after* leaving
 }
 
 void event_4()
 {
-	removeSandColumns(); //_remember to remove before going there...	
-	Warp_ChangeFace(60, 151, TCROSS, FACE_DOWN);
+    removeSandColumns(); //_remember to remove before going there...
+    Warp_ChangeFace(60, 151, TCROSS, FACE_DOWN);
 }
 
 void event_5()
 {
-	Warp_ChangeFace(35, 81, TCROSS, FACE_DOWN);
+    Warp_ChangeFace(35, 81, TCROSS, FACE_DOWN);
 }
 
 void event_6()
 {
-	removeSandColumns(); //_remember to remove before going there...
-	warp(94, 145, TCROSS);
+    removeSandColumns(); //_remember to remove before going there...
+    warp(94, 145, TCROSS);
 }
 
 void event_7()
 {
-	warp(14, 13, TCROSS);
+    warp(14, 13, TCROSS);
 }
 
 void event_8()
 {
-	warp(50, 112, TCROSS);
+    warp(50, 112, TCROSS);
 }
 
 void event_9()
 {
-	warp(77, 73, TCROSS);
+    warp(77, 73, TCROSS);
 }
 
 void event_10()
 {
-	warp(62, 11, TCROSS);
+    warp(62, 11, TCROSS);
 }
 
 void event_11()
 {
-	warp(96, 47, TCROSS);
+    warp(96, 47, TCROSS);
 }
 
 void event_12()
 {
-	warp(125, 71, TCROSS);
+    warp(125, 71, TCROSS);
 }
 
-void event_13()  //(Final Room)
-{
-	warp(30, 138, TCROSS);
-	
-	/*
-	if( !getFlag( CAVE_PLOT ) ) {
-	
-		text(RENSHI, "Man... I hope this one holds...  You've already eaten through three of my best gags!");
-		text(RENSHI, "Those things are going to be hell to replace...  Do you know how hard it is to be roguishly dangerous without the proper amount of silken scarves?");
-		text(EMIRA, "Mmmph...  Mmmph!");
-		text(RENSHI, "Yeah, right...  A Samurai behind me.  You'll only fool me with that one twelve times.  Thirteenth time is a charm.");
-		partymove("U2");
-		text(FALIAN, "At long last, I've found you, Desert Dog.  Let the girl go, and I'll make your end a swift one.");
-		//entity.specframe[1] = 5;
-		text(RENSHI, "Ahh!");
-		text(RENSHI, "Hrmm...  Seeing as I'm a man of good will, and that I've accidentally left my knives in my other lair, I grant you your request, Moon Knight.");
-		text(EMIRA, "MMPH!  MMPH!");
-		text(RENSHI, "I shall take my leave.  I hope she's as much of a hassle to you as she was to me!");
-		moveEnt( 1, 0, 0 );
-		text(FALIAN, "You shall not escape my honor's obligation so easily, Thief.  We shall meet again.");
-		text(FALIAN, "...");
-		
-		setFlag( CAVE_PLOT, 1 );
-	}*/
-	MessageBox( "DRAMA!" );
-}
+//(Final Room)
+void to_final_room() { warp(30, 138, TCROSS); }
 
 void event_14()
 {
-	warp(77, 73, TCROSS);
+    warp(77, 73, TCROSS);
 }
 
 void event_15()
 {
-	warp(200, 195, TCROSS);
+    warp(200, 195, TCROSS);
 }
 
 void event_16()
 {
-	warp(186, 33, TCROSS);
+    warp(186, 33, TCROSS);
 }
 
 void event_17()
 {
-	warp(237, 195, TCROSS);
+    warp(237, 195, TCROSS);
 }
 
 void event_18()
 {
-	warp(217, 183, TCROSS);
+    warp(217, 183, TCROSS);
 }
 
 void event_19()
 {
-	warp(213, 26, TCROSS);
+    warp(213, 26, TCROSS);
 }
 
 void event_20()
 {
-	warp(254, 183, TCROSS);
+    warp(254, 183, TCROSS);
 }
 
 void event_21()
 {
-	warp_ChangeFace(182, 141, TCROSS, FACE_DOWN);
+    warp_ChangeFace(182, 141, TCROSS, FACE_DOWN);
 }
 
 void event_22()
 {
-	warp_ChangeFace(203, 162, TCROSS, FACE_DOWN);
+    warp_ChangeFace(203, 162, TCROSS, FACE_DOWN);
 }
 
 void event_23()
 {
-	warp_ChangeFace(18, 69, TCROSS, FACE_DOWN);
+    warp_ChangeFace(18, 69, TCROSS, FACE_DOWN);
 }
 
 void event_24()
 {
-	warp_ChangeFace(206, 105, TCROSS, FACE_DOWN);
+    warp_ChangeFace(206, 105, TCROSS, FACE_DOWN);
 }
 
 void event_25()
 {
-	warp_ChangeFace(220, 150, TCROSS, FACE_DOWN);
+    warp_ChangeFace(220, 150, TCROSS, FACE_DOWN);
 }
 
 void event_26()
 {
-	warp_ChangeFace(208, 130, TCROSS, FACE_DOWN);
+    warp_ChangeFace(208, 130, TCROSS, FACE_DOWN);
 }
 
 void event_27()
 {
-	warp_ChangeFace(189, 93, TCROSS, FACE_DOWN);
+    warp_ChangeFace(189, 93, TCROSS, FACE_DOWN);
 }
 
 void event_28()
 {
-	warp_ChangeFace(139, 191, TCROSS, FACE_DOWN);
+    warp_ChangeFace(139, 191, TCROSS, FACE_DOWN);
 }
 
 void event_29()
 {
-	warp_ChangeFace(225, 118, TCROSS, FACE_DOWN);
+    warp_ChangeFace(225, 118, TCROSS, FACE_DOWN);
 }
 
 void event_30()
 {
-	warp_ChangeFace(220, 90, TCROSS, FACE_DOWN);
+    warp_ChangeFace(220, 90, TCROSS, FACE_DOWN);
 }
 
 void event_31()
 {
-	warp_ChangeFace(122, 179, TCROSS, FACE_DOWN);
+    warp_ChangeFace(122, 179, TCROSS, FACE_DOWN);
 }
 
 void event_32()
 {
-	warp_ChangeFace(183, 192, TCROSS, FACE_DOWN);
+    warp_ChangeFace(183, 192, TCROSS, FACE_DOWN);
 }
 
 void event_33()
 {
-	warp_ChangeFace(237, 78, TCROSS, FACE_DOWN);
+    warp_ChangeFace(237, 78, TCROSS, FACE_DOWN);
 }
 
 void event_35()
 {
-	warp(244, 39, TCROSS);
+    warp(244, 39, TCROSS);
 }
 
 void event_36()
 {
-	warp(161, 122, TCROSS);
+    warp(161, 122, TCROSS);
 }
 
 void event_37()
 {
-	entity.obstruct[GetPlayer()]=0;
+    entity.obstruct[GetPlayer()]=0;
 
-	slideDownRight( 2,3 );
-	sandtrap( "right", 189 ); 
+    slideDownRight( 2,3 );
+    sandtrap( "right", 189 );
 
-	setRString("1,2,E,R");
-	entity.face[GetPlayer()] = FACE_DOWN;
+    setRString("1,2,E,R");
+    entity.face[GetPlayer()] = FACE_DOWN;
 
-	warp( 124, 147, TCROSS );
+    warp( 124, 147, TCROSS );
 
-	fall( 164 );
-	entity.specframe[GetPlayer()] = 22;	
-	earthquake( 2, 2, 10 );	
-	delay(25);
-	entity.specframe[GetPlayer()] = 23;	
-	delay(35);
-	entity.specframe[GetPlayer()] = 0;	
-	
-	entity.obstruct[GetPlayer()]=1;	
-	setRString("1,E,2,R");
+    fall( 164 );
+    entity.specframe[GetPlayer()] = 22;
+    earthquake( 2, 2, 10 );
+    delay(25);
+    entity.specframe[GetPlayer()] = 23;
+    delay(35);
+    entity.specframe[GetPlayer()] = 0;
+
+    entity.obstruct[GetPlayer()]=1;
+    setRString("1,E,2,R");
 }
 
 
 void event_38()
 {
-	replaceSandColumns();
-	
-	entity.obstruct[GetPlayer()]=0;
-	
-	slideDownLeft( 2,3 );
-	sandtrap( "left", 110 ); 
+    replaceSandColumns();
 
-	setRString("1,2,E,R");
-	entity.face[GetPlayer()] = FACE_DOWN;
-	warp( 37, 7, TCROSS );
-	
-	fall( 23 );
-	entity.specframe[GetPlayer()] = 22;	
-	earthquake(2,2,10);	
-	delay(25);
-	entity.specframe[GetPlayer()] = 23;	
-	delay(35);
-	entity.specframe[GetPlayer()] = 0;	
-	
-	entity.obstruct[GetPlayer()]=1;	
-	setRString("1,E,2,R");
+    entity.obstruct[GetPlayer()]=0;
+
+    slideDownLeft( 2,3 );
+    sandtrap( "left", 110 );
+
+    setRString("1,2,E,R");
+    entity.face[GetPlayer()] = FACE_DOWN;
+    warp( 37, 7, TCROSS );
+
+    fall( 23 );
+    entity.specframe[GetPlayer()] = 22;
+    earthquake(2,2,10);
+    delay(25);
+    entity.specframe[GetPlayer()] = 23;
+    delay(35);
+    entity.specframe[GetPlayer()] = 0;
+
+    entity.obstruct[GetPlayer()]=1;
+    setRString("1,E,2,R");
 }
 
 
 void event_39() // The lake-fall
 {
-	int a;
+    int a;
 
-	entity.obstruct[GetPlayer()]=0;
-	
-	slideDownRight( 2,3 );
-	sandtrap( "right", 96 ); 
+    entity.obstruct[GetPlayer()]=0;
 
-	setRString("1,2,E,R");
-	entity.face[GetPlayer()] = FACE_DOWN;
-	cameratracking = 0; //_stop the camera from following the player
-	
-	warp( 250, 121, TCROSS );  //_warp the player off screen into some darkness...
-	xwin = 3848; ywin = 2144; //_set the camera nearby.
-	
-	fallspin( 141 );
-	a = timer;	while( timer < a+300 ) { render(); animate_spinning(); showpage(); }
-	fallspin( 161 );
-	
-	xwin = 2360; ywin = 800; //_set the camera to the lake.
-	warp( 157, 30, TCROSS );
-	fall( 57 );
-	
-	cave_plunge();
-	cave_afterplunge();
-	
-	entity.obstruct[GetPlayer()]=1;	
-	setRString("1,E,2,R");
+    slideDownRight( 2,3 );
+    sandtrap( "right", 96 );
+
+    setRString("1,2,E,R");
+    entity.face[GetPlayer()] = FACE_DOWN;
+    cameratracking = 0; //_stop the camera from following the player
+
+    warp( 250, 121, TCROSS );  //_warp the player off screen into some darkness...
+    xwin = 3848; ywin = 2144; //_set the camera nearby.
+
+    fallspin( 141 );
+    a = timer;  while( timer < a+300 ) { render(); animate_spinning(); showpage(); }
+    fallspin( 161 );
+
+    xwin = 2360; ywin = 800; //_set the camera to the lake.
+    warp( 157, 30, TCROSS );
+    fall( 57 );
+
+    cave_plunge();
+    cave_afterplunge();
+
+    entity.obstruct[GetPlayer()]=1;
+    setRString("1,E,2,R");
 }
 
 
 void event_40()
 {
-	entity.obstruct[GetPlayer()]=0;
-	
-	slideDownLeft( 2,3 );
-	sandtrap( "left", 93 ); 
+    entity.obstruct[GetPlayer()]=0;
 
-	setRString("1,2,E,R");
-	entity.face[GetPlayer()] = FACE_DOWN;
-	warp( 59, 177, TCROSS );
-	
-	fall( 184 );
-	entity.specframe[GetPlayer()] = 22;	
-	earthquake(2,2,10);	
-	delay(25);
-	entity.specframe[GetPlayer()] = 23;	
-	delay(35);
-	entity.specframe[GetPlayer()] = 0;	
-	
-	entity.obstruct[GetPlayer()]=1;	
-	setRString("1,E,2,R");
+    slideDownLeft( 2,3 );
+    sandtrap( "left", 93 );
+
+    setRString("1,2,E,R");
+    entity.face[GetPlayer()] = FACE_DOWN;
+    warp( 59, 177, TCROSS );
+
+    fall( 184 );
+    entity.specframe[GetPlayer()] = 22;
+    earthquake(2,2,10);
+    delay(25);
+    entity.specframe[GetPlayer()] = 23;
+    delay(35);
+    entity.specframe[GetPlayer()] = 0;
+
+    entity.obstruct[GetPlayer()]=1;
+    setRString("1,E,2,R");
 }
 
 
 void event_41()
 {
-	entity.obstruct[GetPlayer()]=0;
-	
-	slideDownRight( 2,3 );
-	sandtrap( "right", 93 ); 
+    entity.obstruct[GetPlayer()]=0;
 
-	setRString("1,2,E,R");
-	entity.face[GetPlayer()] = FACE_DOWN;
-	warp( 164, 142, TCROSS );
-	
-	fall( 158 );
-	entity.specframe[GetPlayer()] = 22;	
-	earthquake(2,2,10);	
-	delay(25);
-	entity.specframe[GetPlayer()] = 23;	
-	delay(35);
-	entity.specframe[GetPlayer()] = 0;	
-	
-	entity.obstruct[GetPlayer()]=1;	
-	setRString("1,E,2,R");
+    slideDownRight( 2,3 );
+    sandtrap( "right", 93 );
+
+    setRString("1,2,E,R");
+    entity.face[GetPlayer()] = FACE_DOWN;
+    warp( 164, 142, TCROSS );
+
+    fall( 158 );
+    entity.specframe[GetPlayer()] = 22;
+    earthquake(2,2,10);
+    delay(25);
+    entity.specframe[GetPlayer()] = 23;
+    delay(35);
+    entity.specframe[GetPlayer()] = 0;
+
+    entity.obstruct[GetPlayer()]=1;
+    setRString("1,E,2,R");
 }
 
 
 void event_42()
 {
-	entity.obstruct[GetPlayer()]=0;
-	
-	slideDownRight( 2,3 );
-	sandtrap( "right", 25 ); 
+    entity.obstruct[GetPlayer()]=0;
 
-	setRString("1,2,E,R");
-	entity.face[GetPlayer()] = FACE_DOWN;
-	warp( 107, 64, TCROSS );
-	
-	fall( 85 );
-	entity.specframe[GetPlayer()] = 22;	
-	earthquake(2,2,10);	
-	delay(25);
-	entity.specframe[GetPlayer()] = 23;	
-	delay(35);
-	entity.specframe[GetPlayer()] = 0;	
-	
-	entity.obstruct[GetPlayer()]=1;	
-	setRString("1,E,2,R");
+    slideDownRight( 2,3 );
+    sandtrap( "right", 25 );
+
+    setRString("1,2,E,R");
+    entity.face[GetPlayer()] = FACE_DOWN;
+    warp( 107, 64, TCROSS );
+
+    fall( 85 );
+    entity.specframe[GetPlayer()] = 22;
+    earthquake(2,2,10);
+    delay(25);
+    entity.specframe[GetPlayer()] = 23;
+    delay(35);
+    entity.specframe[GetPlayer()] = 0;
+
+    entity.obstruct[GetPlayer()]=1;
+    setRString("1,E,2,R");
 }
 
 void event_43()
 {
-	warp(93, 81, TCROSS);
+    warp(93, 81, TCROSS);
 }
 
 void event_44()
 {
-	warp(110, 81, TCROSS);
+    warp(110, 81, TCROSS);
 }
 
 void event_45()
 {
-	warp(47, 217, TCROSS);
+    warp(47, 217, TCROSS);
 }
 
 void event_46()
 {
-	warp(59, 217, TCROSS);
+    warp(59, 217, TCROSS);
 }
 
-void event_47() //Emira
-{
-	/*
-	entity.specFrame[0] = 0;
-	text(EMIRA, "Oh, Handsome one...  You turned out a better choice than I thought!");
-	text(FALIAN, "...I owed your father.  Nothing more.");
-	text(EMIRA, "How cold...");
-	text(FALIAN, "We will return to your father now.");
-	text(EMIRA, "N..nno... We can't...");
-	text(FALIAN, "...?");
-	text(EMIRA, "Renshi...  Stole something from me...");
-	text(FALIAN, "As dishonorable thieves are wont to.  What is your point?");
-	text(EMIRA, "It was a family Heirloom.  The Sun Coin.  I cannot face my father until I have it back.  He trusted me dearly with it's wellbeing...");
-	text(FALIAN, "...");
-	text(EMIRA, "Please, Handsome one.  Would you help me recover it?");
-	text(FALIAN, "...This is becoming far more trouble than one night's rest is worth...");
-	text(EMIRA, "Please?!");
-	text(FALIAN, "...");
-	text(FALIAN, "Fine.  I shall assist you.");
-	text(EMIRA, "Thank you a thousand times, Moon Knight!  I will make sure it's worth your while!");
-	text(FALIAN, "...");
 
-	moveEnt(0,0,0);	
-	setFlag( CAVE_PLOT, 2 );
-	*/
-	
-	MessageBox( "drama" );
+void to_dwarf_town()
+{
+    V1_MapSwitch( "dwarf.map", 51, 16, TBLACK );
+}
+
+void lance_leaves()
+{
+
+        if( !Flags[F_CAVE_LANCE_LEAVES] )
+        {
+            TextBox(
+                T_DEXTER,
+                "If lance were with us at this point",
+                "he'd leave!",
+                ""
+            );
+
+            TextBox(
+                T_DARIN,
+                "What a dick!",
+                "",
+                ""
+            );
+
+            Flags[F_CAVE_LANCE_LEAVES] = 1;
+        }
 }

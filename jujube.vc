@@ -128,3 +128,13 @@ void dexter_intro()
 
     EntFinish();
 }
+
+void to_Sand_Cave()
+{
+    V1_MapSwitch("cave.map", 56,182, TBLACK);
+}
+
+void summit_to_sand_cave()
+{
+    V1_MapSwitch("cave.map", 166,180, TBLACK);
+}
