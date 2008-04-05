@@ -15,6 +15,6 @@ anim paralyzed	F11 W8 F12 W8 F13 W8 F14 W8 B
 anim shouty	F15 W15 F16 W15 B
 anim charmed	F17 W15 F18 W15 B
 anim stoned	F19
-anim use_item	F93 W8 F94 W20 F95 W10 F96 W10
+anim use_item	F92 W8 F93 W20 F94 W10 F95 W10
 anim dance	F97 W22 F96 W22 B
 anim charging	F40 W15 F41 W15 B
