@@ -200,6 +200,7 @@ void logGameFlags() {
 
 #define F_CAVE_LANCE_LEAVES     109 //when lance leaves for the first time.
 
+#define F_MNT_LANCE_JOIN        110 // We've encountered the evil seal and had lance join
 
 //START OF CHEST INDEXES
 #define CHEST_UNDERSEA_A    1000        /// Chest A undersea.map
@@ -237,3 +238,4 @@ void logGameFlags() {
 #define CHEST_HECK_EAST     1032        /// East Tower Chest of Castle.map
 #define CHEST_COTTAGE_G     1033        /// Chest G cottage.map
 #define CHEST_COTTAGE_H     1034        /// Chest H cottage.map
+#define CHEST_JUJUBE_TRAP      1035        /// Trap chest in jujube

@@ -138,3 +138,88 @@ void summit_to_sand_cave()
 {
     V1_MapSwitch("cave.map", 166,180, TBLACK);
 }
+
+void examine_seal() 
+{
+    if (!flags[F_MNT_LANCE_JOIN]) {
+		// At this point, teleport Lance to be standing on the same spot as Dexter, but 
+		// "behind" him relative to the viewer, so he's virtually invisible. VERGE probably 
+		// uses entity order to determine draw order for entities of equivalent y-value, but 
+		// it might take some mucking about to figure out how to make this work. Alternatively,
+		// if it just isn't happening, you could teleport him in at his first appearance, 
+		// as he steps away.
+		TextBoxM(T_DARIN,    "This must be the place! I can see a passage",
+				"leading into the mountain behind the","waterfall.");
+		TextBox(T_DARIN,    "There's some kind of evil round thing blocking",
+				"the way, though.","");
+		TextBox(T_DEXTER,	"I see. This is a mystic ward. It seems that Lord Stan",
+				"has anticipated our visit. It will not be easy to",
+				"penetrate this barrier.");
+		TextBox(T_DARIN,    "But you know magic! Can't you de-magic it somehow?","","");    			
+		TextBox(T_DEXTER,	"I'm afraid not. My studies have focused mainly on the",
+				"killing side of things. Trying to remove an evil seal,"
+				"with black magic would be like throwing oil on a fire.");
+		TextBox(T_DARIN,	"Dammit! I can't let something as simple as this stop me!",
+				"There must be some way!","");
+		// Lance steps out from behind Dexter.
+		TextBox(T_BUBBA,	"I couldn't help but overhear your predicament!","","");
+		// Darin and Dexter do shock poses.
+		TextBox(T_DARIN,	"Where did you come from?","","");
+		TextBoxM(T_BUBBA,	"There will be time for explanations later.",
+				"What's important right now is that you have a problem",
+				"and I have a solution!");
+		TextBoxM(T_BUBBA,	"Your clever friend here has cut to the heart of",
+				the matter: to undo evil magic, you need holy magic.","");
+		TextBox(T_BUBBA,	"It just so happens that there's a powerful cleric",
+				"is working in the Dwarf Village beneath this mountain.",
+				"A seal like this will be easy for him.");
+		TextBox(T_DARIN,	"Then it is possible!", "But wait...", "Why are you telling us this?");
+		TextBoxM(T_BUBBA,	"The name's Lance. I'm a sort of freelancer.",
+				"I have business in the Dwarf Village, but I can't",
+				"get in because the entranceway is blocked.");
+		TextBox(T_BUBBA,	"You probably saw the entrance on your way here.",
+				"To get through, I need an item found in a chest",
+				"nearby. The chest is locked, but I can open it.");
+		TextBoxM(T_DEXTER,	"But how does this involve us?","","");
+		TextBoxM(T_BUBBA,	"Aheheh. Oh boy, this is a bit embarrassing.",
+				"See, there's a monster inside the chest...","");
+		TextBox(T_DARIN,	"You need a monster to open a door?", "", "");
+		TextBox(T_BUBBA,	"The monster isn't the thing I need!", 
+				"It's there to keep people from taking the item..", "");
+		TextBox(T_DEXTER,	"So the chest is locked, and then there is a monster",
+				"inside the chest?","");			
+		TextBoxM(T_BUBBA,	"Right! Some people, eh?", 
+				"Anyhow, I could use a couple of tough guys like you", 
+				"to help me fight the monster. The caves leading to");
+		TextBox(T_BUBBA,	"the Dwarf Village are pretty dangerous, too.","","");
+		// Darin looks at Dexter.
+		TextBox(T_DARIN,	"What do you think?", "We'd get to explore a cave.", "");
+		TextBox(T_DEXTER,	"Our options are limited. I'm not sure we have any",
+				"other choice.","");			
+		TextBox(T_BUBBA,	"That's the spirit! I'm sure we'll be the best of friends.","","");
+		// Lance joins the party.
+		flags[F_MNT_LANCE_JOIN] = 1;
+	}
+	else if (!flags[F_MNT_EVIL_SIGN] && !CharInParty("Paxton")) {
+		TextBox(T_DEXTER,	"This is truly a powerful seal.",
+				"Lord Stan must be a sorcerer without peer.","");				
+	}
+}
+
+void trap_chest {
+	if (CHEST_JUJUBE_TRAP) 
+		TextBox(0,	"Empty.","","");				
+	else {
+		if (CharInParty("Lance")) {
+			if (prompt(T_BUBBA,	"This is it. You guys ready?","","","Yes|No")) {
+				TextBox(T_DARIN,	"Here it comes!", "", "");
+				// fight monster, get Long Piece item
+				TextBox(T_BUBBA,	"I knew I could count on you guys!", 
+									"We make a great team.", "");
+			}
+			// if you pick "no," nothing more happens
+		}
+		else TextBox(0,	"It's locked.","","");				
+	}
+
+}
