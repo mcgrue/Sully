@@ -1869,7 +1869,7 @@ void Sleeping_Dexter() {
 
     // If Dexter has joined your party *and* we're during the
     // Bumsville nighttime scene, then this event can execute!
-    if( flags[F_MOUNT_DEX_JOIN] && flags[F_BUM_NIGHT] )
+    if( flags[F_MNT_DEX_JOIN] && flags[F_BUM_NIGHT] )
     {
         TextBox( T_DEXTER, "...M...meteo?", "That Light has bestowed upon me...", "the greatest... mmph.. mmm..." );
         TextBox( T_DARIN,   "Aww, he looks like he's having sweet","dreams.","Best not to wake him.");

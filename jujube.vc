@@ -4,14 +4,26 @@ void Start()
     SaveDisable(); //cannot save in dungeons.
 
 
-    if ( flags[F_MOUNT_DEX_JOIN] )
+    if( flags[F_MNT_DEX_JOIN] )
         entity.x[0]=300000; //if dexter has already joined,
                             //warp his on-map doppleganger way off-screen
+                            
+    entity.x[1]=300000; //lance's on-map doppleganger is always way off-screen...
+        
+
+    if( flags[F_MNT_EVIL_SIGN] ) {
+        DestroySign();
+    }
+    
+    if( flags[CHEST_JUJUBE_TRAP] ) {
+        SetTile(86, 33, 1, 143);
+    }
+    
+    if( flags[F_MNT_TETRIS_DOOR_OPEN] ) {
+        clear_tetris_door_tiles();
+    }
 
 /*
-    if( flags[F_MNT_EVIL_SIGN] ) //if the sign's been destroyed,
-        DestroySign();           //make sure it stays destroyed on revisits to this map.
-
     if( flags[F_LAB_BLOWN_UP] )
         DestroyLab();
 
@@ -26,9 +38,79 @@ void Start()
     if( !flags[F_LAB_BLOWN_UP] && flags[F_LAB_COUNTDOWN] )
         DoLabBlowup();
 */
+
     V1_StartMusic( "res/music/DREAMS2.S3M" );
 
     Banner("Mount Jujube",300);
+}
+
+void clear_tetris_door_tiles()
+{
+        SetObs( 34,75, 0 );
+        SetObs( 35,75, 35 ); //let's be cute and obstruct just the remaining block.
+
+
+        SetTile( 35,73, 2, 300 );
+        SetTile( 34,74, 2, 300 );
+        SetTile( 35,74, 2, 300 ); 
+        SetTile( 34,75, 2, 300 ); /// these four tiles get set to the "black" tile if the door is open
+            
+        SetTile( 35,75, 2, 301 ); /// and the last one gets the last tetris block
+}
+
+
+void tetris_doormat() {
+    if( flags[F_MNT_TETRIS_DOOR_OPEN] ) 
+        return;
+        
+    if( CharInParty("Lance") )
+    {
+        if( !HasItem("Long_Piece") )
+        {
+            AutoText(T_LANCE,  "This is the door that leads to the Sand Caves, where the dwarf Village is.");
+            AutoText(T_DARIN, "Woo caves!" );
+            AutoText(T_LANCE,  "...right.");
+            AutoText(T_LANCE,  "Anyway, the key is in a chest back up a level." );
+            AutoText(T_LANCE,  "I can open it." );  
+            AutoText(T_LANCE,  "It's a blue chest.");
+            AutoText(T_LANCE,  "Shouldn't be hard to miss.");
+            
+            playermove( "D3R3W10" );
+            
+            AutoText(T_LANCE,  "So let's not miss it this time!");
+            AutoText(T_DEXTER, "Geez, pushy much?" );
+            AutoText(T_LANCE,  "Just eager to visit my fine Dwarven... friends again!");
+        }
+        else
+        {
+            clear_tetris_door_tiles();
+            DramaticUseItem( "Long_Piece", 1 );
+            
+            TextBox(T_LANCE,  "Woo!","Man, those four-pieces never","come when you want.");
+            TextBox(T_DEXTER, "Why are so eager to get to this","Dwarf Village, Anyway?.","");
+            TextBox(T_LANCE,  "I... forgot my wallet there.","","");
+            AutoText(T_DEXTER, "And then the door in got locked and the key put in a booby-trapped chest?" );
+            TextBox(T_LANCE,  "Yeah.","","");
+            TextBox(T_LANCE,  "...","","");
+            AutoText(T_LANCE,  "...so it's going to be a little bit of a monster-filled walk through the caves.  We might want to go get some supplies in Bumsville first.");
+            AutoText(T_DARIN, "Woo caves!" );
+            AutoText(T_DEXTER, "Woo preparedness!" );
+            AutoText(T_LANCE,  "Daw, That's the spirit." );
+            
+            flags[F_MNT_TETRIS_DOOR_OPEN] = 1;
+        }
+        
+        return;
+    }    
+    
+    if( !flags[F_MNT_TETRIS_DOOR_INTRO] ) {
+        
+        TextBox(T_DARIN,    "This door is blocked... by blocks?","","");
+        
+        flags[F_MNT_TETRIS_DOOR_INTRO] = 1;
+        
+        return;
+    }
 }
 
 
@@ -72,8 +154,19 @@ void from_summit_to_s3()
 
 void dexter_intro()
 {
-    EntStart();
-    entity.speed[0]=0;  //stop the map-dexter from pacing.
+    if( flags[F_MNT_DEX_JOIN] ) {
+        return; // if dexter has already ever joined once, let's never, ever do this again.
+    }
+    
+    MenuOff();
+                                    //stop the map-dexter from pacing, and
+    EntityMove( 0, "X73Y83W8" );    //move the map-dexter into a proper position.
+    
+    WaitForEntity( 0 ); //wait for the movescript to stop before continuing...
+    
+    Entity.Face[0] = FACE_LEFT;
+    
+    Wait(15);
 
     TextBox(T_DEXTER,   "Hello? Oh, Darin my good friend!",
                         "It's been such a long time, hasn't it?","");
@@ -107,26 +200,22 @@ void dexter_intro()
     TextBox(T_DARIN,    "That's a good idea, Dexter.",
                         "Thank you.","");
 
-/*
-    //move the map-dexter onto darin (map-dexter is entity 0 on this map)
-    entity.speed[0]=100;
-    EntityMove(0, "L1");
-    while(entity.movecode[0])
-    {
-        Render();
-        ShowPage();
-    }
-*/
-    //add dexter to the party at level 4.
+    // let's get the map-version of Dexter aligned.
+    AlignStalker( 0, GetPlayer() );
+
+    // let's wait until the on-map dexter has stopped moving
+    WaitForEntity(0);
+        
+    //...add dexter to the party at level 4 (creating a paty-dexter)...
     JoinPartyAtLevel("Dexter", 4);
 
     //...and move the map-dexter out into never-never land.
     entity.x[0]=300000;
 
     //set this event flag.
-    flags[F_MOUNT_DEX_JOIN]=1;
-
-    EntFinish();
+    flags[F_MNT_DEX_JOIN]=1;
+    
+    MenuOn();
 }
 
 void to_Sand_Cave()
@@ -139,87 +228,412 @@ void summit_to_sand_cave()
     V1_MapSwitch("cave.map", 166,180, TBLACK);
 }
 
-void examine_seal() 
-{
-    if (!flags[F_MNT_LANCE_JOIN]) {
-		// At this point, teleport Lance to be standing on the same spot as Dexter, but 
-		// "behind" him relative to the viewer, so he's virtually invisible. VERGE probably 
-		// uses entity order to determine draw order for entities of equivalent y-value, but 
-		// it might take some mucking about to figure out how to make this work. Alternatively,
-		// if it just isn't happening, you could teleport him in at his first appearance, 
-		// as he steps away.
-		TextBoxM(T_DARIN,    "This must be the place! I can see a passage",
-				"leading into the mountain behind the","waterfall.");
-		TextBox(T_DARIN,    "There's some kind of evil round thing blocking",
-				"the way, though.","");
-		TextBox(T_DEXTER,	"I see. This is a mystic ward. It seems that Lord Stan",
-				"has anticipated our visit. It will not be easy to",
-				"penetrate this barrier.");
-		TextBox(T_DARIN,    "But you know magic! Can't you de-magic it somehow?","","");    			
-		TextBox(T_DEXTER,	"I'm afraid not. My studies have focused mainly on the",
-				"killing side of things. Trying to remove an evil seal,"
-				"with black magic would be like throwing oil on a fire.");
-		TextBox(T_DARIN,	"Dammit! I can't let something as simple as this stop me!",
-				"There must be some way!","");
-		// Lance steps out from behind Dexter.
-		TextBox(T_BUBBA,	"I couldn't help but overhear your predicament!","","");
-		// Darin and Dexter do shock poses.
-		TextBox(T_DARIN,	"Where did you come from?","","");
-		TextBoxM(T_BUBBA,	"There will be time for explanations later.",
-				"What's important right now is that you have a problem",
-				"and I have a solution!");
-		TextBoxM(T_BUBBA,	"Your clever friend here has cut to the heart of",
-				the matter: to undo evil magic, you need holy magic.","");
-		TextBox(T_BUBBA,	"It just so happens that there's a powerful cleric",
-				"is working in the Dwarf Village beneath this mountain.",
-				"A seal like this will be easy for him.");
-		TextBox(T_DARIN,	"Then it is possible!", "But wait...", "Why are you telling us this?");
-		TextBoxM(T_BUBBA,	"The name's Lance. I'm a sort of freelancer.",
-				"I have business in the Dwarf Village, but I can't",
-				"get in because the entranceway is blocked.");
-		TextBox(T_BUBBA,	"You probably saw the entrance on your way here.",
-				"To get through, I need an item found in a chest",
-				"nearby. The chest is locked, but I can open it.");
-		TextBoxM(T_DEXTER,	"But how does this involve us?","","");
-		TextBoxM(T_BUBBA,	"Aheheh. Oh boy, this is a bit embarrassing.",
-				"See, there's a monster inside the chest...","");
-		TextBox(T_DARIN,	"You need a monster to open a door?", "", "");
-		TextBox(T_BUBBA,	"The monster isn't the thing I need!", 
-				"It's there to keep people from taking the item..", "");
-		TextBox(T_DEXTER,	"So the chest is locked, and then there is a monster",
-				"inside the chest?","");			
-		TextBoxM(T_BUBBA,	"Right! Some people, eh?", 
-				"Anyhow, I could use a couple of tough guys like you", 
-				"to help me fight the monster. The caves leading to");
-		TextBox(T_BUBBA,	"the Dwarf Village are pretty dangerous, too.","","");
-		// Darin looks at Dexter.
-		TextBox(T_DARIN,	"What do you think?", "We'd get to explore a cave.", "");
-		TextBox(T_DEXTER,	"Our options are limited. I'm not sure we have any",
-				"other choice.","");			
-		TextBox(T_BUBBA,	"That's the spirit! I'm sure we'll be the best of friends.","","");
-		// Lance joins the party.
-		flags[F_MNT_LANCE_JOIN] = 1;
-	}
-	else if (!flags[F_MNT_EVIL_SIGN] && !CharInParty("Paxton")) {
-		TextBox(T_DEXTER,	"This is truly a powerful seal.",
-				"Lord Stan must be a sorcerer without peer.","");				
-	}
+void evil_seal_left() {
+    MenuOff();
+    examine_seal();
+    playermove( "X146Y64W10" );
+    MenuOn();
 }
 
-void trap_chest {
-	if (CHEST_JUJUBE_TRAP) 
-		TextBox(0,	"Empty.","","");				
-	else {
-		if (CharInParty("Lance")) {
-			if (prompt(T_BUBBA,	"This is it. You guys ready?","","","Yes|No")) {
-				TextBox(T_DARIN,	"Here it comes!", "", "");
-				// fight monster, get Long Piece item
-				TextBox(T_BUBBA,	"I knew I could count on you guys!", 
-									"We make a great team.", "");
-			}
-			// if you pick "no," nothing more happens
-		}
-		else TextBox(0,	"It's locked.","","");				
-	}
+void evil_seal_right() {
+    MenuOff();
+    examine_seal();
+    playermove( "X163Y64W10" );
+    MenuOn();
+}
 
+void do_evil_seal_wom_wom()
+{
+     AutoText( 0, "The camera tracks to the summit, the screen pulses purple, some Wom-Wom sound plays as the 'evil seal' TRotBlits into being, showing a >:P.  The camera then tracks back." );
+}
+
+void examine_seal() 
+{
+    int darin = GetPartyEntity( "Darin" );
+    int dexter = GetPartyEntity( "Dexter" );
+
+    if (!flags[F_MNT_LANCE_JOIN]) {
+       
+        CutsceneOn();
+       
+        do_evil_seal_wom_wom();
+    
+        entity.visible[1] = 0; // make Map-Lance invisible.
+        
+        entity.x[1] = entity.x[dexter];
+        entity.y[1] = (entity.y[dexter] - 1); //make invisible map-lance's position dexter's... minus one in the y-direction so he y-sorts behind.
+        
+        TextBoxM( T_DARIN,
+                  "This must be the place! I can see a ",
+                  "passage leading into the mountain behind",
+                  "the waterfall.");
+                  
+        TextBox( T_DARIN,    
+                 "There's some kind of evil round thing ",
+                 "blocking the way, though.","");
+        
+        TextBox( T_DEXTER,   
+                 "I see. This is a mystic ward. It seems that",
+                 "Lord Stan has anticipated our visit. It", 
+                 "will not be easy to penetrate this barrier.");
+        
+        TextBox( T_DARIN,    
+                 "But you know magic!","Can't you de-magic it somehow?","");
+                                
+        TextBox( T_DEXTER,   
+                 "I'm afraid not. My studies have focused",
+                 "mainly on the killing side of things.", "");
+        
+        TextBox( T_DEXTER,                   
+                 "Trying to remove an evil seal,"
+                 "with black magic would be like",
+                 "throwing oil on a fire.");
+                
+        TextBox( T_DARIN,    
+                 "Dammit! I can't let something as simple as",
+                 "this stop me!",
+                 "There must be some way!");
+                
+        entity.visible[1] = 1; // make Map-Lance invisible.
+        
+        EntityMove(1, "R2W8FW10" );
+        
+        WaitForEntity( 1 ); //wait for the movescript to stop before continuing...
+        
+        Entity.Face[1] = FACE_LEFT; //face the map-Lance at the party.
+        
+        Wait(10);
+                
+        // Lance steps out from behind Dexter.
+        TextBox( T_LANCE,    
+                 "I couldn't help but overhear your",
+                 "predicament!","");
+                 
+        cameratracking = 0;
+        
+        entity.specframe[darin] = 21;
+        entity.specframe[dexter] = 21;
+        
+        EntityMove(darin, "U2D2");
+        EntityMove(dexter, "U2D2");
+        
+        WaitForEntity(darin);
+        WaitForEntity(dexter);
+               
+        // Darin and Dexter do shock poses.
+        TextBox(T_DARIN,    "Where did you come from?","","");
+
+        entity.specframe[darin] = 0;
+        entity.specframe[dexter] = 0;
+        
+        cameratracking = 1;
+        
+        TextBoxM(T_LANCE,   
+                "There will be time for explanations later.",
+                "What's important right now is that you",
+                "have a problem and I have a solution!");
+                
+        TextBoxM(T_LANCE,   
+                "Your clever friend here has cut to the",
+                "heart of the matter: to undo evil magic,",
+                "you need holy magic.");
+                
+        TextBox(T_LANCE,    
+                "It just so happens that there's a powerful",
+                "cleric is working in the Dwarf Village",
+                "beneath this mountain." );
+                
+        TextBox(T_LANCE,    
+                "A seal like this will be easy for him.", "", "" );
+                
+        TextBox(T_DARIN,    "Then it is possible!", "But wait...", "Why are you telling us this?");
+        
+        TextBoxM(T_LANCE,   
+                "The name's Lance. I'm a sort of freelancer.",
+                "I have business in the Dwarf Village, but I",
+                "can't get in because the door is blocked.");
+                
+        TextBox(T_LANCE,    
+                "You probably saw the door on your way ",
+                "here.", "It's blocked by blocks." );
+                
+        TextBox( T_LANCE,
+                 "To get through, I need an item found",
+                 "in a chest nearby. The chest is",
+                 "locked, but I can open it." );
+                
+        TextBoxM(T_DEXTER,  "But how does this involve us?","","");
+        
+        TextBoxM(T_LANCE,   
+                "Aheheh. Oh boy, this is a bit embarrassing.",
+                "See, there's a monster inside the chest...","");
+                
+        TextBox(T_DARIN,    "You need a monster to open a door?", "", "");
+        
+        TextBox(T_LANCE,    
+                "The monster isn't the thing I need!", 
+                "It's there to keep people from taking",
+                "the item.");
+                
+        TextBox(T_DEXTER,   
+                "So the chest is locked, and then there is a",
+                "monster inside the chest?","");            
+                
+        TextBoxM( T_LANCE,   
+                  "Right! Some people, eh?", 
+                  "Anyhow, I could use a couple of tough guys like you", 
+                  "to help me fight the monster.");
+                
+        TextBox( T_LANCE,    
+                 "The caves leading to the Dwarf Village",
+                 "are pretty dangerous, too.","");
+
+        Wait(10);
+        
+        Entity.Face[dexter] = FACE_LEFT;
+        Entity.Face[darin] = FACE_RIGHT;
+        
+        Wait(30);
+        
+        // Darin looks at Dexter.
+        TextBox( T_DARIN,    "What do you think?", "We'd get to explore a cave.", "");
+        TextBox( T_DEXTER,   
+                 "Our options are limited.",
+                 "I'm not sure we have any",
+                 "other choice.");
+                
+        TextBox( T_LANCE,    
+                 "That's the spirit!",
+                 "I'm sure we'll be the best of friends.","" );
+        
+        // let's get the map-version of Lance aligned.
+        AlignStalker( 1, dexter );
+
+        // let's wait until the on-map lance has stopped moving
+        WaitForEntity(1);
+        
+        //...add lance to the party at level 6 (creating a paty-lance)...
+        JoinPartyAtLevel("Lance", 6);
+
+        //...and invisible the map-lance away.
+        entity.visible[1]=0;
+        
+        // Lance joins the party.
+        flags[F_MNT_LANCE_JOIN] = 1;
+        
+        CutsceneOff();
+    }
+    else if (!flags[F_MNT_EVIL_SIGN] && !CharInParty("Paxton")) 
+    {
+        TextBox( T_DEXTER,   
+                 "This is truly a powerful seal.",
+                 "Lord Stan must be a sorcerer without peer.","");               
+    }
+}
+
+void trap_chest()
+{
+    if( flags[CHEST_JUJUBE_TRAP] )
+    {
+        TextBox(0,  "Empty.","","");                
+    }
+    else 
+    {
+        if( CharInParty("Lance") ) 
+        {
+            if( prompt(T_LANCE, "This is it. You guys ready?","","","No|Yes") ) 
+            {
+                TextBox(T_DARIN,    "Here it comes!", "", "");
+                
+                Banner("Battle Happens Here.  Woo.",300);
+                
+                FindItem( "Long_Piece", 1);
+                
+                SetTile(86, 33, 1, 143); // sets the trap chest tile to "opened".
+                
+                // fight monster, get Long Piece item
+                TextBox(T_LANCE,    "I knew I could count on you guys!", 
+                                    "We make a great team.", "");
+                                    
+                flags[CHEST_JUJUBE_TRAP] = 1;
+            }
+            else // if you pick "no," let's remind the player that they still need to do this.
+            {
+                TextBox( T_LANCE,
+                         "Well, we need to fight the monster ", 
+                         "in this chest eventually...", "" );
+            }
+        }
+        else
+        {
+            TextBox(0, "It's locked.","","");              
+        }
+    }
+
+}
+
+
+
+///animates dexter during the RoadBlock() event.
+void VictoryDance() {
+    int dexter = GetPartyEntity( "Dexter" );
+    
+    if( flags[F_MNT_EVIL_SIGN]+35 > systemtime ) {
+        entity.specframe[dexter] = 45;
+    } else {
+        if( flags[F_MNT_EVIL_SIGN]+70 > systemtime ) {
+            entity.specframe[dexter] = 49;
+        } else {
+            flags[F_MNT_EVIL_SIGN] = systemtime;
+        }
+    }
+}
+
+
+///does the roadblock-destruction scene.
+void RoadBlock() {
+    int darin, dexter; //some temp references for their entity indexes
+    int sparklies, pop;
+    
+    if( !flags[F_MNT_EVIL_SIGN] ) 
+    {
+        MenuOff();
+        
+        darin   = GetPartyEntity( "Darin" );
+        dexter  = GetPartyEntity( "Dexter" );
+        
+        sparklies = LoadAnimation( "res/images/story_fx/sparklies.pcx", 16,16);
+        pop = LoadAnimation( "res/images/story_fx/pop.pcx", 16,16);
+        
+        
+        TextBox( 0, 
+                 "'Evil Lab closed for Evil Renovations'","",
+                 "            -The Management");
+        
+        TextBoxM( T_DARIN,   
+                  "Aw, nuts!",
+                  "A flimsy sign obstructing the way forward!","");
+        
+        entity.specframe[darin] = 28;
+        wait(50);
+        entity.specframe[darin] = 30;
+        wait(100);
+        
+        TextBox( T_DARIN,    
+                 "There's no way we can get past this!", 
+                 "Crystal!  I've failed you! (sob)","");
+                 
+        TextBox( T_DEXTER,   
+                 "There's no problem that a little", 
+                 "WANTON DESTRUCTION couldn't solve!",
+                 "Stand back!");
+        
+        entity.specframe[dexter] = 31; //pose facing forward
+        wait(35);
+        
+        entity.specframe[dexter] = 44; //get out the book
+        wait(50);
+        entity.specframe[dexter] = 40;
+        wait(100);
+        
+        entity.specframe[dexter] = 34; //flipping the pages
+        wait(25);
+        entity.specframe[dexter] = 38;
+        wait(25);
+        entity.specframe[dexter] = 34;
+        wait(25);
+        entity.specframe[dexter] = 38;
+        wait(25);
+        entity.specframe[dexter] = 34; 
+        wait(25);
+        entity.specframe[dexter] = 38;
+        wait(25);
+        
+        entity.specframe[dexter] = 43; //casting frame
+        
+        //magic sparklie on cane
+        SoundMagic2();
+        for( timer=0; timer<120; ) {
+            Render();
+            BlitFrameAt(GetEntScrX(dexter)+1,GetEntScrY(dexter)+6, sparklies, timer/20, screen);    
+            ShowPage();
+        }
+        
+        //fire spell, beginning
+        SoundBomb();
+        for( timer=0; timer<140; ) {
+            Render();
+            
+            BlitFrameAt(GetTileScrX(177),    GetTileScry(64)+6, pop, timer/20, screen);
+            BlitFrameAt(GetTileScrX(176)+5,  GetTileScry(65), pop, (timer/20)-2, screen);
+            BlitFrameAt(GetTileScrX(177)+4,  GetTileScry(65)+8, pop, (timer/20)-4, screen);
+            
+            ShowPage();
+            
+            //let's use the flag as a sfx-counter!
+            if( !flags[F_MNT_EVIL_SIGN] ) {
+                
+                if( timer > 40 ) {
+                    SoundBomb();
+                    
+                    flags[F_MNT_EVIL_SIGN]++;
+                }
+            } else if( flags[F_MNT_EVIL_SIGN] == 1 ) {
+                if( timer > 80 ) {
+                    SoundBomb();
+                    
+                    flags[F_MNT_EVIL_SIGN]++;
+                }   
+            }
+        }
+        
+        //POW!  Goodbye sign, hello smoking crater!
+        DestroySign();
+        
+        flags[F_MNT_EVIL_SIGN] = systemtime; //using this event's flag as a timer again!
+        HookRetrace("VictoryDance");    //let's temporarily hook a map function so 
+                                        //dexter dances while Darin gets up and talks! :D
+        
+        entity.specframe[darin] = 28;
+        wait(50);
+        entity.specframe[darin] = 0; //set darin back to normal-mode.
+        
+        TextBox( T_DARIN,    
+                 "You know, we probably could've just",
+                 "moved it.","");
+                            
+        HookRetrace("V1RPG_RenderFunc");    //restore the default HookRetrace...
+        entity.specframe[dexter] = 0;       //set dexter normal-mode
+                            
+        TextBox( T_DEXTER,   
+                 "What's the point of spending years learning",
+                 "the arcane secrets of our universe if",
+                 "you're not going to abuse them?" );
+        
+        //clean up the temp-variables
+        FreeAnimation( sparklies ); 
+        FreeAnimation( pop ); 
+        
+        flags[F_MNT_EVIL_SIGN] = 1;
+        
+        MenuOn();
+    } 
+}
+
+/// This function takes care of all the tile and obstruction-changing
+/// work to remove the sign.
+void DestroySign() 
+{
+    SetObs( 177,64, 0 );
+    SetObs( 176,65, 0 );
+    
+    SetTile( 176,64, 1, 0); // remove the sign from the 
+    SetTile( 176,65, 1, 0); // background overlay layer
+    SetTile( 177,64, 1, 0);
+    SetTile( 177,65, 1, 0);
+    
+    SetTile( 176,64, 0, 808); // add the charred pit!
+    SetTile( 176,65, 0, 828); 
+    SetTile( 177,64, 0, 809); 
+    SetTile( 177,65, 0, 829);
 }

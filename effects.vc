@@ -13,23 +13,23 @@
 /// @see ResolveAction() The function that calls this.
 void trigger_on_act( int bidx, int pidx )
 {
-	int i, cur_status_idx;
-	string cur_status_name;
-	
-	for( i=0; i<bat_getStatusCount(bidx,pidx); i++ )
-	{
-		cur_status_name = bat_getStatus( bidx, pidx, i );
+    int i, cur_status_idx;
+    string cur_status_name;
+    
+    for( i=0; i<bat_getStatusCount(bidx,pidx); i++ )
+    {
+        cur_status_name = bat_getStatus( bidx, pidx, i );
 
-		cur_status_idx = GetStatus( cur_status_name );
+        cur_status_idx = GetStatus( cur_status_name );
 
-		if( cur_status_idx >= 0 )
-		{
-			if( StatusRemovedByI(cur_status_idx, "on_act") )
-			{
-				bat_removeAllInstancesOfStatus( bidx, pidx, cur_status_name );
-			}
-		}			
-	}
+        if( cur_status_idx >= 0 )
+        {
+            if( StatusRemovedByI(cur_status_idx, "on_act") )
+            {
+                bat_removeAllInstancesOfStatus( bidx, pidx, cur_status_name );
+            }
+        }           
+    }
 }
 
 /// everytime a battle actor dies, this gets called.
@@ -37,36 +37,36 @@ void trigger_on_act( int bidx, int pidx )
 /// @see EndOfBattleAction() The function that calls this.
 void trigger_on_death( int bidx, int pidx )
 {
-	int i, cur_status_idx, doLifeline;
-	string cur_status_name;
-	
-	for( i=0; i<bat_getStatusCount(bidx,pidx); i++ )
-	{
-		cur_status_name = bat_getStatus( bidx, pidx, i );
+    int i, cur_status_idx, doLifeline;
+    string cur_status_name;
+    
+    for( i=0; i<bat_getStatusCount(bidx,pidx); i++ )
+    {
+        cur_status_name = bat_getStatus( bidx, pidx, i );
 
-		cur_status_idx = GetStatus( cur_status_name );
+        cur_status_idx = GetStatus( cur_status_name );
 
-		if( cur_status_idx >= 0 )
-		{
-			if( StatusRemovedByI(cur_status_idx, "on_death") )
-			{
-				bat_removeAllInstancesOfStatus( bidx, pidx, cur_status_name );
-				
-				/// LIFELINE status check.
-				if( equ("LIFELINE",cur_status_name) )
-				{
-					doLifeline = 1;
-				}
-			}
-		}			
-	}
-	
-	/// if there was a "lifeline" active at the time of death, we ressurect 
-	/// the lucky battle actor (but only after all of the on_death effects finish!)
-	if( doLifeline )
-	{
-		bat_revive( bidx, pidx, bat_max_hp(bidx,pidx) );
-	}
+        if( cur_status_idx >= 0 )
+        {
+            if( StatusRemovedByI(cur_status_idx, "on_death") )
+            {
+                bat_removeAllInstancesOfStatus( bidx, pidx, cur_status_name );
+                
+                /// LIFELINE status check.
+                if( equ("LIFELINE",cur_status_name) )
+                {
+                    doLifeline = 1;
+                }
+            }
+        }           
+    }
+    
+    /// if there was a "lifeline" active at the time of death, we ressurect 
+    /// the lucky battle actor (but only after all of the on_death effects finish!)
+    if( doLifeline )
+    {
+        bat_revive( bidx, pidx, bat_max_hp(bidx,pidx) );
+    }
 }
 
 /// every time a battle actor is revived, this gets called.
@@ -74,23 +74,23 @@ void trigger_on_death( int bidx, int pidx )
 /// @see bat_revive() The function that calls this.
 void trigger_on_life( int bidx, int pidx )
 {
-	int i, cur_status_idx;
-	string cur_status_name;
-	
-	for( i=0; i<bat_getStatusCount(bidx,pidx); i++ )
-	{
-		cur_status_name = bat_getStatus( bidx, pidx, i );
+    int i, cur_status_idx;
+    string cur_status_name;
+    
+    for( i=0; i<bat_getStatusCount(bidx,pidx); i++ )
+    {
+        cur_status_name = bat_getStatus( bidx, pidx, i );
 
-		cur_status_idx = GetStatus( cur_status_name );
+        cur_status_idx = GetStatus( cur_status_name );
 
-		if( cur_status_idx >= 0 )
-		{
-			if( StatusRemovedByI(cur_status_idx, "on_life") )
-			{
-				bat_removeAllInstancesOfStatus( bidx, pidx, cur_status_name );
-			}
-		}			
-	}
+        if( cur_status_idx >= 0 )
+        {
+            if( StatusRemovedByI(cur_status_idx, "on_life") )
+            {
+                bat_removeAllInstancesOfStatus( bidx, pidx, cur_status_name );
+            }
+        }           
+    }
 }
 
 /// everytime a player-character is involved in a resting action (sleeping at 
@@ -100,23 +100,23 @@ void trigger_on_life( int bidx, int pidx )
 /// @see Inn() Calls PartyRest();
 void trigger_on_rest( int cast_idx )
 {
-	int i, j, cur_status_idx;
-	string cur_status_name;
-	
-	for( j=0; j<GetCastStatusCount(cast_idx); i++ )
-	{
-		cur_status_name = GetCastStatus( cast_idx, j );
+    int i, j, cur_status_idx;
+    string cur_status_name;
+    
+    for( j=0; j<GetCastStatusCount(cast_idx); i++ )
+    {
+        cur_status_name = GetCastStatus( cast_idx, j );
 
-		cur_status_idx = GetStatus( cur_status_name );
+        cur_status_idx = GetStatus( cur_status_name );
 
-		if( cur_status_idx >= 0 )
-		{
-			if( StatusRemovedByI(cur_status_idx, "on_rest") )
-			{
-				castRemoveAllStatus( cast_idx, cur_status_name );
-			}
-		}			
-	}
+        if( cur_status_idx >= 0 )
+        {
+            if( StatusRemovedByI(cur_status_idx, "on_rest") )
+            {
+                castRemoveAllStatus( cast_idx, cur_status_name );
+            }
+        }           
+    }
 }
 
 /// everytime a battle character gets hit, this gets called for them.
@@ -124,23 +124,23 @@ void trigger_on_rest( int cast_idx )
 /// @see _GAT_do_change() The function that calls this.
 void trigger_on_hit( int bidx, int pidx )
 {
-	int i, cur_status_idx;
-	string cur_status_name;
-	
-	for( i=0; i<bat_getStatusCount(bidx,pidx); i++ )
-	{
-		cur_status_name = bat_getStatus( bidx, pidx, i );
+    int i, cur_status_idx;
+    string cur_status_name;
+    
+    for( i=0; i<bat_getStatusCount(bidx,pidx); i++ )
+    {
+        cur_status_name = bat_getStatus( bidx, pidx, i );
 
-		cur_status_idx = GetStatus( cur_status_name );
+        cur_status_idx = GetStatus( cur_status_name );
 
-		if( cur_status_idx >= 0 )
-		{
-			if( StatusRemovedByI(cur_status_idx, "on_hit") )
-			{
-				bat_removeAllInstancesOfStatus( bidx, pidx, cur_status_name );
-			}
-		}			
-	}
+        if( cur_status_idx >= 0 )
+        {
+            if( StatusRemovedByI(cur_status_idx, "on_hit") )
+            {
+                bat_removeAllInstancesOfStatus( bidx, pidx, cur_status_name );
+            }
+        }           
+    }
 }
 
 /// This gets called for every party member (living and dead) at the end of a battle.
@@ -148,23 +148,23 @@ void trigger_on_hit( int bidx, int pidx )
 /// @see endOfBattle() The function that calls this.
 void trigger_on_end( int cast_idx )
 {
-	int j, cur_status_idx;
-	string cur_status_name;
-	
-	for( j=0; j<GetCastStatusCount(cast_idx); j++ )
-	{
-		cur_status_name = GetCastStatus( cast_idx, j );
+    int j, cur_status_idx;
+    string cur_status_name;
+    
+    for( j=0; j<GetCastStatusCount(cast_idx); j++ )
+    {
+        cur_status_name = GetCastStatus( cast_idx, j );
 
-		cur_status_idx = GetStatus( cur_status_name );
+        cur_status_idx = GetStatus( cur_status_name );
 
-		if( cur_status_idx >= 0 )
-		{
-			if( StatusRemovedByI(cur_status_idx, "on_rest") )
-			{
-				castRemoveAllStatus( cast_idx, cur_status_name );
-			}
-		}			
-	}
+        if( cur_status_idx >= 0 )
+        {
+            if( StatusRemovedByI(cur_status_idx, "on_rest") )
+            {
+                castRemoveAllStatus( cast_idx, cur_status_name );
+            }
+        }           
+    }
 }
 
 /// This gets called when a PARTY_NULL effect expires.
@@ -172,31 +172,31 @@ void trigger_on_end( int cast_idx )
 ///
 void HandleBattleQueueSpecialEffectExpiry( int q_idx )
 {
-	int my_ref = battle_queue[q_idx].batent_ref;
-	int my_party = battle_queue[q_idx].batent_party;
-	string my_data = battle_queue[q_idx].data;
-	
-	int status_tidx, status_bitch_tidx;
-	int status_idx, status_bitch_bidx, status_bitch_pidx;
-	
-	if( my_party != PARTY_NULL )
-	{
-		ErrorHandler("HandleBattleQueueSpecialEffectExpiry(), associated party wasn't == PARTY_NULL (got: "+str(my_party)+") " );
-		return;
-	}
-	
-	loadTargettingFromString( my_data );
-	status_tidx = GetTargIdxByText( "STATUS" );
-	status_bitch_tidx = GetTargIdxByText( "AFFECTED" );
-	
-	if( status_tidx >= 0 && status_bitch_tidx >= 0 )
-	{
-		status_idx = GetTargID(status_tidx);
-		status_bitch_bidx = GetTargID(status_bitch_tidx);
-		status_bitch_pidx = GetTargMode(status_bitch_tidx);
-		
-		
-	}
+    int my_ref = battle_queue[q_idx].batent_ref;
+    int my_party = battle_queue[q_idx].batent_party;
+    string my_data = battle_queue[q_idx].data;
+    
+    int status_tidx, status_bitch_tidx;
+    int status_idx, status_bitch_bidx, status_bitch_pidx;
+    
+    if( my_party != PARTY_NULL )
+    {
+        ErrorHandler("HandleBattleQueueSpecialEffectExpiry(), associated party wasn't == PARTY_NULL (got: "+str(my_party)+") " );
+        return;
+    }
+    
+    loadTargettingFromString( my_data );
+    status_tidx = GetTargIdxByText( "STATUS" );
+    status_bitch_tidx = GetTargIdxByText( "AFFECTED" );
+    
+    if( status_tidx >= 0 && status_bitch_tidx >= 0 )
+    {
+        status_idx = GetTargID(status_tidx);
+        status_bitch_bidx = GetTargID(status_bitch_tidx);
+        status_bitch_pidx = GetTargMode(status_bitch_tidx);
+        
+        
+    }
 }
 
 
@@ -204,25 +204,25 @@ void HandleBattleQueueSpecialEffectExpiry( int q_idx )
 ////////////////////////////////
 //  Effect-specific sound effects!
 ////////////////////////////////
-int sfx_drink	= LoadSound( "res/sfx/items/drink.wav" );
-int sfx_drip	= LoadSound( "res/sfx/items/drip.wav" );
-int sfx_eat	= LoadSound( "res/sfx/items/eat.wav" );
-int sfx_holy	= LoadSound( "res/sfx/items/sun.wav" );
+int sfx_drink   = LoadSound( "res/sfx/items/drink.wav" );
+int sfx_drip    = LoadSound( "res/sfx/items/drip.wav" );
+int sfx_eat = LoadSound( "res/sfx/items/eat.wav" );
+int sfx_holy    = LoadSound( "res/sfx/items/sun.wav" );
 
 void SoundDrink() {
-	PlaySound( sfx_drink, sfx_volume );
+    PlaySound( sfx_drink, sfx_volume );
 }
 
 void SoundDrip() {
-	PlaySound( sfx_drip, sfx_volume );
+    PlaySound( sfx_drip, sfx_volume );
 }
 
 void SoundEat() {
-	PlaySound( sfx_eat, sfx_volume );
+    PlaySound( sfx_eat, sfx_volume );
 }
 
 void SoundHoly() {
-	PlaySound( sfx_holy, sfx_volume );
+    PlaySound( sfx_holy, sfx_volume );
 }
 
 
@@ -235,37 +235,37 @@ void SoundHoly() {
 // Uses the vc/util/targetting.vc helper functions
 void HP_OC_targ_menu()
 {
-	int cast_idx = 0-2;
+    int cast_idx = 0-2;
 
-	while( cast_idx < (0-1) )
-	{
+    while( cast_idx < (0-1) )
+    {
 
-		cast_idx = MenuPartyBox();
+        cast_idx = MenuPartyBox();
 
-		if( cast_idx == (0-1) ) //we've been cancelled!
-		{
-			CancelTargetting();
-			MenuHappyBeep();
-		}
-		else //we've got a valid cast_idx.  Let's check for validity!
-		{
-			// If this guy isn't at full HP and isn't dead, 
-			// He's a valid target!
-			if( master_cast[cast_idx].stats[STAT_MAX_HP] != master_cast[cast_idx].cur_hp 
-				&& master_cast[cast_idx].cur_hp > 0 )
-			{
-				AddTarget( cast_idx, 0, master_cast[cast_idx].name );
-				TargettingDone();
-				MenuHappyBeep();
-			}
-			else
-			{
-				cast_idx = 0-2; //set this to 
-				MenuAngryBuzz();
-				MenuPartyBoxRestorePosition();
-			}
-		}
-	}
+        if( cast_idx == (0-1) ) //we've been cancelled!
+        {
+            CancelTargetting();
+            MenuHappyBeep();
+        }
+        else //we've got a valid cast_idx.  Let's check for validity!
+        {
+            // If this guy isn't at full HP and isn't dead, 
+            // He's a valid target!
+            if( master_cast[cast_idx].stats[STAT_MAX_HP] != master_cast[cast_idx].cur_hp 
+                && master_cast[cast_idx].cur_hp > 0 )
+            {
+                AddTarget( cast_idx, 0, master_cast[cast_idx].name );
+                TargettingDone();
+                MenuHappyBeep();
+            }
+            else
+            {
+                cast_idx = 0-2; //set this to 
+                MenuAngryBuzz();
+                MenuPartyBoxRestorePosition();
+            }
+        }
+    }
 }
 
 
@@ -273,35 +273,35 @@ void HP_OC_targ_menu()
 // Uses the vc/util/targetting.vc helper functions
 void MP_OC_targ_menu()
 {
-	int cast_idx = 0-2;
-	
-	while( cast_idx < (0-1) )
-	{
-		cast_idx = MenuPartyBox();
-		
-		if( cast_idx == (0-1) ) //we've been cancelled!
-		{
-			CancelTargetting();
-			MenuHappyBeep();
-		}
-		else //we've got a valid cast_idx.  Let's check for validity!
-		{
-			// If this guy isn't at full HP and isn't dead, 
-			// He's a valid target!
-			if( master_cast[cast_idx].stats[STAT_MAX_MP] != master_cast[cast_idx].cur_mp )
-			{
-				AddTarget( cast_idx, 0, master_cast[cast_idx].name );
-				TargettingDone();
-				MenuHappyBeep();
-			}
-			else
-			{
-				cast_idx = 0-2; //set this to 
-				MenuAngryBuzz();
-				MenuPartyBoxRestorePosition();
-			}
-		}
-	}
+    int cast_idx = 0-2;
+    
+    while( cast_idx < (0-1) )
+    {
+        cast_idx = MenuPartyBox();
+        
+        if( cast_idx == (0-1) ) //we've been cancelled!
+        {
+            CancelTargetting();
+            MenuHappyBeep();
+        }
+        else //we've got a valid cast_idx.  Let's check for validity!
+        {
+            // If this guy isn't at full HP and isn't dead, 
+            // He's a valid target!
+            if( master_cast[cast_idx].stats[STAT_MAX_MP] != master_cast[cast_idx].cur_mp )
+            {
+                AddTarget( cast_idx, 0, master_cast[cast_idx].name );
+                TargettingDone();
+                MenuHappyBeep();
+            }
+            else
+            {
+                cast_idx = 0-2; //set this to 
+                MenuAngryBuzz();
+                MenuPartyBoxRestorePosition();
+            }
+        }
+    }
 }
 
 
@@ -309,34 +309,34 @@ void MP_OC_targ_menu()
 // Uses the vc/util/targetting.vc helper functions
 void DEAD_OC_targ_menu()
 {
-	int cast_idx = 0-2;
-	
-	while( cast_idx < (0-1) )
-	{
-		cast_idx = MenuPartyBox();
-		
-		if( cast_idx == (0-1) ) //we've been cancelled!
-		{
-			CancelTargetting();
-			MenuHappyBeep();
-		}
-		else //we've got a valid cast_idx.  Let's check for validity!
-		{
-			// If this guy is dead, He's a valid target!
-			if( 0 >= master_cast[cast_idx].cur_mp )
-			{
-				AddTarget( cast_idx, 0, master_cast[cast_idx].name );
-				TargettingDone();
-				MenuHappyBeep();
-			}
-			else
-			{
-				cast_idx = 0-2; //set this to 
-				MenuAngryBuzz();
-				MenuPartyBoxRestorePosition();
-			}
-		}
-	}
+    int cast_idx = 0-2;
+    
+    while( cast_idx < (0-1) )
+    {
+        cast_idx = MenuPartyBox();
+        
+        if( cast_idx == (0-1) ) //we've been cancelled!
+        {
+            CancelTargetting();
+            MenuHappyBeep();
+        }
+        else //we've got a valid cast_idx.  Let's check for validity!
+        {
+            // If this guy is dead, He's a valid target!
+            if( 0 >= master_cast[cast_idx].cur_mp )
+            {
+                AddTarget( cast_idx, 0, master_cast[cast_idx].name );
+                TargettingDone();
+                MenuHappyBeep();
+            }
+            else
+            {
+                cast_idx = 0-2; //set this to 
+                MenuAngryBuzz();
+                MenuPartyBoxRestorePosition();
+            }
+        }
+    }
 }
 
 // This asks for a single party member, and requires that their (cur_hp > 0)
@@ -344,200 +344,207 @@ void DEAD_OC_targ_menu()
 void LIVE_OC_targ_menu()
 {
 log( "LIVE_OC" );
-	
-	int cast_idx = 0-2;
-	
-	while( cast_idx < (0-1) )
-	{
-		cast_idx = MenuPartyBox();
-		
-		if( cast_idx == (0-1) ) //we've been cancelled!
-		{
-			CancelTargetting();
-			MenuHappyBeep();
-		}
-		else //we've got a valid cast_idx.  Let's check for validity!
-		{
-			// If this guy is alive, He's a valid target!
-			if( 0 < master_cast[cast_idx].cur_mp )
-			{
-				AddTarget( cast_idx, 0, master_cast[cast_idx].name );
-				TargettingDone();
-				MenuHappyBeep();
-			}
-			else
-			{
-				cast_idx = 0-2; //set this to 
-				MenuAngryBuzz();
-				MenuPartyBoxRestorePosition();
-			}
-		}
-	}	
+    
+    int cast_idx = 0-2;
+    
+    while( cast_idx < (0-1) )
+    {
+        cast_idx = MenuPartyBox();
+        
+        if( cast_idx == (0-1) ) //we've been cancelled!
+        {
+            CancelTargetting();
+            MenuHappyBeep();
+        }
+        else //we've got a valid cast_idx.  Let's check for validity!
+        {
+            // If this guy is alive, He's a valid target!
+            if( 0 < master_cast[cast_idx].cur_mp )
+            {
+                AddTarget( cast_idx, 0, master_cast[cast_idx].name );
+                TargettingDone();
+                MenuHappyBeep();
+            }
+            else
+            {
+                cast_idx = 0-2; //set this to 
+                MenuAngryBuzz();
+                MenuPartyBoxRestorePosition();
+            }
+        }
+    }   
 }
 
 
 void pearl_use()
 {
-	string s;
-	
-	SoundHoly();
-	
-	if( GetTargettingCount() != 1 )
-	{
-		AutoText( T_SULLY, "Dear sweet vecna!  Grue, or someone altering the system, screwed something up!~How the heck did the Pearl of Truth get used on multiple people?!" );
-	}
-	else
-	{
-		s = master_cast[GetTargID(0)].name;
-		
-		if( equ(s,"darin") )
-		{
-			TextBox( T_DARIN, "Sometimes, late at night, I think unheroic","thoughts!","...I'm so ashamed." );
-			
-			if( CharInParty("Crystal") )
-			{
-				TextBox( T_CRYSTAL, "*gasp*!","","" );
-			}
-		}
-		else if( equ(s,"dexter") )
-		{
-			TextBox( T_DEXTER, "This one time, at Magic Camp,","I stuck a wand up m...","" );
-			TextBox( T_DARIN, "That's enough Truth from the pearl","for today, I think.","" );
-		}
-		else if( equ(s,"crystal") )
-		{
-			AutoText( T_CRYSTAL, "I am good and pure, and have never done anything wrong ever." );
-			
-			if( CharInParty("Darin") )
-			{
-				AutoText( T_DARIN, "*snort*" );
-				AutoText( T_CRYSTAL, "You are *so* on the couch tonight after we save the world, mister." );
-			}
-		}
-		else if( equ(s,"sara") )
-		{
-			TextBox( T_SARA, "I put a 'kick me' sign on Crystal's","back when she wasn't looking.","" );
-			
-			if( CharInParty("Crystal") )
-			{
-				TextBox( T_CRYSTAL, "WHAT?!","","" );
-			}
-			
-			TextBox( T_SARA, "...and by 'sign' I mean 'wrote on her","robes in machine grease'.","" );
-			
-			if( CharInParty("Crystal") )
-			{
-				TextBoxM( T_CRYSTAL, "...","","" );
-				TextBoxM( T_CRYSTAL, "...you gonna die, bitch!","","" );
-			}			
-		}
-		else if( equ(s,"galfrey") )
-		{
-			TextBoxM( T_GALFREY, "...","","" );
-			Autotext( T_GALFREY, "...sometimes... when I get nervous... I put my fingers under my armpits, and then I sniff'm." );
-			
-			if( CharInParty("Crystal") )
-			{
-				Autotext( T_CRYSTAL, "Eww!" );
-				Autotext( T_GALFREY, "...Hey.  If you didn't want to hear it, you shouldn't've handed me the Pearl." );
-			}
-		}
-		else
-		{
-			AutoText( T_SULLY, "We're looking for a guy named '"+s+"'.  Anyone by that name here?  No?  Bummer."  );
-		}		
-	}
+    string s;
+    
+    SoundHoly();
+    
+    if( GetTargettingCount() != 1 )
+    {
+        AutoText( T_SULLY, "Dear sweet vecna!  Grue, or someone altering the system, screwed something up!~How the heck did the Pearl of Truth get used on multiple people?!" );
+    }
+    else
+    {
+        s = master_cast[GetTargID(0)].name;
+        
+        if( equ(s,"darin") )
+        {
+            TextBox( T_DARIN, "Sometimes, late at night, I think unheroic","thoughts!","...I'm so ashamed." );
+            
+            if( CharInParty("Crystal") )
+            {
+                TextBox( T_CRYSTAL, "*gasp*!","","" );
+            }
+        }
+        else if( equ(s,"dexter") )
+        {
+            TextBox( T_DEXTER, "This one time, at Magic Camp,","I stuck a wand up m...","" );
+            TextBox( T_DARIN, "That's enough Truth from the pearl","for today, I think.","" );
+        }
+        else if( equ(s,"crystal") )
+        {
+            AutoText( T_CRYSTAL, "I am good and pure, and have never done anything wrong ever." );
+            
+            if( CharInParty("Darin") )
+            {
+                AutoText( T_DARIN, "*snort*" );
+                AutoText( T_CRYSTAL, "You are *so* on the couch tonight after we save the world, mister." );
+            }
+        }
+        else if( equ(s,"sara") )
+        {
+            TextBox( T_SARA, "I put a 'kick me' sign on Crystal's","back when she wasn't looking.","" );
+            
+            if( CharInParty("Crystal") )
+            {
+                TextBox( T_CRYSTAL, "WHAT?!","","" );
+            }
+            
+            TextBox( T_SARA, "...and by 'sign' I mean 'wrote on her","robes in machine grease'.","" );
+            
+            if( CharInParty("Crystal") )
+            {
+                TextBoxM( T_CRYSTAL, "...","","" );
+                TextBoxM( T_CRYSTAL, "...you gonna die, bitch!","","" );
+            }           
+        }
+        else if( equ(s,"galfrey") )
+        {
+            TextBoxM( T_GALFREY, "...","","" );
+            Autotext( T_GALFREY, "...sometimes... when I get nervous... I put my fingers under my armpits, and then I sniff'm." );
+            
+            if( CharInParty("Crystal") )
+            {
+                Autotext( T_CRYSTAL, "Eww!" );
+                Autotext( T_GALFREY, "...Hey.  If you didn't want to hear it, you shouldn't've handed me the Pearl." );
+            }
+        }
+        else
+        {
+            AutoText( T_SULLY, "We're looking for a guy named '"+s+"'.  Anyone by that name here?  No?  Bummer."  );
+        }       
+    }
 }
 
 
 void worldmap_use()
 {
-	MenuPageTurn();
-	
-	TextBox( T_STAN, "I have cursed this map!","No location for YOU!","Mwahahaha!" );
+    MenuPageTurn();
+    
+    TextBox( T_STAN, "I have cursed this map!","No location for YOU!","Mwahahaha!" );
+}
+
+void long_piece_use()
+{
+    TextBox( T_DARIN, "What... does this do again?","", "" );
+    TextBox( T_LANCE, "It opens that funny door partway","up Mount Jujube!","" );
+    TextBox( T_LANCE, "Come on.  We're so close to","that Dwarf Village I can","taste it!" );
 }
 
 void gswitch_use()
 {
-	int idx = IsItem( "Golden_Switch" );
-	
-	if( !Flags[F_GSWITCH] )
-	{
-		TextBox( T_DARIN, "Wow!  A real golden switch!","And it even flips on and off!","" );
-	}
-	
-	if( master_items[idx].icon == 43 )
-	{
-		master_items[idx].icon == 44;
-	}
-	else
-	{
-		master_items[idx].icon == 43;
-	}
-	
-	SoundSwitch();
-	Unpress( 0 );
-	
-	Flags[F_GSWITCH]++;
+    int idx = IsItem( "Golden_Switch" );
+    
+    if( !Flags[F_GSWITCH] )
+    {
+        TextBox( T_DARIN, "Wow!  A real golden switch!","And it even flips on and off!","" );
+    }
+    
+    if( master_items[idx].icon == 43 )
+    {
+        master_items[idx].icon == 44;
+    }
+    else
+    {
+        master_items[idx].icon == 43;
+    }
+    
+    SoundSwitch();
+    Unpress( 0 );
+    
+    Flags[F_GSWITCH]++;
 }
 
 
 
 void starlight_use()
 {
-	int user_idx, target_idx;
+    int user_idx, target_idx;
 
-	if( !IsInBattle() )
-	{
-		starlight_use_MENU();
-	}
-	else
-	{
-		user_idx = GetTargIdxByText( "Attacker" );
-		target_idx = GetTargIdxByText( "Target" );
-		
-		/// this battle effect retargets if the former target was dead.
-		AttemptSingleLivingRetarget();
-		
-		AddGATTACA( 
-			GetTargID(target_idx), 
-			GetTargMode(target_idx),
-			BS_CHANGE_MP, 
-			15
-		);
-		
-		TurnBattleEffectOff( 1 );
-	}
+    if( !IsInBattle() )
+    {
+        starlight_use_MENU();
+    }
+    else
+    {
+        user_idx = GetTargIdxByText( "Attacker" );
+        target_idx = GetTargIdxByText( "Target" );
+        
+        /// this battle effect retargets if the former target was dead.
+        AttemptSingleLivingRetarget();
+        
+        AddGATTACA( 
+            GetTargID(target_idx), 
+            GetTargMode(target_idx),
+            BS_CHANGE_MP, 
+            15
+        );
+        
+        TurnBattleEffectOff( 1 );
+    }
 }
 
 void herb_use() 
 {
-	int user_idx, target_idx;
+    int user_idx, target_idx;
 
-	if( !IsInBattle() )
-	{
-		herb_use_MENU();
-	}
-	else
-	{
+    if( !IsInBattle() )
+    {
+        herb_use_MENU();
+    }
+    else
+    {
 Log( "herb_use" );
-		user_idx = GetTargIdxByText( "Attacker" );
-		target_idx = GetTargIdxByText( "Target" );
-		
-		/// this battle effect retargets if the former target was dead.
-		AttemptSingleLivingRetarget();
-		
-		AddGATTACA( 
-			GetTargID(target_idx), 
-			GetTargMode(target_idx),
-			BS_CHANGE_HP, 
-			30
-		);
-		
-		TurnBattleEffectOn( "healy_sparkles" );
-		
+        user_idx = GetTargIdxByText( "Attacker" );
+        target_idx = GetTargIdxByText( "Target" );
+        
+        /// this battle effect retargets if the former target was dead.
+        AttemptSingleLivingRetarget();
+        
+        AddGATTACA( 
+            GetTargID(target_idx), 
+            GetTargMode(target_idx),
+            BS_CHANGE_HP, 
+            30
+        );
+        
+        TurnBattleEffectOn( "healy_sparkles" );
+        
 Log( "herb_use end" );
-	}
+    }
 }
 
 
@@ -545,45 +552,45 @@ Log( "herb_use end" );
 ///
 void skill_wm_heal()
 {
-	int user_idx, target_idx;
-	int amt, tmp;
+    int user_idx, target_idx;
+    int amt, tmp;
 
-	if( !IsInBattle() )
-	{
+    if( !IsInBattle() )
+    {
 MessageBox( "LOL!" );
-	}
-	else
-	{
+    }
+    else
+    {
 Log( "skill_wm_heal" );
-		
+        
 
-		user_idx = GetTargIdxByText( "Attacker" );
-		target_idx = GetTargIdxByText( "Target" );
-		
-		/// this battle effect retargets if the former target was dead.
-		AttemptSingleLivingRetarget();
-		
-		amt = bat_mag( GetTargID(user_idx), GetTargMode(user_idx) ) * 3;
-		amt = amt / 2;
-		
-		tmp = amt/10;
-		amt += Random(0-tmp, 0+tmp);
-		if( amt < 0 )
-		{
-			amt = 1;
-		}
-		
-		AddGATTACA( 
-			GetTargID(target_idx), 
-			GetTargMode(target_idx),
-			BS_CHANGE_HP, 
-			amt
-		);
-		
-		TurnBattleEffectOn( "healy_sparkles" );
-		
+        user_idx = GetTargIdxByText( "Attacker" );
+        target_idx = GetTargIdxByText( "Target" );
+        
+        /// this battle effect retargets if the former target was dead.
+        AttemptSingleLivingRetarget();
+        
+        amt = bat_mag( GetTargID(user_idx), GetTargMode(user_idx) ) * 3;
+        amt = amt / 2;
+        
+        tmp = amt/10;
+        amt += Random(0-tmp, 0+tmp);
+        if( amt < 0 )
+        {
+            amt = 1;
+        }
+        
+        AddGATTACA( 
+            GetTargID(target_idx), 
+            GetTargMode(target_idx),
+            BS_CHANGE_HP, 
+            amt
+        );
+        
+        TurnBattleEffectOn( "healy_sparkles" );
+        
 Log( "skill_wm_heal end" );
-	}
+    }
 }
 
 
@@ -594,61 +601,61 @@ int __anim_healy = -1;
 
 void healy_sparkles()
 {
-	int i;
+    int i;
 
-	if( __healy_sfx < 0 ) 
-	{
-		__healy_sfx = LoadSound( "res\sfx\MAGIC.WAV" );
-		__anim_healy = LoadAnimation( "res\battle\effects\sparkle-green.pcx", 32, 32);
-		
-		PlaySound( __healy_sfx, sfx_volume );
-		
-		__healy_starttime = systemtime;
-		__healy_time = __healy_starttime + 103;
-	}
-	
-	if( systemtime >= __healy_time )
-	{
-		FreeAnimation( __anim_healy );
-		FreeSound( __healy_sfx );
-		
-		__healy_time = -1;
-		__anim_healy = -1;
-		__healy_sfx = -1;
-		__healy_starttime = -1;
-		
-		TurnBattleEffectOff( 1 );
-	}
-	else
-	{
-		for( i=0; i<GetGatticanCount(); i++ )
-		{
-			BlitFrameAt( 
-				GetGatticanCX(i), 
-				GetGatticanCY(i), 
-				__anim_healy, 
-				(systemtime - __healy_starttime) / 8, 
-				screen 
-			);
+    if( __healy_sfx < 0 ) 
+    {
+        __healy_sfx = LoadSound( "res\sfx\MAGIC.WAV" );
+        __anim_healy = LoadAnimation( "res\battle\effects\sparkle-green.pcx", 32, 32);
+        
+        PlaySound( __healy_sfx, sfx_volume );
+        
+        __healy_starttime = systemtime;
+        __healy_time = __healy_starttime + 103;
+    }
+    
+    if( systemtime >= __healy_time )
+    {
+        FreeAnimation( __anim_healy );
+        FreeSound( __healy_sfx );
+        
+        __healy_time = -1;
+        __anim_healy = -1;
+        __healy_sfx = -1;
+        __healy_starttime = -1;
+        
+        TurnBattleEffectOff( 1 );
+    }
+    else
+    {
+        for( i=0; i<GetGatticanCount(); i++ )
+        {
+            BlitFrameAt( 
+                GetGatticanCX(i), 
+                GetGatticanCY(i), 
+                __anim_healy, 
+                (systemtime - __healy_starttime) / 8, 
+                screen 
+            );
 Log( "BLITTED FRAME: " + str((__healy_starttime - systemtime) / 8) );
-		}
-	}
+        }
+    }
 }
 
 void medicine_use()
 {
-	if( !IsInBattle() )
-	{
-		medicine_use_MENU();
-	}
+    if( !IsInBattle() )
+    {
+        medicine_use_MENU();
+    }
 }
 
 void brew_use()
 {
-	if( !IsInBattle() )
-	{
-		brew_use_MENU();
-	}
+    if( !IsInBattle() )
+    {
+        brew_use_MENU();
+    }
 }
 
 
@@ -664,51 +671,51 @@ void brew_use()
 //heal 15 MP
 void starlight_use_MENU()
 {
-	int i;
-	SoundHoly();
-	
-	for(i=0; i<GetTargettingCount(); i++)
-	{
-		HealMP( GetTargID(i), 15 );
-	}
+    int i;
+    SoundHoly();
+    
+    for(i=0; i<GetTargettingCount(); i++)
+    {
+        HealMP( GetTargID(i), 15 );
+    }
 }
 
 
 void herb_use_MENU()
 {
-	int i;
-	SoundEat();
-	
-	for(i=0; i<GetTargettingCount(); i++)
-	{
-		HealHP( GetTargID(i), 15 );
-	}	
+    int i;
+    SoundEat();
+    
+    for(i=0; i<GetTargettingCount(); i++)
+    {
+        HealHP( GetTargID(i), 15 );
+    }   
 }
 
 void medicine_use_MENU()
 {
-	int i;
-	
-	SoundDrink();
-	
-	for(i=0; i<GetTargettingCount(); i++)
-	{
-		HealHP( GetTargID(i), 45 );
-	}	
+    int i;
+    
+    SoundDrink();
+    
+    for(i=0; i<GetTargettingCount(); i++)
+    {
+        HealHP( GetTargID(i), 45 );
+    }   
 }
 
 
 void brew_use_MENU()
 {
-	int i;
-	
-	SoundDrink();
-	
-	for(i=0; i<GetTargettingCount(); i++)
-	{
-		if( master_cast[GetTargID(i)].cur_hp == 0 )
-		{
-			HealHP( GetTargID(i), 1 );
-		}
-	}	
+    int i;
+    
+    SoundDrink();
+    
+    for(i=0; i<GetTargettingCount(); i++)
+    {
+        if( master_cast[GetTargID(i)].cur_hp == 0 )
+        {
+            HealHP( GetTargID(i), 1 );
+        }
+    }   
 }

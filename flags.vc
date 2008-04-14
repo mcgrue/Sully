@@ -81,7 +81,7 @@ void logGameFlags() {
 #define F_COT_INTRO             9       ///Cottage 'enterspeak' event occured
 #define F_COT_STAN              10      ///Cottage ENCOUNTER occured. party loses crystal
 
-#define F_MOUNT_DEX_JOIN        11      ///DEXTER joins you at MOUNTAIN.MAP
+#define F_MNT_DEX_JOIN          11      ///DEXTER joins you at MOUNTAIN.MAP
 #define F_MNT_GREEDY_SAGE       12      ///The Sage demands 20,000 or Ponytail-babeage (Crystal)
 #define F_MNT_SAGE_DONE         13      ///The Sage has spilled the carrot-beans!
 #define F_MNT_EVIL_SIGN         14      ///The construction sign, trigger this if we've killed it.
@@ -201,6 +201,12 @@ void logGameFlags() {
 #define F_CAVE_LANCE_LEAVES     109 //when lance leaves for the first time.
 
 #define F_MNT_LANCE_JOIN        110 // We've encountered the evil seal and had lance join
+#define F_MNT_TETRIS_DOOR_OPEN  111 // We've talked to the tetris door before meeting Lance.
+#define F_MNT_TETRIS_DOOR_INTRO 112 // We've opened the tetris door!
+
+
+
+
 
 //START OF CHEST INDEXES
 #define CHEST_UNDERSEA_A    1000        /// Chest A undersea.map
