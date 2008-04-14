@@ -33,8 +33,8 @@
 
 // Some various Story-related variables and effects. 
 //
-int sfx_waves;	///used in the island.map flashback
-int wavetimer;	///used in the island.map flashback
+int sfx_waves;  ///used in the island.map flashback
+int wavetimer;  ///used in the island.map flashback
 
 //used in cottage.map Stan-intro scene.
 int sparkle1 = LoadAnimation("res/images/story_fx/sparkle1.gif", 16, 32);
@@ -43,27 +43,27 @@ int sparkle3 = LoadAnimation("res/images/story_fx/sparkle3.gif", 16, 16);
 
 void HackLogFinderThingForWonkyBM()
 {
-	Log( "Dumping the BM for " + master_cast[menu_cast].name );
-	dump_bm( menu_cast ); //removing this causes great sorrow in the battle system
-	Exit( "Finished." );
+    Log( "Dumping the BM for " + master_cast[menu_cast].name );
+    dump_bm( menu_cast ); //removing this causes great sorrow in the battle system
+    Exit( "Finished." );
 }
 
 
 void f5_debug_set_activemode()
 {
-	debug_metamode_active = 1;
-	debug_metamode_active_steppassthru = 1; //in case we're in the stepmode trap-loop.
+    debug_metamode_active = 1;
+    debug_metamode_active_steppassthru = 1; //in case we're in the stepmode trap-loop.
 }
 
 void f8_debug_set_stepmode_or_step()
 {
-	debug_metamode_active = 0;
-	
-	if( key[SCAN_F8] )
-	{
-		debug_metamode_active_steppassthru = 1;
-		key[SCAN_F8] = 0;
-	}
+    debug_metamode_active = 0;
+    
+    if( key[SCAN_F8] )
+    {
+        debug_metamode_active_steppassthru = 1;
+        key[SCAN_F8] = 0;
+    }
 }
 
 
@@ -76,23 +76,23 @@ void f8_debug_set_stepmode_or_step()
 ///
 void AutoExec()
 {
-	// run tests
-	runTests();
+    // run tests
+    runTests();
 
-	InitMcgrender();
+    InitMcgrender();
 
-	//the following functions initialize things in the various libraries
-	// that need initializing... images, sounds, whatever.
-	//ClearCast(); // This needs to happen first because it sets some stuff to -1 that really doesn't want to be 0.
-	V1RPG_LoadResources();	//loads resources for the v1rpg library.
-	SSAC_LoadResources();	//loads resources for the Sully: Simple and Clean library
-	SMENU_LoadResources();	//loads resources for the Simple Menu library
-	initSpeechPortsInData(); //OMG HAX!
+    //the following functions initialize things in the various libraries
+    // that need initializing... images, sounds, whatever.
+    //ClearCast(); // This needs to happen first because it sets some stuff to -1 that really doesn't want to be 0.
+    V1RPG_LoadResources();  //loads resources for the v1rpg library.
+    SSAC_LoadResources();   //loads resources for the Sully: Simple and Clean library
+    SMENU_LoadResources();  //loads resources for the Simple Menu library
+    initSpeechPortsInData(); //OMG HAX!
 
-	InitEnemyGroups();	// load the battle group resources
-	InitSlashy();		// loads the weapon and enemy slashy anims.
-	
-	selectmap_clear(1);	// sets up the selectmap.
+    InitEnemyGroups();  // load the battle group resources
+    InitSlashy();       // loads the weapon and enemy slashy anims.
+    
+    selectmap_clear(1); // sets up the selectmap.
 
 /// put this in the load/save game and 
 /// in the main menu.  Also put a startup
@@ -123,10 +123,10 @@ Log( "Smoove[0]: " + GetSkillDisablingStatusByIdx( GetSkill("Smoove"), 0 ) );
 //exit("");
 
 //DumpStructEnemies();
-	
-//	debugAllItems();
-//	exit("");
-	
+    
+//  debugAllItems();
+//  exit("");
+    
 //dumpBattleGroups();
 
 /*
@@ -161,9 +161,9 @@ SetRepeaterModeMcFAIL(25);
 
 while( 1 )
 {
-	render();
-	do_selectmap();
-	showpage();
+    render();
+    do_selectmap();
+    showpage();
 }
 
 
@@ -214,54 +214,54 @@ tmp = LoadSprite( "carot.spr", SPRITETYPE_ENEMY );
 FreeSprite( tmp, 1 );
 */
 
-	_prev_bm_idx = -1;	//set this up on load.  For battle menu cleanup.
-	
-	init_events();		//loads all of the events in the event datafile.
-	loadFunkOrama();	//loads the FUNK!
-	
-	init_keyconf();
-	SetRepeaterModeMcFAIL( 25 );
-	
-	bm_autoexec();
-	
-	MenuOff();	//let's not let anyone touch the menu until we're in-game, eh?
-	
-	//we load all the data first so we can do the introduction without pause.
+    _prev_bm_idx = -1;  //set this up on load.  For battle menu cleanup.
+    
+    init_events();      //loads all of the events in the event datafile.
+    loadFunkOrama();    //loads the FUNK!
+    
+    init_keyconf();
+    SetRepeaterModeMcFAIL( 25 );
+    
+    bm_autoexec();
+    
+    MenuOff();  //let's not let anyone touch the menu until we're in-game, eh?
+    
+    //we load all the data first so we can do the introduction without pause.
 
-	HookRetrace("V1RPG_RenderFunc");// this is the v1_rpg library's default
-					// Hookretrace function, defined in "vc/v1_rpg/v1_rpg.vc"
-					//
-					// It allows for the handly-dandy vclayer variable
-					// (softcode, not a system feature) to be used, providing
-					// a universal temporary area to draw to the screen with.
-					//
-					// If this confuses you, don't worry about it for now.
+    HookRetrace("V1RPG_RenderFunc");// this is the v1_rpg library's default
+                    // Hookretrace function, defined in "vc/v1_rpg/v1_rpg.vc"
+                    //
+                    // It allows for the handly-dandy vclayer variable
+                    // (softcode, not a system feature) to be used, providing
+                    // a universal temporary area to draw to the screen with.
+                    //
+                    // If this confuses you, don't worry about it for now.
 
-	
+    
 
-	//This allows alt-f4 to exit verge.
-	HookKey( SCAN_F4, "alt_f4" );
-	
-	HookKey( SCAN_D, "darin_dump" );
-	HookKey( SCAN_X, "christmas" );
-	HookKey( SCAN_S, "bouncetest" );
-	
-	HookKey( SCAN_G, "grantback_pendinguse_items_from_battle_actionqueue" );
-	
-	HookKey( SCAN_L, "magically_beef_up_allies" ); 
-	
-	HookKey( SCAN_F, "HackLogFinderThingForWonkyBM" );
-	
-	HookKey( SCAN_B, "dump_all_bm" );
-	
-	HookKey( SCAN_V, "healy_sparkles" );
-	HookKey( SCAN_P, "fill_party" );	
-		
-		
-	HookKey( SCAN_F5, "f5_debug_set_activemode" );	
-	HookKey( SCAN_F8, "f8_debug_set_stepmode_or_step" );	
+    //This allows alt-f4 to exit verge.
+    HookKey( SCAN_F4, "alt_f4" );
+    
+    HookKey( SCAN_D, "darin_dump" );
+    HookKey( SCAN_X, "christmas" );
+    HookKey( SCAN_S, "bouncetest" );
+    
+    HookKey( SCAN_G, "grantback_pendinguse_items_from_battle_actionqueue" );
+    
+    HookKey( SCAN_L, "magically_beef_up_allies" ); 
+    
+    HookKey( SCAN_F, "HackLogFinderThingForWonkyBM" );
+    
+    HookKey( SCAN_B, "dump_all_bm" );
+    
+    HookKey( SCAN_V, "healy_sparkles" );
+    HookKey( SCAN_P, "fill_party" );    
+        
+        
+    HookKey( SCAN_F5, "f5_debug_set_activemode" );  
+    HookKey( SCAN_F8, "f8_debug_set_stepmode_or_step" );    
 
-		
+        
 //DumpStructStatus();
 //Log( "==============================================================================" );
 //testStatusAbilities(); 
@@ -270,65 +270,65 @@ FreeSprite( tmp, 1 );
 
 V3Console__Init();
 
-	InitIntro();
-	DoIntro();
+    InitIntro();
+    DoIntro();
 }
 
 void darin_dump()
 {
-	debugCast(0);
+    debugCast(0);
 }
 
 void fill_party()
 {
-	JoinParty("Darin");
-	JoinParty("Crystal");
-	JoinParty("Dexter");
-	//JoinParty("Sara");
-	//JoinParty("Galfrey");
-	JoinParty("Paxton");
-	JoinParty("Lance");
+    JoinParty("Darin");
+    JoinParty("Crystal");
+    JoinParty("Dexter");
+    //JoinParty("Sara");
+    //JoinParty("Galfrey");
+    JoinParty("Paxton");
+    JoinParty("Lance");
 }
 
 void christmas()
 {
-	int i;
-	for( i=0; i<item_count; i++ )
-	{
-		GiveItemI( i, Random(1,50) );
-	}
+    int i;
+    for( i=0; i<item_count; i++ )
+    {
+        GiveItemI( i, Random(1,50) );
+    }
 }
 
 /*
 void bouncetest()
 {
-	int p = Random(0,1);
-	int r = Random(1,100000);
-	int b;
-	
-	if( p == PARTY_ALLY )
-		b = SelectRandomAlly( 1 );
-	else
-		b = SelectRandomEnemy( 1 );
-		
-	string name = bat_getName(b, p);
-	name = left(name, 5);
-	
-	//NewBounceText( b, p, str(r), Random(-1,1) );
-	NewBounceText( b, p, name, Random(-1,1) );
+    int p = Random(0,1);
+    int r = Random(1,100000);
+    int b;
+    
+    if( p == PARTY_ALLY )
+        b = SelectRandomAlly( 1 );
+    else
+        b = SelectRandomEnemy( 1 );
+        
+    string name = bat_getName(b, p);
+    name = left(name, 5);
+    
+    //NewBounceText( b, p, str(r), Random(-1,1) );
+    NewBounceText( b, p, name, Random(-1,1) );
 }
 */
 
 void magically_beef_up_allies()
 {
-	int i;
-	
-	for( i=0; i<PartySize(); i++ )
-	{
-		master_cast[party[i]].stats[STAT_MAX_HP] = 300;
-		
-		master_cast[party[i]].cur_hp = master_cast[party[i]].stats[STAT_MAX_HP]; 
-	}
+    int i;
+    
+    for( i=0; i<PartySize(); i++ )
+    {
+        master_cast[party[i]].stats[STAT_MAX_HP] = 300;
+        
+        master_cast[party[i]].cur_hp = master_cast[party[i]].stats[STAT_MAX_HP]; 
+    }
 }
 
 /// Melds all the map-upkeep needs of the three libraries this game uses.
@@ -337,43 +337,43 @@ void magically_beef_up_allies()
 /// map vc files.
 void InitMap() {
 
-	// from the Simpletype library... this makes
-	// sure that your party is on the map!
-	//
-	// note: mapswitchx, mapswitchy are parts of the v1_rpg library
-	//       set by v1_MpaSwitch()
-	
-	if( !v1_party_init ) 
-	{
-		if( __initmap_overworld_flag )
-		{
-			_overworld_mode = 1;
-			SpawnPartyOverworld( mapswitchx, mapswitchy );
-		}
-		else
-		{
-			_overworld_mode = 0;
-			SpawnParty( mapswitchx, mapswitchy );
-		}
-		
-		v1_party_init = 1;
-	}
-	// from the menu library, this makes sure that if you're in
-	// menu-off mode, it stays off, or vica versa.
-	if (_menu_on) MenuOn();
-	else MenuOff();
+    // from the Simpletype library... this makes
+    // sure that your party is on the map!
+    //
+    // note: mapswitchx, mapswitchy are parts of the v1_rpg library
+    //       set by v1_MpaSwitch()
+    
+    if( !v1_party_init ) 
+    {
+        if( __initmap_overworld_flag )
+        {
+            _overworld_mode = 1;
+            SpawnPartyOverworld( mapswitchx, mapswitchy );
+        }
+        else
+        {
+            _overworld_mode = 0;
+            SpawnParty( mapswitchx, mapswitchy );
+        }
+        
+        v1_party_init = 1;
+    }
+    // from the menu library, this makes sure that if you're in
+    // menu-off mode, it stays off, or vica versa.
+    if (_menu_on) MenuOn();
+    else MenuOff();
 
-	// from the v1_rpg effects library
-	// this makes sure that the second half of any transition effect
-	// started by v1_MapSwitch() is completed!
-	v1_InitMap();
+    // from the v1_rpg effects library
+    // this makes sure that the second half of any transition effect
+    // started by v1_MapSwitch() is completed!
+    v1_InitMap();
 }
 
 int __initmap_overworld_flag;
 
 void InitMap_SetOverworldMode( int i )
 {
-	__initmap_overworld_flag = i;
+    __initmap_overworld_flag = i;
 }
 
 
@@ -384,142 +384,142 @@ void InitMap_SetOverworldMode( int i )
 /// of the intro.
 void DoIntro()
 {
-	
-	string sav_rstring = curmap.rstring;
-	
-	ResetPreferences();
-	
-	curmap.rstring = "R";
+    
+    string sav_rstring = curmap.rstring;
+    
+    ResetPreferences();
+    
+    curmap.rstring = "R";
 
-	ClearVCLayer();	//part of the v1_rpg.vc lib.  Clears the vclayer.
-	
-	StopMusic();
-	
-	//calls the v3splash() function, if it exists.
-	CallFunction("v3splash");	
-	
-	//play the unofficial VERGE theme song, Hymn to Aurora!
-	PlayMusic( "res/music/AURORA.MOD" ); 
-	SetMusicVolume( 70 ) ;
-	
-	int delay = 40;
-	int longdelay = 100;
-	
-	string _im = "res/images/story_fx/intro/retro.gif";
-	int im = LoadImage( _im );
-	
-	if( equ(sav_rstring, "") )
-	{
-		RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
-		SetLucent(75);
-		Blit( 0,0, im, screen );
-		Wait(delay);
+    ClearVCLayer(); //part of the v1_rpg.vc lib.  Clears the vclayer.
+    
+    StopMusic();
+    
+    //calls the v3splash() function, if it exists.
+    CallFunction("v3splash");   
+    
+    //play the unofficial VERGE theme song, Hymn to Aurora!
+    PlayMusic( "res/music/AURORA.MOD" ); 
+    SetMusicVolume( 70 ) ;
+    
+    int delay = 40;
+    int longdelay = 100;
+    
+    string _im = "res/images/story_fx/intro/retro.gif";
+    int im = LoadImage( _im );
+    
+    if( equ(sav_rstring, "") )
+    {
+        RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
+        SetLucent(75);
+        Blit( 0,0, im, screen );
+        Wait(delay);
 
-		SetLucent(0);
-		RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
-		SetLucent(50);
-		Blit( 0,0, im, screen );
-		Wait(delay);
+        SetLucent(0);
+        RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
+        SetLucent(50);
+        Blit( 0,0, im, screen );
+        Wait(delay);
 
-		SetLucent(0);
-		RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
-		SetLucent(25);
-		Blit( 0,0, im, screen );
-		Wait(delay);
+        SetLucent(0);
+        RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
+        SetLucent(25);
+        Blit( 0,0, im, screen );
+        Wait(delay);
 
-		SetLucent(0);
-		RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
-		Blit( 0,0, im, screen );
-		Wait(longdelay);	
+        SetLucent(0);
+        RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
+        Blit( 0,0, im, screen );
+        Wait(longdelay);    
 
-		SetLucent(0);
-		RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
-		SetLucent(25);
-		Blit( 0,0, im, screen );
-		Wait(delay);
+        SetLucent(0);
+        RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
+        SetLucent(25);
+        Blit( 0,0, im, screen );
+        Wait(delay);
 
-		SetLucent(0);
-		RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
-		SetLucent(50);
-		Blit( 0,0, im, screen );
-		Wait(delay);
+        SetLucent(0);
+        RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
+        SetLucent(50);
+        Blit( 0,0, im, screen );
+        Wait(delay);
 
-		SetLucent(0);
-		RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
-		SetLucent(75);
-		Blit( 0,0, im, screen );
-		Wait(delay);
+        SetLucent(0);
+        RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
+        SetLucent(75);
+        Blit( 0,0, im, screen );
+        Wait(delay);
 
-		SetLucent(0);
-		RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
-		Wait(delay);
-	}
-	else
-	{
-		SetLucent(0);
-		FillVCLayer( RGB(0,0,0) );
-		Wait(delay);
-	
-		SetLucent(75);
-		VCPutIMG( _im, 0,0 );
-		Wait(delay);
-		
-		SetLucent(0);
-		FillVCLayer( RGB(0,0,0) );
+        SetLucent(0);
+        RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
+        Wait(delay);
+    }
+    else
+    {
+        SetLucent(0);
+        FillVCLayer( RGB(0,0,0) );
+        Wait(delay);
+    
+        SetLucent(75);
+        VCPutIMG( _im, 0,0 );
+        Wait(delay);
+        
+        SetLucent(0);
+        FillVCLayer( RGB(0,0,0) );
 
-		SetLucent(50);
-		VCPutIMG( _im, 0,0 );
-		Wait(delay);
-		
-		SetLucent(0);
-		FillVCLayer( RGB(0,0,0) );
+        SetLucent(50);
+        VCPutIMG( _im, 0,0 );
+        Wait(delay);
+        
+        SetLucent(0);
+        FillVCLayer( RGB(0,0,0) );
 
-		SetLucent(25);
-		VCPutIMG( _im, 0,0 );
-		Wait(delay);
-		
-		SetLucent(0);
-		FillVCLayer( RGB(0,0,0) );
+        SetLucent(25);
+        VCPutIMG( _im, 0,0 );
+        Wait(delay);
+        
+        SetLucent(0);
+        FillVCLayer( RGB(0,0,0) );
 
-		SetLucent(0);
-		VCPutIMG( _im, 0,0 );
-		Wait(longdelay);
-		
-		SetLucent(0);
-		FillVCLayer( RGB(0,0,0) );
-		
-		SetLucent(25);
-		VCPutIMG( _im, 0,0 );
-		Wait(delay);
-		
-		SetLucent(0);
-		FillVCLayer( RGB(0,0,0) );
-		
-		SetLucent(50);
-		VCPutIMG( _im, 0,0 );
-		Wait(delay);
-		
-		SetLucent(0);
-		FillVCLayer( RGB(0,0,0) );
-		
-		SetLucent(75);
-		VCPutIMG( _im, 0,0 );
-		Wait(delay);
-		
-		SetLucent(0);
-		FillVCLayer( RGB(0,0,0) );
-		
-		Wait(delay);
-	}
+        SetLucent(0);
+        VCPutIMG( _im, 0,0 );
+        Wait(longdelay);
+        
+        SetLucent(0);
+        FillVCLayer( RGB(0,0,0) );
+        
+        SetLucent(25);
+        VCPutIMG( _im, 0,0 );
+        Wait(delay);
+        
+        SetLucent(0);
+        FillVCLayer( RGB(0,0,0) );
+        
+        SetLucent(50);
+        VCPutIMG( _im, 0,0 );
+        Wait(delay);
+        
+        SetLucent(0);
+        FillVCLayer( RGB(0,0,0) );
+        
+        SetLucent(75);
+        VCPutIMG( _im, 0,0 );
+        Wait(delay);
+        
+        SetLucent(0);
+        FillVCLayer( RGB(0,0,0) );
+        
+        Wait(delay);
+    }
 
-	FreeImage(im);
-	
-	curmap.rstring = sav_rstring;
+    FreeImage(im);
+    
+    curmap.rstring = sav_rstring;
 
-	//let's go to intro.map so we can play with entities!
-	//
-	// To follow along the execution of the program, open up intro.vc.	
-	Map( "intro.map" );
+    //let's go to intro.map so we can play with entities!
+    //
+    // To follow along the execution of the program, open up intro.vc.  
+    Map( "intro.map" );
 }
 
 
@@ -534,25 +534,25 @@ void DoIntro()
 /// Question to all: we should rethink the speech port system maybe?
 /// -Grue
 void initSpeechPortsInData() {
-	int i;
-	string name;
+    int i;
+    string name;
 
-	for( i=0; i<MAX_CAST; i++ ) {
+    for( i=0; i<MAX_CAST; i++ ) {
 
-		name = master_cast[i].name;
+        name = master_cast[i].name;
 
-		if( equ(name,"darin") ) {
-			master_cast[i].portrait_idx = T_DARIN;
-		} else if( equ(name,"dexter") ) {
-			master_cast[i].portrait_idx = T_DEXTER;
-		} else if( equ(name,"sara") ) {
-			master_cast[i].portrait_idx = T_SARA;
-		} else if( equ(name,"crystal") ) {
-			master_cast[i].portrait_idx = T_CRYSTAL;
-		} else if( equ(name,"galfrey") ) {
-			master_cast[i].portrait_idx = T_GALFREY;
-		}
-	}
+        if( equ(name,"darin") ) {
+            master_cast[i].portrait_idx = T_DARIN;
+        } else if( equ(name,"dexter") ) {
+            master_cast[i].portrait_idx = T_DEXTER;
+        } else if( equ(name,"sara") ) {
+            master_cast[i].portrait_idx = T_SARA;
+        } else if( equ(name,"crystal") ) {
+            master_cast[i].portrait_idx = T_CRYSTAL;
+        } else if( equ(name,"galfrey") ) {
+            master_cast[i].portrait_idx = T_GALFREY;
+        }
+    }
 }
 
 /// Returns a speech portrait index based on party position
@@ -561,13 +561,13 @@ void initSpeechPortsInData() {
 /// horribleness above. -Grue
 int SpcByPos( int party_pos )
 {
-	if( party_pos < 0 || party_pos >= PartySize() )
-	{
-		ErrorHandler( "SpcByPos(): "+str(party_pos)+" is an invalid party index." );
-		return 0-1;
-	}
+    if( party_pos < 0 || party_pos >= PartySize() )
+    {
+        ErrorHandler( "SpcByPos(): "+str(party_pos)+" is an invalid party index." );
+        return 0-1;
+    }
 
-	return master_cast[party[party_pos]].portrait_idx;
+    return master_cast[party[party_pos]].portrait_idx;
 }
 
 
@@ -575,13 +575,13 @@ int SpcByPos( int party_pos )
 /// Hookkeyying this to f4 allows alt-f4 to exit verge.
 void alt_f4()
 {
-	if( key[SCAN_ALT] ) {
-		exit( "" );
-	}
+    if( key[SCAN_ALT] ) {
+        exit( "" );
+    }
 }
 
 
-int _title_menu, _title_menu_load_done;	/// Quick workarounds to get loadgames into the main title screen.  
+int _title_menu, _title_menu_load_done; /// Quick workarounds to get loadgames into the main title screen.  
 
 
 /// Plays the closing credits sequence.
@@ -590,146 +590,146 @@ int _title_menu, _title_menu_load_done;	/// Quick workarounds to get loadgames i
 /// Uses the Simple Credits library in vc/util/credits.vc
 void Credits()
 {
-	string sav_rstring = curmap.rstring;
+    string sav_rstring = curmap.rstring;
 
-	curmap.rstring = "R";	
-	FillVCLayer( RGB(0,0,0) );
-	
-	int y;	
-	resetCredits();
+    curmap.rstring = "R";   
+    FillVCLayer( RGB(0,0,0) );
+    
+    int y;  
+    resetCredits();
 
-	addIntroLine( y,   "The Sully Chronicles, v3 Simple Edition." );
-	y+=10;
+    addIntroLine( y,   "The Sully Chronicles, v3 Simple Edition." );
+    y+=10;
 
-	addIntroLine( y,   "========================================" );
-	y+=30;
+    addIntroLine( y,   "========================================" );
+    y+=30;
 
-	addIntroLine( y,   "Original game by Brian 'Hahn' Peterson" );
-	y+=30;
+    addIntroLine( y,   "Original game by Brian 'Hahn' Peterson" );
+    y+=30;
 
-	addIntroLine( y,   "v3 revision of the game by:" );
-	y+=20;
+    addIntroLine( y,   "v3 revision of the game by:" );
+    y+=20;
 
-	addIntroLine( y,   "Ben 'McGrue' McGraw" );
-	y+=20;
+    addIntroLine( y,   "Ben 'McGrue' McGraw" );
+    y+=20;
 
-	addIntroLine( y,  "Martin 'Zip' P." );
-	y+=30;
+    addIntroLine( y,  "Martin 'Zip' P." );
+    y+=30;
 
-	addIntroLine( y,  "With additional code by:" );
-	y+=20;
-	addIntroLine( y,  "Benjamin 'vecna' Eirich" );
-	y+=20;
-	addIntroLine( y,  "Tristan 'RageCage' Michael" );
-	y+=20;
-	addIntroLine( y,  "Shamus 'Kildorf' Peveril" );
+    addIntroLine( y,  "With additional code by:" );
+    y+=20;
+    addIntroLine( y,  "Benjamin 'vecna' Eirich" );
+    y+=20;
+    addIntroLine( y,  "Tristan 'RageCage' Michael" );
+    y+=20;
+    addIntroLine( y,  "Shamus 'Kildorf' Peveril" );
 
-	y+=50;
-	addIntroLine( y,  "Originally tile and sprite art by:" );
+    y+=50;
+    addIntroLine( y,  "Originally tile and sprite art by:" );
 
-	y+=20;
-	addIntroLine( y,  "Brian 'Hahn' Peterson" );
+    y+=20;
+    addIntroLine( y,  "Brian 'Hahn' Peterson" );
 
-	y+=30;
-	addIntroLine( y,  "Additional art by:" );
+    y+=30;
+    addIntroLine( y,  "Additional art by:" );
 
-	y+=20;
-	addIntroLine( y,  "AJ 'Gayo' Joas" );
+    y+=20;
+    addIntroLine( y,  "AJ 'Gayo' Joas" );
 
-	y+=20;
-	addIntroLine( y,  "Ben 'McGrue' McGraw" );
+    y+=20;
+    addIntroLine( y,  "Ben 'McGrue' McGraw" );
 
-	y+=50;
-	addIntroLine( y,  "Music" );
-	y+=10;
-	addIntroLine( y,  "=====" );
-	y+=25;
-	addIntroLine( y,  "Hymn to Aurora, Copyright Horace Wimp" );
-	y+=25;
-	addIntroLine( y,  "Bad Experiences, Copyright 1994 Frog" );
-	y+=25;
-	addIntroLine( y,  "D.O.S. tune #3, Copyright 1993 lotf interface" );
-	y+=25;
-	addIntroLine( y,  "Exage, Copyright 1990 Peter J. Salomonsen" );
-	y+=25;
-	addIntroLine( y,  "Medioeval, Copyright Fabio Barzagli" );
-	y+=25;
-	addIntroLine( y,  "Vangelis Remix #02, Author Unknown" );
-	y+=25;
-	addIntroLine( y,  "Song of Crying Guitar, Copyright 1995 Vadim VS" );
-	y+=25;
-	addIntroLine( y,  "Soul-o-matic, Copyright 1993" );
-	y+=10;
-	addIntroLine( y,   "by Purple Motion of Future Crew" );
-	y+=25;
-	addIntroLine( y,  "Dreams of the Acropolis, Copyright E.J.James" );
-	y+=25;
-	addIntroLine( y,  "Mystical Waters, Copyright 1993 H.T.H." );
-	y+=25;
-	addIntroLine( y,  "Simplicity 2, Copyright 1995 Sirius of Bass Productions" );
-	y+=25;
-	addIntroLine( y,  "Symphony, Copyright Skaven of Future Crew" );
-	y+=25;
-	addIntroLine( y,  "Morning Call, Copyright Michiko Naruke" );
+    y+=50;
+    addIntroLine( y,  "Music" );
+    y+=10;
+    addIntroLine( y,  "=====" );
+    y+=25;
+    addIntroLine( y,  "Hymn to Aurora, Copyright Horace Wimp" );
+    y+=25;
+    addIntroLine( y,  "Bad Experiences, Copyright 1994 Frog" );
+    y+=25;
+    addIntroLine( y,  "D.O.S. tune #3, Copyright 1993 lotf interface" );
+    y+=25;
+    addIntroLine( y,  "Exage, Copyright 1990 Peter J. Salomonsen" );
+    y+=25;
+    addIntroLine( y,  "Medioeval, Copyright Fabio Barzagli" );
+    y+=25;
+    addIntroLine( y,  "Vangelis Remix #02, Author Unknown" );
+    y+=25;
+    addIntroLine( y,  "Song of Crying Guitar, Copyright 1995 Vadim VS" );
+    y+=25;
+    addIntroLine( y,  "Soul-o-matic, Copyright 1993" );
+    y+=10;
+    addIntroLine( y,   "by Purple Motion of Future Crew" );
+    y+=25;
+    addIntroLine( y,  "Dreams of the Acropolis, Copyright E.J.James" );
+    y+=25;
+    addIntroLine( y,  "Mystical Waters, Copyright 1993 H.T.H." );
+    y+=25;
+    addIntroLine( y,  "Simplicity 2, Copyright 1995 Sirius of Bass Productions" );
+    y+=25;
+    addIntroLine( y,  "Symphony, Copyright Skaven of Future Crew" );
+    y+=25;
+    addIntroLine( y,  "Morning Call, Copyright Michiko Naruke" );
 
-	y+=40;
-	addIntroLine( y,  "All music and sound effects are the property of" );
-	y+=10;
-	addIntroLine( y,  "their respective owners and used here without" );
-	y+=10;
-	addIntroLine( y,  "permission." );
+    y+=40;
+    addIntroLine( y,  "All music and sound effects are the property of" );
+    y+=10;
+    addIntroLine( y,  "their respective owners and used here without" );
+    y+=10;
+    addIntroLine( y,  "permission." );
 
-	y+=40;
-	addIntroLine( y,  "Additional sounds by:" );
-	y+=25;
-	addIntroLine( y,  "Matthew 'Zathras' Steele" );
+    y+=40;
+    addIntroLine( y,  "Additional sounds by:" );
+    y+=25;
+    addIntroLine( y,  "Matthew 'Zathras' Steele" );
 
-	y+=50;
-	addIntroLine( y,   "========================================" );
-	y+=10;
-	addIntroLine( y,   "VERGE 3 engine copyright 1997-2004 Ben Eirich" );
-	y+=10;
-	addIntroLine( y,   "========================================" );
+    y+=50;
+    addIntroLine( y,   "========================================" );
+    y+=10;
+    addIntroLine( y,   "VERGE 3 engine copyright 1997-2004 Ben Eirich" );
+    y+=10;
+    addIntroLine( y,   "========================================" );
 
-	y+=25;
-	addIntroLine( y,   "All source and custom graphics provided in this game" );
-	y+=10;
-	addIntroLine( y,   "are released into the Public Domain." );
-	y+=10;
-	addIntroLine( y,   "Use them as you see fit.");
+    y+=25;
+    addIntroLine( y,   "All source and custom graphics provided in this game" );
+    y+=10;
+    addIntroLine( y,   "are released into the Public Domain." );
+    y+=10;
+    addIntroLine( y,   "Use them as you see fit.");
 
-	y+=25;
-	addIntroLine( y,   "========================================" );
+    y+=25;
+    addIntroLine( y,   "========================================" );
 
-	y+=25;
-	addIntroLine( y,   "Come visit us at: http://www.verge-rpg.com/" );
-	y+=10;
-	addIntroLine( y,   "We hope you enjoyed the game, ");
-	y+=10;
-	addIntroLine( y,   "and have fun making your own!" );
-	y+=25;
-	addIntroLine( y,   "========================================" );
-	y+=120;
-	addIntroLine( y,   "This game dedicated to the memory of" );
-	y+=25;
-	addIntroLine( y,   "Chris 'Kao Megura' MacDonald" );
-	y+=25;
-	addIntroLine( y,   "Driving force behind GameFAQs.com's growth," );
-	y+=10;
-	addIntroLine( y,   "and early VERGEr." );
-	
+    y+=25;
+    addIntroLine( y,   "Come visit us at: http://www.verge-rpg.com/" );
+    y+=10;
+    addIntroLine( y,   "We hope you enjoyed the game, ");
+    y+=10;
+    addIntroLine( y,   "and have fun making your own!" );
+    y+=25;
+    addIntroLine( y,   "========================================" );
+    y+=120;
+    addIntroLine( y,   "This game dedicated to the memory of" );
+    y+=25;
+    addIntroLine( y,   "Chris 'Kao Megura' MacDonald" );
+    y+=25;
+    addIntroLine( y,   "Driving force behind GameFAQs.com's growth," );
+    y+=10;
+    addIntroLine( y,   "and early VERGEr." );
+    
 
-	y+=350;
-	addIntroLine( y, "" );
+    y+=350;
+    addIntroLine( y, "" );
 
-	FadeIn( 30 );
-	doSimpleCredits( menu_font[0] );
-	FadeOut(30);
-	
-	curmap.rstring = sav_rstring;
-	
-	//and... return to the very beginning of the game!
-	DoIntro();
+    FadeIn( 30 );
+    doSimpleCredits( menu_font[0] );
+    FadeOut(30);
+    
+    curmap.rstring = sav_rstring;
+    
+    //and... return to the very beginning of the game!
+    DoIntro();
 }
 
 
@@ -739,28 +739,28 @@ void Credits()
 // Mainly for the use of the NewGame() function on the intro map.
 void ResetPreferences()
 {
-	global_gametime = 0;
-//	systemtime 		= 0;
-	
+    global_gametime = 0;
+//  systemtime      = 0;
+    
 
-	global_music_volume = 85;
-	sfx_volume = 85;
-	interface_volume = 85;
-	global_noscroll = 0;
-	global_menuluc = 0;
-	
-	menu_colour[0] = rgb(0, 0, 0);
-	menu_colour[1] = rgb(112, 112, 112);
-	menu_colour[2] = rgb(144, 144, 144);
-	menu_colour[3] = rgb(0, 0, 255);
-	
-	ClearVCLayer();
-	
-	vc_quake_on = 0;
-	tint_on = 0;
-	vc_filter_on = 0;
-	vc_custom_filter_on = 0;
-	SetWeather(0);
+    global_music_volume = 85;
+    sfx_volume = 85;
+    interface_volume = 85;
+    global_noscroll = 0;
+    global_menuluc = 0;
+    
+    menu_colour[0] = rgb(0, 0, 0);
+    menu_colour[1] = rgb(112, 112, 112);
+    menu_colour[2] = rgb(144, 144, 144);
+    menu_colour[3] = rgb(0, 0, 255);
+    
+    ClearVCLayer();
+    
+    vc_quake_on = 0;
+    tint_on = 0;
+    vc_filter_on = 0;
+    vc_custom_filter_on = 0;
+    SetWeather(0);
 }
 
 
@@ -772,11 +772,11 @@ int _Ent_tmpvar;
 /// moving while you're talking to them, and turns off the ability to open your 
 /// menu while the conversation is going on.  VERY USEFUL.
 void EntStart() {
-	
-	MenuOff();
-	_Ent_tmpvar = entity.speed[event.entity];
-	
-	entity.speed[event.entity]=0;
+    
+    MenuOff();
+    _Ent_tmpvar = entity.speed[event.entity];
+    
+    entity.speed[event.entity]=0;
 }
 
 /// Call this at the end of any function where you called EntStart().
@@ -788,20 +788,20 @@ void EntStart() {
 /// you allow menus when you don't want them, or disallow menus when you do want
 /// them.
 void EntFinish() {
-	MenuOn();
-	entity.speed[event.entity] = _Ent_tmpvar;
+    MenuOn();
+    entity.speed[event.entity] = _Ent_tmpvar;
 }
 
 
-#define VEHICLE_NONE	0
-#define VEHICLE_AIRSHIP	1
+#define VEHICLE_NONE    0
+#define VEHICLE_AIRSHIP 1
 
 int _vehicle_mode;
 int _overworld_mode;
 
 void SetVehicle( int i )
 {
-	_vehicle_mode = i;
+    _vehicle_mode = i;
 }
 
 
@@ -817,29 +817,30 @@ void SetVehicle( int i )
 void MyGame_PlayerSpeed()
 {
 
-	if( _overworld_mode )
-	{
-		if( _vehicle_mode )
-		{
-			if( entity.speed[GetPlayer()] != 1024 )
-				entity.speed[GetPlayer()] = 1024;
-		}
-		else
-		{
-			if( entity.speed[GetPlayer()] != 64 )
-				entity.speed[GetPlayer()] = 64;
-		}
-	}
-	else
-	{
-		if( ButtonCancel(0) )
-		{
-			entity.speed[GetPlayer()] = 384;
-		}
-		else
-		{
-			entity.speed[GetPlayer()] = 128;
-		}
-	}
-
+    if( _overworld_mode )
+    {
+        if( _vehicle_mode )
+        {
+            if( entity.speed[GetPlayer()] != 1024 )
+                entity.speed[GetPlayer()] = 1024;
+        }
+        else
+        {
+            if( entity.speed[GetPlayer()] != 64 )
+                entity.speed[GetPlayer()] = 64;
+        }
+    }
+    else
+    {
+        if( ButtonCancel(0) )
+        {
+            entity.speed[GetPlayer()] = getRunningPartySpeed();
+        }
+        else
+        {
+            entity.speed[GetPlayer()] = getDefaultPartySpeed();
+        }
+    }
 }
+
+

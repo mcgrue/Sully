@@ -69,5 +69,5 @@ Atlas_Scroll    42  Menu    -       worldmap_use    0   "Shows position on map"
 Golden_Switch   43  Menu    -       gswitch_use 0   "Award for completing the Switch Puzzle in the minimum moves."
 Something_Cool  44  -   -       -       0   "This is something cool!"
 Omni_Charm  45  -   -       -       1   "A talisman of testing equipment status and elemental modifiers."
-Long_Piece  53 Menu    -    long_piece_use 0   "An unusual object Lance claims opens the way to the Sand Cave."
+Long_Piece  49 Menu    -    long_piece_use 0   "An unusual object Lance claims opens the way to the Sand Cave."
 END_OF_FILE
