@@ -166,7 +166,8 @@ int speechprt = LoadAnimation("res\images\speech\speech.pcx", 32, 32);
 #define T_BIRD      11
 #define T_BUBBA     12
 #define T_SANCHO    13
-#define T_LANCE     12
+#define T_LANCE     14
+#define T_PAXTON    15
 
 
 ///////////////////////////////////////////////////////////////////////////////
