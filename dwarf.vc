@@ -5,8 +5,8 @@ void Start()
     SaveDisable(); //cannot save in towns.
     InitMap();
     V1_StartMusic( "res/music/DWARVES.IT" );
-
-    Banner("Dwarfville: City of Dwarfs.",300);
+	arMapTemp[0] = 0; // really long awkward conversation flag
+    Banner("Dwarfville: City of Dwarves.",300);
 }
 
 void warp_doorA_in() { warp(99,39,TCROSS); }        // 1
@@ -51,7 +51,11 @@ void warp_doorM_out() { warp(46,48,TCROSS); }
 void warp_doorN_in() { warp(185,57,TCROSS); }   // 27
 void warp_doorN_out() { warp(51,44,TCROSS); }
 
-void warp_doorO_in() { warp(0,0,TCROSS); }      // 29
+void warp_doorO_in() { 
+	TextBox(T_SANCHO,"This door wasn't implemented for some 
+					"reason.",
+					"Isn't that terribly disheartening?");
+}      // 29
 void warp_doorO_out() { warp(55,43,TCROSS); }
 
 void warp_doorP_in() { warp(17,102,TCROSS); }   // 31
@@ -66,4 +70,225 @@ void warp_stairsInn_down() { warp(114,29,TCROSS); }
 
 void to_sand_cave() {
     V1_MapSwitch("cave.map", 30,126, TBLACK);
+}
+
+void Dwarf1() {
+	EntStart();
+	if (!flags[F_LOVE_ESCAPE]) { // first time in
+		TextBox(0,"Welcome to the Village of the Dwarves,",
+				  "where we are shaking with outrage at",				 
+				  "this wave of thievery!");
+	}
+	else { // after escaping from the love shack
+		TextBox(0,"Welcome to the Village of the Dwarves!","","");		
+		TextBox(T_DARIN,"But the sign said 'City of Dwarves.'","","");
+		TextBox(0,"Yeah, well, we're working on it.","","");		
+	}	
+	EntFinish();
+}
+
+void Dwarf2() {
+	EntStart();
+	if (!flags[F_LOVE_ESCAPE]) { // first time in
+		TextBox(0,"More humans! Are you with the guy who",
+				  "just stole all our stuff?","");
+		TextBox(T_DARIN,"I can't think of any time when it would",		        
+				"make sense to answer 'yes' to that question.","");
+	}
+	else if (!flags[F_LAB_BLOWN_UP]) { // after escaping from the love shack, before wrecking lab
+		TextBoxM(0,"We're gradually recovering from having all",
+		          "of our dwarven gold stolen.",
+		          "If you could donate anything to help us rebuild,");		
+		TextBox(0,"greatly appreciated.","","");		
+		TextBox(T_DARIN,"I have gold, but it's not dwarven gold.","","");		
+	}	
+	else {
+		TextBox(0, "Whoa! A while back, the whole mountain shook,",
+	                "and all this water came rushing down!","");
+	}
+	EntFinish();
+}
+
+void Dwarf3() {
+	EntStart();
+	if (!flags[F_LOVE_ESCAPE]) { // first time in
+		TextBox(0,"This is terrible! I told them we shouldn't",
+				  "have left all those treasure chests just",				 
+				  "lying around!");
+	}	
+	else if (!arMapTemp[0]) {		
+		TextBox(0,"Oh, hey, it's you again.","","");
+		TextBox(T_DARIN,"Yup, I thought I'd come back and see",
+						"how things were going down here.","");
+		TextBoxM(0,	"That's nice of you.","",
+					"We're, uh, we're not doing too bad.");
+		TextBox(0,	"You know, we had that guy come by and take.",
+					"all our stuff, but we're doing OK since then.","");
+		TextBox(T_DARIN,"It's just stuff, right?","","");					
+		TextBox(0,	"Right, exactly, yeah. Like, I was pretty upset",
+					"about it at the time, but looking back, it",
+					"could have been a lot worse.");					
+		TextBox(T_DARIN,"Yeah, definitely.","","");					
+		TextBox(0,	"So, how are things going topside?","","");
+		if (!flags[F_LAB_BLOWN_UP]) { 
+			TextBox(T_DARIN,"It's been kind of scary, actually!",
+							"I'm not really used to this heroing thing","");							
+			TextBox(0,	"Oh, I didn't know you were a hero.",
+						"I guess you can sort of tell, though, you've",
+						"got those...things.");				
+			TextBox(T_DARIN,"These things, you mean?","","");
+			TextBox(0,	"Yeah! What's up with those, anyway?","","");				
+			TextBox(T_DARIN,"It's sort of hard to explain.","","");
+			TextBox(0,	"OK, OK. So you said it's looking scary",
+						"up there?","");				
+			TextBox(T_DARIN,"Yeah, there's no water or anything.",
+							"We're all about to go destroy Lord Stan's",
+							"evil factory and save my girlfriend.");
+			TextBoxM(0,	"Well, that went right over my head. But listen,",
+						"it sounds like you've got a lot on your plate,",
+						"so I'll let you go.");				
+			TextBox(T_DARIN,"Thanks, yeah. If you hear any exploding,",
+							"that's just the lab.","");
+			TextBox(0,	"...right, yeah, I'll pass that on.",
+						"Anyhow, it's swell of you to come by. I appreciate",
+						"the conversation.");				
+			TextBox(T_DARIN,"Yeah.","","");
+		}
+		else {
+		
+			TextBox(T_DARIN,"Not bad. I got my girlfriend back from",
+							"Lord Stan.","");		
+			if (CharInParty("Crystal"))
+				TextBox(T_CRYSTAL,"Hi.","","");								
+			TextBoxM(0,	"Is that so? Well, good for you, son!",
+						"A lot of people figure that we're friends",
+						"with Lord Stan since we're sort of neighbors,");				
+			TextBox(0,	"but that's a total misconception. Actually",
+						"we were here a long time before the lab got",
+						"built, and he didn't consult us or anything.");		
+			TextBox(T_DARIN,"Yeah, he's a real jerk! I really want to teach",
+							"him a lesson. We're all going to beat him up!","");		
+			TextBoxM(0,	"You serious? ",
+						"Well, good luck, good luck with that. I don't",
+						"think we can spare anyone to help you out since");		
+			TextBox(0,	"we're still recovering from that time we lost",
+						"all our stuff, you know...","");		
+			TextBox(T_DARIN,"With the thief.","","");		
+			TextBox(0,	"Right, yeah. So, you know, we can't really do",
+						"anything. But we appreciate that! Good luck.","");		
+			TextBox(T_DARIN,"Thanks!","","");		
+		}
+		arMapTemp[0] = 1; // for god's sake don't replay all this
+	}
+	else {
+		if (!flags[F_LAB_BLOWN_UP]) { 						
+			TextBox(0,	"Anyhow, it's good of you to come by. I",
+						"appreciate the conversation.","");				
+			TextBox(T_DARIN,"Yeah.","","");
+		}
+		else {						
+			TextBox(0,	"So, you know, we can't really do anything.",
+						"But we appreciate that! Good luck.","");		
+			TextBox(T_DARIN,"Thanks!","","");		
+		}
+	}
+
+	EntFinish();
+}
+
+void Dwarf4() {
+	EntStart();
+				
+	TextBoxM(0,	"Dwarven metalworking is renowned for its",
+				"strength and durability the world over!","");		
+	TextBox(0,	"Ir's actually not that great, but no one can resist",
+				"our mighty dwarven PR.","");				
+	EntFinish();
+}
+
+void Dwarf5() {
+	EntStart();
+	if (!flags[F_LOVE_ESCAPE]) { // first time in	
+					
+		TextBox(0,	"Oh, this is terrible! All our wares have",
+					"been pilfered."
+					"There's not a thing left to sell.");		
+	}
+	else {			
+		TextBox(0,	"Welcome to the Dwarven Forge, where the 
+					"equipment is better than it is in Rodne, ",
+					"but worse than it is in Seaview.");		
+		if (CharInParty("Galfrey")) {
+								
+			TextBox(T_GALFREY,	"What's with these weapons? They're so tiny",
+								"that it looks ridiculous! I wouldn't want",
+								"to be seen with one of these dinky things.");		
+			TextBox(0,	"Well, they are made for dwarves. Just remember:",
+						"It's not the size of your weapon that counts,",
+						"it's how large a numerical bonus it provides!");										
+		}
+		else if (CharInParty("Sara")) {
+			TextBox(T_SARA,	"You should probably get a new slogan.","","");				
+		}
+	}
+	EntFinish();
+}
+
+void Dwarf6() {
+	EntStart();	
+	TextBox(0,	"Welcome to the Village of the Dwarves!","","");		
+	TextBox(T_DARIN,"You know, there's a guy at the entrance",
+					"who's saying the same thing.","");				
+	TextBox(0,	"There is!?","I'll fix him!","");		
+	EntFinish();	
+}
+
+void Dwarf7() {
+	EntStart();
+	if (!flags[F_LOVE_ESCAPE]) { // first time in	
+		TextBox(0,	"Greetings, Gangly Ones. I'm afraid we are ",
+					"ill-equipped to receive visitors right now.","");		
+	}
+	else {				
+		if (prompt(0,	"Tell me, Gangly Ones, would you like to",
+						"hear the story of how the dwarves came to",
+						"settle in this land?","OK|No")) {
+					
+			if (prompt(0,	"Really? You don't mind if I tell you, then?",
+							"","","It's fine|Well...")) {							
+				TextBoxM(0,	"It all began in ancient times, when the",
+							"world was young. Everybody was on dial-up,",
+							"and people still used Netscape.");		
+				TextBoxM(0,	"As you well know, there are many worlds",
+							"besides this one.",
+							"Among those, a jewel in the blue ocean,");
+				TextBoxM(0,	"is the land of the dwarves.",
+							"It was a fine land, and we miss it dearly.",
+							"However, critical portions of the dwarven");
+				TextBoxM(0	"were never implemented.",
+							"Many of us set out in ships in search of",
+							"a complete land, that we might bring back");		
+				TextBoxM(0,	"its secrets to finish our own.",
+							"Unfortunately, our ship was blown off",
+							"course and beached, and we have been");		
+				TextBox(0,	"stranded here ever since."
+							"One day we will repair our ship and set", 
+							"out once again in search of our homeland.");
+			}
+			else 
+				TextBox(0,	"Curses! I shouldn't have asked that.",
+							"second question.","");		
+		}
+	}
+	EntFinish();	
+}
+
+void Dwarf8() {
+	EntStart();	
+	if (!flags[F_LOVE_ESCAPE]) { // first time in						
+		TextBox(0,	"Are you looking for the human priest?",
+					"He's in the church. It's through the big",
+					"door to your left",);		
+	}	
+	EntFinish();	
 }
