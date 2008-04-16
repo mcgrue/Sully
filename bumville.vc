@@ -1,4 +1,4 @@
-    /// The autoexec function for bumville.map
+/// The autoexec function for bumville.map
 void Start()
 {
     int a, b;
@@ -26,7 +26,7 @@ void Start()
         InitMap();
 
         SetMusicVolume(0);
-        V1_StartMusic( "res/music/SIMPL2.S3M" );
+        play_town_music();
 
         CameraTracking = 1;
 
@@ -125,10 +125,15 @@ void Start()
 
     SaveDisable(); //cannot save in towns.
     InitMap();
-    V1_StartMusic( "res/music/SIMPL2.S3M" );
+    play_town_music();
 
     Banner("Bumsville: City of Bums.",300);
 }
+
+void play_town_music() { V1_StartMusic( "res/music/SIMPL2.S3M" ); }
+
+void play_church_music() { V1_StartMusic( "res/music/DC.IT" ); }
+
 
 /// exit to the overworld map
 void overworld()
@@ -628,6 +633,8 @@ void ChurchEnter()
     }
     else
     {
+        play_church_music();
+    
         curmap.rstring = "2,1,3,7,8,E,6,4,R"; // Hide balcony layer
         Warp(16, 237, TCROSS);
         Banner("Church",300);
@@ -636,6 +643,8 @@ void ChurchEnter()
 
 void ChurchExit()
 {
+    play_town_music();
+
     Warp(48, 89, TCROSS);
     curmap.rstring = "2,1,3,7,8,E,6,4,5,R"; // restore normal RString
 }

@@ -82,22 +82,26 @@ void mountain()
 void chasm_west()
 {
     _mapwrap_on = 0;
-    V1_MapSwitch("chasm.map", 4, 1, TBLACK);
+    //V1_MapSwitch("chasm.map", 4, 1, TBLACK);
+    
+    V1_MapSwitch("gorge.map", 36, 19, TBLACK);
 }
 
 /// The mapswitch to Chasm.map's east entrace
 void chasm_east()
 {
     _mapwrap_on = 0;
-    V1_MapSwitch("chasm.map", 97, 40, TBLACK);
+    //V1_MapSwitch("chasm.map", 97, 40, TBLACK);
+    
+    V1_MapSwitch("gorge.map", 95, 19, TBLACK);
 }
 
 /// The mapswitch to bumville.map
 void bumsville()
 {
     _mapwrap_on = 0;
-    V1_MapSwitch("RODNE.MAP",32,2,TBLACK);
-    //V1_MapSwitch("bumville.map", 118, 93, TBLACK);
+    //V1_MapSwitch("RODNE.MAP",32,2,TBLACK);
+    V1_MapSwitch("bumville.map", 118, 93, TBLACK);
 }
 
 /// The mapswitch to rodne.map

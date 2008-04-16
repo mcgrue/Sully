@@ -39,10 +39,13 @@ void Start()
         DoLabBlowup();
 */
 
-    V1_StartMusic( "res/music/DREAMS2.S3M" );
+    play_mountain_music();
 
     Banner("Mount Jujube",300);
 }
+
+void play_mountain_music() { V1_StartMusic( "res/music/DREAMS2.S3M" ); }
+void play_lance_music() { V1_StartMusic( "res/music/AMBLE.IT" ); }
 
 void clear_tetris_door_tiles()
 {
@@ -238,7 +241,7 @@ void evil_seal_left() {
         
         setPartySpeed( 600 );
         setPartyFrame( 15 );
-        playermove( "X144Y64W10" );
+        playermove( "L3W10" );
         setPartyFacing( FACE_RIGHT );
         setPartyFrame( 0 );
         setPartySpeed( -1 );
@@ -259,7 +262,7 @@ void evil_seal_right() {
         
         setPartySpeed( 600 );
         setPartyFrame( 10 );
-        playermove( "X165Y64W10" );
+        playermove( "R3W10" );
         setPartyFacing( FACE_LEFT );
         setPartyFrame( 0 );
         setPartySpeed( -1 );
@@ -273,9 +276,15 @@ void evil_seal_right() {
 
 void do_evil_seal_flash() {
     timer = 0;
+    
+    if( !Flags[F_MNT_LANCE_JOIN] ) {
+        V1_FadeOutMusic( 1 );
+    }
 
     int stage = 0;
     int stage_time = 0;
+    
+    PlaySound( sfx_wom, 30 );
 
     while( timer < 50 ) {
         Render();
@@ -308,7 +317,9 @@ void do_evil_seal_flash() {
 void do_evil_seal_wom_wom()
 {
     int imSeal = LoadImage( "res\images\story_fx\seal.pcx" );
-
+    
+    int prevWom = 0;
+    
     CutsceneOn();
     cameratracking = 0;
     
@@ -321,17 +332,28 @@ void do_evil_seal_wom_wom()
 
     //scale it in, while rotating.    
     while( timer < 300 ) {
+    
+        if( ((timer+50)/100) > prevWom ) {
+            prevWom++;
+            PlaySound( sfx_wom, (10*prevWom)+30 );
+        }
+    
         Render();
         RotScale( blitX, blitY, systemtime, 100+(timer*3), imSeal, screen );     
         ShowPage();
     }
     
+    prevWom++;
+    PlaySound( sfx_wom, (10*prevWom)+30 );
     while( timer < 400 ) {
         Render();
         RotScale( blitX, blitY, systemtime, 1000, imSeal, screen );
         ShowPage();
     }
 
+    prevWom++;
+    PlaySound( sfx_wom, (10*prevWom)+30 );
+    
     /// fade it out at 1:1 size, while rotating.    
     while( timer < 500 ) {
         Render();
@@ -400,7 +422,8 @@ void examine_seal()
                  "this stop me!",
                  "There must be some way!");
                 
-        entity.visible[1] = 1; // make Map-Lance invisible.
+        entity.visible[1] = 1;      // make Map-Lance invisible.
+        entity.obstructable[1] = 0; //and make him not care about obstructions.
         
         EntityMove(1, "R3W8FW10" );
         
@@ -425,9 +448,11 @@ void examine_seal()
         
         WaitForEntity(darin);
         WaitForEntity(dexter);
-               
+
         // Darin and Dexter do shock poses.
         TextBox(T_DARIN,    "Where did you come from?","","");
+        
+        play_lance_music();
 
         entity.specframe[darin] = 0;
         entity.specframe[dexter] = 0;
@@ -453,6 +478,8 @@ void examine_seal()
                 "A seal like this will be easy for him.", "", "" );
                 
         TextBox(T_DARIN,    "Then it is possible!", "But wait...", "Why are you telling us this?");
+        
+        VCPutIMG( "res/images/cells/lance-intro.png" ,212,20 );
         
         TextBoxM(T_LANCE,   
                 "The name's Lance. I'm a sort of freelancer.",
@@ -511,13 +538,19 @@ void examine_seal()
         TextBox( T_LANCE,    
                  "That's the spirit!",
                  "I'm sure we'll be the best of friends.","" );
+              
+        // let's get the map-version of Lance aligned.
+        AlignStalker( dexter, darin );
+
+        // let's wait until the on-map lance has stopped moving
+        WaitForEntity(dexter);
         
         // let's get the map-version of Lance aligned.
         AlignStalker( 1, dexter );
-
+        
         // let's wait until the on-map lance has stopped moving
         WaitForEntity(1);
-        
+
         //...add lance to the party at level 6 (creating a paty-lance)...
         JoinPartyAtLevel("Lance", 6);
 
@@ -526,6 +559,9 @@ void examine_seal()
         
         // Lance joins the party.
         flags[F_MNT_LANCE_JOIN] = 1;
+        
+        ClearVCLayer();
+        play_mountain_music();
         
         CutsceneOff();
     }
