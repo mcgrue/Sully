@@ -246,7 +246,7 @@ void evil_seal_left() {
         setPartyFrame( 0 );
         setPartySpeed( -1 );
         
-        do_evil_seal_wom_wom();
+        do_evil_seal_wom_wom();        
         examine_seal();
         
         MenuOn();
@@ -268,7 +268,7 @@ void evil_seal_right() {
         setPartySpeed( -1 );
         
         do_evil_seal_wom_wom();
-        examine_seal();
+        examine_seal();     
         
         MenuOn();
     }
@@ -453,6 +453,7 @@ void examine_seal()
         TextBox(T_DARIN,    "Where did you come from?","","");
         
         play_lance_music();
+        v1_fadeInMusic(1,100);
 
         entity.specframe[darin] = 0;
         entity.specframe[dexter] = 0;
@@ -560,8 +561,9 @@ void examine_seal()
         // Lance joins the party.
         flags[F_MNT_LANCE_JOIN] = 1;
         
-        ClearVCLayer();
+        ClearVCLayer();                
         play_mountain_music();
+        v1_fadeInMusic(100,100);
         
         CutsceneOff();
     }
