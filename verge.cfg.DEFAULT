@@ -22,6 +22,10 @@ mount1 v3splash320.vpk
 xres			320
 yres 			240
 
+#
+# The X and Y resolution of the window.
+window_x_res    640
+window_y_res    480
 
 ## automax (defaults to 1 if not specified)
 ## 1: automaximizes the window in windowed mode
