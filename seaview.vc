@@ -3,149 +3,149 @@
 
 void start()
 {
-	SaveDisable();
-	InitMap();
+    SaveDisable();
+    InitMap();
 
-	// If you've exposed the secret passage to the church basement, remove the box covering it.
-	if (flags[F_SEAVIEW_CHURCH_BOX]) 
-	{
-		SetTile(92,160,1,0);
-		SetObs(92,160,0);
-	}
+    // If you've exposed the secret passage to the church basement, remove the box covering it.
+    if (flags[F_SEAVIEW_CHURCH_BOX]) 
+    {
+        SetTile(92,160,1,0);
+        SetObs(92,160,0);
+    }
 
-	// When arMapTemp is 0, the player is not on the raised area in the west end of town.
-	// When it's 1, he is. In the beginning he's not, of course, so it starts out 0.
-	arMapTemp[0]=0; 
-	V1_StartMusic( "res/music/OVER4A.IT" );
-	Banner("Seaview",300);
+    // When arMapTemp is 0, the player is not on the raised area in the west end of town.
+    // When it's 1, he is. In the beginning he's not, of course, so it starts out 0.
+    arMapTemp[0]=0; 
+    V1_StartMusic( "res/music/OVER4A.IT" );
+    Banner("Seaview",300);
 }
 
 // This function is called when the player steps up to the raised area on the west end 
 // of town. It tools around with obses and renderstring so he's "above" the lower part.
 void switchlayer_over()
 {
-	// arMapTemp[0] is 0 if the player is currently in the lower area.
-	if (!arMapTemp[0]) // if player was in lower area, switch
-	{ 
-		arMapTemp[0]=1; // Now in upper area
-		curmap.rstring = "1,2,5,E,3,4"; // Switch layer below entities
-		// Change obs around upper-left platform
-		SetObsRect(19,17,19,25,0);
-		SetObsRect(20,17,21,17,0);
-		SetObsRect(36,17,37,17,0);
-		SetObsRect(38,17,38,23,0);
-		SetObsRect(27,28,30,28,0); 
-		SetObsRect(18,13,18,25,1); 
-		SetObsRect(19,13,38,13,1); 
-		SetObsRect(39,13,39,16,1); 
-		SetObs(39,23,1);
-		// Change obs around upper-right platform
-		SetObsRect(46,17,46,23,0);
-		SetObsRect(47,17,48,17,0);
-		SetObs(52,17,0);
-		SetObsRect(62,17,64,17,0);
-		SetObsRect(54,28,57,28,0);
-		SetObsRect(45,13,45,16,1); 
-		SetObs(45,23,1);
-		SetObsRect(46,13,65,13,1); 
-		SetObsRect(66,13,66,25,1); 
-		// Change obs around lower-left platform
-		SetObsRect(19,37,19,45,0); 
-		SetObsRect(20,37,21,37,0); 
-		SetObsRect(36,37,37,37,0); 
-		SetObsRect(38,37,38,45,0); 
-		SetObsRect(18,33,18,45,1); 
-		SetObsRect(19,33,26,33,1); 
-		SetObsRect(31,33,38,33,1);
-		SetObsRect(39,33,39,36,1);
-		SetObsRect(39,43,39,45,1);
-		// Change obs around lower-right platform
-		SetObsRect(46,37,46,45,0);
-		SetObsRect(47,37,48,37,0);
-		SetObsRect(62,37,64,37,0);
-		SetObsRect(65,37,65,45,0);
-		SetObsRect(45,33,45,36,1);
-		SetObsRect(45,43,45,45,1);
-		SetObsRect(46,33,53,33,1);
-		SetObsRect(58,33,66,33,1);
-		SetObsRect(66,34,66,45,1);
-		// Change obs around upper bridge
-		SetObsRect(39,17,45,17,1);
-		SetObsRect(39,22,45,22,1);		
-		// Change obs around lower bridge
-		SetObsRect(39,37,45,37,1);
-		SetObsRect(39,42,45,42,1);
-		// Change obs around left bridge
-		SetObsRect(26,29,26,32,1);
-		SetObsRect(31,29,31,32,1);
-		// Change obs around right bridge
-		SetObsRect(53,29,53,32,1);
-		SetObsRect(58,29,58,32,1);		
-	}
+    // arMapTemp[0] is 0 if the player is currently in the lower area.
+    if (!arMapTemp[0]) // if player was in lower area, switch
+    { 
+        arMapTemp[0]=1; // Now in upper area
+        curmap.rstring = "1,2,5,E,3,4"; // Switch layer below entities
+        // Change obs around upper-left platform
+        SetObsRect(19,17,19,25,0);
+        SetObsRect(20,17,21,17,0);
+        SetObsRect(36,17,37,17,0);
+        SetObsRect(38,17,38,23,0);
+        SetObsRect(27,28,30,28,0); 
+        SetObsRect(18,13,18,25,1); 
+        SetObsRect(19,13,38,13,1); 
+        SetObsRect(39,13,39,16,1); 
+        SetObs(39,23,1);
+        // Change obs around upper-right platform
+        SetObsRect(46,17,46,23,0);
+        SetObsRect(47,17,48,17,0);
+        SetObs(52,17,0);
+        SetObsRect(62,17,64,17,0);
+        SetObsRect(54,28,57,28,0);
+        SetObsRect(45,13,45,16,1); 
+        SetObs(45,23,1);
+        SetObsRect(46,13,65,13,1); 
+        SetObsRect(66,13,66,25,1); 
+        // Change obs around lower-left platform
+        SetObsRect(19,37,19,45,0); 
+        SetObsRect(20,37,21,37,0); 
+        SetObsRect(36,37,37,37,0); 
+        SetObsRect(38,37,38,45,0); 
+        SetObsRect(18,33,18,45,1); 
+        SetObsRect(19,33,26,33,1); 
+        SetObsRect(31,33,38,33,1);
+        SetObsRect(39,33,39,36,1);
+        SetObsRect(39,43,39,45,1);
+        // Change obs around lower-right platform
+        SetObsRect(46,37,46,45,0);
+        SetObsRect(47,37,48,37,0);
+        SetObsRect(62,37,64,37,0);
+        SetObsRect(65,37,65,45,0);
+        SetObsRect(45,33,45,36,1);
+        SetObsRect(45,43,45,45,1);
+        SetObsRect(46,33,53,33,1);
+        SetObsRect(58,33,66,33,1);
+        SetObsRect(66,34,66,45,1);
+        // Change obs around upper bridge
+        SetObsRect(39,17,45,17,1);
+        SetObsRect(39,22,45,22,1);      
+        // Change obs around lower bridge
+        SetObsRect(39,37,45,37,1);
+        SetObsRect(39,42,45,42,1);
+        // Change obs around left bridge
+        SetObsRect(26,29,26,32,1);
+        SetObsRect(31,29,31,32,1);
+        // Change obs around right bridge
+        SetObsRect(53,29,53,32,1);
+        SetObsRect(58,29,58,32,1);      
+    }
 }
 
 // This function is called when the player steps down to the lower area on the west end 
 // of town. It tools around with obses and renderstring so he's "below" the raised part.
 void switchlayer_under()
 {
-	// arMapTemp[0] is 1 if the player is currently in the upper area.
-	if (arMapTemp[0]) // if player was in upper area, switch
-	{ 
-		arMapTemp[0]=0; // Now in lower area
-		curmap.rstring = "1,2,E,5,3,4"; // Switch layer above entities
-		// Change obs around upper-left platform
-		SetObsRect(19,17,19,25,1);
-		SetObsRect(20,17,21,17,1);
-		SetObsRect(36,17,37,17,1);
-		SetObsRect(38,17,38,23,1);
-		SetObsRect(27,28,30,28,1); 
-		SetObsRect(18,13,18,25,0); 
-		SetObsRect(19,13,38,13,0); 
-		SetObsRect(39,13,39,16,0); 
-		SetObs(39,23,0);
-		// Change obs around upper-right platform
-		SetObsRect(46,17,46,23,1);
-		SetObsRect(47,17,48,17,1);
-		SetObs(52,17,1);
-		SetObsRect(62,17,64,17,1);
-		SetObsRect(54,28,57,28,1);
-		SetObsRect(45,13,45,16,0); 
-		SetObs(45,23,0);
-		SetObsRect(46,13,65,13,0); 
-		SetObsRect(66,13,66,25,0); 
-		// Change obs around lower-left platform
-		SetObsRect(19,37,19,45,1); 
-		SetObsRect(20,37,21,37,1); 
-		SetObsRect(36,37,37,37,1); 
-		SetObsRect(38,37,38,45,1); 
-		SetObsRect(18,33,18,45,0); 
-		SetObsRect(19,33,26,33,0); 
-		SetObsRect(31,33,38,33,0);
-		SetObsRect(39,33,39,36,0);
-		SetObsRect(39,43,39,45,0);
-		// Change obs around lower-right platform
-		SetObsRect(46,37,46,45,1);
-		SetObsRect(47,37,48,37,1);
-		SetObsRect(62,37,64,37,1);
-		SetObsRect(65,37,65,45,1);
-		SetObsRect(45,33,45,36,0);
-		SetObsRect(45,43,45,45,0);
-		SetObsRect(46,33,53,33,0);
-		SetObsRect(58,33,66,33,0);
-		SetObsRect(66,34,66,45,0);
-		// Change obs around upper bridge
-		SetObsRect(39,17,45,17,0);
-		SetObsRect(39,22,45,22,0);		
-		// Change obs around lower bridge
-		SetObsRect(39,37,45,37,0);
-		SetObsRect(39,42,45,42,0);
-		// Change obs around left bridge
-		SetObsRect(26,29,26,32,0);
-		SetObsRect(31,29,31,32,0);
-		// Change obs around right bridge
-		SetObsRect(53,29,53,32,0);
-		SetObsRect(58,29,58,32,0);		
-	}
+    // arMapTemp[0] is 1 if the player is currently in the upper area.
+    if (arMapTemp[0]) // if player was in upper area, switch
+    { 
+        arMapTemp[0]=0; // Now in lower area
+        curmap.rstring = "1,2,E,5,3,4"; // Switch layer above entities
+        // Change obs around upper-left platform
+        SetObsRect(19,17,19,25,1);
+        SetObsRect(20,17,21,17,1);
+        SetObsRect(36,17,37,17,1);
+        SetObsRect(38,17,38,23,1);
+        SetObsRect(27,28,30,28,1); 
+        SetObsRect(18,13,18,25,0); 
+        SetObsRect(19,13,38,13,0); 
+        SetObsRect(39,13,39,16,0); 
+        SetObs(39,23,0);
+        // Change obs around upper-right platform
+        SetObsRect(46,17,46,23,1);
+        SetObsRect(47,17,48,17,1);
+        SetObs(52,17,1);
+        SetObsRect(62,17,64,17,1);
+        SetObsRect(54,28,57,28,1);
+        SetObsRect(45,13,45,16,0); 
+        SetObs(45,23,0);
+        SetObsRect(46,13,65,13,0); 
+        SetObsRect(66,13,66,25,0); 
+        // Change obs around lower-left platform
+        SetObsRect(19,37,19,45,1); 
+        SetObsRect(20,37,21,37,1); 
+        SetObsRect(36,37,37,37,1); 
+        SetObsRect(38,37,38,45,1); 
+        SetObsRect(18,33,18,45,0); 
+        SetObsRect(19,33,26,33,0); 
+        SetObsRect(31,33,38,33,0);
+        SetObsRect(39,33,39,36,0);
+        SetObsRect(39,43,39,45,0);
+        // Change obs around lower-right platform
+        SetObsRect(46,37,46,45,1);
+        SetObsRect(47,37,48,37,1);
+        SetObsRect(62,37,64,37,1);
+        SetObsRect(65,37,65,45,1);
+        SetObsRect(45,33,45,36,0);
+        SetObsRect(45,43,45,45,0);
+        SetObsRect(46,33,53,33,0);
+        SetObsRect(58,33,66,33,0);
+        SetObsRect(66,34,66,45,0);
+        // Change obs around upper bridge
+        SetObsRect(39,17,45,17,0);
+        SetObsRect(39,22,45,22,0);      
+        // Change obs around lower bridge
+        SetObsRect(39,37,45,37,0);
+        SetObsRect(39,42,45,42,0);
+        // Change obs around left bridge
+        SetObsRect(26,29,26,32,0);
+        SetObsRect(31,29,31,32,0);
+        // Change obs around right bridge
+        SetObsRect(53,29,53,32,0);
+        SetObsRect(58,29,58,32,0);      
+    }
 }
 
 // Opens a 16x32 door, assuming the bottom half of the door is located on a zone
@@ -153,349 +153,353 @@ void switchlayer_under()
 // separate layer, so all that's necessary is to wipe the door tiles and unobstruct.
 void SV_OpenDoor()
 {
-	SetTile(event.tx,event.ty, 1, 0);
-	SetTile(event.tx,event.ty-1, 1, 0);		
-	SetObs(event.tx,event.ty, 0);		
-	SoundOpenDoor();	
+    SetTile(event.tx,event.ty, 1, 0);
+    SetTile(event.tx,event.ty-1, 1, 0);     
+    SetObs(event.tx,event.ty, 0);       
+    SoundOpenDoor();    
 }
 
 
 // Used when the character steps into the magic shop door from the main town map
 void EnterMagicShop()
 {
-	// If the door is shut, open it.
-	if(getObs(event.tx,event.ty)) SV_OpenDoor();
-	else Warp(98, 115, TCROSS); 
+    // If the door is shut, open it.
+    if(getObs(event.tx,event.ty)) SV_OpenDoor();
+    else Warp(98, 115, TCROSS); 
 }
 
 // Used when the character steps on the inside entrance to the magic shop.
 void ExitMagicShop()
 {
-	Warp(28, 23, TCROSS);
+    Warp(28, 23, TCROSS);
 }
 
 // Used when the character steps into the item shop door from the main town map
 void EnterItemShop()
 {
-	Warp(event.tx - 2, 115, TCROSS); // Two-tile-wide door handled by x offset
+    Warp(event.tx - 2, 115, TCROSS); // Two-tile-wide door handled by x offset
 }
 
 // Used when the character steps on the inside entrance to the item shop.
 void ExitItemShop()
 {
-	Warp(event.tx + 2	, 43, TCROSS); // Two-tile-wide door handled by x offset
+    Warp(event.tx + 2   , 43, TCROSS); // Two-tile-wide door handled by x offset
 }
 
 // Used when the character steps into the Gear shop door from the main town map
 void EnterGearShop()
 {
-	Warp(65, 115, TCROSS); 
+    Warp(65, 115, TCROSS); 
 }
 
 // Used when the character steps on the inside entrance to the gear shop.
 void ExitGearShop()
 {
-	Warp(55, 23, TCROSS); 
+    Warp(55, 23, TCROSS); 
 }
 
 // Used when the character steps into the Gear shop back door from the main town map
 void EnterGearShopBD()
 {
-	Warp(60, 106, TCROSS); 
+    Warp(60, 106, TCROSS); 
 }
 
 // Used when the character steps on the back door entrance in the gear shop.
 void ExitGearShopBD()
 {
-	Warp(52, 16, TCROSS); 
+    Warp(52, 16, TCROSS); 
 }
 
 // Used when the character steps into the Inn door from the main town map
 void EnterInn()
 {
-	// If the door is shut, open it.
-	if(getObs(event.tx,event.ty)) SV_OpenDoor();
-	else Warp(27, 140, TCROSS); 
+    // If the door is shut, open it.
+    if(getObs(event.tx,event.ty)) SV_OpenDoor();
+    else Warp(27, 140, TCROSS); 
 }
 
 // Used when the character steps on the inside entrance to the Inn.
 void ExitInn()
 {
-	Warp(55, 43, TCROSS); 
+    Warp(55, 43, TCROSS); 
 }
 
 // Used when the character goes from the ground floor to the second floor in the inn.
 void InnF1toF2()
 {
-	Warp(72, 132, TCROSS); 
+    Warp(72, 132, TCROSS); 
 }
 
 // Used when the character goes from the second floor to the ground floor in the inn.
 void InnF2toF1()
 {
-	Warp(34, 133, TCROSS); 
+    Warp(34, 133, TCROSS); 
 }
 
 // Used when the character goes from the second floor to the top floor in the inn.
 void InnF2toF3()
 {
-	Warp(91, 132, TCROSS); 
+    Warp(91, 132, TCROSS); 
 }
 
 // Used when the character goes from the top floor to the second floor in the inn.
 void InnF3toF2()
 {
-	Warp(58, 132, TCROSS); 
+    Warp(58, 132, TCROSS); 
 }
 
 // Used when the character steps into the bar door from the main town map
 void EnterBar()
 {
-	Warp(event.tx - 30, 164, TCROSS); // Two-tile-wide door handled by x offset
+    Warp(event.tx - 30, 164, TCROSS); // Two-tile-wide door handled by x offset
 }
 
 // Used when the character steps on the inside entrance to the bar.
 void ExitBar()
 {
-	Warp(event.tx + 30, 67, TCROSS); // Two-tile-wide door handled by x offset
+    Warp(event.tx + 30, 67, TCROSS); // Two-tile-wide door handled by x offset
 }
 
 // Used when the character steps into the bar back door from the main town map
 void EnterBarBD()
 {
-	// If the door is shut, open it.
-	if(getObs(event.tx,event.ty)) SV_OpenDoor();
-	else Warp(36, 164, TCROSS); 
+    // If the door is shut, open it.
+    if(getObs(event.tx,event.ty)) SV_OpenDoor();
+    else Warp(36, 164, TCROSS); 
 }
 
 // Used when the character steps on the back door inside the bar.
 void ExitBarBD()
 {
-	Warp(61, 67, TCROSS); 
+    Warp(61, 67, TCROSS); 
 }
 
 // Used when the character steps into the Club V door from the main town map
 void EnterClub()
 {
-	Warp(28, 189, TCROSS); 
+    Warp(28, 189, TCROSS); 
 }
 
 // Used when the character steps on the inside entrance to Club V.
 void ExitClub()
 {
-	Warp(101, 54, TCROSS); 
+    Warp(101, 54, TCROSS); 
 }
 
 // Used when the character goes from the ground floor to the second floor in Club V.
 void ClubF1toF2()
 {
-	Warp(56, 156, TCROSS); 
+    Warp(56, 156, TCROSS); 
 }
 
 // Used when the character goes from the second floor to the ground floor in Club V.
 void ClubF2toF1()
 {
-	Warp(19, 181, TCROSS); 
+    Warp(19, 181, TCROSS); 
 }
 
 // Used when the character steps into the Club V 2nd floor door from the balcony
 void EnterClubFromBalcony()
 {
-	Warp(65, 163, TCROSS); 
+    Warp(65, 163, TCROSS); 
 }
 
 // Used when the character steps on the balcony entrance in Club V.
 void ExitClubToBalcony()
 {
-	Warp(101, 49, TCROSS); 
+    Warp(101, 49, TCROSS); 
 }
 
 // Used when the character steps into the church door from the main town map
 void EnterChurch()
 {
-	Warp(100, 171, TCROSS); 
+    Warp(100, 171, TCROSS); 
 }
 
 // Used when the character steps on the inside entrance to the church.
 void ExitChurch()
 {
-	Warp(91, 33, TCROSS); 
+    Warp(91, 33, TCROSS); 
 }
 
 void ChurchF1toB1() // Used when the character goes into the basement of the church.
 {
-	// If the box is still in place, have Darin move it.
-	if(!flags[F_SEAVIEW_CHURCH_BOX]) 
-	{		
-		EntStart();
-		TextBox(T_DARIN, "Hmm, this box is empty.", "I wonder if there's something underneath", "it.");
-		SoundOpenBox();
-		SetTile(92,160,1,0);
-		SetObs(92,160,0);
-		Wait(50);
-		TextBox(T_DARIN, "Aha! A secret passage!", "", "");
-		if (CharInParty("Galfrey")) 
-		{
-			TextBox(T_GALFREY, "I knew these religious nuts were up to no", "good.", "");
-			if (CharInParty("Crystal"))
-			{
-				TextBox(T_CRYSTAL, "Why does having a secret passage mean", "they're up to no good?", "");
-				TextBox(T_GALFREY, "That's just basic passage ethics!", "", "");
-			}
-		}
-		EntFinish();
-		flags[F_SEAVIEW_CHURCH_BOX] = 1; // box has been moved
-	}
-	else // If you're just stepping on the exposed stairs...
-	{
-		Warp(56, 181, TCROSS); // descend
-	}
+    // If the box is still in place, have Darin move it.
+    if(!flags[F_SEAVIEW_CHURCH_BOX]) 
+    {       
+        EntStart();
+        TextBox(T_DARIN, "Hmm, this box is empty.", "I wonder if there's something underneath", "it.");
+        SoundOpenBox();
+        SetTile(92,160,1,0);
+        SetObs(92,160,0);
+        Wait(50);
+        TextBox(T_DARIN, "Aha! A secret passage!", "", "");
+        if (CharInParty("Galfrey")) 
+        {
+            TextBox(T_GALFREY, "I knew these religious nuts were up to no", "good.", "");
+            if (CharInParty("Crystal"))
+            {
+                TextBox(T_CRYSTAL, "Why does having a secret passage mean", "they're up to no good?", "");
+                TextBox(T_GALFREY, "That's just basic passage ethics!", "", "");
+            }
+        }
+        EntFinish();
+        flags[F_SEAVIEW_CHURCH_BOX] = 1; // box has been moved
+    }
+    else // If you're just stepping on the exposed stairs...
+    {
+        Warp(56, 181, TCROSS); // descend
+    }
 }
 
 void ChurchB1toF1() // Used when the character goes back up to the main church floor from the basement
 {
-	Warp(92, 160, TCROSS); 
+    Warp(92, 160, TCROSS); 
 }
 
 
 void Innkeeper()
 {
-	int i;
-	EntStart();
-	TextBoxM(0,	"Welcome to the Shangri-La Hotel, where all",
-			"your dreams come true (no warranty",
-			"expressed or implied).");
-	i = Prompt(0,	"One night's stay costs 400 " + moneyname + ".","","","Yes|No");
-	if (i == 1) // Chose "no"
-	{
-		TextBox(0,	"We hope to see you again.","","");
-	}
-	else // chose "yes"
-	{
-		if( money < 400 ) // You are too poor to stay at a nice inn
-		{
-			TextBox(0,	"It seems you're a bit short, sir.","","");
-			Textbox(T_DARIN,	"That's a low blow!","","");
-		}
-		else // Everything is OK -- pay and refresh
-		{
-			SoundChaChing(); 
-		 	TakeMoney(400);
-		 	TextBox(0,	"An excellent choice, sir. We hope you",
-		 			"your stay.","");
-		 	Inn(); // do fadeout and heal party
-		}
-		
-	}
-	EntFinish();
+    int i;
+    EntStart();
+    TextBoxM(0, "Welcome to the Shangri-La Hotel, where all",
+            "your dreams come true (no warranty",
+            "expressed or implied).");
+    i = Prompt(0,   "One night's stay costs 400 " + moneyname + ".","","","Yes|No");
+    if (i == 1) // Chose "no"
+    {
+        TextBox(0,  "We hope to see you again.","","");
+    }
+    else // chose "yes"
+    {
+        if( money < 400 ) // You are too poor to stay at a nice inn
+        {
+            TextBox(0,  "It seems you're a bit short, sir.","","");
+            Textbox(T_DARIN,    "That's a low blow!","","");
+        }
+        else // Everything is OK -- pay and refresh
+        {
+            SoundChaChing(); 
+            TakeMoney(400);
+            TextBox( 0,  
+                     "An excellent choice, sir. We hope you",
+                     "enjoy your stay.","");
+                     
+            Inn(); // do fadeout and heal party
+        }
+        
+    }
+    EntFinish();
 }
 
 void Ent1() // Town greeter
 {
-	EntStart();
-	TextBox(0,	"Welcome to beautiful Seaview!", 
-			"This is the number one vacation spot in",
-			"the area.");
-	EntFinish();
+    EntStart();
+    TextBox( 0,  
+            "Welcome to beautiful Seaview!", 
+            "This is the number one vacation spot in",
+            "the area.");
+            
+    EntFinish();
 }
 
 void Ent2() // Snobby lady
 {
-	EntStart();
-	TextBoxM(0, "This town is hard to get to, but I like it",
-			"that way. It keeps out the riff-raff.","");
-	TextBox(0, 	"Or at least it usually does.",
-			"Where did you lot come from, anyway?","");
-	EntFinish();
+    EntStart();
+    TextBoxM(0, "This town is hard to get to, but I like it",
+            "that way. It keeps out the riff-raff.","");
+    TextBox(0,  "Or at least it usually does.",
+            "Where did you lot come from, anyway?","");
+    EntFinish();
 }
 
 void Ent3() // Guy outside church
 {
-	EntStart();
-	TextBox(0, "This has been the largest church in the",
-			"free world ever since the collapse of the", 
-			"Demi-Pope's space dirigible.",);
-	EntFinish();	
+    EntStart();
+    TextBox(0, "This has been the largest church in the",
+            "free world ever since the collapse of the", 
+            "Demi-Pope's space dirigible.",);
+    EntFinish();    
 }
 
 void Ent4() // Guest at inn
 {
-	EntStart();
-	TextBoxM(0,	"I took a herb from the minibar. I was",
-			"going to replace it later but it had like"
-			"this special wrapping on it.");
-	TextBox(0,	"You win this round, hotel!","","");
-	EntFinish();	
+    EntStart();
+    TextBoxM(0, "I took a herb from the minibar. I was",
+            "going to replace it later but it had like"
+            "this special wrapping on it.");
+    TextBox(0,  "You win this round, hotel!","","");
+    EntFinish();    
 }
 
 void Ent5() // woman in inn lobby
 {
-	EntStart();
-	TextBox(0,	"Oh wow, this is super ritzy. I'm not sure I",
-			"can afford this!","");
-	EntFinish();
+    EntStart();
+    TextBox(0,  "Oh wow, this is super ritzy. I'm not sure I",
+            "can afford this!","");
+    EntFinish();
 }
 
 void Ent6()
 {
-	EntStart();
-	TextBox(0,	"Hot sand, cool water, blue sky...this is the",
-			"life, eh?","");
-	TextBox(T_DARIN,	"I'm honestly a little burnt out on tropical",
-				"paradises. Do you have some miniature golf",
-				"or something?");
-	EntFinish();	
+    EntStart();
+    TextBox(0,  "Hot sand, cool water, blue sky...this is the",
+            "life, eh?","");
+    TextBox(T_DARIN,    "I'm honestly a little burnt out on tropical",
+                "paradises. Do you have some miniature golf",
+                "or something?");
+    EntFinish();    
 }
 
 void Churchy1()
 {
-	EntStart();
-	TextBoxM(0,	"These pews are really old -- they're",
-			"practically falling apart. We ordered",
-			"new ones ages ago, but we haven't heard");
-	TextBoxM(0, "word one about them since we placed the",
-			"order.","");
-	TextBox(0, "We could really use new pew news.","","");
-	if (CharInParty("Galfrey"))
-	{
-		TextBox(T_GALFREY, "Don't think I won't kill you.","","");
-	}
-	EntFinish();
+    EntStart();
+    TextBoxM(0, "These pews are really old -- they're",
+            "practically falling apart. We ordered",
+            "new ones ages ago, but we haven't heard");
+    TextBoxM(0, "word one about them since we placed the",
+            "order.","");
+    TextBox(0, "We could really use new pew news.","","");
+    if (CharInParty("Galfrey"))
+    {
+        TextBox(T_GALFREY, "Don't think I won't kill you.","","");
+    }
+    EntFinish();
 }
 
 void Churchy2()
 {
-	EntStart();
-	TextBoxM(0,	"According to the Manual, Vecna created the",
-			"world in two days, and on the second day",
-			"he rested.");
-	TextBox(0,	"Therefore we rest every other day.","","");						
-	EntFinish();
+    EntStart();
+    TextBoxM(0, "According to the Manual, Vecna created the",
+            "world in two days, and on the second day",
+            "he rested.");
+    TextBox(0,  "Therefore we rest every other day.","","");                        
+    EntFinish();
 }
 
 
 void Barfly1() 
 {
-	EntStart();
-	TextBox(0,	"There's another bar in town, but they're",
-			"real snooty. They don't let us normal folk",
-			"in. Well, the heck with them, I say!");	
-	EntFinish();	
+    EntStart();
+    TextBox(0,  "There's another bar in town, but they're",
+            "real snooty. They don't let us normal folk",
+            "in. Well, the heck with them, I say!");    
+    EntFinish();    
 }
 
 void Barfly2()
 {
-	EntStart();
-	TextBoxM(0,	"I hear there's been some trouble on the",
-			"continent lately. Some Lord Steve or",
-			"something?");
-	TextBox(0,	"Well, it doesn't affect us over here.",
-			"Drink up!","");
-	EntFinish();
+    EntStart();
+    TextBoxM(0, "I hear there's been some trouble on the",
+            "continent lately. Some Lord Steve or",
+            "something?");
+    TextBox(0,  "Well, it doesn't affect us over here.",
+            "Drink up!","");
+    EntFinish();
 }
 
 void leavetown() // called when returning to the map. 
 // Puts you in the wrong place since seaview isn;t on the map yet.
 {
-	V1_MapSwitch("simpletype_overworld.map",58,63,TBLACK); // WRONG COORDINATES. Here for testing purposes only.
+    V1_MapSwitch("simpletype_overworld.map",58,63,TBLACK); // WRONG COORDINATES. Here for testing purposes only.
 }

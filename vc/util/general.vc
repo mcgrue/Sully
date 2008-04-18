@@ -110,7 +110,7 @@ string trim( string s ) {
     for( i=0; i<len(s)-1; i++ ) { //seek the front!
         tmpchr = mid( s, i, 1 );
 
-        if( !equ(tmpchr," ") && !equ(tmpchr,"   ") ) { //if it's not whitespace
+        if( !equ(tmpchr," ") && !equ(tmpchr,chr(9)) ) { //if it's not whitespace
             hit = 1; //true
 
             fore = i;
@@ -124,7 +124,7 @@ string trim( string s ) {
 
     for( i=len(s); i>1; i-- ) { //seek the front!
         tmpchr = mid( s, i-1, 1 );
-        if( !equ(tmpchr," ") && !equ(tmpchr,"   ") ) { //if it's not whitespace
+        if( !equ(tmpchr," ") && !equ(tmpchr,chr(9)) ) { //if it's not whitespace
             hit = 1; //true
 
             aft = i;
