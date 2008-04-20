@@ -36,7 +36,7 @@ string moneyname = "Clams";
 int curpartysize;   
 
 
-/// The current party size.  
+/// The current party leader entity.  
 /// This is set by SpawnParty, and contains the entitys[] index of the party's leader.
 /// please do not alter it by hand unless you Know What You Are Doing (tm).
 int playerent;

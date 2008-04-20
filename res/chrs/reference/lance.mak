@@ -6,7 +6,7 @@ out lance.chr
 frame_w 16
 frame_h 32
 frames_per_row 5
-frame_rows 4
+frame_rows 8
 
 hotspot_x 0
 hotspot_y 16

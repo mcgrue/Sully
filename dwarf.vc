@@ -1,5 +1,10 @@
 // v1_mapswitch("dwarf.map",51,17,TBLACK);
 
+// These are the cells of the temporary map array where we store 
+// entity numbers for Paxton and Lance during their scene.
+#define DWARFVILLE_PAXTON 10
+#define DWARFVILLE_LANCE 11
+
 void Start()
 {
     SaveDisable(); //cannot save in towns.
@@ -10,6 +15,14 @@ void Start()
 	if (flags[F_LOVE_ESCAPE]) { // That one guy got a pot!
 		SetTile(115,82,2,276);
 		SetObs(115,82,20);
+	}
+	if (!flags[F_DWARF_PAXTON_JOIN]) {	
+		// lance and paxton are facing off in the church. We'll store 
+		// their entity numbers in temporary map variables, since we
+		// only need them for this map.
+		arMapTemp[DWARFVILLE_PAXTON] = EntitySpawn(87,132,"res/chrs/paxton.chr");
+		arMapTemp[DWARFVILLE_LANCE] = EntitySpawn(87,138,"res/chrs/lance.chr");
+		entity.face[arMapTemp[DWARFVILLE_LANCE]] = FACE_UP;
 	}
     Banner("Dwarfville: City of Dwarves.",300);
 }
@@ -92,7 +105,7 @@ void EmptyChest() {
 
 
 void Dwarf1() {
-	EntStart();
+	EntStart(); 
 	if (!flags[F_LOVE_ESCAPE]) { // first time in
 		TextBox(0,"Welcome to the Village of the Dwarves,",
 				  "where we are shaking with outrage at",				 
@@ -109,6 +122,9 @@ void Dwarf1() {
 	}	
 	EntFinish();
 }
+
+
+
 
 void Dwarf2() {
 	EntStart();
@@ -380,9 +396,8 @@ void Dwarf11() {
 					"thing. What do I get for signing up?",
 					"Is this one of those orgy religions?");		
 		if (CharInParty("Paxton")) {							
-			TextBox(T_PAXTON,	"The glory of penitent self-denial is",
-								"more satisfying than a thousand",
-								"orgies.");										
+			TextBox(T_PAXTON,	"The glory of penitent self-denial is more",
+								"satisfying than a thousand orgies.","");										
 		}
 	}
 	else { 
@@ -577,4 +592,261 @@ void DwarfMagic() {
 				"this store hasn't been implemented",
 				"yet.");		
 	EntFinish();	
+}
+
+
+
+// ===================================
+// CUTSCENE FUNCTIONS BELOW THIS POINT
+// ===================================
+
+// The whizbang blast effect in the Paxton cutscene.
+void PaxtonBlasto() {
+	int bolthandle = LoadAnimation("res/images/story_fx/bolt.png", 8, 32);
+	int bursthandle = LoadAnimation("res/images/story_fx/burst.png", 32, 32);
+
+	PaxtonThunderbolt(bolthandle, bursthandle, 84*16 - xwin, 135*16 - ywin);
+	PaxtonThunderbolt(bolthandle, bursthandle, 87*16 - xwin, 137*16 - ywin);
+	PaxtonThunderbolt(bolthandle, bursthandle, 90*16 - xwin, 136*16 - ywin);
+	PaxtonThunderbolt(bolthandle, bursthandle, 88*16 - xwin, 135*16 - ywin);	
+
+	FreeAnimation(bolthandle);
+	FreeAnimation(bursthandle);
+}
+
+
+// x and y are in screen coordinates, not map coordinates.
+void PaxtonThunderbolt(int bolthandle, int bursthandle, int boltx, int goaly) {
+	int basetime;
+	int bolty;
+	int boltspeed = 6; // pixels per ms
+	int boltrate = 3; // rate of frame rotation, relative to systemtime (centiseconds)
+	int burstrate = 3; // rate of frame rotation, relative to systemtime (centiseconds)
+		
+	bolty = -32; // totally offscreen to begin with
+	basetime = systemtime;
+	timer = 0;
+	// Bolt flies from top of screen to specified coordinates
+	while (bolty < goaly) {
+		Render();
+		bolty += timer * boltspeed;
+		timer = 0;
+		TBlitFrame(boltx-4, bolty, bolthandle, (systemtime/boltrate)%anims[bolthandle].numframes, screen);
+		ShowPage();		
+	}
+	
+	
+	// Now do the blast shockwave
+	PlaySound(sfx_bomb,100);	
+	timer = 0;
+	while (timer < (burstrate*anims[bursthandle].numframes)) {
+		Render();
+		TBlitFrame(boltx-16, goaly+8, bursthandle, (timer/burstrate)%anims[bursthandle].numframes, screen);
+		ShowPage();		
+	}	
+}
+
+void PaxtonDarken() {
+	timer = 0;	
+	PlaySound(sfx_wom,100);	
+	while (timer < 100) { // fade to dim light
+		VCLayerTintScreen(0, 100-(timer/3));	
+		Render();
+		ShowPage();
+	}
+	VCLayerTintScreen(0, 67);		
+}
+
+void LancePowerUp(int lance) {
+	int startradius = 200;
+	int flickerrate = 10;
+	int flickerdur = 3;
+	int x = entity.x[lance] + (entity.hotw[lance]/2) - xwin;
+	int y = entity.y[lance] + (entity.hoth[lance]/2) - ywin;
+	int col = RGB(255,0,0);
+
+	PlaySound(sfx_magic4,100);	
+	timer = 0;
+	while (timer < 100) {
+		Render();
+		if ( (timer/flickerrate) % 2 && timer - (timer/flickerrate*flickerrate) < flickerdur ) 
+			CircleFill(x,y,200 - (timer*2),200 - (timer*2),col,screen);
+		else Circle(x,y,200 - (timer*2),200 - (timer*2),col,screen);
+		ShowPage();
+	}
+	PlaySound(sfx_shing,100);
+}
+
+void PaxtonCutscene() // Paxton confronts Lance, then joins the party
+{
+	int paxton = arMapTemp[DWARFVILLE_PAXTON];
+	int lance = arMapTemp[DWARFVILLE_LANCE];
+	int dexter = GetPartyEntity("Dexter");
+	int vol = V1_GetCurVolume(); 
+	if (!flags[F_DWARF_PAXTON_JOIN]) {
+		// Move Darin into position to watch the scene. We want him at (91,141)				
+		EntityMove(playerent, "PU" + str(entity.y[playerent] - (141*16)) + "L" + str(entity.x[playerent] - (91*16)) + "T");
+		WaitForEntity(playerent);
+
+		// Move the camera so that it's positioned between lance and paxton, at tile (87,137)		
+		CutsceneOn();
+		camCtrScrollTo(87*16, 137*16, 50);
+		V1_FadeOutMusic(50);
+
+		EntityMove(paxton,"D1");
+		WaitForEntity(paxton);
+		
+		TextBoxM(T_PAXTON,	"Villainy!","","");		
+		TextBoxM(T_PAXTON,	"Despicable!","","");		
+		TextBox(T_PAXTON,	"Outrageous!","","");
+		
+		EntityMove(paxton,"D1");
+		WaitForEntity(paxton);
+							
+		TextBoxM(T_PAXTON,	"Never before have I witnessed such an",
+							"outrage! Only the basest of crooks",
+							"would rob a house of God!");
+		TextBox(T_PAXTON,	"Your life and soul hang on your swift",
+							"repentance for these misdeeds!","");
+		
+		TextBox(T_LANCE,	"Wh-what, you mean this stuff?",
+							"No, this is, uh...","");		
+		EntityMove(lance,"Z29");
+		Wait(80);
+		EntityMove(lance,"Z35");
+		TextBox(T_LANCE,	"...this is my stuff! Yeah.",
+							"Hey, what are you doing with my stuff,",
+							"you bastard?");				
+		EntityMove(paxton,"D1Z22");
+		PaxtonDarken();
+		TextBox(T_PAXTON,	"So be it.",
+							"The unrighteous shall perish in the light",
+							"of judgment!    THUNDERBIRD!");				
+		EntityMove(lance,"Z21");
+		PaxtonBlasto();
+		Wait(150);
+		VCLayerTintScreen(0,100);		
+		entity.specframe[lance] = 0;
+		EntityMove(lance,"U1");
+		WaitForEntity(lance);
+		Wait(20);
+		TextBox(T_LANCE,	"So that's how it's going to be, eh?",
+							"All right, you asked for it!","");						
+		LancePowerUp(lance);
+		Wait(20);
+		TextBox(T_LANCE,	"Ultimate attack...                                                                     ",
+							"Run away!","");						
+		entity.speed[lance] = 400;
+		EntityMove(paxton,"Z21");
+		EntityMove(lance,"D7R15D4");
+		WaitForEntity(lance);
+		entity.x[lance] = -100; entity.y[lance] = -100; // And Lance lives to fight another day!		
+		EntityMove(paxton,"Z20");		
+		Wait(35);
+		V1_FadeInMusic(100,vol);		
+		EntityMove(playerent,"L4U3");
+		EntityMove(dexter,"L5U2");
+		WaitForEntity(playerent);
+		WaitForEntity(dexter);
+		Wait(35);
+		
+		TextBox(T_DARIN,	"Um...excuse me?","","");
+		entity.specframe[paxton] = 0; // Stop making faces, Paxton.
+		TextBox(T_PAXTON,	"More humans.",
+							"My kin are an uncommon sight here in the",
+							"underground.");		
+		EntityMove(paxton,"D1");
+		WaitForEntity(paxton);
+		TextBox(T_PAXTON,	"And now...three in one day.",
+							"You would not happen to be allied with",
+							"that scoundrel, would you?");		
+		TextBox(T_DARIN,	"...just a minute.","","");	
+
+		EntityMove(playerent,"D2");		
+		WaitForEntity(playerent);
+		EntityMove(playerent,"D1L4");		
+		EntityMove(dexter,"D2L3");
+		WaitForEntity(playerent);
+		WaitForEntity(dexter);
+		entity.face[playerent] = FACE_RIGHT;
+		EntityMove(playerent,"Z29");
+		Wait(20);
+		entity.specframe[playerent] = 0;		
+		Wait(30);
+		EntityMove(dexter,"Z28");
+		Wait(20);
+		entity.specframe[dexter] = 0;		
+		Wait(30);		
+		EntityMove(playerent,"Z29");
+		Wait(20);
+		entity.specframe[playerent] = 0;		
+		Wait(50);
+		EntityMove(playerent,"Z29");
+		EntityMove(dexter,"Z28");
+		Wait(20);
+		entity.specframe[playerent] = 0;		
+		entity.specframe[dexter] = 0;		
+		Wait(50);		
+		EntityMove(playerent,"R2");
+		WaitForEntity(playerent);
+		EntityMove(playerent,"R2U2");
+		EntityMove(dexter,"R3U1");
+		WaitForEntity(playerent);
+		WaitForEntity(dexter);
+
+		TextBoxM(T_DARIN,	"No, we've never met Lance before.","","");								
+		TextBox(T_DARIN,	".a.a.and when I say Lance, I mean,",
+							"'that guy.'",
+							"Whose name I don't know.");	
+		Wait(50);
+		entity.speed[paxton] = 15;
+		EntityMove(paxton,"Z23D1");
+		WaitForEntity(paxton);
+		entity.speed[paxton] = 100;
+		EntityMove(paxton,"W80Z0W20Z25W20");
+		WaitForEntity(paxton);
+		entity.specframe[paxton] = 0;
+		Wait(75);
+		TextBox(T_PAXTON,	"Very well. Forgive my presumption.",
+							"How may I be of service?","");			
+		TextBox(T_DARIN,	"My name's Darin, and this is Dexter."
+							"I'm trying to rescue my girlfriend from",
+							"Lord Stan, but there's a thingy in the way.");					
+		TextBox(T_PAXTON,	"A thingy.","","");	
+		TextBox(T_DEXTER,	"We need your help to dispel the seal",
+							"Lord Stan has placed over the entrance",
+							"to his labs.");
+		EntityMove(paxton,"Z25");
+		TextBoxM(T_PAXTON,	"I see.","","");	
+		TextBox(T_PAXTON,	"My work here is important.",
+							"However, I cannot refuse aid to the",
+							"victims of evil.");	
+		entity.specframe[paxton] = 0;
+		TextBox(T_PAXTON,	"I will lend you my power.","","");	
+		TextBox(T_DARIN,	"Thank you so much!",
+							"This time we'll get Lord Stan for sure!","");
+		TextBoxM(T_PAXTON,	"Perhaps it was inevitable.",
+							"I have always been uneasy with Lord",
+							"Stan's presence so near my mission.");	
+		TextBoxM(T_PAXTON,	"It was only a matter of time before",
+							"he and I came into direct conflict.","");		
+		TextBox(T_PAXTON,	"My name is Paxton. I am an enemy of all",
+							"that is evil.",
+							"Let us pay a visit to these labs.");
+		EntityMove(paxton,"D4");
+		WaitForEntity(paxton);
+		entity.face[paxton] = FACE_UP;
+		JoinPartyAtLevel("Paxton", 8);		
+		
+		entity.x[paxton] = -100; entity.y[paxton] = -100; // get rid of map-paxton		
+		AssembleParty();				
+		TextBoxM(T_PAXTON,	"If you go down and to your right upon",
+							"exiting the church you will find",
+							"another large doorway.");
+		TextBox(T_PAXTON,	"This will lead you back to the summit.","","");
+		
+		camReturnToPlayer(playerent,50);
+		CutsceneOff();
+		flags[F_DWARF_PAXTON_JOIN] = 1;	
+	}	
 }

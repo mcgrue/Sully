@@ -204,8 +204,8 @@ void logGameFlags() {
 #define F_MNT_TETRIS_DOOR_OPEN  111 // We've talked to the tetris door before meeting Lance.
 #define F_MNT_TETRIS_DOOR_INTRO 112 // We've opened the tetris door!
 
-#define F_MNT_BREAK_SEAL        113 // When Paxton breaks the seal.
-
+#define F_DWARF_PAXTON_JOIN     113 // Paxton joins up to get you into the lab
+#define F_MNT_BREAK_SEAL        114 // When Paxton breaks the seal.
 
 
 //START OF CHEST INDEXES
