@@ -644,9 +644,11 @@ void ChurchEnter()
 void ChurchExit()
 {
     play_town_music();
-
+    
+    if (flags[F_LAB_BLOWN_UP])
+	        curmap.rstring = "2,1,3,7,8,6,E,4,5,R";
+    else curmap.rstring = "2,1,3,7,6,E,4,5,R";
     Warp(48, 89, TCROSS);
-    curmap.rstring = "2,1,3,7,8,E,6,4,5,R"; // restore normal RString
 }
 
 /// warp.  Also changes volume and sets the jukebox tile.
