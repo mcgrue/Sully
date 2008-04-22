@@ -506,7 +506,7 @@ int BM_Parse( int mnu_idx, string src, int ln, int level )
     string data, sub;               //the strings being built to be saved into the menu heapstack!
     int thislevel, nextlevel, done, next;   //helpers!
 
-//log( bm_g(level)+"BM_Parse("+str(ln)+","+str(level)+")..." );
+log( bm_g(level)+"BM_Parse('"+src+"',"+str(ln)+","+str(level)+")..." );
     
     while( !done )
     {
@@ -581,7 +581,7 @@ glob_next   = nextline;
             {
                 if( strcmp("",data) || strcmp("",sub)  )
                 {
-                    ErrorHandler( "Battle_Menu::BM_Parse(): There was a list item on a dirty line!  NOOOOOO!.");
+                    ErrorHandler( "Battle_Menu::BM_Parse(): There was a list item on a dirty line (2)!  NOOOOOO!.");
                     return 0-662;
                 }
                 

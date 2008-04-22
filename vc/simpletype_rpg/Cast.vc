@@ -822,7 +822,7 @@ string BM_MakeCastMenu( int c, int battle_mode )
     
     if( battle_mode )
     {   
-        tmp = tmp + "   "+__battle_inventory+chr(10);
+        tmp = tmp + chr(9)+__battle_inventory+chr(10);
         tmp = tmp + "~"+ chr(10) + "Defend"+ chr(10)+"Meditate"+ chr(10)+"Parry"+ chr(10) + "Run";
     }
     else
