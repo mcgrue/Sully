@@ -13,13 +13,13 @@
 
 /******************* Different fades for the fade-system *********************/
 
-#define TNONE			0
-#define TBLACK			1
-#define TWHITE			2
-#define TCROSS			3
-#define TBOX			4
-#define TWIPE			5
-#define TCIRCLE			6
+#define TNONE           0
+#define TBLACK          1
+#define TWHITE          2
+#define TCROSS          3
+#define TBOX            4
+#define TWIPE           5
+#define TCIRCLE         6
 
 
 /***************************** gamestate data *****************************/
@@ -104,68 +104,69 @@ int _debugTile = LoadImage( "tile.png" );
 ///
 void V1RPG_RenderFunc()
 {
-	UpdateControlsMcFAIL();
+    UpdateControlsMcFAIL();
 
-	if( _mapwrap_on )
-		wrapmap( GetPlayer() );
+    if( _mapwrap_on )
+        wrapmap( GetPlayer() );
 
-	//for weather effects
-	RenderWeather();
+    //for weather effects
+    RenderWeather();
 
-	if( vc_filter_on ) {
-		
-		if( vc_filter_lucent )
-		{
-			SetLucent(vc_filter_lucent);
-			ColorFilter( vc_filter, screen );
-			SetLucent(0);	
-		}
-		else
-		{
-			ColorFilter( vc_filter, screen );
-		}
-	}
-	
-	TBlit(0, 0, v1_vclayer, screen);
-	
-	//for vclayer tinting.
-	if ( tint_on )
-	{
-		SetLucent(tint_lucent);
-		RectFill(0, 0, 320, 240, tint_color, screen);
-		SetLucent(0);
-	}
-	
-	//for continuous quaking!
-	if( vc_quake_on )
-	{
-		//toggles cameratracking.  Since we need to have xwin and ywin update
-		//and they only update during Render(), and this is a HookRender function,
-		//we need to do this activity every-other render.
-		if( cameratracking ) {
-			cameratracking = 0;
-		} else {
-			cameratracking = 1;
-		}
-				
-		xwin =  xwin+Random(0-vc_quake_x,vc_quake_x);
-		ywin =  ywin+Random(0-vc_quake_y,vc_quake_y);	
-	}
-	
-	MyGame_PlayerSpeed();
-	
-	
-	
-	//PrintString(10, 10, screen, 0, "Player Entity: " +str(GetPlayer()));
-	//PrintString(10, 20, screen, 0, "entity.speed[Player()]: " +str(entity.speed[GetPlayer()]));
-	
-//	int tx = entity.x[GetPlayer()]/16;
-//	int ty = entity.y[GetPlayer()]/16;
-	
-//	PrintString(10, 10, screen, 0, "tx: " +str(tx));
-//	PrintString(10, 20, screen, 0, "ty: " +str(ty));
-	
-//	TBlit( (tx*16)-xwin, (ty*16)-ywin, _debugTile, screen );
+    if( vc_filter_on ) {
+        
+        if( vc_filter_lucent )
+        {
+            SetLucent(vc_filter_lucent);
+            ColorFilter( vc_filter, screen );
+            SetLucent(0);   
+        }
+        else
+        {
+            ColorFilter( vc_filter, screen );
+        }
+    }
+    
+    TBlit(0, 0, v1_vclayer, screen);
+    
+    //for vclayer tinting.
+    if ( tint_on )
+    {
+        SetLucent(tint_lucent);
+        RectFill(0, 0, 320, 240, tint_color, screen);
+        SetLucent(0);
+    }
+    
+    //for continuous quaking!
+    if( vc_quake_on )
+    {
+        //toggles cameratracking.  Since we need to have xwin and ywin update
+        //and they only update during Render(), and this is a HookRender function,
+        //we need to do this activity every-other render.
+        if( cameratracking ) {
+            cameratracking = 0;
+        } else {
+            cameratracking = 1;
+        }
+                
+        xwin =  xwin+Random(0-vc_quake_x,vc_quake_x);
+        ywin =  ywin+Random(0-vc_quake_y,vc_quake_y);   
+    }
+    
+    MyGame_PlayerSpeed();
+    
+    
+    PrintString(10, 10, screen, 0, "Steps to battle: " +str(get_steps_to_next_battle()));
+    
+    //PrintString(10, 10, screen, 0, "Player Entity: " +str(GetPlayer()));
+    //PrintString(10, 20, screen, 0, "entity.speed[Player()]: " +str(entity.speed[GetPlayer()]));
+    
+//  int tx = entity.x[GetPlayer()]/16;
+//  int ty = entity.y[GetPlayer()]/16;
+    
+//  PrintString(10, 10, screen, 0, "tx: " +str(tx));
+//  PrintString(10, 20, screen, 0, "ty: " +str(ty));
+    
+//  TBlit( (tx*16)-xwin, (ty*16)-ywin, _debugTile, screen );
 }
 
 /// Sets the colorfilter option for V1RPG_RenderFunc.
@@ -173,8 +174,8 @@ void V1RPG_RenderFunc()
 /// @param color_filter The RGB()-encoded colorvalue 
 void VCScreenFilter( int color_filter ) 
 {
-	vc_filter_on = 1;
-	vc_filter = color_filter;
+    vc_filter_on = 1;
+    vc_filter = color_filter;
 }
 
 
@@ -182,7 +183,7 @@ void VCScreenFilter( int color_filter )
 ///
 int IsVCScreenFilterOn()
 {
-	return vc_filter_on;
+    return vc_filter_on;
 }
 
 
@@ -192,11 +193,11 @@ int IsVCScreenFilterOn()
 /// @see V1RPG_RenderFunc()
 void VCScreenFilterOff() 
 {
-	vc_filter_on = 0;
-	vc_custom_filter_on = 0;
-	_VCCustomFilter_color_1 = 0;
-	_VCCustomFilter_color_2 = 0;
-	vc_filter_lucent = 0;
+    vc_filter_on = 0;
+    vc_custom_filter_on = 0;
+    _VCCustomFilter_color_1 = 0;
+    _VCCustomFilter_color_2 = 0;
+    vc_filter_lucent = 0;
 }
 
 
@@ -210,7 +211,7 @@ void VCScreenFilterOff()
 /// @see VCScreenFilter()
 void VCScreenFilterLucent( int perc ) 
 {
-	vc_filter_lucent = perc;
+    vc_filter_lucent = perc;
 }
 
 
@@ -219,8 +220,8 @@ void VCScreenFilterLucent( int perc )
 /// Make sure to supply both arguments using RGB()
 ///
 /// Example:
-///	VCCustomFilter( RGB(0,0,0), RGB(255,255,0) ); //this will make the screen 
-///		//all shades of Yellow... as long as V1RPG_RenderFunc is in the HookRetrace.
+/// VCCustomFilter( RGB(0,0,0), RGB(255,255,0) ); //this will make the screen 
+///     //all shades of Yellow... as long as V1RPG_RenderFunc is in the HookRetrace.
 ///
 /// @param color_1 the RGB-encoded definition of the darkest color on a screen, 
 /// @param color_2 the RGB-encoded definition of the brightest color on a screen.
@@ -228,15 +229,15 @@ void VCScreenFilterLucent( int perc )
 /// @see V1RPG_RenderFunc()
 void VCCustomFilter( int color_1, int color_2 )
 {
-	vc_custom_filter_on = 1;
+    vc_custom_filter_on = 1;
 
-	vc_filter_on = 1;
-	vc_filter = CF_CUSTOM;	
-	
-	SetCustomColorFilter( color_1, color_2 );
-	
-	_VCCustomFilter_color_1 = color_1;
-	_VCCustomFilter_color_2 = color_2;
+    vc_filter_on = 1;
+    vc_filter = CF_CUSTOM;  
+    
+    SetCustomColorFilter( color_1, color_2 );
+    
+    _VCCustomFilter_color_1 = color_1;
+    _VCCustomFilter_color_2 = color_2;
 }
 
 /// If something else accesses SetCustomColorFilter() directly without accessing 
@@ -251,10 +252,10 @@ void VCCustomFilter( int color_1, int color_2 )
 /// @see VCCustomFilter()
 void VCCustomFilterRestore()
 {
-	vc_custom_filter_on = 1;
-	vc_filter_on = 1;
-	vc_filter = CF_CUSTOM;
-	SetCustomColorFilter(_VCCustomFilter_color_1, _VCCustomFilter_color_2);
+    vc_custom_filter_on = 1;
+    vc_filter_on = 1;
+    vc_filter = CF_CUSTOM;
+    SetCustomColorFilter(_VCCustomFilter_color_1, _VCCustomFilter_color_2);
 }
 
 /// returns 1 if VCCustomFilter() is active, 0 if it is not.
@@ -262,7 +263,7 @@ void VCCustomFilterRestore()
 /// @see VCCustomFilter()
 int IsVCCustomFilterOn()
 {
-	return vc_custom_filter_on;
+    return vc_custom_filter_on;
 }
 
 /// returns the integer color-value of the current VCCustomFilter's "dark" color.
@@ -270,7 +271,7 @@ int IsVCCustomFilterOn()
 /// @see VCCustomFilter()
 int getVCCustomFilterColor1()
 {
-	return _VCCustomFilter_color_1;
+    return _VCCustomFilter_color_1;
 }
 
 /// returns the integer color-value of the current VCCustomFilter's "light" color.
@@ -278,7 +279,7 @@ int getVCCustomFilterColor1()
 /// @see VCCustomFilter()
 int getVCCustomFilterColor2()
 {
-	return _VCCustomFilter_color_2;
+    return _VCCustomFilter_color_2;
 }
 
 
@@ -293,9 +294,9 @@ int getVCCustomFilterColor2()
 /// @param percent the percentage of lucency to apply to the tint to the screen.
 void VCLayerTintScreen(int color, int percent)
 {
-	tint_on = 1;
-	tint_color = color;
-	tint_lucent = percent;
+    tint_on = 1;
+    tint_color = color;
+    tint_lucent = percent;
 }
 
 
@@ -305,7 +306,7 @@ void VCLayerTintScreen(int color, int percent)
 /// @see VCLayerTintScreen()
 void VCLayerTintOff()
 {
-	tint_on = 0;
+    tint_on = 0;
 }
 
 
@@ -314,7 +315,7 @@ void VCLayerTintOff()
 /// @see v1_vclayer
 void ClearVCLayer() 
 {
-	RectFill(0, 0, ImageWidth(v1_vclayer), ImageHeight(v1_vclayer), transcolor, v1_vclayer); //blanks the vc layer
+    RectFill(0, 0, ImageWidth(v1_vclayer), ImageHeight(v1_vclayer), transcolor, v1_vclayer); //blanks the vc layer
 }
 
 
@@ -334,11 +335,11 @@ void ClearVCLayer()
 /// @see v1_vclayer
 void VCPutIMG( string img_name, int x_pos, int y_pos )
 {
-	int img;
-	
-	img = LoadImage( img_name );
-	TBlit( x_pos, y_pos, img, v1_vclayer );
-	FreeImage(img);
+    int img;
+    
+    img = LoadImage( img_name );
+    TBlit( x_pos, y_pos, img, v1_vclayer );
+    FreeImage(img);
 }
 
 
@@ -350,8 +351,8 @@ void VCPutIMG( string img_name, int x_pos, int y_pos )
 /// @see RGB()
 void FillVCLayer( int matte_color ) 
 {
-	//fills the vc layer with matte_color
-	RectFill(0, 0, ImageWidth(v1_vclayer), ImageHeight(v1_vclayer), matte_color, v1_vclayer); 
+    //fills the vc layer with matte_color
+    RectFill(0, 0, ImageWidth(v1_vclayer), ImageHeight(v1_vclayer), matte_color, v1_vclayer); 
 }
 
 
@@ -367,7 +368,7 @@ void FillVCLayer( int matte_color )
 /// @see v1rpg_SmallFont
 void VCText( int x, int y, string s ) 
 {
-	PrintString( x,y, v1_vclayer, v1rpg_SmallFont, s);
+    PrintString( x,y, v1_vclayer, v1rpg_SmallFont, s);
 }
 
 
@@ -378,7 +379,7 @@ void VCText( int x, int y, string s )
 /// @see v1rpg_SmallFont
 void VCCenterText( int y, string s ) 
 {
-	PrintCenter( ImageWidth(v1_vclayer)/2, y, v1_vclayer, v1rpg_SmallFont, s );
+    PrintCenter( ImageWidth(v1_vclayer)/2, y, v1_vclayer, v1rpg_SmallFont, s );
 }
 
 
@@ -398,10 +399,10 @@ void VCCenterText( int y, string s )
 /// @see VCQuakeOff()
 void VCQuake( int quake_x, int quake_y ) 
 {
-	vc_quake_on = 1;
-	vc_quake_x = quake_x;
-	vc_quake_y = quake_y;
-	cameratracking = 0;
+    vc_quake_on = 1;
+    vc_quake_x = quake_x;
+    vc_quake_y = quake_y;
+    cameratracking = 0;
 }
 
 
@@ -410,8 +411,8 @@ void VCQuake( int quake_x, int quake_y )
 /// @see V1RPG_RenderFunc()
 void VCQuakeOff() 
 {
-	vc_quake_on = 0;
-	cameratracking = 1;
+    vc_quake_on = 0;
+    cameratracking = 1;
 }
 
 
@@ -427,15 +428,15 @@ void VCQuakeOff()
 /// @see V1RPG_RenderFunc_DUALMODE()
 void V1_StartDualMode( string newrstring ) 
 {
-	_dualmode_on = 1;
-	_dualmode_counter = 0;
-	_old_rstring = curmap.rstring;
-	curmap.rstring = newrstring;
+    _dualmode_on = 1;
+    _dualmode_counter = 0;
+    _old_rstring = curmap.rstring;
+    curmap.rstring = newrstring;
 
-	//clear vclayer2 before we start!
-	RectFill(0, 0, ImageWidth(v1_vclayer2), ImageHeight(v1_vclayer2), transcolor, v1_vclayer2); //clear vclayer2
-	
-	HookRetrace("V1RPG_RenderFunc_DUALMODE");
+    //clear vclayer2 before we start!
+    RectFill(0, 0, ImageWidth(v1_vclayer2), ImageHeight(v1_vclayer2), transcolor, v1_vclayer2); //clear vclayer2
+    
+    HookRetrace("V1RPG_RenderFunc_DUALMODE");
 }
 
 
@@ -447,15 +448,15 @@ void V1_StartDualMode( string newrstring )
 /// @see V1RPG_RenderFunc()
 /// @see V1_StartDualMode()
 void V1_StopDualMode() 
-{	
-	if( _dualmode_on )
-	{
-		_dualmode_on = 0;
+{   
+    if( _dualmode_on )
+    {
+        _dualmode_on = 0;
 
-		curmap.rstring = _old_rstring;
+        curmap.rstring = _old_rstring;
 
-		HookRetrace("V1RPG_RenderFunc");
-	}
+        HookRetrace("V1RPG_RenderFunc");
+    }
 }
 
 
@@ -468,16 +469,16 @@ void V1_StopDualMode()
 /// @see V1RPG_RenderFunc()
 void V1RPG_RenderFunc_DUALMODE() 
 {
-	if( !_dualmode_counter ) 
-	{
-		V1RPG_RenderFunc();
-		_dualmode_counter = 1;
-	} 
-	else 
-	{
-		TBlit(0, 0, v1_vclayer2, screen);
-		_dualmode_counter = 0;
-	}	
+    if( !_dualmode_counter ) 
+    {
+        V1RPG_RenderFunc();
+        _dualmode_counter = 1;
+    } 
+    else 
+    {
+        TBlit(0, 0, v1_vclayer2, screen);
+        _dualmode_counter = 0;
+    }   
 }
 
 
@@ -488,17 +489,17 @@ void V1RPG_RenderFunc_DUALMODE()
 /// autoexec() function with all the other library load functions!
 void V1RPG_LoadResources()
 {
-	textboxframe = LoadImage("res\system\textbox2.gif");
-	textmore = LoadImage("res\system\more.gif");
-		
-	v1rpg_LargeFont = LoadFont("res\system\font3_vw.gif");
-	_v1rpg_LargeFont = v1rpg_LargeFont; //stores the original largefont.
+    textboxframe = LoadImage("res\system\textbox2.gif");
+    textmore = LoadImage("res\system\more.gif");
+        
+    v1rpg_LargeFont = LoadFont("res\system\font3_vw.gif");
+    _v1rpg_LargeFont = v1rpg_LargeFont; //stores the original largefont.
 
-	v1rpg_SmallFont = LoadFont("res\system\smallFont3.gif");
-	_v1rpg_SmallFont = v1rpg_SmallFont; //stores the original smallfont.
+    v1rpg_SmallFont = LoadFont("res\system\smallFont3.gif");
+    _v1rpg_SmallFont = v1rpg_SmallFont; //stores the original smallfont.
 
-	EnableVariableWidth(v1rpg_LargeFont);
-	EnableVariableWidth(v1rpg_SmallFont);
+    EnableVariableWidth(v1rpg_LargeFont);
+    EnableVariableWidth(v1rpg_SmallFont);
 }
 
 
@@ -538,25 +539,25 @@ void V1RPG_LoadResources()
 /// @see TCIRCLE
 void V1_MapSwitch(string mapn, int x, int y, int effect)
 {
-	v1_party_init = 0;
+    v1_party_init = 0;
 
-	mapswitche = effect;
-	mapswitchx = x;
-	mapswitchy = y;
-	
-	switch (effect)
-	{
-		case 1: FadeOut(30);
-		case 2: WhiteOut(30);
-		case 3: Blit(0, 0, screen, crossfade_img);
-		case 4: BoxOut(30);
-		case 5: Blit(0, 0, screen, crossfade_img);
-		case 6: CircleOut(50);
-	}
-	
-	SetMusicVolume( global_music_volume );
-	SetWeather(WEATHER_NONE);
-	Map(mapn);
+    mapswitche = effect;
+    mapswitchx = x;
+    mapswitchy = y;
+    
+    switch (effect)
+    {
+        case 1: FadeOut(30);
+        case 2: WhiteOut(30);
+        case 3: Blit(0, 0, screen, crossfade_img);
+        case 4: BoxOut(30);
+        case 5: Blit(0, 0, screen, crossfade_img);
+        case 6: CircleOut(50);
+    }
+    
+    SetMusicVolume( global_music_volume );
+    SetWeather(WEATHER_NONE);
+    Map(mapn);
 }
 
 
@@ -577,18 +578,18 @@ void V1_MapSwitch(string mapn, int x, int y, int effect)
 /// @see InitMap()
 void V1_InitMap()
 {
-	SetMusicVolume( global_music_volume );
+    SetMusicVolume( global_music_volume );
 
-	// Do fade transition
-	switch (mapswitche)
-	{
-		case 1: FadeIn(30);
-		case 2: WhiteIn(30);
-		case 3: CrossFade(50);
-		case 4: BoxIn(30);
-		case 5: TransWipe(100);
-		case 6: CircleIn(50);
-	}	
+    // Do fade transition
+    switch (mapswitche)
+    {
+        case 1: FadeIn(30);
+        case 2: WhiteIn(30);
+        case 3: CrossFade(50);
+        case 4: BoxIn(30);
+        case 5: TransWipe(100);
+        case 6: CircleIn(50);
+    }   
 }
 
 
@@ -602,8 +603,8 @@ int __setFaceMidwarpVal;
 /// 
 void SetFaceMidWarp( int new_facing )
 {
-	__setFaceMidwarpFlag = 1;
-	__setFaceMidwarpVal = new_facing;
+    __setFaceMidwarpFlag = 1;
+    __setFaceMidwarpVal = new_facing;
 }
 
 
@@ -625,40 +626,40 @@ void SetFaceMidWarp( int new_facing )
 /// @see TCIRCLE
 void Warp(int x, int y, int effect)
 {
-	switch (effect)
-	{
-		case 1:	FadeOut(30);
-		case 2: WhiteOut(30);
-		case 3: Blit(0, 0, screen, crossfade_img);
-		case 4: BoxOut(30);
-		case 5: Blit(0, 0, screen, crossfade_img);
-		case 6: CircleOut(50);
-	}
+    switch (effect)
+    {
+        case 1: FadeOut(30);
+        case 2: WhiteOut(30);
+        case 3: Blit(0, 0, screen, crossfade_img);
+        case 4: BoxOut(30);
+        case 5: Blit(0, 0, screen, crossfade_img);
+        case 6: CircleOut(50);
+    }
 
-	entity.x[GetPlayer()] = x*16;
-	entity.y[GetPlayer()] = y*16;
+    entity.x[GetPlayer()] = x*16;
+    entity.y[GetPlayer()] = y*16;
 
 
-	if( __setFaceMidwarpFlag )
-	{
-		entity.face[GetPlayer()] = __setFaceMidwarpVal;
-	}
+    if( __setFaceMidwarpFlag )
+    {
+        entity.face[GetPlayer()] = __setFaceMidwarpVal;
+    }
 Log( "curmap.rstring before render: '" + curmap.rstring + "'" );
-	Render();
+    Render();
 Log( " curmap.rstring after render: '" + curmap.rstring + "'" );
-		
-	switch (effect)
-	{
-		case 1: FadeIn(30);
-		case 2: WhiteIn(30);
-		case 3: CrossFade(50);
-		case 4: BoxIn(30);
-		case 5: TransWipe(50);
-		case 6: CircleIn(50);
-	}
-	
-	/// clear the midwarp facing flag.
-	__setFaceMidwarpFlag = 0;
+        
+    switch (effect)
+    {
+        case 1: FadeIn(30);
+        case 2: WhiteIn(30);
+        case 3: CrossFade(50);
+        case 4: BoxIn(30);
+        case 5: TransWipe(50);
+        case 6: CircleIn(50);
+    }
+    
+    /// clear the midwarp facing flag.
+    __setFaceMidwarpFlag = 0;
 }
 
 
@@ -673,7 +674,7 @@ Log( " curmap.rstring after render: '" + curmap.rstring + "'" );
 /// @see MenuDrawBackground()
 void V1_Box(int x, int y, int w, int h)
 {
-	MenuDrawBackground(x, y, x+w, y+h, 1);
+    MenuDrawBackground(x, y, x+w, y+h, 1);
 }
 
 
@@ -684,14 +685,14 @@ void V1_Box(int x, int y, int w, int h)
 ///
 /// @see V1_Box()
 void CenterMessageBox( int font, string msg ) {
-	int wid, high;
-	
-	high = FontHeight( font );
-	wid = TextWidth( font, msg );
+    int wid, high;
+    
+    high = FontHeight( font );
+    wid = TextWidth( font, msg );
 
-	V1_Box( (ImageWidth(screen)/2)-(wid/2)-high, (ImageHeight(screen)/2)-high, wid+(high*2), high*3 );
-	
-	PrintCenter(ImageWidth(screen)/2, ImageHeight(screen)/2, screen, font, msg);
+    V1_Box( (ImageWidth(screen)/2)-(wid/2)-high, (ImageHeight(screen)/2)-high, wid+(high*2), high*3 );
+    
+    PrintCenter(ImageWidth(screen)/2, ImageHeight(screen)/2, screen, font, msg);
 }
 
 
@@ -703,35 +704,35 @@ void CenterMessageBox( int font, string msg ) {
 /// the menu is disabled during this function.
 void Banner( string msg, int duration ) 
 {
-	int menu_mode = MenuCanBeOn();
-	MenuOff();
+    int menu_mode = MenuCanBeOn();
+    MenuOff();
 
-	timer = 0;
-	while ( timer<duration && !b1 )
-	{
-		Render();
-		CenterMessageBox( v1rpg_SmallFont, msg );
-		
-		ShowPage();
-	}
+    timer = 0;
+    while ( timer<duration && !b1 )
+    {
+        Render();
+        CenterMessageBox( v1rpg_SmallFont, msg );
+        
+        ShowPage();
+    }
 
-	Unpress(0);
-	
-	if(menu_mode)	MenuOn();
+    Unpress(0);
+    
+    if(menu_mode)   MenuOn();
 }
 
 
 /// Turns on the ability to save.
 void SaveEnable() 
 {
-	can_save = 1;
+    can_save = 1;
 }
 
 
 /// Turns off the ability to save.
 void SaveDisable() 
 {
-	can_save = 0;
+    can_save = 0;
 }
 
 
@@ -741,10 +742,10 @@ void SaveDisable()
 /// leaves the obstruction alone if obs is any other value.
 void AlterBTile(int x, int y, int t, int obs) 
 {
-	SetTile(x,y,0,t);
-	
-	if( !obs || obs == 1 ) 
-		SetObs(x,y,obs);
+    SetTile(x,y,0,t);
+    
+    if( !obs || obs == 1 ) 
+        SetObs(x,y,obs);
 }
 
 
@@ -754,10 +755,10 @@ void AlterBTile(int x, int y, int t, int obs)
 /// leaves the obstruction alone if obs is any other value.
 void AlterFTile(int x, int y, int t, int obs) 
 {
-	SetTile(x,y,1,t);
-	
-	if( !obs || obs == 1  ) 
-		SetObs(x,y,obs);
+    SetTile(x,y,1,t);
+    
+    if( !obs || obs == 1  ) 
+        SetObs(x,y,obs);
 }
 
 
@@ -772,14 +773,14 @@ void AlterFTile(int x, int y, int t, int obs)
 /// @see SoundSwitch();
 int OpenTreasure( int flag, int x, int y, int open_tile, int layer ) 
 {
-	if( !flags[flag] ) 
-	{
-		flags[flag] = 1;
-		SetTile(x,y,layer,open_tile);
-		SoundSwitch();
-		return 1;
-	} else 
-	{
-		return 0;
-	}
+    if( !flags[flag] ) 
+    {
+        flags[flag] = 1;
+        SetTile(x,y,layer,open_tile);
+        SoundSwitch();
+        return 1;
+    } else 
+    {
+        return 0;
+    }
 }

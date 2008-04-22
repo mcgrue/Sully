@@ -1792,7 +1792,7 @@ void jukebox_playa()
 
         case 8:
             SetTile(55,164,0,516);
-            PlayMusic("res/music/MYSTWATR.S3M");
+            V1_StartMusic("res/music/AQUASUB.IT");
             TextBox(0,"Now playing 'Ocean Rhapsody'.","","");
 
         case 9:

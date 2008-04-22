@@ -646,7 +646,7 @@ void ChurchExit()
     play_town_music();
     
     if (flags[F_LAB_BLOWN_UP])
-	        curmap.rstring = "2,1,3,7,8,6,E,4,5,R";
+            curmap.rstring = "2,1,3,7,8,6,E,4,5,R";
     else curmap.rstring = "2,1,3,7,6,E,4,5,R";
     Warp(48, 89, TCROSS);
 }
@@ -2057,7 +2057,7 @@ void jukebox_playa()
 
         case 8:
             SetTile(55,164,0,516);
-            PlayMusic("res/music/MYSTWATR.S3M");
+            V1_StartMusic("res/music/AQUASUB.IT");
             TextBox(0,"Now playing 'Ocean Rhapsody'.","","");
 
         case 9:

@@ -162,122 +162,11 @@ void SetChasmModeObs()
 
 void airship()
 {
-
-//MessageBox( "active images: '"+str(numimagehandles)+"'" );
-
-Log("3");
-InitBattleSetup( "Overworld_A" );
-Log("4");
-initBattleRenderer();
-Log("5");
-
-//MessageBox( "active images: '"+str(numimagehandles)+"'" );
-
-int D=8;
-
-/**
- * When we make this into it's own happy-function, remember to change all of the
- * [0] references to [topmost_active_actor] references.  Bitch.
- *
- * Maybe.
- *
- * Make sure the inactive-bump-to-1 thing works well.
- */
-while( 8==D )
-{
-    Render();
-    RenderBattle();
-    ShowPage();
-
-    if( key[SCAN_Q] )
-    {
-        D=0113;
-        __sully_battle_flag = 0;
-
-        endOfBattle();
-    }
-
-//  BasicTohit( SelectRandomAlly(1), PARTY_ALLY, SelectRandomEnemy(1), PARTY_ENEMY, Random(0,1) );
-//  BasicTohit( SelectRandomEnemy(1), PARTY_ENEMY, SelectRandomAlly(1), PARTY_ALLY, Random(0,1) );
-
-    if( !battle_queue_zero_count() )
-    {
-
-        /// we must wait until the pretty battle effects from the previous
-        /// action are done before trying to resolve the next action!
-        if( !AreBattleEffectsRendering() )
-        {
-            advance_battle_queue_to_next_action();
-        }
-    }
-    else
-    {
-        /// if the top zero-time dude is inactive,
-        /// knock him up to time 1 for my sanity's sake.
-        if( !BattleQueueActorIsActive(0) )
-        {
-            battle_queue[0].time = 1;
-        }
-
-        else if( battle_queue[0].action == BACT_CHARGE )
-        {
-            ResolveAction( battle_queue[0].batent_ref, battle_queue[0].batent_party, battle_queue[0].data );
-            pop_battle_queue();
-        }
-
-        /// if the top zero-time dude is an enemy, trigger their AI.
-        else if( battle_queue[0].batent_party == PARTY_ENEMY )
-        {
-            if( strcmp( master_enemy[battle_queue[0].batent_ref].ai,"") )
-            {
-                if( FunctionExists(master_enemy[battle_queue[0].batent_ref].ai) )
-                {
-                    SetCurrentQueueIdxForAI(0);
-                    CallFunction( master_enemy[battle_queue[0].batent_ref].ai );
-                }
-            }
-            else
-            {
-                SetCurrentQueueIdxForAI(0);
-                DefaultEnemyAI();
-            }
 /*
-            if( !CheckForAISet(battle_queue[0].batent_ref) )
-            {
-                Errorhandler( "Main Battle Loop: There was a mis-set AI.  BAD." );
-                DefaultEnemyAI( 0 );
-            }
-*/
-            pop_battle_queue();
-        }
-        else if( battle_queue[0].batent_party == PARTY_ALLY )
-        {
-            if( BattleMenuIsOff() )
-            {
-                TurnBattleMenuOn( battle_queue[0].batent_ref );
-            }
-
-            //MessageBox( "Ally turn: "+bat_getName( battle_queue[0].batent_ref, battle_queue[0].batent_party )+"!!!" );
-            //pop_battle_queue();
-        }
-        else if( battle_queue[0].batent_party == PARTY_NULL )
-        {
-            /// something, like a status ailment, just expired.  Deal with it.
-            HandleBattleQueueSpecialEffectExpiry( 0 );
-        }
-        else
-        {
-            ErrorHandler( "Main battle loop: unknown party ("+str(battle_queue[0].batent_party)+") is trying to take an action!  onoes!" );
-        }
-    }
-}
-
-Log("6");
-
 start();
 
 return;
-    int i, ent;
+    
 
 GrantSkill( "Darin", "Sword_Dance" );
 GrantSkill( "Darin", "Cleave" );
@@ -301,10 +190,8 @@ Log( "==========" );
 MessageBox( "CHOWN'D!" );
 
 return;
-
-_mapwrap_on = 0;
-V1_MapSwitch("CAVE.MAP",56,182,TBLACK);
-return;
+*/
+    int i, ent;
 
     for( i=0; i<PartySize(); i++ )
     {

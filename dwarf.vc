@@ -10,20 +10,20 @@ void Start()
     SaveDisable(); //cannot save in towns.
     InitMap();
     V1_StartMusic( "res/music/DWARVES.IT" );
-	arMapTemp[0] = 0; // really long awkward conversation flag
-	arMapTemp[1] = 0; // secret-teller flag
-	if (flags[F_LOVE_ESCAPE]) { // That one guy got a pot!
-		SetTile(115,82,2,276);
-		SetObs(115,82,20);
-	}
-	if (!flags[F_DWARF_PAXTON_JOIN]) {	
-		// lance and paxton are facing off in the church. We'll store 
-		// their entity numbers in temporary map variables, since we
-		// only need them for this map.
-		arMapTemp[DWARFVILLE_PAXTON] = EntitySpawn(87,132,"res/chrs/paxton.chr");
-		arMapTemp[DWARFVILLE_LANCE] = EntitySpawn(87,138,"res/chrs/lance.chr");
-		entity.face[arMapTemp[DWARFVILLE_LANCE]] = FACE_UP;
-	}
+    arMapTemp[0] = 0; // really long awkward conversation flag
+    arMapTemp[1] = 0; // secret-teller flag
+    if (flags[F_LOVE_ESCAPE]) { // That one guy got a pot!
+        SetTile(115,82,2,276);
+        SetObs(115,82,20);
+    }
+    if (!flags[F_DWARF_PAXTON_JOIN]) {  
+        // lance and paxton are facing off in the church. We'll store 
+        // their entity numbers in temporary map variables, since we
+        // only need them for this map.
+        arMapTemp[DWARFVILLE_PAXTON] = EntitySpawn(87,132,"res/chrs/paxton.chr");
+        arMapTemp[DWARFVILLE_LANCE] = EntitySpawn(87,138,"res/chrs/lance.chr");
+        entity.face[arMapTemp[DWARFVILLE_LANCE]] = FACE_UP;
+    }
     Banner("Dwarfville: City of Dwarves.",300);
 }
 
@@ -70,9 +70,9 @@ void warp_doorN_in() { warp(185,57,TCROSS); }   // 27
 void warp_doorN_out() { warp(51,44,TCROSS); }
 
 void warp_doorO_in() { 
-	TextBox(T_SANCHO,"This door wasn't implemented for some 
-					"reason.",
-					"Isn't that terribly disheartening?");
+    TextBox(T_SANCHO,"This door wasn't implemented for some 
+                    "reason.",
+                    "Isn't that terribly disheartening?");
 }      // 29
 void warp_doorO_out() { warp(55,43,TCROSS); }
 
@@ -91,507 +91,507 @@ void to_sand_cave() {
 }
 
 void Signpost() {
-	EntStart();
-	TextBox(0,	"City of the Dwarves","",				 
-				"Watch your step!");
-	EntFinish();
+    EntStart();
+    TextBox(0,  "City of the Dwarves","",                
+                "Watch your step!");
+    EntFinish();
 }
 
 void EmptyChest() {
-	EntStart();
-	TextBox(0,	"It's empty.","","");
-	EntFinish();
+    EntStart();
+    TextBox(0,  "It's empty.","","");
+    EntFinish();
 }
 
 
 void Dwarf1() {
-	EntStart(); 
-	if (!flags[F_LOVE_ESCAPE]) { // first time in
-		TextBox(0,"Welcome to the Village of the Dwarves,",
-				  "where we are shaking with outrage at",				 
-				  "this wave of thievery!");
-		Wait(100);
-		TextBox(0,"See how I incorporated current events ",
-				  "into my greeting?",				 
-				  "I'm so good at this!");
-	}
-	else { // after escaping from the love shack
-		TextBox(0,"Welcome to the Village of the Dwarves!","","");		
-		TextBox(T_DARIN,"But the sign said 'City of Dwarves.'","","");
-		TextBox(0,"Yeah, well, we're working on it.","","");		
-	}	
-	EntFinish();
+    EntStart(); 
+    if (!flags[F_LOVE_ESCAPE]) { // first time in
+        TextBox(0,"Welcome to the Village of the Dwarves,",
+                  "where we are shaking with outrage at",                
+                  "this wave of thievery!");
+        Wait(100);
+        TextBox(0,"See how I incorporated current events ",
+                  "into my greeting?",               
+                  "I'm so good at this!");
+    }
+    else { // after escaping from the love shack
+        TextBox(0,"Welcome to the Village of the Dwarves!","","");      
+        TextBox(T_DARIN,"But the sign said 'City of Dwarves.'","","");
+        TextBox(0,"Yeah, well, we're working on it.","","");        
+    }   
+    EntFinish();
 }
 
 
 
 
 void Dwarf2() {
-	EntStart();
-	if (!flags[F_LOVE_ESCAPE]) { // first time in
-		TextBox(0,"More humans! Are you with the guy who",
-				  "just stole all our stuff?","");
-		TextBox(T_DARIN,"I can't think of any time when it would",		        
-						"make sense to answer 'yes' to that",
-						"question.");
-	}
-	else if (!flags[F_LAB_BLOWN_UP]) { // after escaping from the love shack, before wrecking lab
-		TextBoxM(0,"We're gradually recovering from having all",
-		          "of our dwarven gold stolen.",
-		          "If you could donate anything to help us rebuild,");		
-		TextBox(0,"greatly appreciated.","","");		
-		TextBox(T_DARIN,"I have gold, but it's not dwarven gold.","","");		
-	}	
-	else {
-		TextBox(0, "Whoa! A while back, the whole mountain shook,",
-	                "and all this water came rushing down!","");
-	}
-	EntFinish();
+    EntStart();
+    if (!flags[F_LOVE_ESCAPE]) { // first time in
+        TextBox(0,"More humans! Are you with the guy who",
+                  "just stole all our stuff?","");
+        TextBox(T_DARIN,"I can't think of any time when it would",              
+                        "make sense to answer 'yes' to that",
+                        "question.");
+    }
+    else if (!flags[F_LAB_BLOWN_UP]) { // after escaping from the love shack, before wrecking lab
+        TextBoxM(0,"We're gradually recovering from having all",
+                  "of our dwarven gold stolen.",
+                  "If you could donate anything to help us rebuild,");      
+        TextBox(0,"greatly appreciated.","","");        
+        TextBox(T_DARIN,"I have gold, but it's not dwarven gold.","","");       
+    }   
+    else {
+        TextBox(0, "Whoa! A while back, the whole mountain shook,",
+                    "and all this water came rushing down!","");
+    }
+    EntFinish();
 }
 
 void Dwarf3() {
-	EntStart();
-	if (!flags[F_LOVE_ESCAPE]) { // first time in
-		TextBox(0,"This is terrible! I told them we shouldn't",
-				  "have left all those treasure chests just",				 
-				  "lying around!");
-	}	
-	else if (!arMapTemp[0]) {		
-		TextBox(0,"Oh, hey, it's you again.","","");
-		TextBox(T_DARIN,"Yup, I thought I'd come back and see",
-						"how things were going down here.","");
-		TextBoxM(0,	"That's nice of you.","",
-					"We're, uh, we're not doing too bad.");
-		TextBox(0,	"You know, we had that guy come by and take.",
-					"all our stuff, but we're doing OK since then.","");
-		TextBox(T_DARIN,"It's just stuff, right?","","");					
-		TextBox(0,	"Right, exactly, yeah. Like, I was pretty upset",
-					"about it at the time, but looking back, it",
-					"could have been a lot worse.");					
-		TextBox(T_DARIN,"Yeah, definitely.","","");					
-		TextBox(0,	"So, how are things going topside?","","");
-		if (!flags[F_LAB_BLOWN_UP]) { 
-			TextBox(T_DARIN,"It's been kind of scary, actually!",
-							"I'm not really used to this heroing thing","");							
-			TextBox(0,	"Oh, I didn't know you were a hero.",
-						"I guess you can sort of tell, though, you've",
-						"got those...things.");				
-			TextBox(T_DARIN,"These things, you mean?","","");
-			TextBox(0,	"Yeah! What's up with those, anyway?","","");				
-			TextBox(T_DARIN,"It's sort of hard to explain.","","");
-			TextBox(0,	"OK, OK. So you said it's looking scary",
-						"up there?","");				
-			TextBox(T_DARIN,"Yeah, there's no water or anything.",
-							"We're all about to go destroy Lord Stan's",
-							"evil factory and save my girlfriend.");
-			TextBoxM(0,	"Well, that went right over my head. But listen,",
-						"it sounds like you've got a lot on your plate,",
-						"so I'll let you go.");				
-			TextBox(T_DARIN,"Thanks, yeah. If you hear any exploding,",
-							"that's just the lab.","");
-			TextBox(0,	"...right, yeah, I'll pass that on.",
-						"Anyhow, it's swell of you to come by. I appreciate",
-						"the conversation.");				
-			TextBox(T_DARIN,"Yeah.","","");
-		}
-		else {
-		
-			TextBox(T_DARIN,"Not bad. I got my girlfriend back from",
-							"Lord Stan.","");		
-			if (CharInParty("Crystal"))
-				TextBox(T_CRYSTAL,"Hi.","","");								
-			TextBoxM(0,	"Is that so? Well, good for you, son!",
-						"A lot of people figure that we're friends",
-						"with Lord Stan since we're sort of neighbors,");				
-			TextBox(0,	"but that's a total misconception. Actually",
-						"we were here a long time before the lab got",
-						"built, and he didn't consult us or anything.");		
-			TextBox(T_DARIN,"Yeah, he's a real jerk! I really want to teach",
-							"him a lesson. We're all going to beat him up!","");		
-			TextBoxM(0,	"You serious? ",
-						"Well, good luck, good luck with that. I don't",
-						"think we can spare anyone to help you out since");		
-			TextBox(0,	"we're still recovering from that time we lost",
-						"all our stuff, you know...","");		
-			TextBox(T_DARIN,"With the thief.","","");		
-			TextBox(0,	"Right, yeah. So, you know, we can't really do",
-						"anything. But we appreciate that! Good luck.","");		
-			TextBox(T_DARIN,"Thanks!","","");		
-		}
-		arMapTemp[0] = 1; // for god's sake don't replay all this
-	}
-	else {
-		if (!flags[F_LAB_BLOWN_UP]) { 						
-			TextBox(0,	"Anyhow, it's good of you to come by. I",
-						"appreciate the conversation.","");				
-			TextBox(T_DARIN,"Yeah.","","");
-		}
-		else {						
-			TextBox(0,	"So, you know, we can't really do anything.",
-						"But we appreciate that! Good luck.","");		
-			TextBox(T_DARIN,"Thanks!","","");		
-		}
-	}
+    EntStart();
+    if (!flags[F_LOVE_ESCAPE]) { // first time in
+        TextBox(0,"This is terrible! I told them we shouldn't",
+                  "have left all those treasure chests just",                
+                  "lying around!");
+    }   
+    else if (!arMapTemp[0]) {       
+        TextBox(0,"Oh, hey, it's you again.","","");
+        TextBox(T_DARIN,"Yup, I thought I'd come back and see",
+                        "how things were going down here.","");
+        TextBoxM(0, "That's nice of you.","",
+                    "We're, uh, we're not doing too bad.");
+        TextBox(0,  "You know, we had that guy come by and take.",
+                    "all our stuff, but we're doing OK since then.","");
+        TextBox(T_DARIN,"It's just stuff, right?","","");                   
+        TextBox(0,  "Right, exactly, yeah. Like, I was pretty upset",
+                    "about it at the time, but looking back, it",
+                    "could have been a lot worse.");                    
+        TextBox(T_DARIN,"Yeah, definitely.","","");                 
+        TextBox(0,  "So, how are things going topside?","","");
+        if (!flags[F_LAB_BLOWN_UP]) { 
+            TextBox(T_DARIN,"It's been kind of scary, actually!",
+                            "I'm not really used to this heroing thing","");                            
+            TextBox(0,  "Oh, I didn't know you were a hero.",
+                        "I guess you can sort of tell, though, you've",
+                        "got those...things.");             
+            TextBox(T_DARIN,"These things, you mean?","","");
+            TextBox(0,  "Yeah! What's up with those, anyway?","","");               
+            TextBox(T_DARIN,"It's sort of hard to explain.","","");
+            TextBox(0,  "OK, OK. So you said it's looking scary",
+                        "up there?","");                
+            TextBox(T_DARIN,"Yeah, there's no water or anything.",
+                            "We're all about to go destroy Lord Stan's",
+                            "evil factory and save my girlfriend.");
+            TextBoxM(0, "Well, that went right over my head. But listen,",
+                        "it sounds like you've got a lot on your plate,",
+                        "so I'll let you go.");             
+            TextBox(T_DARIN,"Thanks, yeah. If you hear any exploding,",
+                            "that's just the lab.","");
+            TextBox(0,  "...right, yeah, I'll pass that on.",
+                        "Anyhow, it's swell of you to come by. I appreciate",
+                        "the conversation.");               
+            TextBox(T_DARIN,"Yeah.","","");
+        }
+        else {
+        
+            TextBox(T_DARIN,"Not bad. I got my girlfriend back from",
+                            "Lord Stan.","");       
+            if (CharInParty("Crystal"))
+                TextBox(T_CRYSTAL,"Hi.","","");                             
+            TextBoxM(0, "Is that so? Well, good for you, son!",
+                        "A lot of people figure that we're friends",
+                        "with Lord Stan since we're sort of neighbors,");               
+            TextBox(0,  "but that's a total misconception. Actually",
+                        "we were here a long time before the lab got",
+                        "built, and he didn't consult us or anything.");        
+            TextBox(T_DARIN,"Yeah, he's a real jerk! I really want to teach",
+                            "him a lesson. We're all going to beat him up!","");        
+            TextBoxM(0, "You serious? ",
+                        "Well, good luck, good luck with that. I don't",
+                        "think we can spare anyone to help you out since");     
+            TextBox(0,  "we're still recovering from that time we lost",
+                        "all our stuff, you know...","");       
+            TextBox(T_DARIN,"With the thief.","","");       
+            TextBox(0,  "Right, yeah. So, you know, we can't really do",
+                        "anything. But we appreciate that! Good luck.","");     
+            TextBox(T_DARIN,"Thanks!","","");       
+        }
+        arMapTemp[0] = 1; // for god's sake don't replay all this
+    }
+    else {
+        if (!flags[F_LAB_BLOWN_UP]) {                       
+            TextBox(0,  "Anyhow, it's good of you to come by. I",
+                        "appreciate the conversation.","");             
+            TextBox(T_DARIN,"Yeah.","","");
+        }
+        else {                      
+            TextBox(0,  "So, you know, we can't really do anything.",
+                        "But we appreciate that! Good luck.","");       
+            TextBox(T_DARIN,"Thanks!","","");       
+        }
+    }
 
-	EntFinish();
+    EntFinish();
 }
 
 void Dwarf4() {
-	EntStart();
-				
-	TextBoxM(0,	"Dwarven metalworking is renowned for its",
-				"strength and durability the world over!","");		
-	TextBox(0,	"It's actually not that great, but no one can",
-				"resist our dwarven PR.","");				
-	EntFinish();
+    EntStart();
+                
+    TextBoxM(0, "Dwarven metalworking is renowned for its",
+                "strength and durability the world over!","");      
+    TextBox(0,  "It's actually not that great, but no one can",
+                "resist our dwarven PR.","");               
+    EntFinish();
 }
 
 void Dwarf5() {
-	EntStart();
-	if (!flags[F_LOVE_ESCAPE]) { 
-					
-		TextBox(0,	"Oh, this is terrible! All our wares have",
-					"been pilfered."
-					"There's not a thing left to sell.");		
-	}
-	else {			
-		TextBox(0,	"Welcome to the Dwarven Forge, where the 
-					"weapons are better than they are in Rodne, ",
-					"but worse than they are in Seaview.");		
-		if (CharInParty("Galfrey")) {
-								
-			TextBox(T_GALFREY,	"What's with these weapons? They're so tiny",
-								"that it looks ridiculous! I wouldn't want",
-								"to be seen with one of these dinky things.");		
-			TextBox(0,	"Well, they are made for dwarves. Just remember:",
-						"It's not the size of your weapon that counts,",
-						"it's how large a numerical bonus it provides!");										
-		}
-		else if (CharInParty("Sara")) {
-			TextBox(T_SARA,	"You should probably get a new slogan.","","");				
-		}
-	}
-	EntFinish();
+    EntStart();
+    if (!flags[F_LOVE_ESCAPE]) { 
+                    
+        TextBox(0,  "Oh, this is terrible! All our wares have",
+                    "been pilfered."
+                    "There's not a thing left to sell.");       
+    }
+    else {          
+        TextBox(0,  "Welcome to the Dwarven Forge, where the 
+                    "weapons are better than they are in Rodne, ",
+                    "but worse than they are in Seaview.");     
+        if (CharInParty("Galfrey")) {
+                                
+            TextBox(T_GALFREY,  "What's with these weapons? They're so tiny",
+                                "that it looks ridiculous! I wouldn't want",
+                                "to be seen with one of these dinky things.");      
+            TextBox(0,  "Well, they are made for dwarves. Just remember:",
+                        "It's not the size of your weapon that counts,",
+                        "it's how large a numerical bonus it provides!");                                       
+        }
+        else if (CharInParty("Sara")) {
+            TextBox(T_SARA, "You should probably get a new slogan.","","");             
+        }
+    }
+    EntFinish();
 }
 
 void Dwarf6() {
-	EntStart();	
-	TextBox(0,	"Welcome to the Village of the Dwarves!","","");		
-	TextBox(T_DARIN,"You know, there's a guy at the entrance",
-					"who's saying the same thing.","");				
-	TextBox(0,	"There is!?","I'll fix him!","");		
-	EntFinish();	
+    EntStart(); 
+    TextBox(0,  "Welcome to the Village of the Dwarves!","","");        
+    TextBox(T_DARIN,"You know, there's a guy at the entrance",
+                    "who's saying the same thing.","");             
+    TextBox(0,  "There is!?","I'll fix him!","");       
+    EntFinish();    
 }
 
 void Dwarf7() {
-	EntStart();
-	if (!flags[F_LOVE_ESCAPE]) { 
-		TextBoxM(0,	"Greetings, Gangly Ones. I'm afraid we are ",
-					"ill-equipped to receive visitors right now.","");		
-		TextBoxM(0,	"If you could return later on I would",
-					"endeavor to be a better host at that time.","");		
-	}
-	else {				
-		if (!prompt(0,	"Tell me, Gangly Ones, would you like to",
-						"hear the story of how the dwarves came to",
-						"settle in this land?","OK|No")) {
-					
-			if (prompt(0,	"Really? You don't mind if I tell you, then?",
-							"","","Well...|It's fine")) {							
-				TextBoxM(0,	"It all began in ancient times, when the",
-							"world was young. Everybody was on dial-up,",
-							"and people still used Netscape.");		
-				TextBoxM(0,	"As you well know, there are many worlds",
-							"besides this one.",
-							"Among those, a jewel in the blue ocean,");
-				TextBoxM(0,	"is the land of the dwarves.",
-							"It was a fine land, and we miss it dearly.",
-							"However, critical portions of the dwarven");
-				TextBoxM(0	"kingdom were never implemented.",
-							"Many of us set out in ships in search of",
-							"a complete land, that we might bring back");		
-				TextBoxM(0,	"its secrets to finish our own.",
-							"Unfortunately, our ship was blown off",
-							"course and beached, and we have been");		
-				TextBox(0,	"stranded here ever since."
-							"One day we will repair our ship and set", 
-							"out once again in search of our homeland.");
-			}
-			else 
-				TextBox(0,	"Curses! I shouldn't have asked that.",
-							"second question.","");		
-		}
-	}
-	EntFinish();	
+    EntStart();
+    if (!flags[F_LOVE_ESCAPE]) { 
+        TextBoxM(0, "Greetings, Gangly Ones. I'm afraid we are ",
+                    "ill-equipped to receive visitors right now.","");      
+        TextBoxM(0, "If you could return later on I would",
+                    "endeavor to be a better host at that time.","");       
+    }
+    else {              
+        if (!prompt(0,  "Tell me, Gangly Ones, would you like to",
+                        "hear the story of how the dwarves came to",
+                        "settle in this land?","OK|No")) {
+                    
+            if (prompt(0,   "Really? You don't mind if I tell you, then?",
+                            "","","Well...|It's fine")) {                           
+                TextBoxM(0, "It all began in ancient times, when the",
+                            "world was young. Everybody was on dial-up,",
+                            "and people still used Netscape.");     
+                TextBoxM(0, "As you well know, there are many worlds",
+                            "besides this one.",
+                            "Among those, a jewel in the blue ocean,");
+                TextBoxM(0, "is the land of the dwarves.",
+                            "It was a fine land, and we miss it dearly.",
+                            "However, critical portions of the dwarven");
+                TextBoxM(0  "kingdom were never implemented.",
+                            "Many of us set out in ships in search of",
+                            "a complete land, that we might bring back");       
+                TextBoxM(0, "its secrets to finish our own.",
+                            "Unfortunately, our ship was blown off",
+                            "course and beached, and we have been");        
+                TextBox(0,  "stranded here ever since."
+                            "One day we will repair our ship and set", 
+                            "out once again in search of our homeland.");
+            }
+            else 
+                TextBox(0,  "Curses! I shouldn't have asked that.",
+                            "second question.","");     
+        }
+    }
+    EntFinish();    
 }
 
 void Dwarf8() {
-	EntStart();	
-	if (!flags[F_LOVE_ESCAPE]) { 
-		if (!CharInParty("Paxton")) {
-			TextBox(0,	"Are you looking for the human priest?",
-						"He's in the church. It's through the big",
-						"door to your left.");		
-		}
-		else {
-			TextBox(0,	"Are you leaving us, Paxton?","","",);										
-			TextBox(T_PAXTON,	"There is no refusing destiny. One day I",
-								"may return, but for now necessity beckons",
-								"me back to the sunlit world.");		
-		}
-	}	
-	else {
-		if (!CharInParty("Paxton")) {
-			TextBox(0,	"Hey, where's Paxton?","","");		
-		}
-		else {						
-			TextBox(0,	"Now that Stan's seal is gone, it's easy",
-						"to travel between here and Bumsville.","");		
-		}		
-	}
-	EntFinish();	
+    EntStart(); 
+    if (!flags[F_LOVE_ESCAPE]) { 
+        if (!CharInParty("Paxton")) {
+            TextBox(0,  "Are you looking for the human priest?",
+                        "He's in the church. It's through the big",
+                        "door to your left.");      
+        }
+        else {
+            TextBox(0,  "Are you leaving us, Paxton?","","",);                                      
+            TextBox(T_PAXTON,   "There is no refusing destiny. One day I",
+                                "may return, but for now necessity beckons",
+                                "me back to the sunlit world.");        
+        }
+    }   
+    else {
+        if (!CharInParty("Paxton")) {
+            TextBox(0,  "Hey, where's Paxton?","","");      
+        }
+        else {                      
+            TextBox(0,  "Now that Stan's seal is gone, it's easy",
+                        "to travel between here and Bumsville.","");        
+        }       
+    }
+    EntFinish();    
 }
 
 void Dwarf9() {
-	EntStart();	
-	if (!flags[F_LAB_BLOWN_UP]) { 
-		TextBox(0,	"Our dwarven treasury is empty!",								
-					"A treasury without treasure is like a",
-					"hydraulic drill without a coring winch!");		
-		if (CharInParty("Sara")) {
-			TextBox(T_SARA,	"Gasp!","","");			
-		}
-	}
-	else {
-		TextBox(0,	"There was a huge rushing sound and then",								
-					"the entire place was awash in water!",
-					"Luckily it all seeped into the earth.");			
-		TextBox(T_DARIN,	"Whoops. Are you guys okay?","","",);										
-		TextBox(0,	"No one was hurt, but I don't think my",								
-					"itsy bitsy spider will ever be the",
-					"same.");			
+    EntStart(); 
+    if (!flags[F_LAB_BLOWN_UP]) { 
+        TextBox(0,  "Our dwarven treasury is empty!",                               
+                    "A treasury without treasure is like a",
+                    "hydraulic drill without a coring winch!");     
+        if (CharInParty("Sara")) {
+            TextBox(T_SARA, "Gasp!","","");         
+        }
+    }
+    else {
+        TextBox(0,  "There was a huge rushing sound and then",                              
+                    "the entire place was awash in water!",
+                    "Luckily it all seeped into the earth.");           
+        TextBox(T_DARIN,    "Whoops. Are you guys okay?","","",);                                       
+        TextBox(0,  "No one was hurt, but I don't think my",                                
+                    "itsy bitsy spider will ever be the",
+                    "same.");           
 
-	}
-	EntFinish();	
+    }
+    EntFinish();    
 }
 
 void Dwarf10() {
-	EntStart();	
-	TextBoxM(0,	"Dwarves love to dig!",								
-				"Come sing the dwarven digging song",
-				"with us.");		
-	TextBox(0,	"Dig, dig, move that earth.",								
-				"Dig it up for all you're worth!",
-				"I CAN'T HEAR YOU!");		
-	if (CharInParty("Galfrey")) {
-		TextBox(T_GALFREY,	"I don't like the digging song.","","");										
-	}
-	EntFinish();	
+    EntStart(); 
+    TextBoxM(0, "Dwarves love to dig!",                             
+                "Come sing the dwarven digging song",
+                "with us.");        
+    TextBox(0,  "Dig, dig, move that earth.",                               
+                "Dig it up for all you're worth!",
+                "I CAN'T HEAR YOU!");       
+    if (CharInParty("Galfrey")) {
+        TextBox(T_GALFREY,  "I don't like the digging song.","","");                                        
+    }
+    EntFinish();    
 }
 
 void Dwarf11() {
-	EntStart();	
-	if (!flags[F_LAB_BLOWN_UP]) { 
-		TextBox(0,	"I'm not really sold on this whole Vecna",
-					"thing. What do I get for signing up?",
-					"Is this one of those orgy religions?");		
-		if (CharInParty("Paxton")) {							
-			TextBox(T_PAXTON,	"The glory of penitent self-denial is more",
-								"satisfying than a thousand orgies.","");										
-		}
-	}
-	else { 
-		TextBox(0,	"I guess Paxton isn't coming back.",
-					"Maybe we could convert this place into",
-					"a rec room.");		
-	}
-	EntFinish();	
+    EntStart(); 
+    if (!flags[F_LAB_BLOWN_UP]) { 
+        TextBox(0,  "I'm not really sold on this whole Vecna",
+                    "thing. What do I get for signing up?",
+                    "Is this one of those orgy religions?");        
+        if (CharInParty("Paxton")) {                            
+            TextBox(T_PAXTON,   "The glory of penitent self-denial is more",
+                                "satisfying than a thousand orgies.","");                                       
+        }
+    }
+    else { 
+        TextBox(0,  "I guess Paxton isn't coming back.",
+                    "Maybe we could convert this place into",
+                    "a rec room.");     
+    }
+    EntFinish();    
 }
 
 void Dwarf12() {
-	EntStart();	
-	if (arMapTemp[1] == 0) { // haven't spoken to him yet
-		if (!prompt(0,	"Hey, do you want to hear a secret?","","","Yes|No")) {
-			TextBoxM(0,	"The caves go much deeper than this.",
-						"It gets really scary farther in, but they",
-						"say that there's something really");			
-			TextBox(0,	"amazing at the bottom. ",
-						"Makes you wonder, huh?","");
-			arMapTemp[1] == 2;
-		}			
-		else {
-			TextBox(0,	"Who says 'no' to a question like that?",
-						"I'm offended!","");
-			arMapTemp[1] == 1;
-		}
-	}
-	else if (arMapTemp[1] == 1) { // refused secret already
-		if (!prompt(0,	"Well, look who it is.",
-						"You want to hear the secret after all,",
-						"right?","Yes|No")) {
-			TextBox(0,	"Too bad!",
-						"Ahahaha!","");				
-		}			
-		else {
-			TextBox(0,	"I bet you think you're funny.",
-						"Get lost!","");
-		}
-	}
-	else if (arMapTemp[1] == 2) { // heard secret already
-		TextBox(0,	"Makes you wonder, huh?","","");
-	}
-	EntFinish();	
+    EntStart(); 
+    if (arMapTemp[1] == 0) { // haven't spoken to him yet
+        if (!prompt(0,  "Hey, do you want to hear a secret?","","","Yes|No")) {
+            TextBoxM(0, "The caves go much deeper than this.",
+                        "It gets really scary farther in, but they",
+                        "say that there's something really");           
+            TextBox(0,  "amazing at the bottom. ",
+                        "Makes you wonder, huh?","");
+            arMapTemp[1] == 2;
+        }           
+        else {
+            TextBox(0,  "Who says 'no' to a question like that?",
+                        "I'm offended!","");
+            arMapTemp[1] == 1;
+        }
+    }
+    else if (arMapTemp[1] == 1) { // refused secret already
+        if (!prompt(0,  "Well, look who it is.",
+                        "You want to hear the secret after all,",
+                        "right?","Yes|No")) {
+            TextBox(0,  "Too bad!",
+                        "Ahahaha!","");             
+        }           
+        else {
+            TextBox(0,  "I bet you think you're funny.",
+                        "Get lost!","");
+        }
+    }
+    else if (arMapTemp[1] == 2) { // heard secret already
+        TextBox(0,  "Makes you wonder, huh?","","");
+    }
+    EntFinish();    
 }
 
 void Dwarf13() {
-	EntStart();	
-	if (!flags[F_LAB_BLOWN_UP]) { 					
-		TextBox(0,	"Damn you, humans! Why can't you leave us",
-					"in peace with our cache of amazing",
-					"treasure?");		
-	}
-	else { 
-		TextBox(0,	"I won't forgive you humans for stealing",
-					"all our stuff. As soon as our ship is",
-					"repaired, I'm out of here!");		
-	}
-	EntFinish();	
+    EntStart(); 
+    if (!flags[F_LAB_BLOWN_UP]) {                   
+        TextBox(0,  "Damn you, humans! Why can't you leave us",
+                    "in peace with our cache of amazing",
+                    "treasure?");       
+    }
+    else { 
+        TextBox(0,  "I won't forgive you humans for stealing",
+                    "all our stuff. As soon as our ship is",
+                    "repaired, I'm out of here!");      
+    }
+    EntFinish();    
 }
 
 void Dwarf14() {
-	EntStart();	
-	if (!flags[F_LAB_BLOWN_UP]) { 						
-		TextBox(0,	"A guy in a vest ran through here and",
-					"grabbed the bottle right out of my hand!",
-					"I feel so violated.");		
-	}
-	else {
-		TextBox(0,	"If I were a bottle of Smirnoff Twisted",
-					"V, I would be Green Apple flavor.",
-					"Because I'm sassy!");		
-	}
-	EntFinish();	
+    EntStart(); 
+    if (!flags[F_LAB_BLOWN_UP]) {                       
+        TextBox(0,  "A guy in a vest ran through here and",
+                    "grabbed the bottle right out of my hand!",
+                    "I feel so violated.");     
+    }
+    else {
+        TextBox(0,  "If I were a bottle of Smirnoff Twisted",
+                    "V, I would be Green Apple flavor.",
+                    "Because I'm sassy!");      
+    }
+    EntFinish();    
 }
 
 void Dwarf15() {
-	EntStart();	
-	TextBoxM(0,	"Are you surprised that dwarves can use",
-				"magic? When you broaden your horizons",
-				"you may discover that the world is a very");		
-	TextBox(0,	"different place from how it seemed!","","");		
-	EntFinish();	
+    EntStart(); 
+    TextBoxM(0, "Are you surprised that dwarves can use",
+                "magic? When you broaden your horizons",
+                "you may discover that the world is a very");       
+    TextBox(0,  "different place from how it seemed!","","");       
+    EntFinish();    
 }
 
 void Dwarf16() {
-	EntStart();	
-	TextBox(0,	"Hey, buddy. Do you want to split this",
-				"Smirnoff Twisted V Watermelon with me?",
-				"I don't think I can finish the whole thing.");		
-	EntFinish();	
+    EntStart(); 
+    TextBox(0,  "Hey, buddy. Do you want to split this",
+                "Smirnoff Twisted V Watermelon with me?",
+                "I don't think I can finish the whole thing.");     
+    EntFinish();    
 }
 
 void Dwarf17() {
-	EntStart();	
-	if (!flags[F_LOVE_ESCAPE]) { 
-		TextBox(0,	"This is my house. If it looks a bit spare,",
-					"that's because a guy just ran in here and",
-					"TOOK ALL MY STUFF.");		
-	}
-	else { 
-		TextBoxM(0,	"Well, it's been tough, but I'm rebuilding.",
-					"Look, I got a pot!","");		
-		TextBox(0,	"It's, um, it has a...",
-					"You can put things in it.","");		
-	}
-	EntFinish();	
+    EntStart(); 
+    if (!flags[F_LOVE_ESCAPE]) { 
+        TextBox(0,  "This is my house. If it looks a bit spare,",
+                    "that's because a guy just ran in here and",
+                    "TOOK ALL MY STUFF.");      
+    }
+    else { 
+        TextBoxM(0, "Well, it's been tough, but I'm rebuilding.",
+                    "Look, I got a pot!","");       
+        TextBox(0,  "It's, um, it has a...",
+                    "You can put things in it.","");        
+    }
+    EntFinish();    
 }
 
 void Innkeeper() {
-	EntStart();	
-	if (!prompt(0,	"Welcome to Six Feet Under!",
-				"For only 50 " +moneyname+ " you can enjoy a dirt",
-				"nap in one of our lovely suites!","OK|No")) {
-		if (money < 50) {
-			TextBox(0,	"Hey, you don't have 50 " +moneyname+ "!",
-						"Don't toy with my emotions that way!","");
-		}
-		else {
-		    SoundChaChing(); 
-		    TakeMoney(50);			
-			TextBox(0,	"Sweet dreams!","","");		    
-			Inn();
-			TextBox(0,	"I hope you enjoyed your stay.",
-						"Recommend us to all your friends!","");		    			
-			if (CharInParty("Galfrey")) {
-				TextBox(T_GALFREY,	"I don't have any friends.","","");		    			
-			}
-		}
-	}
-	else {			
-		TextBox(0,	"If you change your mind, you know where",
-					"we are!","");
-	}	
-	EntFinish();	
+    EntStart(); 
+    if (!prompt(0,  "Welcome to Six Feet Under!",
+                "For only 50 " +moneyname+ " you can enjoy a dirt",
+                "nap in one of our lovely suites!","OK|No")) {
+        if (money < 50) {
+            TextBox(0,  "Hey, you don't have 50 " +moneyname+ "!",
+                        "Don't toy with my emotions that way!","");
+        }
+        else {
+            SoundChaChing(); 
+            TakeMoney(50);          
+            TextBox(0,  "Sweet dreams!","","");         
+            Inn();
+            TextBox(0,  "I hope you enjoyed your stay.",
+                        "Recommend us to all your friends!","");                        
+            if (CharInParty("Galfrey")) {
+                TextBox(T_GALFREY,  "I don't have any friends.","","");                     
+            }
+        }
+    }
+    else {          
+        TextBox(0,  "If you change your mind, you know where",
+                    "we are!","");
+    }   
+    EntFinish();    
 }
 
 void Bartender() {
-	EntStart();	
-	TextBoxM(0,	"Well now, human visitors! That's a rarity.",
-				"Sit down and take a load off!","");		
-	TextBox(0,	"We dwarves are a hearty folk. None of",
-				"that swill you call ale down here! For us",
-				"it's nothing but Smirnoff Twisted V!");		
-	EntFinish();	
+    EntStart(); 
+    TextBoxM(0, "Well now, human visitors! That's a rarity.",
+                "Sit down and take a load off!","");        
+    TextBox(0,  "We dwarves are a hearty folk. None of",
+                "that swill you call ale down here! For us",
+                "it's nothing but Smirnoff Twisted V!");        
+    EntFinish();    
 }
 
 void DwarfWeapon() {
-	EntStart();	
-	if (!flags[F_LOVE_ESCAPE]) { 
-		TextBox(0,	"Here at the Dwarven Forge, we have the",
-					"best weapon to suit your needs!","");		
-		Wait(100);
-		TextBox(0,	"...at least, that's what I'd like to say.",
-					"However, a burglar just made off with",
-					"our entire stock.");
-		TextBox(T_DARIN,	"What about those weapons on the walls?","","");
-		TextBox(0,	"Oh, a wise guy, huh?","Get out of here, you!","");		
-	}
-	else { 
-		TextBox(0,	"I'm supposed to sell you weapons, but",
-					"this store hasn't been implemented",
-					"yet.");		
-	}
-	EntFinish();	
+    EntStart(); 
+    if (!flags[F_LOVE_ESCAPE]) { 
+        TextBox(0,  "Here at the Dwarven Forge, we have the",
+                    "best weapon to suit your needs!","");      
+        Wait(100);
+        TextBox(0,  "...at least, that's what I'd like to say.",
+                    "However, a burglar just made off with",
+                    "our entire stock.");
+        TextBox(T_DARIN,    "What about those weapons on the walls?","","");
+        TextBox(0,  "Oh, a wise guy, huh?","Get out of here, you!","");     
+    }
+    else { 
+        TextBox(0,  "I'm supposed to sell you weapons, but",
+                    "this store hasn't been implemented",
+                    "yet.");        
+    }
+    EntFinish();    
 }
 
 void DwarfArmor() {
-	EntStart();	
-	if (!flags[F_LOVE_ESCAPE]) { 
-		TextBox(0,	"We're in a bit of a bind here.",
-					"Could you maybe come back next week?","");		
-	}
-	else { 
-		TextBox(0,	"I'm supposed to sell you armor, but",
-					"this store hasn't been implemented",
-					"yet.");		
-	}
-	EntFinish();	
+    EntStart(); 
+    if (!flags[F_LOVE_ESCAPE]) { 
+        TextBox(0,  "We're in a bit of a bind here.",
+                    "Could you maybe come back next week?","");     
+    }
+    else { 
+        TextBox(0,  "I'm supposed to sell you armor, but",
+                    "this store hasn't been implemented",
+                    "yet.");        
+    }
+    EntFinish();    
 }
 
 void DwarfItem() {
-	EntStart();	
-	TextBox(0,	"I'm supposed to sell you items, but",
-				"this store hasn't been implemented",
-				"yet.");		
-	EntFinish();	
+    EntStart(); 
+    TextBox(0,  "I'm supposed to sell you items, but",
+                "this store hasn't been implemented",
+                "yet.");        
+    EntFinish();    
 }
 
 void DwarfMagic() {
-	EntStart();	
-	TextBox(0,	"I'm supposed to sell you magic, but",
-				"this store hasn't been implemented",
-				"yet.");		
-	EntFinish();	
+    EntStart(); 
+    TextBox(0,  "I'm supposed to sell you magic, but",
+                "this store hasn't been implemented",
+                "yet.");        
+    EntFinish();    
 }
 
 
@@ -602,251 +602,251 @@ void DwarfMagic() {
 
 // The whizbang blast effect in the Paxton cutscene.
 void PaxtonBlasto() {
-	int bolthandle = LoadAnimation("res/images/story_fx/bolt.png", 8, 32);
-	int bursthandle = LoadAnimation("res/images/story_fx/burst.png", 32, 32);
+    int bolthandle = LoadAnimation("res/images/story_fx/bolt.png", 8, 32);
+    int bursthandle = LoadAnimation("res/images/story_fx/burst.png", 32, 32);
 
-	PaxtonThunderbolt(bolthandle, bursthandle, 84*16 - xwin, 135*16 - ywin);
-	PaxtonThunderbolt(bolthandle, bursthandle, 87*16 - xwin, 137*16 - ywin);
-	PaxtonThunderbolt(bolthandle, bursthandle, 90*16 - xwin, 136*16 - ywin);
-	PaxtonThunderbolt(bolthandle, bursthandle, 88*16 - xwin, 135*16 - ywin);	
+    PaxtonThunderbolt(bolthandle, bursthandle, 84*16 - xwin, 135*16 - ywin);
+    PaxtonThunderbolt(bolthandle, bursthandle, 87*16 - xwin, 137*16 - ywin);
+    PaxtonThunderbolt(bolthandle, bursthandle, 90*16 - xwin, 136*16 - ywin);
+    PaxtonThunderbolt(bolthandle, bursthandle, 88*16 - xwin, 135*16 - ywin);    
 
-	FreeAnimation(bolthandle);
-	FreeAnimation(bursthandle);
+    FreeAnimation(bolthandle);
+    FreeAnimation(bursthandle);
 }
 
 
 // x and y are in screen coordinates, not map coordinates.
 void PaxtonThunderbolt(int bolthandle, int bursthandle, int boltx, int goaly) {
-	int basetime;
-	int bolty;
-	int boltspeed = 6; // pixels per ms
-	int boltrate = 3; // rate of frame rotation, relative to systemtime (centiseconds)
-	int burstrate = 3; // rate of frame rotation, relative to systemtime (centiseconds)
-		
-	bolty = -32; // totally offscreen to begin with
-	basetime = systemtime;
-	timer = 0;
-	// Bolt flies from top of screen to specified coordinates
-	while (bolty < goaly) {
-		Render();
-		bolty += timer * boltspeed;
-		timer = 0;
-		TBlitFrame(boltx-4, bolty, bolthandle, (systemtime/boltrate)%anims[bolthandle].numframes, screen);
-		ShowPage();		
-	}
-	
-	
-	// Now do the blast shockwave
-	PlaySound(sfx_bomb,100);	
-	timer = 0;
-	while (timer < (burstrate*anims[bursthandle].numframes)) {
-		Render();
-		TBlitFrame(boltx-16, goaly+8, bursthandle, (timer/burstrate)%anims[bursthandle].numframes, screen);
-		ShowPage();		
-	}	
+    int basetime;
+    int bolty;
+    int boltspeed = 6; // pixels per ms
+    int boltrate = 3; // rate of frame rotation, relative to systemtime (centiseconds)
+    int burstrate = 3; // rate of frame rotation, relative to systemtime (centiseconds)
+        
+    bolty = -32; // totally offscreen to begin with
+    basetime = systemtime;
+    timer = 0;
+    // Bolt flies from top of screen to specified coordinates
+    while (bolty < goaly) {
+        Render();
+        bolty += timer * boltspeed;
+        timer = 0;
+        TBlitFrame(boltx-4, bolty, bolthandle, (systemtime/boltrate)%anims[bolthandle].numframes, screen);
+        ShowPage();     
+    }
+    
+    
+    // Now do the blast shockwave
+    PlaySound(sfx_bomb,100);    
+    timer = 0;
+    while (timer < (burstrate*anims[bursthandle].numframes)) {
+        Render();
+        TBlitFrame(boltx-16, goaly+8, bursthandle, (timer/burstrate)%anims[bursthandle].numframes, screen);
+        ShowPage();     
+    }   
 }
 
 void PaxtonDarken() {
-	timer = 0;	
-	PlaySound(sfx_wom,100);	
-	while (timer < 100) { // fade to dim light
-		VCLayerTintScreen(0, 100-(timer/3));	
-		Render();
-		ShowPage();
-	}
-	VCLayerTintScreen(0, 67);		
+    timer = 0;  
+    PlaySound(sfx_wom,100); 
+    while (timer < 100) { // fade to dim light
+        VCLayerTintScreen(0, 100-(timer/3));    
+        Render();
+        ShowPage();
+    }
+    VCLayerTintScreen(0, 67);       
 }
 
 void LancePowerUp(int lance) {
-	int startradius = 200;
-	int flickerrate = 10;
-	int flickerdur = 3;
-	int x = entity.x[lance] + (entity.hotw[lance]/2) - xwin;
-	int y = entity.y[lance] + (entity.hoth[lance]/2) - ywin;
-	int col = RGB(255,0,0);
+    int startradius = 200;
+    int flickerrate = 10;
+    int flickerdur = 3;
+    int x = entity.x[lance] + (entity.hotw[lance]/2) - xwin;
+    int y = entity.y[lance] + (entity.hoth[lance]/2) - ywin;
+    int col = RGB(255,0,0);
 
-	PlaySound(sfx_magic4,100);	
-	timer = 0;
-	while (timer < 100) {
-		Render();
-		if ( (timer/flickerrate) % 2 && timer - (timer/flickerrate*flickerrate) < flickerdur ) 
-			CircleFill(x,y,200 - (timer*2),200 - (timer*2),col,screen);
-		else Circle(x,y,200 - (timer*2),200 - (timer*2),col,screen);
-		ShowPage();
-	}
-	PlaySound(sfx_shing,100);
+    PlaySound(sfx_magic4,100);  
+    timer = 0;
+    while (timer < 100) {
+        Render();
+        if ( (timer/flickerrate) % 2 && timer - (timer/flickerrate*flickerrate) < flickerdur ) 
+            CircleFill(x,y,200 - (timer*2),200 - (timer*2),col,screen);
+        else Circle(x,y,200 - (timer*2),200 - (timer*2),col,screen);
+        ShowPage();
+    }
+    PlaySound(sfx_shing,100);
 }
 
 void PaxtonCutscene() // Paxton confronts Lance, then joins the party
 {
-	int paxton = arMapTemp[DWARFVILLE_PAXTON];
-	int lance = arMapTemp[DWARFVILLE_LANCE];
-	int dexter = GetPartyEntity("Dexter");
-	int vol = V1_GetCurVolume(); 
-	if (!flags[F_DWARF_PAXTON_JOIN]) {
-		// Move Darin into position to watch the scene. We want him at (91,141)				
-		EntityMove(playerent, "PU" + str(entity.y[playerent] - (141*16)) + "L" + str(entity.x[playerent] - (91*16)) + "T");
-		WaitForEntity(playerent);
+    int paxton = arMapTemp[DWARFVILLE_PAXTON];
+    int lance = arMapTemp[DWARFVILLE_LANCE];
+    int dexter = GetPartyEntity("Dexter");
+    int vol = V1_GetCurVolume(); 
+    if (!flags[F_DWARF_PAXTON_JOIN]) {
+        // Move Darin into position to watch the scene. We want him at (91,141)             
+        EntityMove(playerent, "PU" + str(entity.y[playerent] - (141*16)) + "L" + str(entity.x[playerent] - (91*16)) + "T");
+        WaitForEntity(playerent);
 
-		// Move the camera so that it's positioned between lance and paxton, at tile (87,137)		
-		CutsceneOn();
-		camCtrScrollTo(87*16, 137*16, 50);
-		V1_FadeOutMusic(50);
+        // Move the camera so that it's positioned between lance and paxton, at tile (87,137)       
+        CutsceneOn();
+        camCtrScrollTo(87*16, 137*16, 50);
+        V1_FadeOutMusic(50);
 
-		EntityMove(paxton,"D1");
-		WaitForEntity(paxton);
-		
-		TextBoxM(T_PAXTON,	"Villainy!","","");		
-		TextBoxM(T_PAXTON,	"Despicable!","","");		
-		TextBox(T_PAXTON,	"Outrageous!","","");
-		
-		EntityMove(paxton,"D1");
-		WaitForEntity(paxton);
-							
-		TextBoxM(T_PAXTON,	"Never before have I witnessed such an",
-							"outrage! Only the basest of crooks",
-							"would rob a house of God!");
-		TextBox(T_PAXTON,	"Your life and soul hang on your swift",
-							"repentance for these misdeeds!","");
-		
-		TextBox(T_LANCE,	"Wh-what, you mean this stuff?",
-							"No, this is, uh...","");		
-		EntityMove(lance,"Z29");
-		Wait(80);
-		EntityMove(lance,"Z35");
-		TextBox(T_LANCE,	"...this is my stuff! Yeah.",
-							"Hey, what are you doing with my stuff,",
-							"you bastard?");				
-		EntityMove(paxton,"D1Z22");
-		PaxtonDarken();
-		TextBox(T_PAXTON,	"So be it.",
-							"The unrighteous shall perish in the light",
-							"of judgment!    THUNDERBIRD!");				
-		EntityMove(lance,"Z21");
-		PaxtonBlasto();
-		Wait(150);
-		VCLayerTintScreen(0,100);		
-		entity.specframe[lance] = 0;
-		EntityMove(lance,"U1");
-		WaitForEntity(lance);
-		Wait(20);
-		TextBox(T_LANCE,	"So that's how it's going to be, eh?",
-							"All right, you asked for it!","");						
-		LancePowerUp(lance);
-		Wait(20);
-		TextBox(T_LANCE,	"Ultimate attack...                                                                     ",
-							"Run away!","");						
-		entity.speed[lance] = 400;
-		EntityMove(paxton,"Z21");
-		EntityMove(lance,"D7R15D4");
-		WaitForEntity(lance);
-		entity.x[lance] = -100; entity.y[lance] = -100; // And Lance lives to fight another day!		
-		EntityMove(paxton,"Z20");		
-		Wait(35);
-		V1_FadeInMusic(100,vol);		
-		EntityMove(playerent,"L4U3");
-		EntityMove(dexter,"L5U2");
-		WaitForEntity(playerent);
-		WaitForEntity(dexter);
-		Wait(35);
-		
-		TextBox(T_DARIN,	"Um...excuse me?","","");
-		entity.specframe[paxton] = 0; // Stop making faces, Paxton.
-		TextBox(T_PAXTON,	"More humans.",
-							"My kin are an uncommon sight here in the",
-							"underground.");		
-		EntityMove(paxton,"D1");
-		WaitForEntity(paxton);
-		TextBox(T_PAXTON,	"And now...three in one day.",
-							"You would not happen to be allied with",
-							"that scoundrel, would you?");		
-		TextBox(T_DARIN,	"...just a minute.","","");	
+        EntityMove(paxton,"D1");
+        WaitForEntity(paxton);
+        
+        TextBoxM(T_PAXTON,  "Villainy!","","");     
+        TextBoxM(T_PAXTON,  "Despicable!","","");       
+        TextBox(T_PAXTON,   "Outrageous!","","");
+        
+        EntityMove(paxton,"D1");
+        WaitForEntity(paxton);
+                            
+        TextBoxM(T_PAXTON,  "Never before have I witnessed such an",
+                            "outrage! Only the basest of crooks",
+                            "would rob a house of God!");
+        TextBox(T_PAXTON,   "Your life and soul hang on your swift",
+                            "repentance for these misdeeds!","");
+        
+        TextBox(T_LANCE,    "Wh-what, you mean this stuff?",
+                            "No, this is, uh...","");       
+        EntityMove(lance,"Z29");
+        Wait(80);
+        EntityMove(lance,"Z35");
+        TextBox(T_LANCE,    "...this is my stuff! Yeah.",
+                            "Hey, what are you doing with my stuff,",
+                            "you bastard?");                
+        EntityMove(paxton,"D1Z22");
+        PaxtonDarken();
+        TextBox(T_PAXTON,   "So be it.",
+                            "The unrighteous shall perish in the light",
+                            "of judgment!    THUNDERBIRD!");                
+        EntityMove(lance,"Z21");
+        PaxtonBlasto();
+        Wait(150);
+        VCLayerTintScreen(0,100);       
+        entity.specframe[lance] = 0;
+        EntityMove(lance,"U1");
+        WaitForEntity(lance);
+        Wait(20);
+        TextBox(T_LANCE,    "So that's how it's going to be, eh?",
+                            "All right, you asked for it!","");                     
+        LancePowerUp(lance);
+        Wait(20);
+        TextBox(T_LANCE,    "Ultimate attack...                                                                     ",
+                            "Run away!","");                        
+        entity.speed[lance] = 400;
+        EntityMove(paxton,"Z21");
+        EntityMove(lance,"D7R15D4");
+        WaitForEntity(lance);
+        entity.x[lance] = -100; entity.y[lance] = -100; // And Lance lives to fight another day!        
+        EntityMove(paxton,"Z20");       
+        Wait(35);
+        V1_FadeInMusic(100,vol);        
+        EntityMove(playerent,"L4U3");
+        EntityMove(dexter,"L5U2");
+        WaitForEntity(playerent);
+        WaitForEntity(dexter);
+        Wait(35);
+        
+        TextBox(T_DARIN,    "Um...excuse me?","","");
+        entity.specframe[paxton] = 0; // Stop making faces, Paxton.
+        TextBox(T_PAXTON,   "More humans.",
+                            "My kin are an uncommon sight here in the",
+                            "underground.");        
+        EntityMove(paxton,"D1");
+        WaitForEntity(paxton);
+        TextBox(T_PAXTON,   "And now...three in one day.",
+                            "You would not happen to be allied with",
+                            "that scoundrel, would you?");      
+        TextBox(T_DARIN,    "...just a minute.","",""); 
 
-		EntityMove(playerent,"D2");		
-		WaitForEntity(playerent);
-		EntityMove(playerent,"D1L4");		
-		EntityMove(dexter,"D2L3");
-		WaitForEntity(playerent);
-		WaitForEntity(dexter);
-		entity.face[playerent] = FACE_RIGHT;
-		EntityMove(playerent,"Z29");
-		Wait(20);
-		entity.specframe[playerent] = 0;		
-		Wait(30);
-		EntityMove(dexter,"Z28");
-		Wait(20);
-		entity.specframe[dexter] = 0;		
-		Wait(30);		
-		EntityMove(playerent,"Z29");
-		Wait(20);
-		entity.specframe[playerent] = 0;		
-		Wait(50);
-		EntityMove(playerent,"Z29");
-		EntityMove(dexter,"Z28");
-		Wait(20);
-		entity.specframe[playerent] = 0;		
-		entity.specframe[dexter] = 0;		
-		Wait(50);		
-		EntityMove(playerent,"R2");
-		WaitForEntity(playerent);
-		EntityMove(playerent,"R2U2");
-		EntityMove(dexter,"R3U1");
-		WaitForEntity(playerent);
-		WaitForEntity(dexter);
+        EntityMove(playerent,"D2");     
+        WaitForEntity(playerent);
+        EntityMove(playerent,"D1L4");       
+        EntityMove(dexter,"D2L3");
+        WaitForEntity(playerent);
+        WaitForEntity(dexter);
+        entity.face[playerent] = FACE_RIGHT;
+        EntityMove(playerent,"Z29");
+        Wait(20);
+        entity.specframe[playerent] = 0;        
+        Wait(30);
+        EntityMove(dexter,"Z28");
+        Wait(20);
+        entity.specframe[dexter] = 0;       
+        Wait(30);       
+        EntityMove(playerent,"Z29");
+        Wait(20);
+        entity.specframe[playerent] = 0;        
+        Wait(50);
+        EntityMove(playerent,"Z29");
+        EntityMove(dexter,"Z28");
+        Wait(20);
+        entity.specframe[playerent] = 0;        
+        entity.specframe[dexter] = 0;       
+        Wait(50);       
+        EntityMove(playerent,"R2");
+        WaitForEntity(playerent);
+        EntityMove(playerent,"R2U2");
+        EntityMove(dexter,"R3U1");
+        WaitForEntity(playerent);
+        WaitForEntity(dexter);
 
-		TextBoxM(T_DARIN,	"No, we've never met Lance before.","","");								
-		TextBox(T_DARIN,	".a.a.and when I say Lance, I mean,",
-							"'that guy.'",
-							"Whose name I don't know.");	
-		Wait(50);
-		entity.speed[paxton] = 15;
-		EntityMove(paxton,"Z23D1");
-		WaitForEntity(paxton);
-		entity.speed[paxton] = 100;
-		EntityMove(paxton,"W80Z0W20Z25W20");
-		WaitForEntity(paxton);
-		entity.specframe[paxton] = 0;
-		Wait(75);
-		TextBox(T_PAXTON,	"Very well. Forgive my presumption.",
-							"How may I be of service?","");			
-		TextBox(T_DARIN,	"My name's Darin, and this is Dexter."
-							"I'm trying to rescue my girlfriend from",
-							"Lord Stan, but there's a thingy in the way.");					
-		TextBox(T_PAXTON,	"A thingy.","","");	
-		TextBox(T_DEXTER,	"We need your help to dispel the seal",
-							"Lord Stan has placed over the entrance",
-							"to his labs.");
-		EntityMove(paxton,"Z25");
-		TextBoxM(T_PAXTON,	"I see.","","");	
-		TextBox(T_PAXTON,	"My work here is important.",
-							"However, I cannot refuse aid to the",
-							"victims of evil.");	
-		entity.specframe[paxton] = 0;
-		TextBox(T_PAXTON,	"I will lend you my power.","","");	
-		TextBox(T_DARIN,	"Thank you so much!",
-							"This time we'll get Lord Stan for sure!","");
-		TextBoxM(T_PAXTON,	"Perhaps it was inevitable.",
-							"I have always been uneasy with Lord",
-							"Stan's presence so near my mission.");	
-		TextBoxM(T_PAXTON,	"It was only a matter of time before",
-							"he and I came into direct conflict.","");		
-		TextBox(T_PAXTON,	"My name is Paxton. I am an enemy of all",
-							"that is evil.",
-							"Let us pay a visit to these labs.");
-		EntityMove(paxton,"D4");
-		WaitForEntity(paxton);
-		entity.face[paxton] = FACE_UP;
-		JoinPartyAtLevel("Paxton", 8);		
-		
-		entity.x[paxton] = -100; entity.y[paxton] = -100; // get rid of map-paxton		
-		AssembleParty();				
-		TextBoxM(T_PAXTON,	"If you go down and to your right upon",
-							"exiting the church you will find",
-							"another large doorway.");
-		TextBox(T_PAXTON,	"This will lead you back to the summit.","","");
-		
-		camReturnToPlayer(playerent,50);
-		CutsceneOff();
-		flags[F_DWARF_PAXTON_JOIN] = 1;	
-	}	
+        TextBoxM(T_DARIN,   "No, we've never met Lance before.","","");                             
+        TextBox(T_DARIN,    "...a.a.and when I say Lance, I mean,",
+                            "'that guy.'",
+                            "Whose name I don't know.");    
+        Wait(50);
+        entity.speed[paxton] = 15;
+        EntityMove(paxton,"Z23D1");
+        WaitForEntity(paxton);
+        entity.speed[paxton] = 100;
+        EntityMove(paxton,"W80Z0W20Z25W20");
+        WaitForEntity(paxton);
+        entity.specframe[paxton] = 0;
+        Wait(75);
+        TextBox(T_PAXTON,   "Very well. Forgive my presumption.",
+                            "How may I be of service?","");         
+        TextBox(T_DARIN,    "My name's Darin, and this is Dexter."
+                            "I'm trying to rescue my girlfriend from",
+                            "Lord Stan, but there's a thingy in the way.");                 
+        TextBox(T_PAXTON,   "A thingy.","",""); 
+        TextBox(T_DEXTER,   "We need your help to dispel the seal",
+                            "Lord Stan has placed over the entrance",
+                            "to his labs.");
+        EntityMove(paxton,"Z25");
+        TextBoxM(T_PAXTON,  "I see.","","");    
+        TextBox(T_PAXTON,   "My work here is important.",
+                            "However, I cannot refuse aid to the",
+                            "victims of evil.");    
+        entity.specframe[paxton] = 0;
+        TextBox(T_PAXTON,   "I will lend you my power.","",""); 
+        TextBox(T_DARIN,    "Thank you so much!",
+                            "This time we'll get Lord Stan for sure!","");
+        TextBoxM(T_PAXTON,  "Perhaps it was inevitable.",
+                            "I have always been uneasy with Lord",
+                            "Stan's presence so near my mission."); 
+        TextBoxM(T_PAXTON,  "It was only a matter of time before",
+                            "he and I came into direct conflict.","");      
+        TextBox(T_PAXTON,   "My name is Paxton. I am an enemy of all",
+                            "that is evil.",
+                            "Let us pay a visit to these labs.");
+        EntityMove(paxton,"D4");
+        WaitForEntity(paxton);
+        entity.face[paxton] = FACE_UP;
+        JoinPartyAtLevel("Paxton", 8);      
+        
+        entity.x[paxton] = -100; entity.y[paxton] = -100; // get rid of map-paxton      
+        AssembleParty();                
+        TextBoxM(T_PAXTON,  "If you go down and to your right upon",
+                            "exiting the church you will find",
+                            "another large doorway.");
+        TextBox(T_PAXTON,   "This will lead you back to the summit.","","");
+        
+        camReturnToPlayer(playerent,50);
+        CutsceneOff();
+        flags[F_DWARF_PAXTON_JOIN] = 1; 
+    }   
 }
