@@ -1,6 +1,8 @@
 /// The autoexec function for mountain.map
 void Start()
 {
+    playerstep=0;
+
     SaveDisable(); //cannot save in dungeons.
 
 
@@ -21,6 +23,10 @@ void Start()
     
     if( flags[F_MNT_TETRIS_DOOR_OPEN] ) {
         clear_tetris_door_tiles();
+    }
+    
+    if( flags[F_MNT_BREAK_SEAL] ) {
+        ClearSealObs();
     }
 
 /*
@@ -377,6 +383,10 @@ void examine_seal()
 {
     int darin = GetPartyEntity( "Darin" );
     int dexter = GetPartyEntity( "Dexter" );
+    
+    if( flags[F_MNT_BREAK_SEAL] ) {
+        return;
+    }
 
     if (!flags[F_MNT_LANCE_JOIN]) {
        
@@ -569,11 +579,22 @@ void examine_seal()
         
         CutsceneOff();
     }
-    else if (!flags[F_MNT_EVIL_SIGN] && !CharInParty("Paxton")) 
+    else if( !CharInParty("Paxton") ) 
     {
         TextBox( T_DEXTER,   
                  "This is truly a powerful seal.",
                  "Lord Stan must be a sorcerer without peer.","");               
+    }
+    else if( CharInParty("Paxton") )
+    {
+        Autotext( T_PAXTON, "Yup.  That's totally an evil seal." );
+        Autotext( T_DARIN, "Yup." );
+        Autotext( T_PAXTON, "Okay it's gone now." );
+        Autotext( T_DEXTER, "That was unimpressive." );
+    
+        ClearSealObs();
+    
+        flags[F_MNT_BREAK_SEAL] = 1;
     }
 }
 
@@ -765,6 +786,19 @@ void RoadBlock() {
         MenuOn();
     } 
 }
+
+void ClearSealObs() {
+    SetObs( 148,63, 0 );
+    SetObs( 149,64, 0 );
+
+    SetObs( 160,64, 0 );
+    SetObs( 161,63, 0 );
+}
+
+void enter_lab() {
+    V1_MapSwitch( "lab.map", 20, 5, TBLACK );
+}
+
 
 /// This function takes care of all the tile and obstruction-changing
 /// work to remove the sign.

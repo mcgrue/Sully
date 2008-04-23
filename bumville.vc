@@ -1,6 +1,8 @@
 /// The autoexec function for bumville.map
 void Start()
 {
+    playerstep=0;
+
     int a, b;
 
     if (flags[F_LAB_BLOWN_UP]) // if lab has been destroyed, show water layer

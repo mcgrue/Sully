@@ -7,6 +7,8 @@
 
 void Start()
 {
+    playerstep=16;
+
     SaveDisable(); //cannot save in towns.
     InitMap();
     V1_StartMusic( "res/music/DWARVES.IT" );

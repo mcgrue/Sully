@@ -1,6 +1,8 @@
 /// The autoexec function for lab.map
 void start()
 {
+    playerstep=16;
+
     SaveDisable();
     
     SetWeather(WEATHER_FOG);
@@ -270,7 +272,7 @@ void NExit()
         HookRetrace( "V1RPG_RenderFunc" );
     }
         
-    V1_MapSwitch("mountain.map", 22, 6, TBLACK);
+    V1_MapSwitch("jujube.map", 154, 61, TBLACK);
 }
 
 /// Switch

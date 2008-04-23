@@ -420,6 +420,8 @@ void replaceSandColumns()
 
 void start()
 {
+    playerstep=0;
+
     cavePrep();
 
     InitMap();
@@ -809,33 +811,33 @@ void to_dwarf_town()
 
 void lance_leaves()
 {
-		int lance;
-		
+        int lance;
+        
         if( !flags[F_CAVE_LANCE_LEAVES] )
         {
-        	lance = GetPartyEntity("Lance");
+            lance = GetPartyEntity("Lance");
             TextBox(T_LANCE,
                 "You guys are hot stuff!",
                 "Hey, listen, I'm gonna run on ahead, OK?",
                 "I'll catch up with you later!");
 
-			// This ugly bit needs some explanation. We want lance at horizontal 
-			// pixel offset 488 because this will allow him to walk smoothly
-			// right through the middle of the two-tile doorway that covers tiles
-			// (30,125) and (31,125). 
-			
-			if (entity.x[lance] < 488) {
-				EntityMove(lance,"PR" + str(488 - entity.x[lance]) + "T");
-				WaitForEntity(lance);
-			}
-			else if (entity.x[lance] < 488) {
-				EntityMove(lance,"PR" + str(488 - entity.x[lance]) + "T");
-				WaitForEntity(lance);
-			}
-			EntityMove(lance,"U12");
-			WaitForEntity(lance);
-			//entity.x[lance] = -100; entity.y[lance] = -100;
-			RemovePlayer("Lance");
+            // This ugly bit needs some explanation. We want lance at horizontal 
+            // pixel offset 488 because this will allow him to walk smoothly
+            // right through the middle of the two-tile doorway that covers tiles
+            // (30,125) and (31,125). 
+            
+            if (entity.x[lance] < 488) {
+                EntityMove(lance,"PR" + str(488 - entity.x[lance]) + "T");
+                WaitForEntity(lance);
+            }
+            else if (entity.x[lance] < 488) {
+                EntityMove(lance,"PR" + str(488 - entity.x[lance]) + "T");
+                WaitForEntity(lance);
+            }
+            EntityMove(lance,"U12");
+            WaitForEntity(lance);
+            //entity.x[lance] = -100; entity.y[lance] = -100;
+            RemovePlayer("Lance");
 
             TextBox(T_DARIN, "That was strange.","","");
 
