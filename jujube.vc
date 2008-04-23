@@ -86,6 +86,8 @@ void tetris_doormat() {
         }
         else
         {
+            PlaySound( sfx_tetris, sfx_volume );
+        
             clear_tetris_door_tiles();
             DramaticUseItem( "Long_Piece", 1 );
             

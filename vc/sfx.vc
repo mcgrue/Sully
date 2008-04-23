@@ -23,6 +23,8 @@ int sfx_twinkle = LoadSound("res/sfx/twinkle.WAV");
 int sfx_grandfn = LoadSound("res/sfx/BIGFNFR.mp3");
 int sfx_fall    = LoadSound("res/sfx/fall02.wav");
 int sfx_wom     = LoadSound("res/sfx/wom.wav");
+int sfx_tetris  = LoadSound("res/sfx/tetris.wav");
+
 
 
 /**************************** functions ****************************/
