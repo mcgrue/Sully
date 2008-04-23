@@ -207,6 +207,8 @@ void logGameFlags() {
 #define F_DWARF_PAXTON_JOIN     113 // Paxton joins up to get you into the lab
 #define F_MNT_BREAK_SEAL        114 // When Paxton breaks the seal.
 
+#define F_RAVEN_STUPID_TALK     115 // I can't believe I added a flag for this.
+
 
 //START OF CHEST INDEXES
 #define CHEST_UNDERSEA_A    1000        /// Chest A undersea.map

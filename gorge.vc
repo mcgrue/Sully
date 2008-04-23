@@ -161,4 +161,39 @@ void sun()
     }
 }
 
+void Tourist() 
+{
+    TextBox( 0, 
+             "Raven Gulch is named in",   
+             "honor of the popular TV show",
+             "'That's So Raven'!" );
 
+    camCtrScrollTo( 32*16, 6*16, 200 );
+
+    TextBox( 0, 
+             "It's just sheer coincidence",
+             "That there are raven-shaped",
+             "tops to both summits!" );
+
+    camReturnToPlayer( playerent, 100 );
+   
+    if( CharInParty("Dexter") && !flags[F_RAVEN_STUPID_TALK] ) {
+        TextBox( T_DEXTER, 
+                 "It was nice that they strived",
+                 "to make the overworld version",
+                 "match this map." );
+                 
+        TextBox( T_DEXTER, 
+                 "...Even though the color's all",
+                 "wrong.",
+                 "" );
+                 
+        TextBox( T_DARIN, 
+                 "Dex, it's common knowledge that",
+                 "stone looks brown from a distance.",
+                 "and grey up close." );
+                 
+        flags[F_RAVEN_STUPID_TALK] = 1;
+    }
+
+}
