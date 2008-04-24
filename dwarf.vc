@@ -734,8 +734,10 @@ void PaxtonCutscene() // Paxton confronts Lance, then joins the party
         Wait(20);
         TextBox(T_LANCE,    "So that's how it's going to be, eh?",
                             "All right, you asked for it!","");                     
+        EntityMove(lance, "Z36");
         LancePowerUp(lance);
         Wait(20);
+        entity.specframe[lance] = 0;
         TextBox(T_LANCE,    "Ultimate attack...                                                                     ",
                             "Run away!","");                        
         entity.speed[lance] = 400;
@@ -842,10 +844,6 @@ void PaxtonCutscene() // Paxton confronts Lance, then joins the party
         
         entity.x[paxton] = -100; entity.y[paxton] = -100; // get rid of map-paxton      
         AssembleParty();                
-        TextBoxM(T_PAXTON,  "If you go down and to your right upon",
-                            "exiting the church you will find",
-                            "another large doorway.");
-        TextBox(T_PAXTON,   "This will lead you back to the summit.","","");
         
         camReturnToPlayer(playerent,50);
         CutsceneOff();
