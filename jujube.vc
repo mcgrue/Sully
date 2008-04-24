@@ -1,6 +1,8 @@
 /// The autoexec function for mountain.map
 void Start()
 {
+    battles_enabled_here = 1;
+
     playerstep=0;
 
     SaveDisable(); //cannot save in dungeons.

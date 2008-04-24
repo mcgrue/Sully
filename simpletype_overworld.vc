@@ -2,6 +2,8 @@
 ///
 void start()
 {
+    battles_enabled_here = 1;
+
     SaveEnable(); //can save on the overworld.
     _mapwrap_on = 1;
 

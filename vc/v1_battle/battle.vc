@@ -1532,8 +1532,11 @@ int BattleMenuIsOff()
 
 void HandleBattleMenu()
 {
+//Log( "HandleBattleMenu" );
+
     if( _bm_idx >= 0 )
     {
+//Log( "HandleBattleMenu 2" );
         /// Battle Menu control code.
         if( master_battle_menus[menu_cast].mode_list )
             UpdateBattleMenuListControls(menu_cast);

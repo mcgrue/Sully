@@ -70,6 +70,18 @@ void f8_debug_set_stepmode_or_step()
 #include "vc/test/vctest.vc"
 #include "vc/test/tests-to-run.vc"
 
+int battles_enabled_here = 0;
+
+void onStep() {
+    if( !getZone(entity.x[playerent],entity.y[playerent]) ) {
+        if( battles_enabled_here ) {
+            doBattleStep();
+        }
+    }
+}
+
+void afterStep() {
+}
 
 /// The AutoExec Function: The first function that gets called.
 ///  Everything starts right here when you start up a game.
@@ -78,6 +90,9 @@ void AutoExec()
 {
     // run tests
     runTests();
+
+    trigger.onStep = "onStep";
+    trigger.afterStep = "";
 
     InitMcgrender();
 
