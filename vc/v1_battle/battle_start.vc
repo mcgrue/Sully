@@ -119,7 +119,7 @@ void doBattleStep() {
     if( ____battleSteps <= 0 )
     {
         doBattle( "Overworld_A" );
-        ____battleSteps = 50 + Random(1,30);
+        ____battleSteps = 90 + Random(1,50);
     }    
     
 }
