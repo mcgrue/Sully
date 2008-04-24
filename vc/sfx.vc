@@ -24,7 +24,7 @@ int sfx_grandfn = LoadSound("res/sfx/BIGFNFR.mp3");
 int sfx_fall    = LoadSound("res/sfx/fall02.wav");
 int sfx_wom     = LoadSound("res/sfx/wom.wav");
 int sfx_tetris  = LoadSound("res/sfx/tetris.wav");
-
+int sfx_swoosh  = LoadSound("res/sfx/warp02.wav");
 
 
 /**************************** functions ****************************/
@@ -123,4 +123,8 @@ void SoundTwinkle() {
 
 void SoundFall() {
     PlaySound( sfx_fall, sfx_volume );
+}
+
+void SoundSwoosh() {
+    PlaySound( sfx_swoosh, sfx_volume );
 }

@@ -38,6 +38,15 @@ int FileSize( string myfile )
     return size;
 }
 
+// This function takes two values and a proportion out of 1000. At 0, it returns
+// the first value. At 1000, it returns the second. In between these two it 
+// interpolates -- 500 returns a value exactly halfway between the two values, 
+// 333 returns a value one-third of the total distance away from the first value,
+// and so on. 
+int interpolate(int v1, int v2, int prop) {
+	return v1 + ((v2-v1)*prop/1000);
+}
+
 /// Returns the contents of a file as one large string.
 /// Modified to take into account FileReadLn's 255-len buffer. 
 ///

@@ -253,7 +253,7 @@ void evil_seal_left() {
         setPartyFacing( FACE_RIGHT );
         setPartyFrame( 0 );
         setPartySpeed( -1 );
-        
+	        
         do_evil_seal_wom_wom();        
         examine_seal();
         
@@ -262,6 +262,7 @@ void evil_seal_left() {
 }
 
 void evil_seal_right() {
+	int i;
     if( !flags[F_MNT_BREAK_SEAL] )
     {
         MenuOff();
@@ -270,12 +271,13 @@ void evil_seal_right() {
         
         setPartySpeed( 600 );
         setPartyFrame( 10 );
-        playermove( "R3W10" );
+        playermove( "R3W10" ); 
         setPartyFacing( FACE_LEFT );
         setPartyFrame( 0 );
-        setPartySpeed( -1 );
+        setPartySpeed( -1 );        
         
         do_evil_seal_wom_wom();
+        
         examine_seal();     
         
         MenuOn();
@@ -545,8 +547,8 @@ void examine_seal()
         TextBox( T_DARIN,    "What do you think?", "We'd get to explore a cave.", "");
         TextBox( T_DEXTER,   
                  "Our options are limited.",
-                 "I'm not sure we have any",
-                 "other choice.");
+                 "I'm not sure we have any other",
+                 "choice.");
                 
         TextBox( T_LANCE,    
                  "That's the spirit!",
@@ -579,21 +581,13 @@ void examine_seal()
         
         CutsceneOff();
     }
-    else if( !CharInParty("Paxton") ) 
-    {
+    else if( !CharInParty("Paxton") ) {
         TextBox( T_DEXTER,   
                  "This is truly a powerful seal.",
                  "Lord Stan must be a sorcerer without peer.","");               
     }
-    else if( CharInParty("Paxton") )
-    {
-        Autotext( T_PAXTON, "Yup.  That's totally an evil seal." );
-        Autotext( T_DARIN, "Yup." );
-        Autotext( T_PAXTON, "Okay it's gone now." );
-        Autotext( T_DEXTER, "That was unimpressive." );
-    
-        ClearSealObs();
-    
+    else {
+		PaxtonBreaksSeal();
         flags[F_MNT_BREAK_SEAL] = 1;
     }
 }
@@ -816,4 +810,258 @@ void DestroySign()
     SetTile( 176,65, 0, 828); 
     SetTile( 177,64, 0, 809); 
     SetTile( 177,65, 0, 829);
+}
+
+void PaxtonBreaksSeal() {
+	int paxton = GetPartyEntity("Paxton");
+	int dexter = GetPartyEntity("Dexter");
+	int vol = V1_GetCurVolume(); 
+
+	CutsceneOn();
+	
+	// Move paxton to row 63, if he's not already there (he can't be above it
+	// because of the map structure, so we needn't check for that condition.)
+	if (entity.y[paxton] > 63*16) {
+			EntityMove(paxton,"PU" + str(entity.y[paxton] - (63*16)) + "T");
+			WaitForEntity(paxton);
+	}
+	if (entity.x[paxton] < 154*16)  // you came in the left way
+		EntityMove(paxton,"X147");
+	else  // you came in the right way
+		EntityMove(paxton,"X162");
+	V1_fadeOutMusic(50);						
+	TextBox(T_PAXTON,	"So this is the seal. It is powerful, but the",
+						"darkness can never overcome the light.", 
+						"Stand back!");
+	
+	entity.speed[paxton] = 65;	
+	// set the camera to follow Paxton while he does his thing
+
+	camZoomToEntity(paxton,30);
+	cameratracking = 2;
+	cameratracker = paxton;
+	if (entity.x[paxton] < 154*16) { // you came in the left way
+
+		EntityMove(paxton, "X149");
+		WaitForEntity(paxton);
+		do_evil_seal_flash();
+		entity.speed[paxton] = 40;	
+		EntityMove(paxton, "Z36X152");
+		WaitForEntity(paxton);
+		do_evil_seal_flash();
+		entity.speed[paxton] = 25;	
+		EntityMove(paxton, "X155");
+		WaitForEntity(paxton);
+		do_evil_seal_flash();
+		entity.specframe[paxton] = 0;
+		entity.face[paxton] = FACE_UP;
+		Wait(50);
+		EntityMove(paxton, "Z37");
+	}
+	else { // you came in the right way
+		EntityMove(paxton, "X160");
+		WaitForEntity(paxton);
+		do_evil_seal_flash();
+		entity.speed[paxton] = 40;	
+		EntityMove(paxton, "Z35X157");
+		WaitForEntity(paxton);
+		do_evil_seal_flash();
+		entity.speed[paxton] = 25;	
+		EntityMove(paxton, "X155");
+		WaitForEntity(paxton);
+		do_evil_seal_flash();
+		entity.specframe[paxton] = 0;
+		entity.face[paxton] = FACE_UP;
+		Wait(50);
+		EntityMove(paxton, "Z37");
+	}
+	
+	SealShatter();
+	
+	entity.face[paxton] = FACE_UP;
+	entity.specframe[paxton] = 0;
+	
+	Wait(50);
+	if (entity.x[playerent] < entity.x[paxton]) { // came from the left
+		EntityMove(playerent, "Y63X153");
+		EntityMove(dexter, "Y63X152");
+	}
+	else { // came from the right 
+		EntityMove(playerent, "Y63X158");
+		EntityMove(dexter, "Y63X159");
+	}
+	WaitForEntity(playerent);
+	WaitForEntity(dexter);
+	camReturnToPlayer(playerent,50);	
+	
+	Wait(35);		
+	TextBox(T_DARIN,	"That was awesome!","","");
+	TextBox(T_PAXTON,	"This is but a fragment of the power God",
+						"has entrusted to me. When the time is",
+						"right, you will see the rest.");
+	
+	AssemblePartyAt(155*16,63*16); // this turns cutscene mode off, incidentally
+	TextBox(T_DARIN,	"All right! Let's go rescue Crystal, guys!","","");
+	
+	V1_fadeInMusic(vol, 100);
+}
+
+void SealShatter() {
+    int imSeal = LoadImage( "res\images\story_fx\seal.pcx" );
+    int imShiny;
+    int imSparkle1 = LoadImage( "res\images\story_fx\g_sparkle1.png" );
+    int imSparkle2 = LoadImage( "res\images\story_fx\g_sparkle2.png" );
+    int stage = 0;
+    int mainlucent = 0;
+    int diagdist = 18; // the x/y distance for a diagonal piece of a circle of rad 25
+    int sparkX, sparkY;
+    int goalX, goalY;
+    int initX, initY;
+    
+    cameratracking = 0;
+    
+    camCtrScrollTo( ((154*16)+8), (58*16), 100 );
+
+    int blitX = 168;
+    int blitY = 104;
+
+    timer = 0;
+	PlaySound( sfx_wom, 100 );
+    while( timer < 100 ) {    	
+        Render();
+        SetLucent(100-timer);
+        RotScale( blitX, blitY, systemtime, 1000, imSeal, screen );
+        ShowPage();
+    }
+
+	timer = 0;
+    while( timer < 50 ) {
+        Render();
+        RotScale( blitX, blitY, systemtime, 1000, imSeal, screen );
+        ShowPage();
+    }
+
+    initX = 155*16 - xwin;
+    initY = 61*16 + 8 - ywin;
+	int i; // lol counter
+	
+	// Paxton shoots out a bunch of sparklies
+	timer = 0;	
+	while(timer < 200) {
+		if (systemtime/10%2) imShiny = imSparkle1;
+		else imShiny = imSparkle2;
+		Render();
+		if (timer >= stage*25) {
+			stage++;
+			if (stage < 9) SoundSavePoint();
+			switch (stage) {				
+				CASE 1:
+					goalX = blitX - 8; goalY = blitY - 8 + 50;
+				CASE 2:
+					goalX = blitX - 8 - (diagdist*2); goalY = blitY - 8 + (diagdist*2);
+				CASE 3:
+					goalX = blitX - 8 - 50; goalY = blitY - 8;
+				CASE 4:
+					goalX = blitX - 8 - (diagdist*2); goalY = blitY - 8 - (diagdist*2);
+				CASE 5:
+					goalX = blitX - 8; goalY = blitY - 8 - 50;
+				CASE 6:
+					goalX = blitX - 8 + (diagdist*2); goalY = blitY - 8 - (diagdist*2);
+				CASE 7:
+					goalX = blitX - 8 + 50; goalY = blitY - 8;
+				CASE 8:
+					goalX = blitX - 8 + (diagdist*2); goalY = blitY - 8 + (diagdist*2);
+			}
+		}
+		RotScale( blitX, blitY, systemtime, 1000, imSeal, screen );
+        for (i=0;i<stage-1;i++)
+        	SparklyCircle(blitX-8, blitY-8, 50, 270 + (i*45), imShiny);
+		
+		TBlit(interpolate(initX, goalX, 1000*(25 + timer - (stage*25))/25), interpolate(initY, goalY, 1000*(25 + timer - (stage*25))/25), imShiny, screen );			
+		ShowPage();
+	}
+	
+	// The sparklies hover in place for a moment
+	timer = 0;
+    while( timer < 75 ) {    	
+		if (systemtime/10%2) imShiny = imSparkle1;
+		else imShiny = imSparkle2;
+        Render();
+        RotScale( blitX, blitY, systemtime, 1000, imSeal, screen );
+        for (i=0;i<360;i+=45)
+        	SparklyCircle(blitX-8, blitY-8, 50, i, imShiny);
+        ShowPage();
+    }	
+    
+    // The sparklies converge on the seal!
+    timer = 0;    
+    while( timer < 150 ) { 
+		if (systemtime/10%2) imShiny = imSparkle1;
+		else imShiny = imSparkle2;
+        Render();
+        RotScale( blitX, blitY, systemtime, 1000, imSeal, screen );
+        SetLucent(75);
+        CircleFill(blitX, blitY, 150 - timer, 150 - timer, RGB(255,255,255), screen);
+        SetLucent(0);
+        Circle(blitX, blitY, 150 - timer, 150 - timer, RGB(255,255,255), screen);
+        for (i=0;i<360;i+=45)
+        	SparklyCircle(blitX-8, blitY-8, 50-(timer/3), i + (systemtime*3), imShiny);        
+        ShowPage();
+    }
+    			
+	SoundHealingWell();
+	
+	timer = 0;    	
+   	while (timer < 50) {
+   		SetLucent(0);
+   		Render();   		
+   		RotScale( blitX, blitY, systemtime, 1000, imSeal, screen );
+   		SetLucent(timer*2);
+   		Circle(blitX, blitY, timer/2, timer/2, RGB(255,255,255), screen);
+   		ShowPage();
+   	}
+    	
+	// Now the seal disappears
+	stage = 0;
+	timer = 0;
+	while (timer < 400) {
+		Render();
+		if (timer >= stage*50) {
+			stage++;
+			mainlucent += 11;			
+			SoundSwoosh();
+		}
+		SetLucent(mainlucent);
+		RotScale( blitX, blitY, systemtime, 1000, imSeal, screen );
+		
+		SetLucent(mainlucent + ((100 - mainlucent)*(50 + timer - (stage*50))/50));
+		switch (stage) {
+			CASE 1: 
+				RotScale(blitX, blitY - (timer/2), systemtime, 1000, imSeal, screen );
+			CASE 2: 
+				RotScale(blitX - ((timer-50)*diagdist/50), blitY - ((timer-50)*diagdist/50), systemtime, 1000, imSeal, screen );
+			CASE 3: 
+				RotScale(blitX - ((timer-100)/2), blitY, systemtime, 1000, imSeal, screen );
+			CASE 4: 
+				RotScale(blitX - ((timer-150)*diagdist/50), blitY + ((timer-150)*diagdist/50), systemtime, 1000, imSeal, screen );
+			CASE 5: 
+				RotScale(blitX, blitY + ((timer-200)/2), systemtime, 1000, imSeal, screen );
+			CASE 6: 
+				RotScale(blitX + ((timer-250)*diagdist/50), blitY + ((timer-250)*diagdist/50), systemtime, 1000, imSeal, screen );
+			CASE 7: 
+				RotScale(blitX + ((timer-300)/2), blitY, systemtime, 1000, imSeal, screen );
+			CASE 8: 
+				RotScale(blitX + ((timer-350)*diagdist/50), blitY - ((timer-350)*diagdist/50), systemtime, 1000, imSeal, screen );
+		}		
+		ShowPage();
+	}
+
+    
+    FreeImage( imSeal );
+
+}
+
+// Draws a sparkly (or, well, anything) using polar coordinates
+void SparklyCircle(int cx, int cy, int radius, int angle, int img) {
+	TBlit(cx - (cos(angle)*radius>>16), cy  - (sin(angle)*radius>>16), img, screen );	
 }
