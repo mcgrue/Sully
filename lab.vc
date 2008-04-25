@@ -1764,7 +1764,6 @@ void LabPutIMG( string img_name, int x_pos, int y_pos )
 
 void sancho()
 {
-    EntStart();
     if( !flags[F_LAB_SANCHO] )
     {
         TextBox( T_DARIN, "What the deuce?","What are you doing here, Sancho?","" );
@@ -1826,8 +1825,6 @@ void sancho()
     {
         TextBox( T_SANCHO, "Had I had any respect for you,","it would now be gone.","" );
     }
-    
-    EntFinish();
 }
 
 void sully()

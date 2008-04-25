@@ -101,28 +101,22 @@ void e_exit() /* 2 */
 
 /// entity
 void villager_a() /* 3 */
-{
-    EntStart();
-    
+{      
     TextBox(0,  "Welcome to the town of Rodne.",
                 "Yes, I'm the dork who says the town name",
                 "and I'm proud of it!");
-            
-    EntFinish();
 }
 
 /// entity
 void villager_b() /* 4 */
 {
-    EntStart();
-    
     if( flags[F_CARROT_QUEST] )
     {
         TextBox(0,  "I... I don't believe it!",
                     "Please use the power of the",
                     "carrot to destroy Lord Stan.");
                     
-        EntFinish();
+        
         return;
     }
     
@@ -143,13 +137,13 @@ void villager_b() /* 4 */
         TextBox(T_DARIN,    "Don't be such an egghead, Dex.","","");
     }
     
-    EntFinish();
+    
 }
 
 /// entity
 void villager_c() /* 5 */
 {
-    EntStart();
+    
     
     TextBox(0,  "If it's a technician you're looking for,",
                 "the lab is in the southwest area of the",
@@ -163,13 +157,13 @@ void villager_c() /* 5 */
         TextBox(T_SARA,"Hey!","","");
     }
     
-    EntFinish();
+    
 }
 
 /// entity
 void villager_d() /* 6 */
 {
-    EntStart();
+    
     
     TextBox(0,  "This is the elder's place.",
                 "He will teach you about the heritage of",
@@ -181,13 +175,13 @@ void villager_d() /* 6 */
         TextBox(3,"Oh, boy! Learning!","","");
     }
     
-    EntFinish();
+    
 }
 
 /// entity
 void villager_e() /* 7 */
 {
-    EntStart();
+    
     
     TextBoxM(0, "We live in fear of both Lord Stan and",
                 "Big Daddy Bubba.",
@@ -212,13 +206,13 @@ void villager_e() /* 7 */
         }
     }
     
-    EntFinish();
+    
 }
 
 /// entity
 void villager_f() /* 8 */
 {
-    EntStart();
+    
     
     TextBox(0,  "There's a trail leading deep into the Forest on",
                 "the east edge of the village.", "");
@@ -235,13 +229,13 @@ void villager_f() /* 8 */
         TextBox(T_CRYSTAL,  "Don't make me scratch your eyes out.", "","");
     }
     
-    EntFinish();
+    
 }
 
 /// zone
 void rabbit() /* 9 */
 {
-    EntStart();
+    
     
     if( flags[F_CARROT_QUEST] )
     {
@@ -249,7 +243,7 @@ void rabbit() /* 9 */
                             "monster! How you could you rob",
                             "me of my sole passion in life?");      
                     
-        EntFinish();
+        
         return;
     }
     
@@ -274,13 +268,13 @@ void rabbit() /* 9 */
         }
     }
     
-    EntFinish();
+    
 }
 
 /// zone
 void bird() /* 10 */
 {
-    EntStart();
+    
     
     TextBox(T_BIRD, "This trail leads deep into the Forest.",
                     "Enjoy the serene beauty of the wind",
@@ -293,13 +287,13 @@ void bird() /* 10 */
         TextBox(3,"What a remarkable bird.","","");
     }
     
-    EntFinish();
+    
 }
 
 /// zone
 void warning_sign() 
 {
-    EntStart();
+    
     
     TextBox(0,  "WARNING!",
             "The forest is dangerous! Stay out!","");
@@ -310,14 +304,14 @@ void warning_sign()
                         "You're just a sign.","");
     }
     
-    EntFinish();
+    
 }
 
 
 /// entity
 void elder_a() /* 11 */
 {
-    EntStart();
+    
     
     TextBox(0,  "The village elder is upstairs.",
             "He remembers the early days of this",
@@ -335,20 +329,20 @@ void elder_a() /* 11 */
         }
     }
     
-    EntFinish();
+    
 }
 
 /// entity
 void elder_b() /* 12 */
 {
-    EntStart();
+    
     
     if( CharInParty("Sara") )
     {
         TextBox(0,  "Good luck, young folks. Enjoy",
                     "your stay here in Rodne.","");
         
-        EntFinish();
+        
         return;
     }
     
@@ -357,7 +351,7 @@ void elder_b() /* 12 */
         TextBox(0,  "Good luck, young folks. Enjoy",
                     "your stay here in Rodne.","");
         
-        EntFinish();
+        
         return;
     }
     
@@ -400,13 +394,13 @@ void elder_b() /* 12 */
                 "world spiffier.");
     
     
-    EntFinish();
+    
 }
 
 /// entity
 void blacksmith() /* 13 */
 {
-    EntStart();
+    
     
     TextBox(0,  "I am Thor, the blacksmith.",
                 "Well met, travelers! What",
@@ -419,13 +413,13 @@ void blacksmith() /* 13 */
 
     TextBox(0,  "I thank you, sir! Good day.","","");
     
-    EntFinish();
+    
 }
 
 /// zone
 void pharmacy() /* 14 */
 {
-    EntStart();
+    
     
     TextBox(0,  "You look like a nice bunch of kids. ",
                 "I'll show you the real medicine, not just", "Tic-Tacs.");
@@ -438,13 +432,13 @@ void pharmacy() /* 14 */
     TextBox(0,  "Aww... come on!",
                 "Buy one more medicine, please?","");
                 
-    EntFinish();
+    
 }
 
 /// zone
 void rat() /* 15 */
 {
-    EntStart();
+    
     
     if( flags[F_LOVE_SARA_JOIN] || flags[F_RODNE_TALKRAT] )
     {
@@ -463,7 +457,7 @@ void rat() /* 15 */
                             "fun.","");         
         }
         
-        EntFinish();
+        
         return;
     }
     
@@ -497,7 +491,7 @@ void rat() /* 15 */
     
     flags[F_RODNE_TALKRAT] = 1;
     
-    EntFinish();
+    
 }
 
 /// warp
@@ -747,7 +741,7 @@ void Carrot() /* 39 */
     {
         save_vol = V1_GetCurVolume(); //save the current volume to restore later
 
-        EntStart();
+        
 
         if( HasItem("Pearl_of_Truth") && !flags[F_CARROT_QUEST])
         {
@@ -781,7 +775,7 @@ void Carrot() /* 39 */
 
         V1_SetCurVolume(save_vol);
 
-        EntFinish();
+        
     }
 }
 
@@ -789,7 +783,7 @@ void Carrot() /* 39 */
 /// Zone
 void Machine()
 {
-    EntStart();
+    
     
     TextBox(T_DARIN,    "What is this monstrosity?",
                         "It looks like a mangled wreck",
@@ -802,12 +796,12 @@ void Machine()
                         "why I needed the wood.");
     }
     
-    EntFinish();
+    
 }
 
 void DayClock()
 {
-    EntStart();
+    
     TextBox(T_DARIN, "Ooh, shiny.","","");
     if (1 || CharInParty("Sara"))
     {
@@ -816,22 +810,22 @@ void DayClock()
         TextBox(T_SARA, "Right now it's daytime.","","");
         TextBox(T_DARIN, "Wow!","","");
     }
-    EntFinish();
+    
 }
 
 void hidden_rabbit()
 {
-    EntStart();
+    
     TextBox(0,      "I bet you think you're pretty clever for",
                 "looking back here, right?",
                 "Well, I'm not impressed!");
-    EntFinish();                
+                    
 }
 
 void lone_post()
 {
-    EntStart();
+    
     TextBox(T_DARIN,    "It's a fencepost. ",
                 "I wonder what it's doing here?","");
-    EntFinish();                    
+                        
 }

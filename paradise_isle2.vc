@@ -47,15 +47,8 @@ void island_flashback_timer()
 // I'll do very explicit comments on this one to explain exactly what's 
 // going on here. (-Grue)
 void crystal_event()
-{
-    //exit(str(master_cast[7].equipment[0]));
-    EntStart();
-    // Whenever we start a sequence of events that we don't want the Menu 
-    // accessible during, call MenuOff().  Otherwise, we could open a menu
-    // while people are talking, and that's bad! :D
-    MenuOff();
-    
-      Wait(75);
+{    
+    Wait(75);
     FadeOut(100);
     
     //fill the vclayer with black to serve as a black matte for the art cells
@@ -106,7 +99,7 @@ void crystal_event()
     int darin = GetPartyEntity( "Darin" );
     
     // let's move the on-map crystal 'onto' Darin.
-    EntFinish(); 
+     
     AlignStalker( 0, darin );
 
     // let's wait until the on-map crystal has stopped moving
@@ -123,15 +116,12 @@ void crystal_event()
     
     //let's save a flag that Crystal's joined.
     flags[F_CRYS_JOIN] = 1;
-    
-    //now turn on the ability to summon the menu, and we're done.
-    MenuOn();
 }
 
 
 void sully() 
 {   
-    EntStart();
+    
     
     //if Galfrey hasn't joined yet, we default to the intro text.
     if( !flags[F_HECK_GALFREY_JOIN] )
@@ -187,7 +177,7 @@ void sully()
         }
     }
     
-    EntFinish();
+    
 }
 
 //the introductory babble of Sully's before he has a use in the plot!
@@ -330,7 +320,7 @@ void Pearl_Cave()
 // He is now the guardian of all netcode demonstrations.  Good for him!
 void Sancho()
 {   
-    EntStart(); 
+     
     int answer, responses;
     string n1,n2,n3;
     
@@ -528,7 +518,7 @@ void Sancho()
         flags[F_SANCHO_MENU] = 1;
     }
     
-    EntFinish();
+    
 }
 
 int check3( string s1, string s2, string s3, string comp )

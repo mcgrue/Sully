@@ -327,7 +327,7 @@ void ChurchF1toB1() // Used when the character goes into the basement of the chu
     // If the box is still in place, have Darin move it.
     if(!flags[F_SEAVIEW_CHURCH_BOX]) 
     {       
-        EntStart();
+        
         TextBox(T_DARIN, "Hmm, this box is empty.", "I wonder if there's something underneath", "it.");
         SoundOpenBox();
         SetTile(92,160,1,0);
@@ -343,7 +343,7 @@ void ChurchF1toB1() // Used when the character goes into the basement of the chu
                 TextBox(T_GALFREY, "That's just basic passage ethics!", "", "");
             }
         }
-        EntFinish();
+        
         flags[F_SEAVIEW_CHURCH_BOX] = 1; // box has been moved
     }
     else // If you're just stepping on the exposed stairs...
@@ -361,7 +361,7 @@ void ChurchB1toF1() // Used when the character goes back up to the main church f
 void Innkeeper()
 {
     int i;
-    EntStart();
+    
     TextBoxM(0, "Welcome to the Shangri-La Hotel, where all",
             "your dreams come true (no warranty",
             "expressed or implied).");
@@ -389,71 +389,71 @@ void Innkeeper()
         }
         
     }
-    EntFinish();
+    
 }
 
 void Ent1() // Town greeter
 {
-    EntStart();
+    
     TextBox( 0,  
             "Welcome to beautiful Seaview!", 
             "This is the number one vacation spot in",
             "the area.");
             
-    EntFinish();
+    
 }
 
 void Ent2() // Snobby lady
 {
-    EntStart();
+    
     TextBoxM(0, "This town is hard to get to, but I like it",
             "that way. It keeps out the riff-raff.","");
     TextBox(0,  "Or at least it usually does.",
             "Where did you lot come from, anyway?","");
-    EntFinish();
+    
 }
 
 void Ent3() // Guy outside church
 {
-    EntStart();
+    
     TextBox(0, "This has been the largest church in the",
             "free world ever since the collapse of the", 
             "Demi-Pope's space dirigible.",);
-    EntFinish();    
+        
 }
 
 void Ent4() // Guest at inn
 {
-    EntStart();
+    
     TextBoxM(0, "I took a herb from the minibar. I was",
             "going to replace it later but it had like"
             "this special wrapping on it.");
     TextBox(0,  "You win this round, hotel!","","");
-    EntFinish();    
+        
 }
 
 void Ent5() // woman in inn lobby
 {
-    EntStart();
+    
     TextBox(0,  "Oh wow, this is super ritzy. I'm not sure I",
             "can afford this!","");
-    EntFinish();
+    
 }
 
 void Ent6()
 {
-    EntStart();
+    
     TextBox(0,  "Hot sand, cool water, blue sky...this is the",
             "life, eh?","");
     TextBox(T_DARIN,    "I'm honestly a little burnt out on tropical",
                 "paradises. Do you have some miniature golf",
                 "or something?");
-    EntFinish();    
+        
 }
 
 void Churchy1()
 {
-    EntStart();
+    
     TextBoxM(0, "These pews are really old -- they're",
             "practically falling apart. We ordered",
             "new ones ages ago, but we haven't heard");
@@ -464,38 +464,38 @@ void Churchy1()
     {
         TextBox(T_GALFREY, "Don't think I won't kill you.","","");
     }
-    EntFinish();
+    
 }
 
 void Churchy2()
 {
-    EntStart();
+    
     TextBoxM(0, "According to the Manual, Vecna created the",
             "world in two days, and on the second day",
             "he rested.");
     TextBox(0,  "Therefore we rest every other day.","","");                        
-    EntFinish();
+    
 }
 
 
 void Barfly1() 
 {
-    EntStart();
+    
     TextBox(0,  "There's another bar in town, but they're",
             "real snooty. They don't let us normal folk",
             "in. Well, the heck with them, I say!");    
-    EntFinish();    
+        
 }
 
 void Barfly2()
 {
-    EntStart();
+    
     TextBoxM(0, "I hear there's been some trouble on the",
             "continent lately. Some Lord Steve or",
             "something?");
     TextBox(0,  "Well, it doesn't affect us over here.",
             "Drink up!","");
-    EntFinish();
+    
 }
 
 void leavetown() // called when returning to the map. 

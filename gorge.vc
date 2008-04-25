@@ -40,9 +40,7 @@ void Gulch_Door_Right()
 }
 
 void vorn()
-{
-    EntStart();
-    
+{    
     TextBoxM(0,"Welcome to Raven Gulch! It is said that",
                "he who leaps off the edge will fall to",
                "his death!");
@@ -51,16 +49,10 @@ void vorn()
                "northeast.");
     
     entity.speed[0]=50;
-    
-    EntFinish();
 }
 
 void ranger()
-{
-    MenuOff();
-
-    //EntStart();
-    
+{    
     if( !flags[F_LAB_FOUND_CRYSTAL] )
     {
         TextBox(0,  "Sorry. Nobody can cross the bridge to",
@@ -105,8 +97,6 @@ void ranger()
         TextBox(0,"Stay out of trouble now, ya hear?","",""); 
         flags[F_RAVEN_GULCH] = 1;
     }
-    
-    MenuOn();
 }
 
 void sun() 

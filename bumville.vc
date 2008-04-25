@@ -41,7 +41,7 @@ void Start()
                     "come again!");
 
 
-        EntFinish();
+        
         return;
     }
 
@@ -208,7 +208,7 @@ void Idol()
 
 void Ent0()
 {
-    EntStart();
+    
 
     if( flags[F_BUM_NIGHT] && flags[F_BUM_NIGHT] != 3 ) //this starts the chain of nighttime events! :D
     {
@@ -248,34 +248,34 @@ void Ent0()
                 "hopes up! Never give up and you're sure",
                 "to succeed.");
 
-    EntFinish();
+    
 }
 
 void Ent1()
 {
-    EntStart();
+    
 
     TextBox(0,"We get all of our carrots from that nice",
               "farm family that lives to the northwest.", "");
 
-    EntFinish();
+    
 }
 
 void Ent3()
 {
-    EntStart();
+    
 
     TextBox(0,"I'm going on vacation next fall to",
               "Paradise Isle. I hear they have",
               "great clam hunting.");
 
 
-    EntFinish();
+    
 }
 
 void Ent4()
 {
-    EntStart();
+    
 
     if (!flags[F_LAB_BLOWN_UP])
     {
@@ -299,12 +299,12 @@ void Ent4()
     }
 
 
-    EntFinish();
+    
 }
 
 void Ent5()
 {
-    EntStart();
+    
 
     TextBoxM(0,"There are actually two smiths that work",
                "in this town.","");
@@ -314,26 +314,26 @@ void Ent5()
                "vegetables. He missed the Bronze Age",
                "I guess.");
 
-    EntFinish();
+    
 }
 
 void Ent6()
 {
-    EntStart();
+    
 
     TextBoxM(0,"There was an old sage that once lived",
                "here, giving out sage advice.", "");
     TextBox(0,"He disappeared a few years back. I think",
               "he headed to Mt. Jujube to meditate.", "");
 
-    EntFinish();
+    
 }
 
 void Ent7()
 {
     int answer;
 
-    EntStart();
+    
 
     answer = prompt(0,  "I'm a wandering storyteller!",
                         "Do you want to hear a great",
@@ -342,7 +342,7 @@ void Ent7()
     {
         TextBox(0,  "Well I didn't want to tell it",
                     "to ya anyway, ya bum!","");
-        EntFinish();
+        
         return;
     }
 
@@ -361,24 +361,24 @@ void Ent7()
     TextBox(0,  "And everyone lived happily",
                 "ever after! So what do you",
                 "think? Suspenseful, huh?");
-    EntFinish();
+    
 }
 
 void Ent8()
 {
-    EntStart();
+    
 
     TextBoxM(0, "Welcome to the city of Bumsville!",
                 "We're at the hub of the world's",
                 "civilization!");
     TextBox(0,  "... Pretty sad, huh?","","");
 
-    EntFinish();
+    
 }
 
 void Ent9()
 {
-    EntStart();
+    
 
     TextBoxM(0,"This is the mountain city, not like the",
                "tree hugging hippies from Rodne to the",
@@ -387,12 +387,12 @@ void Ent9()
               "a nice view of Mt. Jujube on the highest",
               "plateau.");
 
-    EntFinish();
+    
 }
 
 void Ent27()
 {
-    EntStart();
+    
 
     TextBoxM(0, "Mister, you gotta help me! My sister keeps",
                 "running in circles around the studio!", "");
@@ -402,7 +402,7 @@ void Ent27()
                 "extraneous numerical references in them?","");
 
 
-    EntFinish();
+    
 }
 
 void Zealot1()
@@ -782,14 +782,14 @@ void Innkeeper()
 {
     int i, dex_ent; //temp vars we may need later in the function...
 
-    EntStart();
+    
 
     if( flags[F_BUM_NIGHT] && flags[F_BUM_NIGHT] != 3 ) // if it's 3, the scene's over
     {
         TextBox(0,  "I trust everything is ok, sir?",
                     "You might want to take a walk on such",
                     "a beautiful night.");
-        EntFinish();
+        
         return;
     }
 
@@ -805,7 +805,7 @@ void Innkeeper()
         TextBox(0,  "Sorry to hear that.",
                     "Be sure to come back for all of your",
                     "lodging needs!");
-        EntFinish();
+        
         return;
     }
 
@@ -813,7 +813,7 @@ void Innkeeper()
     {
         TextBox(0,  "You don't have enough money!",
                     "Get out of here, ya deadbeat!","");
-        EntFinish();
+        
         return;
     }
 
@@ -833,7 +833,7 @@ void Innkeeper()
         TextBox(0,  "Feeling better this morning, sir?",
                     "I hope you had a good rest",
                     "and please come again!");
-        EntFinish();
+        
         return;
     }
 
@@ -905,7 +905,7 @@ void Innkeeper()
                         "I need to get some fresh air.");
 
     flags[F_BUM_NIGHT] = 1;
-    EntFinish();
+    
 }
 
 // Unsets zone for the given tile and obtructs it
@@ -935,7 +935,7 @@ void ChirpyChirp()
 /// zone
 void Weapon_Shop()
 {
-    EntStart();
+    
     TextBox(0,  "I'm your friendly neighborhood",
                 "arms dealer! Buy what you see,",
                 "but you didn't get it here!");
@@ -947,13 +947,13 @@ void Weapon_Shop()
 
     TextBox(0,  "Thanks for stopping by.",
                 "Remember, you don't know me!","");
-    EntFinish();
+    
 }
 
 /// zone
 void Item_Shop()
 {
-    EntStart();
+    
     TextBox(0,  "Welcome to my apothecary! Do",
                 "you need a potion to help you",
                 "join a deceased loved one?");
@@ -967,23 +967,23 @@ void Item_Shop()
 
 
     TextBox(0,  "Thank you. Come again!","","");
-    EntFinish();
+    
 }
 
 void White_Magic_Shop()
 {
-    EntStart();
+    
     TextBox(0,  "Welcome to White Lie! We have a wide",
             "selection of useful spells available.","");
-    EntFinish();
+    
 }
 
 void Black_Magic_Shop()
 {
-    EntStart();
+    
     TextBox(0,  "Welcome to Black Humor! For all your",
             "destructive needs.","");
-    EntFinish();
+    
 }
 
 
@@ -991,9 +991,9 @@ void Black_Magic_Shop()
 /// @ see jukebox_playa()
 void Jukebox()
 {
-    EntStart();
+    
     jukebox_playa();
-    EntFinish();
+    
 }
 
 /// Promptbox for the fashion studio's jukebox.
@@ -1004,7 +1004,7 @@ void Volume_Control()
 
 
 
-    EntStart();
+    
 
     answer = Prompt( 0, "Would you like to turn to music","up or down?","",
                         "PUMP IT UP!|Ow, my ears.");
@@ -1031,13 +1031,13 @@ void Volume_Control()
     SetMusicVolume( flags[F_BUM_JUKE_VOLUME]*10 );
     SetTile(57,164,0,507+flags[F_BUM_JUKE_VOLUME]);
 
-    EntFinish();
+    
 }
 
 /// zone
 void Principal()
 {
-    EntStart();
+    
 
     TextBoxM(0, "Welcome to our proud and",
                 "distinguished university! We",
@@ -1045,7 +1045,7 @@ void Principal()
     TextBox(0,  "Visit our professors if you",
                 "wish to enroll in a course.","");
 
-    EntFinish();
+    
 }
 
 /// zone
@@ -1053,7 +1053,7 @@ void Tank()
 {
     int answer;
 
-    EntStart();
+    
 
     TextBox(0,  "We train young people to use",
                 "arms and to fight. Second",
@@ -1066,7 +1066,7 @@ void Tank()
     {
         TextBox(0,  "Fine! Run away from a good challenge",
                     "like the communist hippie wimps you are!", "");
-        EntFinish();
+        
         return;
     }
 
@@ -1075,7 +1075,7 @@ void Tank()
         TextBox(0,  "There are no intelligence requirements ",
                     "for this course but you still need",
                     "money!");
-        EntFinish();
+        
         return;
     }
 
@@ -1108,7 +1108,7 @@ void Tank()
                 "come take a course here again",
                 "some time soon!");
 
-    EntFinish();
+    
 }
 
 /// zone
@@ -1116,7 +1116,7 @@ void Geek()
 {
     int answer;
 
-    EntStart();
+    
 
     TextBox(0,  "We train mechanics and",
                 "gadgeteers here. All things",
@@ -1132,7 +1132,7 @@ void Geek()
             TextBox(0,  "Do not fear the future! You",
                         "people shall be the first to",
                         "die in the... er... bye!");
-            EntFinish();
+            
             return;
         }
 
@@ -1141,7 +1141,7 @@ void Geek()
             TextBox(0,  "The pursuit of truth is nice",
                         "and all, but no money, no",
                         "class. Scram!");
-            EntFinish();
+            
             return;
         }
 
@@ -1167,7 +1167,7 @@ void Geek()
                     "'engineer'.  I'm not picky.");
     }
 
-    EntFinish();
+    
 }
 
 /// zone
@@ -1177,7 +1177,7 @@ void Wimp()
     int answer;
 
 
-    EntStart();
+    
 
     TextBox(0,  "Here is where we instruct the",
                 "young people in the ways of",
@@ -1208,7 +1208,7 @@ void Wimp()
                     TextBox(0,  "Trying to learn magic tricks",
                                 "for free now? Get out, you",
                                 "cheapskate kids!" );
-                    EntFinish();
+                    
                     return;
                 }
                 else
@@ -1239,7 +1239,7 @@ void Wimp()
                 TextBox(0,  "I understand.",
                             "Tampering with the fabric of reality",
                             "may not be everyone's cup of tea.");
-                EntFinish();
+                
                 return;
             }
 
@@ -1253,12 +1253,12 @@ void Wimp()
                     "dog without batting a lash.");
         TextBox(T_DARIN, "...Leave Fluffykins out of this!","","" );
     }
-    EntFinish();
+    
 }
 
 /// entity
 void Dexters_Dad() {
-    EntStart();
+    
     TextBoxM(0, "Where is that worthless little puke? ",
                 "I oughta disown that ungrateful ninny",
                 "of a son!");
@@ -1290,12 +1290,12 @@ void Dexters_Dad() {
         TextBox(T_DEXTER,   "He's just not listening.",
                             "Let's go, Darin.","");
     }
-    EntFinish();
+    
 }
 
 /// entity
 void Dexters_Mom() {
-    EntStart();
+    
     TextBox(0,  "My husband goes on like that,",
                 "but I think he loves Dexter",
                 "very much in his heart.");
@@ -1306,7 +1306,7 @@ void Dexters_Mom() {
                             "I help Darin destroy Lord",
                             "Stan he'll respect me more.");
     }
-    EntFinish();
+    
 }
 
 /// entity
@@ -1314,14 +1314,14 @@ void little_daddy_bruce() {
     int answer, darin;
 
 
-    EntStart();
+    
 
     if( flags[F_FASHION_MADEOVER] ) //if you're already 'pretty'
     {
         TextBox(0,  "How's the new attire working",
                     "out for you today? You look",
                     "stunning, you really do!");
-        EntFinish();
+        
         return;
     }
 
@@ -1333,7 +1333,7 @@ void little_daddy_bruce() {
             TextBox(0,  "Go tell the stylists what you",
                         "want done, then return here.",
                         "You haven't even gotten new duds!");
-            EntFinish();
+            
             return;
         }
 
@@ -1342,7 +1342,7 @@ void little_daddy_bruce() {
             TextBox(0,  "Go tell the stylists what you",
                         "want done, then return here.",
                         "You haven't even gotten a haircut!");
-            EntFinish();
+            
             return;
         }
 
@@ -1350,7 +1350,7 @@ void little_daddy_bruce() {
         {
             TextBox(0,  "Go tell the stylists what you",
                         "want done, then return here.","");
-            EntFinish();
+            
             return;
         }
 
@@ -1445,7 +1445,7 @@ void little_daddy_bruce() {
 
         flags[F_FASHION_MADEOVER] = 1;
 
-        EntFinish();
+        
         return;
     }
 
@@ -1471,7 +1471,7 @@ void little_daddy_bruce() {
             TextBox(0,  "Oh, well I am so sorry to",
                         "hear that. Please come back",
                         "when you want to be pretty.");
-            EntFinish();
+            
             return;
         }
 
@@ -1480,7 +1480,7 @@ void little_daddy_bruce() {
             TextBox(0,  "Oh sorry, hon. We can't make",
                         "you into a creature of beauty",
                         "without money. Sorry.");
-            EntFinish();
+            
             return;
         }
 
@@ -1509,14 +1509,14 @@ void little_daddy_bruce() {
         flags[F_FASHION_PURCHASE] = 1; //we've purchased the goods!
     }
 
-    EntFinish();
+    
 }
 
 /// entity
 void fashion_babe() {
     int answer, darin;
 
-    EntStart();
+    
 
     if(!flags[F_FASHION_MADEOVER])
     {
@@ -1524,7 +1524,7 @@ void fashion_babe() {
                     "there's anything you need in",
                     "the studio, let me know.");
 
-        EntFinish();
+        
         return;
     }
 
@@ -1536,7 +1536,7 @@ void fashion_babe() {
         TextBox(0,  "Smart move! You look better",
                     "now anyway.","");
 
-        EntFinish();
+        
         return;
     }
 
@@ -1557,14 +1557,14 @@ void fashion_babe() {
     flags[F_FASHION_CLOTHES]    = 0;
     flags[F_FASHION_MADEOVER]   = 0;
 
-    EntFinish();
+    
 }
 
 /// entity
 void clothes_guy() {
     int answer;
 
-    EntStart();
+    
 
     if(flags[F_FASHION_MADEOVER])
     {
@@ -1572,7 +1572,7 @@ void clothes_guy() {
                     "new threads working out for",
                     "you?");
 
-        EntFinish();
+        
         return;
     }
 
@@ -1582,7 +1582,7 @@ void clothes_guy() {
                     "and clothes are my thing.",
                     "Please go see Bruce up front.");
 
-        EntFinish();
+        
         return;
     }
 
@@ -1592,7 +1592,7 @@ void clothes_guy() {
                     "clothes you requested. See",
                     "you in a bit!");
 
-        EntFinish();
+        
         return;
     }
 
@@ -1615,7 +1615,7 @@ void clothes_guy() {
     TextBox(0,  "Fabulous! I'll get that sized",
                 "for your measurements then.","");
 
-    EntFinish();
+    
 }
 
 /// entity
@@ -1624,7 +1624,7 @@ void hair_stylist() {
 
 
 
-    EntStart();
+    
 
     if( flags[F_FASHION_MADEOVER] )
     {
@@ -1632,7 +1632,7 @@ void hair_stylist() {
                     "new haircut working out for",
                     "you?");
 
-        EntFinish();
+        
         return;
     }
 
@@ -1643,7 +1643,7 @@ void hair_stylist() {
                     "and hair is my thing.",
                     "Please go see Bruce up front.");
 
-        EntFinish();
+        
         return;
     }
 
@@ -1652,7 +1652,7 @@ void hair_stylist() {
         TextBox(0,  "I'm getting ready with the",
                     "style you requested. See",
                     "you in a bit!");
-        EntFinish();
+        
         return;
     }
 
@@ -1678,7 +1678,7 @@ void hair_stylist() {
     TextBox(0,  "Lovely! I'll get the coloring",
                 "and scissors ready.","");
 
-    EntFinish();
+    
 }
 
 /// entity
@@ -1687,14 +1687,14 @@ void cape_dyer() {
 
 
 
-    EntStart();
+    
 
     if(flags[F_FASHION_MADEOVER])
     {
         TextBox(0,  "Greetings! How is that",
                     "new cape working out for",
                     "you?");
-        EntFinish();
+        
         return;
     }
 
@@ -1703,7 +1703,7 @@ void cape_dyer() {
         TextBox(0,  "Hi, there! My name is James",
                     "and I specialize in dyes.",
                     "Please go see Bruce up front.");
-        EntFinish();
+        
         return;
     }
 
@@ -1712,7 +1712,7 @@ void cape_dyer() {
         TextBox(0,  "I'm getting ready with the",
                     "color you requested. See",
                     "you in a bit!");
-        EntFinish();
+        
         return;
     }
 
@@ -1737,12 +1737,12 @@ void cape_dyer() {
     TextBox(0,  "Splendid! I'll get the water",
                 "and dye bases ready.","");
 
-    EntFinish();
+    
 }
 
 /// entity
 void music_man() {
-    EntStart();
+    
 
     TextBox(0,  "This is our bitchin' stereo",
                 "system! Feel free to set the",
@@ -1751,71 +1751,71 @@ void music_man() {
                 "a song, and the right dial to",
                 "set the volume.");
 
-    EntFinish();
+    
 }
 
 /// entity
 void student_a() {
-    EntStart();
+    
     TextBox(0,  "We're real fighters! Our",
                 "classes involve bench pressing",
                 "cattle and eating gravel!");
-    EntFinish();
+    
 }
 
 /// entity
 void student_b() {
-    EntStart();
+    
     TextBox(0,  "The boys and I are gonna stay",
                 "after class and beat up the",
                 "mages for their lunch money.");
-    EntFinish();
+    
 }
 
 /// entity
 void student_c() {
-    EntStart();
+    
     TextBox(0,  "There was a girl in this class",
                 "once, but she was smarter than",
                 "the teacher, so she left.");
-    EntFinish();
+    
 }
 
 /// entity
 void student_d() {
-    EntStart();
+    
     TextBoxM(0, "I'm working on a top secret",
                 "project for next week's",
                 "science fair!");
     TextBox(0,  "It's called a 'video game' and",
                 "will rot and control the minds",
                 "of all it enslaves!");
-    EntFinish();
+    
 }
 
 /// entity
 void student_e() {
-    EntStart();
+    
     TextBoxM(0, "I'm pretty dumb for signing up",
                 "in a magic class in a world",
                 "that has no mana.");
     TextBox(0,  "*sigh*... and last month's",
                 "tuition is overdue as well.","");
-    EntFinish();
+    
 }
 
 /// entity
 void student_f() {
-    EntStart();
+    
     TextBox(0,  "I am, like, so totally killer",
                 "with magic. I should, like,",
                 "go adventuring or whatever.");
-    EntFinish();
+    
 }
 
 void student_g()
 {
-    EntStart();
+    
 
     TextBoxM(0, "The three main elements are Fire, Ice,",
             "and Electric, but there's also Dark and",
@@ -1824,12 +1824,12 @@ void student_g()
             "fire-based and cold-blooded enemies, and",
             "Electric is most effective when used");
     TextBox(0,  "against water creatures and machines!", "", "");
-    EntFinish();
+    
 }
 
 void student_h()
 {
-    EntStart();
+    
 
     TextBoxM(0, "Different people learn skills in different",
             "ways. Warriors develop new abilities as",
@@ -1838,32 +1838,32 @@ void student_h()
             "to get new abilities, and summoners must",
             "form pacts with summoned creatures.");
     TextBox(0,  "And some people just improvise!","","");
-    EntFinish();
+    
 }
 
 void student_i()
 {
-    EntStart();
+    
 
     TextBox(0,  "What a gyp! I bought Fire last semester,",
             "but now I have to buy Mega Fire. They're",
             "both fire, aren't they?");
-    EntFinish();
+    
 }
 
 void student_j()
 {
-    EntStart();
+    
 
     TextBox(0,  "Man, the buy list for Intermediate White is",
             "huge. I wonder if I can get away with not",
             "getting Refresh...");
-    EntFinish();
+    
 }
 
 void teacher()
 {
-    EntStart();
+    
     TextBox(0,  "Welcome to Introductory Adventuring.",
                 "Save frequently, and don't forget to",
                 "equip your gear!");
@@ -1871,14 +1871,14 @@ void teacher()
     {
         TextBox( T_GALFREY, "What's next, 'talk to everyone?'","","");
     }
-    EntFinish();
+    
 }
 
 
 
 /// zone
 void Sleeping_Dexter() {
-    EntStart();
+    
 
     // If Dexter has joined your party *and* we're during the
     // Bumsville nighttime scene, then this event can execute!
@@ -1888,7 +1888,7 @@ void Sleeping_Dexter() {
         TextBox( T_DARIN,   "Aww, he looks like he's having sweet","dreams.","Best not to wake him.");
     }
 
-    EntFinish();
+    
 }
 
 /// zone
@@ -1896,14 +1896,14 @@ void veggiesmith() {
 
     int save_vol = V1_GetCurVolume(); //save the current volume to restore later
 
-    EntStart();
+    
 
     if( flags[F_CARROT_QUEST] == 2 )
     {
         TextBox(0,  "Hello again, mister!",
                     "I hope the sacred weapon is serving",
                     "you well.");
-        EntFinish();
+        
         return;
     }
 
@@ -1971,36 +1971,36 @@ void veggiesmith() {
 
     V1_SetCurVolume(save_vol);
 
-    EntFinish();
+    
 }
 
 
 /// entity
 void person_a()
 {
-    EntStart();
+    
     TextBox(0,"Hi! Are you room service?","","");
-    EntFinish();
+    
 }
 
 /// entity
 void person_b()
 {
-    EntStart();
+    
     TextBox(0,  "Isn't this just the cutest,",
                  "quaintest bed and breakfast",
                  "you've ever seen?");
-    EntFinish();
+    
 }
 
 /// entity
 void person_c()
 {
-    EntStart();
+    
     TextBox(0,  "Trust me, dude. Do NOT steal",
                  "towels from this place. They",
                  "come after you with knives.");
-    EntFinish();
+    
 }
 
 /// zone
@@ -2110,52 +2110,52 @@ void bridgeswitch_under() {
 
 void churchA()
 {
-    EntStart();
+    
     TextBoxM(0, "Every day I pray to the great Vecna to",
                 "cure my arthritis.",
                 "");
     TextBox(0,  "He says it will be fixed in two weeks!", "", "");
-    EntFinish();
+    
 }
 
 void churchB()
 {
-    EntStart();
+    
     TextBox(0,  "I'm actually a Grunitarian, but this is the",
                 "only church in town.", "");
-    EntFinish();
+    
 }
 
 void churchC()
 {
-    EntStart();
+    
     TextBoxM(0, "You want to know about the crosses in the",
             "graveyard?  The cross represents the",
             "Direction Pad by which the gods steer the");
     TextBox(0,  "destinies of the righteous.", "Didn't you go to Sunday school?", "");
-    EntFinish();
+    
 }
 
 void churchD()
 {
-    EntStart();
+    
     TextBox(0,  "The balcony has a good view, but there",
                 "are no seats.",
                 "I'm so conflicted!");
-    EntFinish();
+    
 }
 
 void churchE()
 {
-    EntStart();
+    
     TextBox(0, "I came for the wine, but I stayed for the",
             "salvation!", "");
-    EntFinish();
+    
 }
 
 void priest()
 {
-    EntStart();
+    
     int tempvar = IsCharacter("Darin"); // Find Darin's cast index.
     // I'm assuming that Darin is a character, and that his index is thus valid. If not, it'll break stuff in Sully long before this.
     TextBox(0,  "Blessed are they who walk in the light.", "", "");
@@ -2165,17 +2165,17 @@ void priest()
                 "advance to the next level.", "");
         TextBox(T_DARIN,    "I know that!", "", "");
     }
-    EntFinish();
+    
 }
 
 void Archivist()
 {
-    EntStart();
+    
     TextBoxM(0, "Welcome to the archives. We have books" ,
             "from all over the world here, but they're",
             "a bit disorganized.");
     TextBox(0, "Did you want to know about something in","particular?","");
-    EntFinish();
+    
 }
 
 // If the player is not on the balcony yet, this puts him there by rearranging some obses and moving a couple of entities.

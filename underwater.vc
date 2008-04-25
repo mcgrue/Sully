@@ -85,7 +85,7 @@ void warp_lever()
 {
     if( !Flags[F_SEA_WARPON] )
     {
-        EntStart();
+        
         TextBox( T_DARIN,   "Uuurgh!",
                     "",
                     "");
@@ -101,7 +101,7 @@ void warp_lever()
         TextBox( T_CRYSTAL, "Don't worry honey.",
                     "I still respect you for your mind...",
                     "");
-        EntFinish();
+        
     }
     else
     {
@@ -202,7 +202,7 @@ void green_zone()
 
 void flood_door()
 {
-    EntStart();
+    
     switch( Flags[F_SEA_LEVER_CNT] )
     {
         case 0: 
@@ -224,7 +224,7 @@ void flood_door()
                         "",
                         "");
     }
-    EntFinish();
+    
 }
 
 void UpdateDoorTiles()
@@ -271,7 +271,7 @@ void to_green_cliff()
 ///Bert the talking Stingray!
 void bert()
 {
-    EntStart();
+    
     
     if( !flags[F_SEA_BERT] ) 
     {
@@ -297,5 +297,5 @@ void bert()
                             "Asking me more won't change this.", "");
     }
     
-    EntFinish();
+    
 }

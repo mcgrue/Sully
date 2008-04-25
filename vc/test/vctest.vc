@@ -176,6 +176,24 @@ void testTriggerAfterStep() {
     trigger.afterStep = ""; //restore empty
 }
 
+
+void testTriggerBeforeEntityScript() {
+    
+    AssertTrue( Equ(trigger.beforeEntityScript, "") );      //inits blank.
+    trigger.beforeEntityScript = "foo";
+    AssertTrue( Equ(trigger.beforeEntityScript, "foo") );   //can be set.
+    
+    trigger.beforeEntityScript = ""; //restore empty
+}
+
+void testTriggerAfterEntityScript() {
+    AssertTrue( Equ(trigger.afterEntityScript, "") );      //inits blank.
+    trigger.afterEntityScript = "foo";
+    AssertTrue( Equ(trigger.afterEntityScript, "foo") );   //can be set.
+    
+    trigger.afterEntityScript = ""; //restore empty
+}
+
 /* only uncomment this to fail.
 void testTestFail()
 {

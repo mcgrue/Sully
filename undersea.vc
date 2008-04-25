@@ -49,7 +49,7 @@ void entrance()
 ///Bert the talking Stingray!
 void bert()
 {
-    EntStart();
+    
     
     if( !flags[F_SEA_BERT] ) 
     {
@@ -75,7 +75,7 @@ void bert()
                             "Asking me more won't change this.", "");
     }
     
-    EntFinish();
+    
 }
 
 /// Treasure: 400 clams
@@ -229,7 +229,7 @@ void Pearl_of_Truth()
 {
     int save_vol = V1_GetCurVolume(); //save the current volume to restore later
     
-    EntStart();
+    
     
     if( !flags[F_PROCURED_PEARL] )
     {
@@ -303,5 +303,5 @@ void Pearl_of_Truth()
     
     V1_SetCurVolume( save_vol );
     
-    EntFinish();
+    
 }

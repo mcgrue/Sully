@@ -93,6 +93,9 @@ void AutoExec()
 
     trigger.onStep = "onStep";
     trigger.afterStep = "";
+    
+    trigger.beforeEntityScript = "EntStart";
+    trigger.afterEntityScript = "EntFinish";
 
     InitMcgrender();
 

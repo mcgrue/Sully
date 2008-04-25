@@ -622,7 +622,7 @@ void MasterDial( int flag_idx, int pos ) /* 19 */
 {
     int answer, old_state;
     
-    EntStart();
+    
     
     old_state = GetTextBoxScrollMode(); //set the original TextBox Scroll State.
     
@@ -648,7 +648,7 @@ void MasterDial( int flag_idx, int pos ) /* 19 */
         
         MenuPageTurn();
         
-        EntFinish();
+        
         return;
     }
         
@@ -656,7 +656,7 @@ void MasterDial( int flag_idx, int pos ) /* 19 */
     {
         MenuAngryBuzz();
         
-        EntFinish();
+        
         return;
     }
     
@@ -666,73 +666,73 @@ void MasterDial( int flag_idx, int pos ) /* 19 */
     
     MenuPageTurn();
     
-    EntFinish();
+    
 }
 
 void Skull_A() /* 20 */
 {
-    EntStart();
+    
     TextBox(0,  "You fell into Big Daddy Bubba's",
                 "trap! Ha ha!","");
-    EntFinish();    
+        
 }
 
 void Skull_B() /* 21 */
 {
-    EntStart();
+    
     TextBox(0,  "Please don't leave this cell.",
                 "We're so bored and lonely!","");
-    EntFinish();    
+        
 }
 
 void Skull_C() /* 22 */
 {
-    EntStart();
+    
     TextBox(0,  "Don't look at me. I'm just a dumb skull!","","");
-    EntFinish();    
+        
 }
 
 void Skull_D() /* 23 */
 {
-    EntStart();
+    
     TextBox(0,"The sum of the numbers is 13.","","");
-    EntFinish();    
+        
 }
 
 void Skull_E() /* 24 */
 {
-    EntStart();
+    
     TextBox(0,"The second number is not odd.","","");
-    EntFinish();    
+        
 }
 
 void Skull_F() /* 25 */
 {
-    EntStart();
+    
     TextBox(0,  "The first number is greater than 3.","","");
-    EntFinish();    
+        
 }
 
 void Skull_G() /* 26 */
 {
-    EntStart();
+    
     TextBox(0,  "The first and second numbers",
                 "are not the same.","");
-    EntFinish();    
+        
 }
 
 void Skull_H() /* 27 */
 {
-    EntStart();
+    
     TextBox(0,  "The third number is greater",
                 "than the sum of the first two.","");
-    EntFinish();    
+        
 }
 
 
 void Skull_I()
 {
-    EntStart();
+    
     TextBox(0,  "None of the numbers are zero.","","");
-    EntFinish();    
+        
 }

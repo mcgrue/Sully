@@ -93,21 +93,21 @@ void to_sand_cave() {
 }
 
 void Signpost() {
-    EntStart();
+    
     TextBox(0,  "City of the Dwarves","",                
                 "Watch your step!");
-    EntFinish();
+    
 }
 
 void EmptyChest() {
-    EntStart();
+    
     TextBox(0,  "It's empty.","","");
-    EntFinish();
+    
 }
 
 
 void Dwarf1() {
-    EntStart(); 
+    
     if (!flags[F_LOVE_ESCAPE]) { // first time in
         TextBox(0,"Welcome to the Village of the Dwarves,",
                   "where we are shaking with outrage at",                
@@ -122,14 +122,14 @@ void Dwarf1() {
         TextBox(T_DARIN,"But the sign said 'City of Dwarves.'","","");
         TextBox(0,"Yeah, well, we're working on it.","","");        
     }   
-    EntFinish();
+    
 }
 
 
 
 
 void Dwarf2() {
-    EntStart();
+    
     if (!flags[F_LOVE_ESCAPE]) { // first time in
         TextBox(0,"More humans! Are you with the guy who",
                   "just stole all our stuff?","");
@@ -148,11 +148,11 @@ void Dwarf2() {
         TextBox(0, "Whoa! A while back, the whole mountain shook,",
                     "and all this water came rushing down!","");
     }
-    EntFinish();
+    
 }
 
 void Dwarf3() {
-    EntStart();
+    
     if (!flags[F_LOVE_ESCAPE]) { // first time in
         TextBox(0,"This is terrible! I told them we shouldn't",
                   "have left all those treasure chests just",                
@@ -235,21 +235,21 @@ void Dwarf3() {
         }
     }
 
-    EntFinish();
+    
 }
 
 void Dwarf4() {
-    EntStart();
+    
                 
     TextBoxM(0, "Dwarven metalworking is renowned for its",
                 "strength and durability the world over!","");      
     TextBox(0,  "It's actually not that great, but no one can",
                 "resist our dwarven PR.","");               
-    EntFinish();
+    
 }
 
 void Dwarf5() {
-    EntStart();
+    
     if (!flags[F_LOVE_ESCAPE]) { 
                     
         TextBox(0,  "Oh, this is terrible! All our wares have",
@@ -273,20 +273,20 @@ void Dwarf5() {
             TextBox(T_SARA, "You should probably get a new slogan.","","");             
         }
     }
-    EntFinish();
+    
 }
 
 void Dwarf6() {
-    EntStart(); 
+     
     TextBox(0,  "Welcome to the Village of the Dwarves!","","");        
     TextBox(T_DARIN,"You know, there's a guy at the entrance",
                     "who's saying the same thing.","");             
     TextBox(0,  "There is!?","I'll fix him!","");       
-    EntFinish();    
+        
 }
 
 void Dwarf7() {
-    EntStart();
+    
     if (!flags[F_LOVE_ESCAPE]) { 
         TextBoxM(0, "Greetings, Gangly Ones. I'm afraid we are ",
                     "ill-equipped to receive visitors right now.","");      
@@ -324,11 +324,11 @@ void Dwarf7() {
                             "second question.","");     
         }
     }
-    EntFinish();    
+        
 }
 
 void Dwarf8() {
-    EntStart(); 
+     
     if (!flags[F_LOVE_ESCAPE]) { 
         if (!CharInParty("Paxton")) {
             TextBox(0,  "Are you looking for the human priest?",
@@ -351,11 +351,11 @@ void Dwarf8() {
                         "to travel between here and Bumsville.","");        
         }       
     }
-    EntFinish();    
+        
 }
 
 void Dwarf9() {
-    EntStart(); 
+     
     if (!flags[F_LAB_BLOWN_UP]) { 
         TextBox(0,  "Our dwarven treasury is empty!",                               
                     "A treasury without treasure is like a",
@@ -374,11 +374,11 @@ void Dwarf9() {
                     "same.");           
 
     }
-    EntFinish();    
+        
 }
 
 void Dwarf10() {
-    EntStart(); 
+     
     TextBoxM(0, "Dwarves love to dig!",                             
                 "Come sing the dwarven digging song",
                 "with us.");        
@@ -388,11 +388,11 @@ void Dwarf10() {
     if (CharInParty("Galfrey")) {
         TextBox(T_GALFREY,  "I don't like the digging song.","","");                                        
     }
-    EntFinish();    
+        
 }
 
 void Dwarf11() {
-    EntStart(); 
+     
     if (!flags[F_LAB_BLOWN_UP]) { 
         TextBox(0,  "I'm not really sold on this whole Vecna",
                     "thing. What do I get for signing up?",
@@ -407,11 +407,11 @@ void Dwarf11() {
                     "Maybe we could convert this place into",
                     "a rec room.");     
     }
-    EntFinish();    
+        
 }
 
 void Dwarf12() {
-    EntStart(); 
+     
     if (arMapTemp[1] == 0) { // haven't spoken to him yet
         if (!prompt(0,  "Hey, do you want to hear a secret?","","","Yes|No")) {
             TextBoxM(0, "The caves go much deeper than this.",
@@ -442,11 +442,11 @@ void Dwarf12() {
     else if (arMapTemp[1] == 2) { // heard secret already
         TextBox(0,  "Makes you wonder, huh?","","");
     }
-    EntFinish();    
+        
 }
 
 void Dwarf13() {
-    EntStart(); 
+     
     if (!flags[F_LAB_BLOWN_UP]) {                   
         TextBox(0,  "Damn you, humans! Why can't you leave us",
                     "in peace with our cache of amazing",
@@ -457,11 +457,11 @@ void Dwarf13() {
                     "all our stuff. As soon as our ship is",
                     "repaired, I'm out of here!");      
     }
-    EntFinish();    
+        
 }
 
 void Dwarf14() {
-    EntStart(); 
+     
     if (!flags[F_LAB_BLOWN_UP]) {                       
         TextBox(0,  "A guy in a vest ran through here and",
                     "grabbed the bottle right out of my hand!",
@@ -472,28 +472,28 @@ void Dwarf14() {
                     "V, I would be Green Apple flavor.",
                     "Because I'm sassy!");      
     }
-    EntFinish();    
+        
 }
 
 void Dwarf15() {
-    EntStart(); 
+     
     TextBoxM(0, "Are you surprised that dwarves can use",
                 "magic? When you broaden your horizons",
                 "you may discover that the world is a very");       
     TextBox(0,  "different place from how it seemed!","","");       
-    EntFinish();    
+        
 }
 
 void Dwarf16() {
-    EntStart(); 
+     
     TextBox(0,  "Hey, buddy. Do you want to split this",
                 "Smirnoff Twisted V Watermelon with me?",
                 "I don't think I can finish the whole thing.");     
-    EntFinish();    
+        
 }
 
 void Dwarf17() {
-    EntStart(); 
+     
     if (!flags[F_LOVE_ESCAPE]) { 
         TextBox(0,  "This is my house. If it looks a bit spare,",
                     "that's because a guy just ran in here and",
@@ -505,11 +505,11 @@ void Dwarf17() {
         TextBox(0,  "It's, um, it has a...",
                     "You can put things in it.","");        
     }
-    EntFinish();    
+        
 }
 
 void Innkeeper() {
-    EntStart(); 
+     
     if (!prompt(0,  "Welcome to Six Feet Under!",
                 "For only 50 " +moneyname+ " you can enjoy a dirt",
                 "nap in one of our lovely suites!","OK|No")) {
@@ -533,21 +533,21 @@ void Innkeeper() {
         TextBox(0,  "If you change your mind, you know where",
                     "we are!","");
     }   
-    EntFinish();    
+        
 }
 
 void Bartender() {
-    EntStart(); 
+     
     TextBoxM(0, "Well now, human visitors! That's a rarity.",
                 "Sit down and take a load off!","");        
     TextBox(0,  "We dwarves are a hearty folk. None of",
                 "that swill you call ale down here! For us",
                 "it's nothing but Smirnoff Twisted V!");        
-    EntFinish();    
+        
 }
 
 void DwarfWeapon() {
-    EntStart(); 
+     
     if (!flags[F_LOVE_ESCAPE]) { 
         TextBox(0,  "Here at the Dwarven Forge, we have the",
                     "best weapon to suit your needs!","");      
@@ -563,11 +563,11 @@ void DwarfWeapon() {
                     "this store hasn't been implemented",
                     "yet.");        
     }
-    EntFinish();    
+        
 }
 
 void DwarfArmor() {
-    EntStart(); 
+     
     if (!flags[F_LOVE_ESCAPE]) { 
         TextBox(0,  "We're in a bit of a bind here.",
                     "Could you maybe come back next week?","");     
@@ -577,23 +577,23 @@ void DwarfArmor() {
                     "this store hasn't been implemented",
                     "yet.");        
     }
-    EntFinish();    
+        
 }
 
 void DwarfItem() {
-    EntStart(); 
+     
     TextBox(0,  "I'm supposed to sell you items, but",
                 "this store hasn't been implemented",
                 "yet.");        
-    EntFinish();    
+        
 }
 
 void DwarfMagic() {
-    EntStart(); 
+     
     TextBox(0,  "I'm supposed to sell you magic, but",
                 "this store hasn't been implemented",
                 "yet.");        
-    EntFinish();    
+        
 }
 
 

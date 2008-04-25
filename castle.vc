@@ -60,7 +60,7 @@ void galfrey_event() {
         return;
     }
     
-    EntStart();
+    
     
     if( flags[F_HECK_ARMOR_ATTACK] )
     {
@@ -73,7 +73,7 @@ void galfrey_event() {
         Galfrey_Scene();
     }
     
-    EntFinish();
+    
 }
 
 void cyclops_plaque() // 3 //
@@ -88,13 +88,13 @@ void cyclops_plaque() // 3 //
     }
     else
     {
-        EntStart();
+        
         
         TextBox(0,  "The cyclops guardian can show you the",
                     "entrance. He needs the [Pearl of Truth] to",
                     "see it.");
                     
-        EntFinish();
+        
     }
 }
 
@@ -125,14 +125,14 @@ void cyclops_statue() // 4 //
         return;
     }
     
-    EntStart();
+    
  
     //Do this before Galfrey's joined.
     if( !CharInParty("Galfrey") )
     {
         TextBox(T_DARIN,    "What a suspicious looking statue!","","");
                     
-        EntFinish();
+        
         return;
     }
     
@@ -185,7 +185,7 @@ void cyclops_statue() // 4 //
                                 "of our justice now!");
     }
     
-    EntFinish();
+    
 }
 
 void heck_upkeep() // 0 //
@@ -581,11 +581,11 @@ void main_gate() {
     } 
     else //if we talked to the gates!
     {
-        EntStart();
+        
         
         TextBox(T_DARIN, "Oh man, he was right!","The gates *are* locked!","");
         
-        EntFinish();
+        
  
         /*
         log( "======================================" );
@@ -763,7 +763,7 @@ void Wall_Close() // 31 //
     
     if(!flags[F_HECK_WALL_CLOSE])
     {
-        EntStart();
+        
         
         SoundBomb();
         
@@ -786,7 +786,7 @@ void Wall_Close() // 31 //
         
         flags[F_HECK_WALL_CLOSE]=1;
         
-        EntFinish();
+        
     }
 }
 
@@ -853,7 +853,7 @@ void West_Tower_Gate() // 38 //
 {
     if( !flags[F_HECK_WEST_GATE] )
     {
-        EntStart();
+        
         
         TextBox(T_DARIN,    "This gate is locked.","","");
         TextBox(T_GALFREY,  "No problem. They're latched from the",
@@ -868,7 +868,7 @@ void West_Tower_Gate() // 38 //
         TextBox(T_GALFREY,  "Told you so.","","");
         flags[F_HECK_WEST_GATE]=1;
         
-        EntFinish();
+        
     }
 }
 
@@ -888,7 +888,7 @@ void dexter_event() // 39 //
     int bubba   = 2; //bubba is mapent 0
     int dexter  = 1; //dexter is mapent 1
     
-    EntStart();
+    
     
     CutsceneOn();
     Entity.Face[darin]      = FACE_UP;
@@ -1008,12 +1008,12 @@ void dexter_event() // 39 //
     CutsceneOff();
     flags[F_HECK_DEXTER_JOIN] = 1; 
     
-    EntFinish();
+    
 }
 
 void bubba_event() // 40 //
 {
-    EntStart();
+    
 
     
 
@@ -1030,19 +1030,19 @@ void bubba_event() // 40 //
     
     Entity.Face[1] = FACE_DOWN;
     
-    EntFinish();
+    
 }
 
 
 void West_Tower_Sign() // 41 //
 {
-    EntStart();
+    
     
     TextBox(0,  "It is said that when it looks",
                 "hopeless, the hero Zorro will",
                 "bring the wind to your steps.");
                 
-    EntFinish();
+    
 }
 
 
@@ -1057,13 +1057,13 @@ void West_Tower_Box() // 42 //
 
 void East_Tower_Sign() // 43 //
 {
-    EntStart();
+    
     
     TextBox(0,  "Light the torches with care.",
                 "Some will illuminate and",
                 "others will burn.");
          
-    EntFinish();
+    
 }
 
 void East_Tower_Box() // 44 //
@@ -1165,7 +1165,7 @@ void Stan_Taunt()
     
     if( !flags[F_HECK_STAN_TAUNT] )
     {
-        EntStart();
+        
         
         sara = GetPartyEntity( "Sara" );
         
@@ -1264,7 +1264,7 @@ void Stan_Taunt()
         flags[F_HECK_STAN_TAUNT]=1;
         CutsceneOff();
         
-        EntFinish();
+        
     }
 }
 
@@ -1274,7 +1274,7 @@ void Wall_Crush() // 52 //
     int i,x,y,x1,x2,y1;
     int darin, sara, dexter, crystal, galfrey;
     
-    EntStart();
+    
     
     if( !flags[F_HECK_WALLCRUSH] )
     {
@@ -1439,12 +1439,12 @@ void Wall_Crush() // 52 //
         flags[F_HECK_WALLCRUSH] = 1;
     }
  
-    EntFinish();
+    
 }
 
 void crystal_event() // 53 //
 {
-    EntStart();
+    
     
     if(flags[F_HECK_WALLCRUSH])
     {
@@ -1453,12 +1453,12 @@ void crystal_event() // 53 //
                             "these walls.");
     }
     
-    EntStart();
+    
 }
 
 void sara_event() // 54 //
 {
-    EntFinish();
+    
     
     if(flags[F_HECK_WALLCRUSH])
     {
@@ -1467,14 +1467,14 @@ void sara_event() // 54 //
                         "Push harder, wuss!");
     }
     
-    EntFinish();
+    
 }
 
 
 
 void Living_Statues() // 55 //
 {
-    EntStart();
+    
     
     int dexter, galfrey;
 
@@ -1551,20 +1551,20 @@ void Living_Statues() // 55 //
         flags[F_HECK_ARMOR_ATTACK]=1;
     }
     
-    EntFinish();
+    
 }
 
 
 
 void dex_finish() // 57 //
 {
-    EntStart();
+    
     
     TextBox(T_DEXTER,   "This is your only chance, Darin! ",
                         "We'll be fine.",
                         "Go now and face Lord Stan!");
                         
-    EntFinish();
+    
 }
 
 
@@ -1576,7 +1576,7 @@ void Final_Encounter() // 58 //
  
     if(!flags[F_HECK_FINAL_SPEECH])
     {
-        EntStart();
+        
         
         camZoomToEntity(5, 50);
         
@@ -1604,7 +1604,7 @@ void Final_Encounter() // 58 //
         
         flags[F_HECK_FINAL_SPEECH]=1;
         
-        EntFinish();
+        
     }
 
 }
@@ -1612,7 +1612,7 @@ void Final_Encounter() // 58 //
 void Final_Lever() // 59 //
 {
     int i;
-    EntStart();
+    
     
     if(!flags[F_HECK_FINAL_LEVER])
     {
@@ -1658,7 +1658,7 @@ void Final_Lever() // 59 //
         Credits();
     }
     
-    EntFinish();
+    
 }
 
 void Stair_Close() // 60 //
@@ -1681,7 +1681,7 @@ void Stair_Close() // 60 //
 // int going_outside: 1 if going outside, 0 if going inside.
 void Gold_Door_Open( string item_needed, int top_tx, int top_ty, int my_flag, int warp_x, int warp_y, int going_outside ) // 63 //                                  // Master Gold Door Open
 {
-    EntStart();
+    
     
     if( HasItem(item_needed) )
     {
@@ -1702,7 +1702,7 @@ void Gold_Door_Open( string item_needed, int top_tx, int top_ty, int my_flag, in
         
         flags[my_flag]=1;
         
-        EntFinish();
+        
         return;
     }
         
@@ -1720,14 +1720,14 @@ void Gold_Door_Open( string item_needed, int top_tx, int top_ty, int my_flag, in
                 WalkInside( warp_x, warp_y );
             }
 
-            EntFinish();
+            
             return;
 //      }
     }
     
     TextBox(SpcByPos(0), "Hmm... locked.","","");
     
-    EntFinish();
+    
 }
 
 
@@ -1893,7 +1893,7 @@ void Master_Fall( int x, int y ) // 73 //
         
     y_pos = 112*16;
 
-    EntStart();
+    
     
     FadeOut( 5 );
     SoundFall();
@@ -1936,7 +1936,7 @@ void Master_Fall( int x, int y ) // 73 //
 
     Warp(x,y,TBLACK);
     
-    EntFinish();
+    
 }
 
 
@@ -1945,7 +1945,7 @@ void Master_Fall( int x, int y ) // 73 //
 //
 void Pan_Intro()
 {
-    EntStart();
+    
     
     if( CharInParty("Darin") && !flags[F_HECK_INTROPAN] )
     {
@@ -1982,5 +1982,5 @@ void Pan_Intro()
         flags[F_HECK_INTROPAN] = 1;
     }   
     
-    EntFinish();
+    
 }
