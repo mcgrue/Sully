@@ -48,6 +48,10 @@ void HackLogFinderThingForWonkyBM()
     Exit( "Finished." );
 }
 
+void f12_debug_mcgrender() {
+    McRenderToString( str(systemtime) );
+}
+
 
 void f5_debug_set_activemode()
 {
@@ -277,7 +281,9 @@ FreeSprite( tmp, 1 );
         
         
     HookKey( SCAN_F5, "f5_debug_set_activemode" );  
-    HookKey( SCAN_F8, "f8_debug_set_stepmode_or_step" );    
+    HookKey( SCAN_F8, "f8_debug_set_stepmode_or_step" );
+    HookKey( SCAN_F12, "f12_debug_mcgrender" );    
+
 
         
 //DumpStructStatus();

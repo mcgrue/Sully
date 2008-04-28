@@ -105,6 +105,123 @@ void doBattle( String battle_group_dat_area )
     }
 }
 
+String __music_before_battle;
+
+int initBattleRenderer()
+{
+    int i, tmp, x, y, tmp_ref;
+
+    cleanupPreviousBattle();
+    
+    // set the fonts
+    fontBattleWhite = menu_font[0];
+    fontBattleGrey  = menu_font[1];
+    fontBattleGreen = menu_font[2];
+    fontBattleRed   = menu_font[3];
+
+    // we're in a battle now.  Tell the engine that.
+    __sully_battle_flag = 1;
+    
+    /// set this to an area-based loader.
+    imBattleBG = LoadImage( "res/battle/backgrounds/Grass.png" );   
+    
+    /// TEMP. put this in a one-time init somewhere and remove the freeing in the above function.
+    imBattleActorPointer = LoadImage( "res/battle/actoractive.pcx" );
+        
+    /// create three new layers in the McGrender engine.
+    
+    /// The background layer, mainly for the background image and any spell 
+    /// effects that will occur behind the enemies and allies.
+    bs_layerBG      = McgSpawnLayer(); 
+    
+    /// The foreground layer, containing at the bottom levels the enemy and ally sprites, 
+    /// and to be used for any effect drawn over them.
+    bs_layerFG      = McgSpawnLayer();
+    
+    /// The interface layer, used for the HUD, menus, and any messageboxes.  Could have effects 
+    /// drawn over them too. Yay!
+    bs_layerInterface   = McgSpawnLayer();
+
+    McgSetActiveLayer( bs_layerBG );
+    mcg_add_image( 0,0, 0,0, 100, imBattleBG ); 
+
+    McgSetActiveLayer( bs_layerFG );
+
+    bs_enemy_sprite_ref_count = GetBattleGroupCount();
+
+    for( i=0; i<bs_enemy_sprite_ref_count; i++ )
+    {
+    
+        tmp = GetBattleGroupEnemy( i );
+        
+        if( tmp < 0 )
+        {
+            ErrorHandler (
+                "v1_battle::battle.vc() The battle group returned -1 for an " +
+                "enemy access.  Most distressing."
+            );      
+        }
+        
+//DumpEnemy( tmp );
+        /// sets up the graphics for the enemy
+        bs_enemy_sprite_ref[i] = LoadSprite( master_enemy[tmp].sprite, SPRITETYPE_ENEMY );
+    
+        x = GetBattleGroupEnemyX( i );
+        y = GetBattleGroupEnemyY( i );
+
+        tmp_ref = mcg_add_sprite( x,y,  x,y,    0, bs_enemy_sprite_ref[i] );
+        
+        /// adds the enemy to the battle as far as the non-graphical aspects are concerned
+        addEnemyToBattle( tmp, tmp_ref, IsBattleGroupEnemyLeader(i) );
+    }
+    
+    if( !equ(BattleGroupSetupCallfunc(),"") )
+    {
+        if( BATTLE_GROUP_CALLFUNC_STRICT )
+        {
+            if( !FunctionExists(BattleGroupSetupCallfunc()) )
+            {
+                ErrorHandler (
+                    "v1_battle::battle.vc() In Battle Group Callfunc Strict "+
+                    "mode, function '"+BattleGroupSetupCallfunc()+"' was "+
+                    "requested but did not exist."
+                );
+            }
+        }
+        
+        CallFunction( BattleGroupSetupCallfunc() );
+    }
+    
+    BsPlacePartySprites();
+        
+    McgSetActiveLayer( bs_layerInterface );
+    
+    ref_effects = mcg_add_complex( "DoBattleEffects", -1 );
+    ref_slashy = mcg_add_complex( "DoSlashy", -1 );
+    ref_bouncynums = mcg_add_complex( "DoBouncy", -1 );
+    ref_BattleHUD = mcg_add_complex( "DrawBattleHUD", -1 );
+    //ref_BattleQueue = mcg_add_complex( "DrawBattleQueue", -1 );
+    //ref_BattleQueue = mcg_add_complex( "", -1 );
+    ref_battlemenu = mcg_add_complex( "HandleBattleMenu", -1 );
+    ref_battletarg = mcg_add_complex( "HandleBattleMenuTargetting", -1 );
+
+    ref_actorindicator = mcg_add_complex( "HandleBattleMenuActorIndicator", -1 );
+
+    //mcg_add_complex( "__TEST_bouncy", -1 );
+    
+    BsSeedBattleQueue();
+    
+    __music_before_battle = V1_CurrentMusicName();
+    
+    V1_StartMusic( "res/music/X01C.IT" );
+
+    if( mode_battle_debug )
+    {
+        h_window_debug = WindowCreate( 10, 10, 480, 200, "Battle debug info" ); 
+
+        ref_BattleQueue = mcg_add_complex( "render_battle_debug_window", -1 );
+    }
+}
 
 int ____battleSteps = 30;
 
