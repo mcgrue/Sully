@@ -1,0 +1,66 @@
+// 	This document will explain how to make your sprite definition files. 
+// It's also a sprite definition file itself! 
+// 	This is a TXT file, while other sprite definition files are SPR files.
+// The file extension doesn't matter so long as the file contains plain text.
+// 	These lines will be ignored by the spritefile reader because anything
+// after a // is ignored, like in VC. 
+     	
+// 	Similarly, any line containing nothing but whitespace, like the above, 
+// is also ignored.
+
+// 	The first real line of the file must contain 6 fields, as follows:
+// NAME: The filename for the image file that goes with this sprite. The file 
+//	must be located in the same directory as the file, that being the one 
+//	defined as the SPRFILE_DIR. The filename may not contain spaces.
+// WIDTH: The width of a single frame of this sprite
+// HEIGHT: The height of a single frame of this sprite.
+// FRAMES PER ROW: The number of frames on each row of the image. If the rows 
+//	have different numbers of frames then make this the largest number and
+//	the other rows will have extra "phantom" frames that you won't use.
+//	Note that changing this will change which frame is labeled what.
+// ROWS: The number of rows in the image. 
+// PADDING: The type of padding used. This must be 0, 1, or 2, although
+// 	technically any other value defaults to 2..
+//	Type 0 (no padding): There is no padding anywhere.
+//	Type 1 (full padding): There is one pixel of padding between every row
+//		and every column, and also on the topmost and leftmost lines
+//		of pixels, at the image's edge.
+//	Type 2 (edgeless padding): There is one pixel of padding between every
+//		row and every column, but the top row and left column are flush
+//		with the edges of the image.
+
+// So here's the data line! I've included a header comment to make it readable.
+//name		wd	ht	per_row	rows	padding
+vampire.gif	16	32	15	1	1
+
+// If you want to see how these settings translate to an actual image, have a
+// look at vampire.gif. As you can see, it's a single long row of 16x32 frames.
+
+// Now for the actual animations! Every line after the original must be an
+// animation definition (though more features may be added in the future).
+//	An animation definition is a line that begins with the word "anim," The
+// next word on the line is a unique (case-insensitive) name for an animation 
+// string, followed by whitespace, and then finally the animation string.
+// 	Animation strings work similar to the walkstrings in CHR makefiles;
+// F0W10F1W15F2W20B means "show frame 0 for 0.1 seconds, then frame 1 for 0.15
+// seconds, then frame 2 for 0.2 seconds, then start over." If you want the
+// animation to loop you end with B, otherwise not. There are a few differences
+// between these and normal CHR walkstrings, however: first off, whitespace is
+// ignored, so you can break the line up like F0W10 F1W15 F2W20 B for the sake
+// of readability. Secondly, you can insert callfuncs in the string. The system
+// will automatically call these functions when it reaches that point. This is 
+// a good way to synchronize sound playback with animation! 
+// 	To insert an optional callfunction MyFunction(), put [MyFunction] into
+// the animation string. If the function doesn't exist it will be skipped. If 
+// you want to make sure that the function exists globally, use the form
+// <MyFunction> instead.
+
+
+anim idle F0W15F1W15B
+anim weak F2W15F3W15B
+anim attack F5W15F6W15F7W15F8W20
+anim hit F4 W45
+anim death F9W5F10W5F11W5F12W5F13W5F14
+// 	For some reason the sprite reader gets a bit wonky if the last line of 
+// the file contains data, so you have to put an unimportant line at the end
+// like this. This should be fixed pretty soon, God willing.

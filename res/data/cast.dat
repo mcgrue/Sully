@@ -17,12 +17,12 @@
 //
 // name     class       chrfile     overworld_chr   battle_sprite   statfile    "description"
 
-Darin       Knight      Darin.chr   lil_darin.chr   p_darin.spr     Darin.dat   "Unlikely hero, out for adventure.  Now with Headband! This is some extra stuff added to Darin's description to test the line limit and layout."
-Crystal     Priest      Crystal.chr lil_crystal.chr p_crystal.spr   Crystal.dat "Stereotypical kidnapping fodder!"
-Dexter      Wizard      Dexter.chr  lil_dexter.chr  p_dexter.spr    Dexter.dat  "Neeeeeeeeeerd!"
-Sara        Engineer    Sara.chr    lil_sara.chr    p_darin.spr     Sara.dat    "She has a tool!"
-Galfrey     Spearguy    Galfrey.chr lil_galfrey.chr p_darin.spr     Galfrey.dat "I like to poke things."
-Lance       Thief       Lance.chr   lil_lance.chr   p_dexter.spr    Galfrey.dat "How much, you say?"
-Paxton      Cleric      Paxton.chr  lil_paxton.chr  p_paxton.spr    Galfrey.dat "I'm totally holier than thou."
-Mr._E       Avatar      Galfrey.chr crono.chr       p_dexter.spr    Galfrey.dat "Shrouded in odd clothing... is this a man...? ...a woman...? ...or should we ask...?"
+Darin       Knight      Darin.chr   lil_darin.chr   p_darin.spr     Darin.dat   "Save the world? How hard could it be?"
+Crystal     Priest      Crystal.chr lil_crystal.chr p_crystal.spr   Crystal.dat "A beacon of vestal innocence. No, really. Take our word for it."
+Dexter      Wizard      Dexter.chr  lil_dexter.chr  p_dexter.spr    Dexter.dat  "Still waters run explodey."
+Sara        Engineer    Sara.chr    lil_sara.chr    p_darin.spr     Sara.dat    "Might have a few screws loose."
+Galfrey     Spearguy    Galfrey.chr lil_galfrey.chr p_darin.spr     Galfrey.dat	"How could you ever understand my pain!?"
+Lance       Thief       Lance.chr   lil_lance.chr   p_dexter.spr    Lance.dat	"Who, me? I'm just passing through."
+Paxton      Cleric      Paxton.chr  lil_paxton.chr  p_paxton.spr    Paxton.dat	"Come not near to me, for I am holier than thou."
+Mr._E       Avatar      Galfrey.chr crono.chr       p_dexter.spr    MrE.dat		"Shrouded in odd clothing... is this a man...? ...a woman...? ...or should we ask...?"
 END_OF_FILE
