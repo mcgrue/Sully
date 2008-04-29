@@ -1,56 +1,55 @@
+
 int __current_menu_idx;
 
-
 int __current_targ_batact_delay;
-
 
 /// set how long to shove this new action into the battle queue for!
 void SetTargettedActionDelay( int delay )
 {
-	__current_targ_batact_delay = delay;
+    __current_targ_batact_delay = delay;
 }
 
 /// return how long to shove this new action into the battle queue for!
 int GetTargettedActionDelay()
 {
-	return __current_targ_batact_delay;
+    return __current_targ_batact_delay;
 }
 
 
 void ExecuteLoveUniversal()
 {
-	ClearTargetting();
-	targetting_success = TARG_SUCCESS;
-	AddTarget( battle_queue[0].batent_ref, PARTY_ALLY, "Attacker" );
+    ClearTargetting();
+    targetting_success = TARG_SUCCESS;
+    AddTarget( battle_queue[0].batent_ref, PARTY_ALLY, "Attacker" );
 }
 
 
 void ExecuteLove( string _key )
 {
-	//cur_level
-	Log( "ExecuteLove( "+_key+" )" );
-	Log( "Current Level: " + str(master_battle_menus[__current_menu_idx].cur_level) );
-	
-	if( master_battle_menus[__current_menu_idx].cur_level >= 1 )
-	{
-		if(
-			equ(
-				getPageItem( __current_menu_idx, master_battle_menus[__current_menu_idx].level_history[0], master_battle_menus[__current_menu_idx].cursor_history[0] ),
-				"Items"
-			)
-		) {
-			ExecuteLoveItem( _key );
-			return;
-		}
-		else
-		{
-			ExecuteLoveSkill( _key );
-		}
-	}
-	else
-	{
-		ExecuteLoveSpecial( _key );
-	}
+    //cur_level
+    Log( "ExecuteLove( "+_key+" )" );
+    Log( "Current Level: " + str(master_battle_menus[__current_menu_idx].cur_level) );
+    
+    if( master_battle_menus[__current_menu_idx].cur_level >= 1 )
+    {
+        if(
+            equ(
+                getPageItem( __current_menu_idx, master_battle_menus[__current_menu_idx].level_history[0], master_battle_menus[__current_menu_idx].cursor_history[0] ),
+                "Items"
+            )
+        ) {
+            ExecuteLoveItem( _key );
+            return;
+        }
+        else
+        {
+            ExecuteLoveSkill( _key );
+        }
+    }
+    else
+    {
+        ExecuteLoveSpecial( _key );
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -59,62 +58,62 @@ void ExecuteLove( string _key )
 
 void ExecuteLoveItem( string _key )
 {
-	int i;
+    int i;
 
-	i = IsItem( _key );
-	
-	if( i < 0 )
-	{
-		ErrorHandler( "ExecuteLoveItem: '"+_key+"' is not a valid item." );
-		return;
-	}
-	
-	/// 1. Make sure this item is usable in battle.	
-	if( !CheckItemUseflagI(i,USE_BATTLE) )
-	{
-		ErrorHandler( "ExecuteLoveItem: '"+_key+"' is not usable in battle." );
-		return;	
-	}
-	
-	/// 1a. Make sure the targetting callfunc exists! (onoes!)
-	if( !FunctionExists(GetItemTargFunc(i)) )
-	{
-		ErrorHandler( "ExecuteLoveItem: '"+_key+"'s targetting function ("+GetItemTargFunc(i)+") does not exist!" );
-		return;		
-	}
-	
-	/// 1b. Make sure the item is in inventory! (change thias if we want to genericize it for multiple inventories)
-	if( !HasItemI(i) )
-	{
-		ErrorHandler( "ExecuteLoveItem: '"+_key+" is not in the party's inventory." );
-		return;			
-	}
+    i = IsItem( _key );
+    
+    if( i < 0 )
+    {
+        ErrorHandler( "ExecuteLoveItem: '"+_key+"' is not a valid item." );
+        return;
+    }
+    
+    /// 1. Make sure this item is usable in battle. 
+    if( !CheckItemUseflagI(i,USE_BATTLE) )
+    {
+        ErrorHandler( "ExecuteLoveItem: '"+_key+"' is not usable in battle." );
+        return; 
+    }
+    
+    /// 1a. Make sure the targetting callfunc exists! (onoes!)
+    if( !FunctionExists(GetItemTargFunc(i)) )
+    {
+        ErrorHandler( "ExecuteLoveItem: '"+_key+"'s targetting function ("+GetItemTargFunc(i)+") does not exist!" );
+        return;     
+    }
+    
+    /// 1b. Make sure the item is in inventory! (change thias if we want to genericize it for multiple inventories)
+    if( !HasItemI(i) )
+    {
+        ErrorHandler( "ExecuteLoveItem: '"+_key+" is not in the party's inventory." );
+        return;         
+    }
 
-	/// 2. Set the targetting cursor to the item's icon.
-	set_selectmap_cursor_image( icon_get(GetItemIconIdx(i)) );
-	
-	/// 3. Pause the battle menu.  
-	PauseBattleMenu();
-	
-	/// 3.5. setup the Targetting library...
-	ExecuteLoveUniversal();
-	
-	/// 3.5.5 setup the Item's effect function (it'd be nice if it did something when it's all said and done...)
-	SetTargettingEffectFunc( GetItemEffectFunc(i) );
-	
-	/// 3.6. set how long it'll take to do this action
-	/// (gayo's spec says item use's charge time takes the 'base delay' of 100...)
-	SetTargettedActionDelay( BASE_DELAY );
-	
+    /// 2. Set the targetting cursor to the item's icon.
+    set_selectmap_cursor_image( icon_get(GetItemIconIdx(i)) );
+    
+    /// 3. Pause the battle menu.  
+    PauseBattleMenu();
+    
+    /// 3.5. setup the Targetting library...
+    ExecuteLoveUniversal();
+    
+    /// 3.5.5 setup the Item's effect function (it'd be nice if it did something when it's all said and done...)
+    SetTargettingEffectFunc( GetItemEffectFunc(i) );
+    
+    /// 3.6. set how long it'll take to do this action
+    /// (gayo's spec says item use's charge time takes the 'base delay' of 100...)
+    SetTargettedActionDelay( BASE_DELAY );
+    
 
-	/// 3.10 set the "decrement this item when used" device.
-	SetTargettingItemDecr( i );
+    /// 3.10 set the "decrement this item when used" device.
+    SetTargettingItemDecr( i );
 
-	/// 4. Place the targetting callfunc into the battle renderstack container for 
-	///    the targetting callfunc.
-	///    The callfunc will handle unpausing the menu if cancelled out, and handle 
-	///    committing the new action to the action queue if valid accepting happens.
-	SetActiveBattleMenuTargetting( GetItemTargFunc(i) );
+    /// 4. Place the targetting callfunc into the battle renderstack container for 
+    ///    the targetting callfunc.
+    ///    The callfunc will handle unpausing the menu if cancelled out, and handle 
+    ///    committing the new action to the action queue if valid accepting happens.
+    SetActiveBattleMenuTargetting( GetItemTargFunc(i) );
 }
 
 /// the private variable for the inventory-decrementing device 
@@ -126,12 +125,12 @@ int __targItemIdx = -1;
 ///
 int HasTargettingItemDecr() 
 {
-	if( __targItemIdx > 0 )
-	{
-		return 1;
-	}
-	
-	return 0;
+    if( __targItemIdx > 0 )
+    {
+        return 1;
+    }
+    
+    return 0;
 }
 
 /// turns on the inventory-decrementing device for items.
@@ -140,14 +139,14 @@ void SetTargettingItemDecr( int item_idx )
 {
 Log( "SetTargettingItemDecr( "+str(item_idx)+" )" );
 
-	__targItemIdx = item_idx;
+    __targItemIdx = item_idx;
 }
 
 /// turns off the inventory-decrementing device for items.
 ///
 void UnsetTargettingItemDecr() 
 {
-	__targItemIdx = -1;
+    __targItemIdx = -1;
 }
 
 
@@ -156,19 +155,19 @@ void UnsetTargettingItemDecr()
 /// Errors if the item referenced by the system doesn't exist in inventory.  Boo.
 void DecrementTargettingItem()
 {
-	if( HasTargettingItemDecr() )
-	{
-		if( !HasItemI(__targItemIdx) )
-		{
-			UnsetTargettingItemDecr();
-			ErrorHandler( "DecrementTargettingItem: '"+GetItemNameI(__targItemIdx)+" is not in the party's inventory.  Unsetting ItemDecr mode." );
-			return;	
-		}
-		
-		TakeItemI( __targItemIdx, 1 );
-		
-		UnsetTargettingItemDecr();
-	}
+    if( HasTargettingItemDecr() )
+    {
+        if( !HasItemI(__targItemIdx) )
+        {
+            UnsetTargettingItemDecr();
+            ErrorHandler( "DecrementTargettingItem: '"+GetItemNameI(__targItemIdx)+" is not in the party's inventory.  Unsetting ItemDecr mode." );
+            return; 
+        }
+        
+        TakeItemI( __targItemIdx, 1 );
+        
+        UnsetTargettingItemDecr();
+    }
 }
 
 
@@ -179,17 +178,17 @@ void DecrementTargettingItem()
 ///
 void grantback_pendinguse_items_from_battle_actionqueue()
 {
-	int i, itemUse;
-	for( i=0; i<battle_queue_count; i++ )
-	{
-		LoadTargettingFromString( battle_queue[i].data );
-		
-		itemUse = GetTargIdxByText( "ITEM_DELETE" );
-		if( itemUse >= 0 )
-		{
-			GiveItemI( GetTargID(itemUse), 1 );
-		}
-	}
+    int i, itemUse;
+    for( i=0; i<battle_queue_count; i++ )
+    {
+        LoadTargettingFromString( battle_queue[i].data );
+        
+        itemUse = GetTargIdxByText( "ITEM_DELETE" );
+        if( itemUse >= 0 )
+        {
+            GiveItemI( GetTargID(itemUse), 1 );
+        }
+    }
 }
 
 
@@ -203,81 +202,81 @@ void grantback_pendinguse_items_from_battle_actionqueue()
 
 void ExecuteLoveSkill( string _key )
 {
-	int i, user_idx;
-	
-	user_idx = battle_queue[0].batent_ref;
-	
-	i = GetSkill( _key );
-	
-	if( i < 0 )
-	{
-		ErrorHandler( "ExecuteLoveSkill: '"+_key+"' is not a valid skill." );
-		return;
-	}
-	
-	/// 1. Make sure this item is usable in battle.	
-	if( !CheckSkillUseflagI(i,USE_BATTLE) )
-	{
-		ErrorHandler( "ExecuteLoveSkill: '"+_key+"' is not usable in battle." );
-		return;	
-	}
-	
-	/// 1a. Make sure the targetting callfunc exists! (onoes!)
-	if( !FunctionExists(GetSkillTargFunc(i)) )
-	{
-		ErrorHandler( "ExecuteLoveSkill: '"+_key+"'s targetting function ("+GetSkillTargFunc(i)+") does not exist!" );
-		DumpSkill( i );
-		return;		
-	}
-	
-	/// 1b. Does this skill, for some unknowable reason, have a negative MP cost?
-	if( GetSkillMpCostI(i) < 0 )
-	{
-		ErrorHandler( "ExecuteLoveSkill: '"+_key+"'s mp_cost was negative. ("+str(GetSkillMpCostI(i))+")" );
-		return;			
-	}
-	
-	
-	/// 1c. does this user, for some equally unknowble reason, not have the MP to use this skill?
-	/// (we never should've gotten this far if that were the case.)
-	if( GetSkillMpCostI(i) > bat_cur_mp(user_idx, PARTY_ALLY) )
-	{
-		ErrorHandler( "ExecuteLoveSkill: '"+_key+"'s mp_cost ("+str(GetSkillMpCostI(i))+") was higher than the party member's current mp ("+str(bat_cur_mp(user_idx, PARTY_ALLY))+"). That should never happen by this point, really." );
-		return;	
-	}
-	
-	/// 2-a. Turn on the MP Use flaggy thingy.
-	SetTargettingSkillMPDecr( GetSkillMpCostI(i) );
+    int i, user_idx;
+    
+    user_idx = battle_queue[0].batent_ref;
+    
+    i = GetSkill( _key );
+    
+    if( i < 0 )
+    {
+        ErrorHandler( "ExecuteLoveSkill: '"+_key+"' is not a valid skill." );
+        return;
+    }
+    
+    /// 1. Make sure this item is usable in battle. 
+    if( !CheckSkillUseflagI(i,USE_BATTLE) )
+    {
+        ErrorHandler( "ExecuteLoveSkill: '"+_key+"' is not usable in battle." );
+        return; 
+    }
+    
+    /// 1a. Make sure the targetting callfunc exists! (onoes!)
+    if( !FunctionExists(GetSkillTargFunc(i)) )
+    {
+        ErrorHandler( "ExecuteLoveSkill: '"+_key+"'s targetting function ("+GetSkillTargFunc(i)+") does not exist!" );
+        DumpSkill( i );
+        return;     
+    }
+    
+    /// 1b. Does this skill, for some unknowable reason, have a negative MP cost?
+    if( GetSkillMpCostI(i) < 0 )
+    {
+        ErrorHandler( "ExecuteLoveSkill: '"+_key+"'s mp_cost was negative. ("+str(GetSkillMpCostI(i))+")" );
+        return;         
+    }
+    
+    
+    /// 1c. does this user, for some equally unknowble reason, not have the MP to use this skill?
+    /// (we never should've gotten this far if that were the case.)
+    if( GetSkillMpCostI(i) > bat_cur_mp(user_idx, PARTY_ALLY) )
+    {
+        ErrorHandler( "ExecuteLoveSkill: '"+_key+"'s mp_cost ("+str(GetSkillMpCostI(i))+") was higher than the party member's current mp ("+str(bat_cur_mp(user_idx, PARTY_ALLY))+"). That should never happen by this point, really." );
+        return; 
+    }
+    
+    /// 2-a. Turn on the MP Use flaggy thingy.
+    SetTargettingSkillMPDecr( GetSkillMpCostI(i) );
 
-	/// 2. Set the targetting cursor to the item's icon.
-	set_selectmap_cursor_image( icon_get(GetSkillParentTypeIconIdx(i)) );
-	
-	/// 3. Pause the battle menu.  
-	PauseBattleMenu();
+    /// 2. Set the targetting cursor to the item's icon.
+    set_selectmap_cursor_image( icon_get(GetSkillParentTypeIconIdx(i)) );
+    
+    /// 3. Pause the battle menu.  
+    PauseBattleMenu();
 
-	/// 3.5. setup the Targetting library...
-	ExecuteLoveUniversal();
+    /// 3.5. setup the Targetting library...
+    ExecuteLoveUniversal();
 
-	/// 3.5.5 setup the Skill's effect function (it'd be nice if it did something when it's all said and done...)
-	SetTargettingEffectFunc( GetSkillEffectFunc(i) );
+    /// 3.5.5 setup the Skill's effect function (it'd be nice if it did something when it's all said and done...)
+    SetTargettingEffectFunc( GetSkillEffectFunc(i) );
 
-	/// 3.5.6 if the skill is reflectable, tell the targetting array that.
-	if( IsSkillReflectable(i) )
-		SetTargettingSkillReflectable();
-	
-	/// 3.5.7 if the skill is nullable, tell the targetting array that.
-	if( IsSkillNullable(i) )
-		SetTargettingSkillNullable();
-	
-	/// 3.6. set how long it'll take to do this action
-	/// (Skills have their own charge time... so fetch it! )
-	SetTargettedActionDelay( GetSkillChargeTime(i) );
+    /// 3.5.6 if the skill is reflectable, tell the targetting array that.
+    if( IsSkillReflectable(i) )
+        SetTargettingSkillReflectable();
+    
+    /// 3.5.7 if the skill is nullable, tell the targetting array that.
+    if( IsSkillNullable(i) )
+        SetTargettingSkillNullable();
+    
+    /// 3.6. set how long it'll take to do this action
+    /// (Skills have their own charge time... so fetch it! )
+    SetTargettedActionDelay( GetSkillChargeTime(i) );
 
-	/// 4. Place the targetting callfunc into the battle renderstack container for 
-	///    the targetting callfunc.
-	///    The callfunc will handle unpausing the menu if cancelled out, and handle 
-	///    committing the new action to the action queue if valid accepting happens.
-	SetActiveBattleMenuTargetting( GetSkillTargFunc(i) );
+    /// 4. Place the targetting callfunc into the battle renderstack container for 
+    ///    the targetting callfunc.
+    ///    The callfunc will handle unpausing the menu if cancelled out, and handle 
+    ///    committing the new action to the action queue if valid accepting happens.
+    SetActiveBattleMenuTargetting( GetSkillTargFunc(i) );
 }
 
 int __targSkillMPCost = -1;
@@ -286,51 +285,51 @@ int __targSkillNullab = -1;
 
 int HasTargettingSkillMPDecr()
 {
-	if( __targSkillMPCost >= 0 ) 
-		return 1;
-	
-	return 0;
+    if( __targSkillMPCost >= 0 ) 
+        return 1;
+    
+    return 0;
 }
 
 void SetTargettingSkillMPDecr( int i )
 {
-	__targSkillMPCost = i;
+    __targSkillMPCost = i;
 }
 
 void UnsetTargettingSkillMPDecr() 
 {
-	__targSkillMPCost = -1;
+    __targSkillMPCost = -1;
 }
 
 
 void SetTargettingSkillReflectable() {
-	__targSkillReflec = 1;
+    __targSkillReflec = 1;
 }
 
 void SetTargettingSkillNullable() {
-	__targSkillNullab = 1;
+    __targSkillNullab = 1;
 }
 
 void UnsetTargettingSkillReflectable() {
-	__targSkillReflec = -1;
+    __targSkillReflec = -1;
 }
 
 void UnsetTargettingSkillNullable() {
-	__targSkillNullab = -1;
+    __targSkillNullab = -1;
 }
 
 int HasTargettingSkillReflectable() {
-	if( __targSkillReflec >= 0 ) 
-		return 1;
-	
-	return 0;
+    if( __targSkillReflec >= 0 ) 
+        return 1;
+    
+    return 0;
 }
 
 int HasTargettingSkillNullable() {
-	if( __targSkillNullab >= 0 ) 
-		return 1;
-	
-	return 0;
+    if( __targSkillNullab >= 0 ) 
+        return 1;
+    
+    return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -339,36 +338,36 @@ int HasTargettingSkillNullable() {
 
 void ExecuteLoveSpecial( string _key )
 {
-	/// Attack
-	/// Defend
-	/// Meditate
-	/// Parry
-	/// Run
+    /// Attack
+    /// Defend
+    /// Meditate
+    /// Parry
+    /// Run
 
-	if( equ(_key,"Attack") )
-	{
-		DoBasicAttack();
-	}
-	else if( equ(_key, "Defend") || equ(_key, "Guard") )
-	{
-		DoSimpleSelfEffect( "SimpleDefendResolver", BASE_DELAY );
-	}
-	else if( equ(_key, "Meditate") )
-	{
-		DoSimpleSelfEffect( "SimpleMeditateResolver", BASE_DELAY );
-	}
-	else if( equ(_key, "Parry") )
-	{
-		DoSimpleSelfEffect( "SimpleParryResolver", BASE_DELAY );
-	}
-	else if( equ(_key, "Run") )
-	{
-		DoSimpleSelfEffect( "SimpleRunResolver", 30 );
-	}
-	else
-	{
-		ErrorHandler( "Execute_Love.vc::ExecuteLoveSpecial(): '"+_key+"' is an unknown special battle action." );
-	}
+    if( equ(_key,"Attack") )
+    {
+        DoBasicAttack();
+    }
+    else if( equ(_key, "Defend") || equ(_key, "Guard") )
+    {
+        DoSimpleSelfEffect( "SimpleDefendResolver", BASE_DELAY );
+    }
+    else if( equ(_key, "Meditate") )
+    {
+        DoSimpleSelfEffect( "SimpleMeditateResolver", BASE_DELAY );
+    }
+    else if( equ(_key, "Parry") )
+    {
+        DoSimpleSelfEffect( "SimpleParryResolver", BASE_DELAY );
+    }
+    else if( equ(_key, "Run") )
+    {
+        DoSimpleSelfEffect( "SimpleRunResolver", 30 );
+    }
+    else
+    {
+        ErrorHandler( "Execute_Love.vc::ExecuteLoveSpecial(): '"+_key+"' is an unknown special battle action." );
+    }
 }
 
 
@@ -377,29 +376,29 @@ int __BM_called_targetting_func_on;
 
 void BM_SetTargettingFunction( string callfunc )
 {
-	if( FunctionExists(callfunc) )
-	{
-		__BM_called_targetting_func = callfunc;
-		__BM_called_targetting_func_on = 1;
-	}
-	else
-	{
-		ErrorHandler( "BM_SetTargettingFunction(), error: '"+callfunc+"' is not a valid function." );
-		__BM_called_targetting_func_on = 0;
-	}
+    if( FunctionExists(callfunc) )
+    {
+        __BM_called_targetting_func = callfunc;
+        __BM_called_targetting_func_on = 1;
+    }
+    else
+    {
+        ErrorHandler( "BM_SetTargettingFunction(), error: '"+callfunc+"' is not a valid function." );
+        __BM_called_targetting_func_on = 0;
+    }
 }
 
 string BM_GetTargettingFunction() {
-	return __BM_called_targetting_func;
+    return __BM_called_targetting_func;
 }
 
 int BM_InTargettingMode() {
-	return __BM_called_targetting_func_on;
+    return __BM_called_targetting_func_on;
 }
 
 void BM_TargettingModeOff() {
-	__BM_called_targetting_func = "";
-	__BM_called_targetting_func_on = 0;
+    __BM_called_targetting_func = "";
+    __BM_called_targetting_func_on = 0;
 }
 
 
@@ -407,19 +406,19 @@ void BM_TargettingModeOff() {
 /// saves that action to the battle queue and forwards the good cause.
 void CommitBattleMenuChoice()
 {
-	BM_TargettingModeOff();
-	TurnBattleMenuOff();
-	BattleMenuTargettingOff();
+    BM_TargettingModeOff();
+    TurnBattleMenuOff();
+    BattleMenuTargettingOff();
 
-	add_battle_queue_entry( 
-		GetTargettedActionDelay(), 
-		battle_queue[0].batent_ref, 
-		battle_queue[0].batent_party, 
-		BACT_CHARGE, 
-		saveTargettingToString() 
-	);
-	
-	pop_battle_queue();
+    add_battle_queue_entry( 
+        GetTargettedActionDelay(), 
+        battle_queue[0].batent_ref, 
+        battle_queue[0].batent_party, 
+        BACT_CHARGE, 
+        saveTargettingToString() 
+    );
+    
+    pop_battle_queue();
 }
 
 /// sets _resolvefunc as the effect's callfunc, 
@@ -432,15 +431,15 @@ void CommitBattleMenuChoice()
 /// This function does nothing involving Tom DeLay.
 void DoSimpleSelfEffect( string _resolvefunc, int _delay )
 {
-	ExecuteLoveUniversal();
-	
-	if( _delay < 0 )
-		_delay = BASE_DELAY;
-	else if( _delay > MAX_DELAY )
-		_delay = MAX_DELAY;
-	
-	SetTargettedActionDelay( _delay );
-	SetActiveBattleMenuTargetting( _resolvefunc );
-	
-	CommitBattleMenuChoice();
+    ExecuteLoveUniversal();
+    
+    if( _delay < 0 )
+        _delay = BASE_DELAY;
+    else if( _delay > MAX_DELAY )
+        _delay = MAX_DELAY;
+    
+    SetTargettedActionDelay( _delay );
+    SetActiveBattleMenuTargetting( _resolvefunc );
+    
+    CommitBattleMenuChoice();
 }

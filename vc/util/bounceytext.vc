@@ -6,7 +6,7 @@
 //
 
 
-#define NUM_BOUNCY 32       //number of frames in a bounce
+#define NUM_BOUNCY 20       //number of frames in a bounce
 
 #define NUM_BOUNCYDIGITS 100    //if you get errors about to many
                 //digits on screen at once, increase this
@@ -68,6 +68,7 @@ int nBouncy[NUM_BOUNCY];
 void InitBouncy()
 {   
     int i;
+/*  
     nBouncy[0] = 3;
     nBouncy[1] = 4;
     nBouncy[2] = 6;
@@ -100,8 +101,8 @@ void InitBouncy()
     nBouncy[29] = 2;
     nBouncy[30] = 1;
     nBouncy[31] = 1;
-    
-/*  
+*/  
+
     nBouncy[0] = 3;
     nBouncy[1] = 6;
     nBouncy[2] = 9;
@@ -122,7 +123,7 @@ void InitBouncy()
     nBouncy[17] = 3;
     nBouncy[18] = 2;
     nBouncy[19] = 1;
-*/  
+
     for( i=0; i<NUM_BOUNCYDIGITS; i++ )
     {
         pBouncyDigits[i].string_id = -1;
@@ -290,6 +291,7 @@ void AddBouncyCharacter( int x, int y, int font_idx, string text, int delay )
             pBouncyDigits[i].font = font_idx;
             pBouncyDigits[i].text = text;
             pBouncyDigits[i].delay = delay;
+Log( "'"+pBouncyDigits[i].text+"' => " + str(delay) );
             pBouncyDigits[i].active = 1;
             pBouncyDigits[i].frame = 0;
             pBouncyDigits[i].counter = 0;
@@ -379,8 +381,6 @@ void NewBounceText( int b_idx, int p_idx, string text, int color, int level )
     x = mcg_width( ent );
     x = (x / 2) - (TextWidth(f, text)/2);
     y = mcg_height( ent );
-    
-    
     
     x = mcg_getX( ent ) + x;
     y = mcg_getY( ent ) + y;

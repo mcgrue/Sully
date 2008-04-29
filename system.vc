@@ -282,8 +282,8 @@ FreeSprite( tmp, 1 );
         
     HookKey( SCAN_F5, "f5_debug_set_activemode" );  
     HookKey( SCAN_F8, "f8_debug_set_stepmode_or_step" );
-    HookKey( SCAN_F12, "f12_debug_mcgrender" );    
-
+//    HookKey( SCAN_F12, "f12_debug_mcgrender" );    
+    HookKey( SCAN_F11, "dump_all_selectnodes" );
 
         
 //DumpStructStatus();
