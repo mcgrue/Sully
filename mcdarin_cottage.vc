@@ -351,20 +351,27 @@ void encounter()
     Textbox(T_DARIN,    "Why are you telling me all this?","", "");
     Textbox(T_STAN, "Well, the plot would come to a grinding",
                     "halt if you didn't know where to go next.", "");
-                
+    
+    int crystal_cel_x = 77;
+    int crystal_cel_y = 10;
+
+    
+
     entity.specframe[crystal]=21;
     Textbox(T_CRYSTAL,  "Oh, so am I supposed to be all panicky",
                         "and helpless now?",
                         "Eek! Eek! Darin, save me!");
     
-
-    ClearVCLayer();
-
+    VCPutIMG( "res/images/cells/cell_crystal_teleport1.png", crystal_cel_x, crystal_cel_y );
+    
     Textbox(T_STAN, "Mwa ha ha ha! Taste my power!","","");
     
+    ClearVCLayer();
 
     entity.specframe[crystal]=25;
-
+    
+    int img;
+    img = LoadImage( "res/images/cells/cell_crystal_teleport2.png" );
         
     // Stop the music and start the 'warping crystal away'
     // effect!
@@ -377,14 +384,15 @@ void encounter()
         SetLucent(100-(timer*2));
         RectFill(0, 0, 320, 240, RGB(255,0,0), screen);
         SetLucent(0);
+        Blit( crystal_cel_x, crystal_cel_y, img, screen );
         ShowPage();
     }
+    FreeImage(img);
+    img = LoadImage( "res/images/cells/cell_crystal_teleport3.png" );
 
     RemovePlayer( "Crystal" );  //remove crystal from the party...
     
-
     entity.x[crystal]=30000;    //...then warp her entity offscreen!
-    
 
     //finish the 'warping crystal away' effect!
     timer=0;
@@ -394,8 +402,10 @@ void encounter()
         SetLucent(timer*2);
         RectFill(0, 0, 320, 240, RGB(255,0,0), screen);
         SetLucent(0);
+        Blit( crystal_cel_x, crystal_cel_y, img, screen );
         ShowPage();
     }
+    FreeImage(img);
     
     //
     // Let's do a little puppet-play of darin expressing SHOCK!
