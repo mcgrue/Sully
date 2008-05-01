@@ -8,18 +8,40 @@
 ///
 /// Grue, 2005.10.11
 
+int _targetting_are_we_good_still() {
+    
+Log( "_targetting_are_we_good_still? "+str(selectmap_count) );    
+    
+    if( selectmap_count == 0 ) {
+        MenuAngryBuzz();
+        selectmap_cursor = 0;
 
+        CallFunction( selectmap_cancel_callfunc );
+        BattleMenuTargettingOff();
+        UnpauseBattleMenu();
+
+        return 0;
+    } 
+    
+    MenuHappyBeep();
+    return 1;
+}
+
+/// target one live battle entity (ally or enemy)
 void LIVE_OC_targ() {
 
     ///dear god, non-battle branch code.  This really needs to be improved upon.
-    if( !IsInBattle() )
-    {
+    if( !IsInBattle() ) {
         LIVE_OC_targ_menu();
         return;
     }
 
     _bt_ss_flags(1,0);
     _bt_setup_selectmap();
+    
+    if( !_targetting_are_we_good_still() ) {
+        return;
+    } 
     
     SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
 }
@@ -36,6 +58,10 @@ void DEAD_OC_targ() {
     _bt_ss_flags(-1,0);
     _bt_setup_selectmap();
     
+    if( !_targetting_are_we_good_still() ) {
+        return;
+    } 
+    
     SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
 }
 
@@ -49,9 +75,14 @@ void OC_targ()
     SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
 }
 
+/// target one live ally
 void A_LIVE_OC_targ() {
     _bt_ss_flags(1,1);
     _bt_setup_selectmap();
+    
+    if( !_targetting_are_we_good_still() ) {
+        return;
+    } 
     
     SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
 }
@@ -63,6 +94,10 @@ void A_DEAD_OC_targ() {
     _bt_ss_flags(-1,1);
     _bt_setup_selectmap();
     
+    if( !_targetting_are_we_good_still() ) {
+        return;
+    } 
+    
     SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
 }
 
@@ -72,6 +107,10 @@ void E_LIVE_OC_targ() {
     _bt_ss_flags(1,-1);
     _bt_setup_selectmap();
     
+    if( !_targetting_are_we_good_still() ) {
+        return;
+    } 
+    
     SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
 }
 
@@ -80,12 +119,20 @@ void E_DEAD_OC_targ() {
     _bt_ss_flags(-1,-1);
     _bt_setup_selectmap();
     
+    if( !_targetting_are_we_good_still() ) {
+        return;
+    } 
+    
     SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
 }
 
 void ALL_E_targ() {
     _bt_ss_flags(0,-1);
     _bt_setup_selectmap();
+    
+    if( !_targetting_are_we_good_still() ) {
+        return;
+    } 
     
     SetActiveBattleMenuTargetting( "Targ_FlashAll_AcceptOrCancel" );
 }
@@ -95,6 +142,10 @@ void ALL_A_targ() {
     _bt_ss_flags(0,1);
     _bt_setup_selectmap();
     
+    if( !_targetting_are_we_good_still() ) {
+        return;
+    } 
+    
     SetActiveBattleMenuTargetting( "Targ_FlashAll_AcceptOrCancel" );
 }
 
@@ -102,9 +153,14 @@ void ALL_targ() {
     _bt_ss_flags(0,0);
     _bt_setup_selectmap();
     
+    if( !_targetting_are_we_good_still() ) {
+        return;
+    } 
+    
     SetActiveBattleMenuTargetting( "Targ_FlashAll_AcceptOrCancel" );
 }
 
+/// can target only allies with less than max MP
 void A_MP_OC_targ() {
     
     /// menu branchcode.  Horrid!
@@ -129,9 +185,15 @@ void A_MP_OC_targ() {
         }
     }
     
+    if( !_targetting_are_we_good_still() ) {
+        return;
+    } 
+    
     SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
 }
 
+
+/// can target only allies with less than max HP
 void A_HP_OC_targ() {
 
     /// menu branchcode.  Horrid!
@@ -155,6 +217,10 @@ void A_HP_OC_targ() {
             SM_setData( idx, bat_getName(i, PARTY_ALLY),"ALLY", i );
         }
     }
+    
+    if( !_targetting_are_we_good_still() ) {
+        return;
+    } 
     
     SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
 }
@@ -334,7 +400,7 @@ int _sm_find_rightmost_enemy_node()
     
     if( n < 0 )
     {
-        ErrorHandler( "_sm_find_rightmost_enemy_node(): There were no enemies on the selectmap, apparently.  Bad show." );
+        Log( "_sm_find_rightmost_enemy_node(): There were no enemies on the selectmap, apparently.  Bad show." );
         return -1;
     }
     
@@ -346,7 +412,6 @@ int _sm_find_living_ally_node()
     int i, x, n;
     
     n = -1;
-
 
     for( i=0; i<selectmap_count; i++ )
     {

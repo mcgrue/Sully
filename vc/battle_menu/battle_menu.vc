@@ -783,6 +783,10 @@ string getPageItem( int m_idx, int page_idx, int opt )
     return GetToken(master_battle_menus[m_idx].page_data[page_idx],",",opt);
 }
 
+string getCurrentlySelectedPageItem() {
+    return getPageItem( __current_menu_idx, master_battle_menus[__current_menu_idx].level_history[0], master_battle_menus[__current_menu_idx].cursor_history[0] );
+}
+
 int MenuLineIsInactive( string s )
 {
     if( !strcmp( left(s,1), ">") )

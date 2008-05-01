@@ -30,22 +30,14 @@ void ExecuteLove( string _key )
     Log( "ExecuteLove( "+_key+" )" );
     Log( "Current Level: " + str(master_battle_menus[__current_menu_idx].cur_level) );
     
-    if( master_battle_menus[__current_menu_idx].cur_level >= 1 )
-    {
-        if(
-            equ(
-                getPageItem( __current_menu_idx, master_battle_menus[__current_menu_idx].level_history[0], master_battle_menus[__current_menu_idx].cursor_history[0] ),
-                "Items"
-            )
-        ) {
-            ExecuteLoveItem( _key );
-            return;
-        }
-        else
-        {
-            ExecuteLoveSkill( _key );
-        }
+    if( equ(getCurrentlySelectedPageItem(), "Items") ) {
+        ExecuteLoveItem( _key );
+        return;
     }
+    else if( IsSkill(_key) )
+    {
+        ExecuteLoveSkill( _key );
+    } 
     else
     {
         ExecuteLoveSpecial( _key );
@@ -348,7 +340,7 @@ void ExecuteLoveSpecial( string _key )
     {
         DoBasicAttack();
     }
-    else if( equ(_key, "Defend") || equ(_key, "Guard") )
+    else if( equ(_key, "Defend") )
     {
         DoSimpleSelfEffect( "SimpleDefendResolver", BASE_DELAY );
     }

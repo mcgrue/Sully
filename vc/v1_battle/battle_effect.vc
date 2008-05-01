@@ -6,41 +6,44 @@ int __battle_effect_resolving = 0;
 string __battle_effect_callfunc;
 
 int IsBattleEffectOn() {
-	return __battle_effect_resolving;
+    return __battle_effect_resolving;
 }
 
 void TurnBattleEffectOn( String callfunc )
 {
-	if( !FunctionExists(callfunc) )
-	{
-		FATAL_ERROR( "TurnBattleEffectOn( '"+callfunc+"' ): That function didn't exist, jerk." );
-	}
+    if( !FunctionExists(callfunc) )
+    {
+        FATAL_ERROR( "TurnBattleEffectOn( '"+callfunc+"' ): That function didn't exist, jerk." );
+    }
 
 Log( "TurnBattleEffectOn!" );
-	__battle_effect_callfunc = callfunc;
+    __battle_effect_callfunc = callfunc;
 
-	__battle_effect_resolving = 1;
+    __battle_effect_resolving = 1;
 }
 
 void TurnBattleEffectOff( int start_GATTACA )
 {
-	__battle_effect_resolving = 0;
-	
-	if( start_GATTACA )
-	{
-		StartGATTACA();
-	}
+    __battle_effect_resolving = 0;
+    
+    if( start_GATTACA )
+    {
+        StartGATTACA();
+    }
 }
 
 void DoBattleEffects()
 {
-	if( __battle_effect_resolving )
-	{
-		MandatoryCallFunction( __battle_effect_callfunc );
-	}
+    if( __battle_effect_resolving )
+    {
+        MandatoryCallFunction( __battle_effect_callfunc );
+    }
 }
 
-void SimpleDefendResolver() {}
+void SimpleDefendResolver() {
+    add_guard_action( battle_queue[0].batent_ref, PARTY_ALLY, BASE_DELAY, STANDARD_DEFEND_POWER );
+}
+
 void SimpleMeditateResolver() {}
 void SimpleParryResolver() {}
 void SimpleRunResolver() {}
@@ -49,51 +52,51 @@ void DoBasicAttack()
 {
 
 Log( "DoBasicAttack()..." );
-	int weapon_idx = master_cast[battle_queue[0].batent_ref].equipment[SLOT_RHAND];
-	
-	/// Set the targetting cursor to the atttacker's weapon icon!
-	if( weapon_idx >= 0 )
-	{	
-		set_selectmap_cursor_image( icon_get(GetItemIconIdx(weapon_idx)) );
-	}
-	else
-	{
-		set_selectmap_cursor_image( icon_get(ICON_NO_WEAPON) );
-	}
-	
-	PauseBattleMenu();
-	
-	ExecuteLoveUniversal();
-	
-	SetTargettingEffectFunc( "BasicAttackFunc" );
-	
-	SetTargettedActionDelay( BASE_DELAY );
-	
-	SetActiveBattleMenuTargetting( "LIVE_OC_targ" );
-	
+    int weapon_idx = master_cast[battle_queue[0].batent_ref].equipment[SLOT_RHAND];
+    
+    /// Set the targetting cursor to the atttacker's weapon icon!
+    if( weapon_idx >= 0 )
+    {   
+        set_selectmap_cursor_image( icon_get(GetItemIconIdx(weapon_idx)) );
+    }
+    else
+    {
+        set_selectmap_cursor_image( icon_get(ICON_NO_WEAPON) );
+    }
+    
+    PauseBattleMenu();
+    
+    ExecuteLoveUniversal();
+    
+    SetTargettingEffectFunc( "BasicAttackFunc" );
+    
+    SetTargettedActionDelay( BASE_DELAY );
+    
+    SetActiveBattleMenuTargetting( "LIVE_OC_targ" );
+    
 /*
-	/// 2. Set the targetting cursor to the item's icon.
-	set_selectmap_cursor_image( 0 );
-	
-	/// 3. Pause the battle menu.  
-	PauseBattleMenu();
+    /// 2. Set the targetting cursor to the item's icon.
+    set_selectmap_cursor_image( 0 );
+    
+    /// 3. Pause the battle menu.  
+    PauseBattleMenu();
 
-	/// 3.5. setup the Targetting library...
-	ExecuteLoveUniversal();
+    /// 3.5. setup the Targetting library...
+    ExecuteLoveUniversal();
 
-	/// 3.5.5 setup the Skill's effect function (it'd be nice if it did something when it's all said and done...)
-	SetTargettingEffectFunc( GetSkillEffectFunc(i) );
-	
-	/// 3.6. set how long it'll take to do this action
-	/// (Skills have their own charge time... so fetch it! )
-	SetTargettedActionDelay( GetSkillChargeTime(i) );
-	
+    /// 3.5.5 setup the Skill's effect function (it'd be nice if it did something when it's all said and done...)
+    SetTargettingEffectFunc( GetSkillEffectFunc(i) );
+    
+    /// 3.6. set how long it'll take to do this action
+    /// (Skills have their own charge time... so fetch it! )
+    SetTargettedActionDelay( GetSkillChargeTime(i) );
+    
 
-	/// 4. Place the targetting callfunc into the battle renderstack container for 
-	///    the targetting callfunc.
-	///    The callfunc will handle unpausing the menu if cancelled out, and handle 
-	///    committing the new action to the action queue if valid accepting happens.
-	SetActiveBattleMenuTargetting( GetSkillTargFunc(i) );
+    /// 4. Place the targetting callfunc into the battle renderstack container for 
+    ///    the targetting callfunc.
+    ///    The callfunc will handle unpausing the menu if cancelled out, and handle 
+    ///    committing the new action to the action queue if valid accepting happens.
+    SetActiveBattleMenuTargetting( GetSkillTargFunc(i) );
 */
-	
+    
 }

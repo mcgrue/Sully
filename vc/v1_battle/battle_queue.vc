@@ -28,6 +28,10 @@
 /// Strictness mode.  If enabled, only one entry may exist per any given batent_ref index.
 #define BATTLE_QUEUE_STRICT 0
 
+
+/// how strong a "defend" action defends for, %-wise
+#define STANDARD_DEFEND_POWER 50
+
 struct battle_queue_entry
 {
     int time;       /// the current time to go until this action fires.
@@ -533,7 +537,7 @@ void ResolveAction( int actor_idx, int actor_party, string action_data )
         }   
     }
 
-///////////
+    ///////////
     ///
     /// This also should be done elsewhere.
     ///
@@ -565,7 +569,7 @@ void ResolveAction( int actor_idx, int actor_party, string action_data )
     }
     ///
     ///
-///////////
+    ///////////
 
     
     /// anything that gets triggered upon an action (on_act) 
@@ -604,15 +608,15 @@ from inventory when it's first selected to be used.
 }
 
 
-int add_guard_action( int b_idx, int b_party, int delay )
+int add_guard_action( int b_idx, int b_party, int delay, int guard_power )
 {
-    add_battle_queue_entry( delay, b_idx, b_party, BACT_GUARD, "guard" );
+    add_battle_queue_entry( delay, b_idx, b_party, BACT_GUARD, str(guard_power) );
 }
 
 int get_best_guard( int b_idx, int b_party )
 {
-    int i, best_time;
-    best_time = 0;
+    int i, best_def, d;
+    best_def = 0;
 
     for( i=0; i<battle_queue_count; i++ )
     {
@@ -621,9 +625,13 @@ int get_best_guard( int b_idx, int b_party )
             battle_queue[i].batent_party == b_party &&
             battle_queue[i].action == BACT_GUARD
         ) {
-            best_time = battle_queue[i].time;
+            d = val(battle_queue[i].data);
+            
+            if( d > best_def ) {
+                best_def = d;
+            }
         }
     }
     
-    return best_time;
+    return best_def;
 }

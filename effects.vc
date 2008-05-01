@@ -193,9 +193,7 @@ void HandleBattleQueueSpecialEffectExpiry( int q_idx )
     {
         status_idx = GetTargID(status_tidx);
         status_bitch_bidx = GetTargID(status_bitch_tidx);
-        status_bitch_pidx = GetTargMode(status_bitch_tidx);
-        
-        
+        status_bitch_pidx = GetTargMode(status_bitch_tidx);  
     }
 }
 
@@ -206,7 +204,7 @@ void HandleBattleQueueSpecialEffectExpiry( int q_idx )
 ////////////////////////////////
 int sfx_drink   = LoadSound( "res/sfx/items/drink.wav" );
 int sfx_drip    = LoadSound( "res/sfx/items/drip.wav" );
-int sfx_eat = LoadSound( "res/sfx/items/eat.wav" );
+int sfx_eat     = LoadSound( "res/sfx/items/eat.wav" );
 int sfx_holy    = LoadSound( "res/sfx/items/sun.wav" );
 
 void SoundDrink() {
@@ -237,12 +235,12 @@ void HP_OC_targ_menu()
 {
     int cast_idx = 0-2;
 
-    while( cast_idx < (0-1) )
+    while( cast_idx < -1 )
     {
 
         cast_idx = MenuPartyBox();
 
-        if( cast_idx == (0-1) ) //we've been cancelled!
+        if( cast_idx == -1 ) //we've been cancelled!
         {
             CancelTargetting();
             MenuHappyBeep();
@@ -273,13 +271,13 @@ void HP_OC_targ_menu()
 // Uses the vc/util/targetting.vc helper functions
 void MP_OC_targ_menu()
 {
-    int cast_idx = 0-2;
+    int cast_idx = -2;
     
-    while( cast_idx < (0-1) )
+    while( cast_idx < -1 )
     {
         cast_idx = MenuPartyBox();
         
-        if( cast_idx == (0-1) ) //we've been cancelled!
+        if( cast_idx == -1 ) //we've been cancelled!
         {
             CancelTargetting();
             MenuHappyBeep();
@@ -296,7 +294,7 @@ void MP_OC_targ_menu()
             }
             else
             {
-                cast_idx = 0-2; //set this to 
+                cast_idx = -2; //set this to 
                 MenuAngryBuzz();
                 MenuPartyBoxRestorePosition();
             }
@@ -309,13 +307,13 @@ void MP_OC_targ_menu()
 // Uses the vc/util/targetting.vc helper functions
 void DEAD_OC_targ_menu()
 {
-    int cast_idx = 0-2;
+    int cast_idx = -2;
     
-    while( cast_idx < (0-1) )
+    while( cast_idx < -1 )
     {
         cast_idx = MenuPartyBox();
         
-        if( cast_idx == (0-1) ) //we've been cancelled!
+        if( cast_idx == -1 ) //we've been cancelled!
         {
             CancelTargetting();
             MenuHappyBeep();
@@ -331,7 +329,7 @@ void DEAD_OC_targ_menu()
             }
             else
             {
-                cast_idx = 0-2; //set this to 
+                cast_idx = -2; //set this to 
                 MenuAngryBuzz();
                 MenuPartyBoxRestorePosition();
             }
@@ -557,13 +555,10 @@ void skill_wm_heal()
 
     if( !IsInBattle() )
     {
-MessageBox( "LOL!" );
+MessageBox( "Please implement for the menu." );
     }
     else
     {
-Log( "skill_wm_heal" );
-        
-
         user_idx = GetTargIdxByText( "Attacker" );
         target_idx = GetTargIdxByText( "Target" );
         
@@ -591,6 +586,68 @@ Log( "skill_wm_heal" );
         
 Log( "skill_wm_heal end" );
     }
+}
+
+
+/// Revive a fallen ally with 25% HP.
+///
+void skill_wm_revive()
+{
+    int user_idx, target_idx;
+    int amt, tmp;
+
+    if( !IsInBattle() ) {
+MessageBox( "Please implement for the menu." );
+        return;
+    }
+
+    if( !bat_is_dead( GetTargID(target_idx), GetTargMode(target_idx) ) ) {
+        TurnBattleEffectOn( "skill_fizzle" );
+        return;
+    }
+
+    target_idx = GetTargIdxByText( "Target" );
+
+    amt = bat_max_hp( GetTargID(target_idx), GetTargMode(target_idx) );
+    amt = amt / 4; // dividing by 4 is 25%
+
+    AddGATTACA( 
+        GetTargID(target_idx), 
+        GetTargMode(target_idx),
+        BS_CHANGE_HP, 
+        amt
+    );
+
+    TurnBattleEffectOn( "healy_sparkles" );
+
+}
+
+void skill_wm_shield() {
+
+    if( !IsInBattle() ) {
+        return;        
+    }
+
+    int target_idx = GetTargIdxByText( "Target" );
+
+    if( bat_is_dead( GetTargID(target_idx), GetTargMode(target_idx) ) ) {
+        TurnBattleEffectOn( "skill_fizzle" );
+        return;
+    }
+
+    bat_addStatus( GetTargID(target_idx), GetTargMode(target_idx), "Protect" );
+
+    MessageBox( "So, there's totally no implemented duration-handling for status yet.  Enjoy your infini-shield." );
+
+    NewBounceText( 
+        GetTargID(target_idx), 
+        GetTargMode(target_idx),
+        "Protect", 
+        BOUNCETEXT_WHITE,
+        1
+    );
+
+    TurnBattleEffectOn( "healy_sparkles" );
 }
 
 
@@ -637,9 +694,12 @@ void healy_sparkles()
                 (systemtime - __healy_starttime) / 8, 
                 screen 
             );
-Log( "BLITTED FRAME: " + str((__healy_starttime - systemtime) / 8) );
         }
     }
+}
+
+void skill_fizzle() {
+    MessageBox( "Well, do some kind of fizzle sound and disappointed frame if a spell fizzles." );
 }
 
 void medicine_use()
