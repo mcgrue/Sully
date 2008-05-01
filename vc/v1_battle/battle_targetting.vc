@@ -17,7 +17,7 @@ Log( "_targetting_are_we_good_still? "+str(selectmap_count) );
         selectmap_cursor = 0;
 
         CallFunction( selectmap_cancel_callfunc );
-        BattleMenuTargettingOff();
+        cancelBattleTargettingMode();
         UnpauseBattleMenu();
 
         return 0;
