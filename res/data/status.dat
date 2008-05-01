@@ -369,6 +369,8 @@ REMOVE on_end, on_death
 
 Rewarding
 // This only matters on enemies. It's added by the Lucky Day Fortune skill, and nothing else.
+// It makes the target guaranteed to drop items and ensures that any theft attempts against
+// it will succeed if it has something to steal.
 //Icon	Dur	RenderFunc	EffectFunc
 X	-1	SR_Rewarding	-
 DESC "You're sure to get something good!"

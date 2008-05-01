@@ -1,0 +1,348 @@
+SULLY SKILLS v0.4
+
+Changes:
+v0.1: First version
+v0.2: Taser is resisted by MGR, not Defense Value. Added some Fortune effects. Weakened Baffle. Added new skills to Black Magic, White Magic, and Gadgetry. Added the Skill Acquisition and Starting Skills sections.
+v0.3: Modified the effects of a few skills so they add status effects rather than doing other, weirder things. Panacea now removes Grave, but only if the target is still alive. The stuff Dispel removes is made explicit; there are now some status effects (for example, the ElementWeak group) that can't be removed by anything except Redecorate. Jackpot's been changed -- it's drastically weaker now, targets an entire party. Monkeywrench no longer imrpoves FER. Cleave can now miss. Sweep no longer has reduced accuracy. Impale is a little stronger. Seal is now party-ranged. Added Quincunx to Swordsmanship, Soul Bleed and Snuff Spirit to Shake Spear, and Immunize and Chaos Orb to Gadgetry.
+v0.4: Changed Mozilla to Iceweasel, and added Mozilla as a separate ability. Glogy is more likely to succeed, and Sancho never fails. Desperation is stronger, but more expensive. Rush now raises FER to 999 (rather than 100), just in case. Added some general clarifications to moves like Magic Sword and Frenzy. HP/MP Bond can be used outside combat. Slap and Cancel now work on bosses, but not very well. Snake Eyes now reduces you to 2 HP, not 1, as best befits the name. The way Fortune works with the Rabbit's Foot is simpler now. Neon Justice now adds Grave. Lance and Galfrey have a few more starting skills, and Crystal's are now set.
+
+Exact MP costs and charge/delay values can be found in the formal skill datafile. Powers aren't stated explicitly anywhere, but I have them kicking around someplace in my personal notes.
+
+If it's not stated explicitly (and if the skill isn't referred to as being "a normal attack"), assume a skill always hits.
+Note that skills referred to as being modified normal attacks get as many hits as the person has strikes, and if the target is killed midway, excess strikes will hit another enemy, same as normal attacks..
+
+-------------------
+ SKILL ACQUISITION:
+-------------------
+	All three kinds of magic are purchased at stores. Each spell must be bought separately for each person. Some spells have other spells as prerequisites, and not everyone can use every spell -- in particular, Darin and Lance get only small selections to choose from. There are at least a few stores -- the Sage sells the best magic, but weaker spells can probably be bought in town, and Fuchsia magic all comes from one secret store someplace. The very, VERY top-tier white/black spells might be in some even weirder place, I guess, like in FF.
+	Swordsmanship and Shake Spear skills are acquired automatically upon reaching certain levels.
+	Trickery is acquired by fulfilling various plot conditions -- speaking to X person, reading X book, and so on. Sometimes this entails actually doing something, while other times you just need to check out the right person or thing.
+	Gadgetry is acquired by finding specific gadgets. If the gadgets actually exist as items, they'll be Key Items. However, you could just make Gadgetry a plot-triggered thing like Trickery and *pretend* there's an item involved.
+	Summons are learned by fighting the summoned monster.
+	Jive isn't learned -- when Dexter gets the Jive group, he knows every Jive skill.
+	Although Fuchsia Magic is bought like ordinary magic, no one can use it at first -- Dexter needs to do a sidequest to get it (which can be done before you lose him to Bubba, but should be tough and meandering). After this he can buy spells from someone involved in the sidequest.
+	All personal skills are possessed from the beginning of the game, EXCEPT Dexter's Funk and all of Sara's skills. Dexter gets Funk when he joins rejoins the party in Castle Heck. Sara has no personal skills by default, but some accessories grant her Personal Skills while they're equipped (so she can have a maximum of two, since she can wear two accessories, but the skill accessories have fairly minor non-skill benefits, so in practice she's unlikely to want to wear more than one at a time).
+
+-----------------
+ STARTING SKILLS
+-----------------
+DARIN: Magic Sword
+CRYSTAL: Heal, Aura Heal, Panacea, Refresh, Revive, Quicken, Barrier, Shield, Might, Enlighten, Regen
+DEXTER: Flame, Ice, Bolt
+LANCE: Sleep, Trouble, Backlash
+PAXTON: Heal, Panacea, Firefox, Thunderbird, Iceweasel, Mozilla
+SARA: Monkeywrench, Scanner
+GALFREY: Dark Spear, Blast Quads, Rush, Armor Break, Brain Stab
+MR. E: (none)
+
+-------------
+ BLACK MAGIC
+-------------
+Black Magic is generally susceptible to Reflect/Nullify.
+
+	Flame (Low): Fire attack. Single-range. Power (Low).
+	Inferno (Mid): Fire attack. Party-range. Power (Mid).
+	Mega Flame (Mid): Fire attack. Single-range. Power (High).
+	Ice (Low): Ice attack. Single-range. Power (Low).
+	Blizzard (Mid): Ice attack. Single-range. Power (Mid).
+	Mega Ice (Mid): Ice attack. Party-range. Power (High).
+	Bolt (Low): Electric attack. Single-range. Power (Low).
+	Storm (Mid): Electric attack. Party-range. Power (Mid).
+	Mega Bolt (Mid): Electric attack. Single-range. Power (High).
+	Baffle (Low): Adds Confuse. Party-range, base success 50%.
+	Charm (Low): Adds Charm. Single-range, base success 75%.
+	Fragile (Low): Adds Fragile. Single-range, always hits.
+	Depress (Low): Adds Depress. Single-range, always hits.
+	Gank (Mid): Adds Death. Single-range, base success 50%.
+	Blood Suck (Low): Deals Drain-elemental damage, drains HP. Single-range, power (Low).
+	Soul Drain (V.Low): Deals Drain-elemental MP damage, drains MP. Single-range, power (V.Low)
+	Divide (Mid): Halves the HP of all enemies, rounding up. This is Reduction-elemental damage and some guys halve or are immune to it (no one doubles or absorbs it, though). Always hits.
+	Sleep (Low): Adds Sleep. Single-range, base success 75%.
+	Stun (Low): Adds Paralysis. Single-range, base success 75%.
+	Miasma (Low): Adds Poison. Party-range, base success 100%.
+	Dispossess (Low): Steals item. Works only as well as an ordinary Steal action.
+	Trouble (1 MP): Immediately get into a fight, if you're in an area where you can. Menu only. Can be used in a few places to summon secret enemies or bosses that can't be met any other way, like the Maya Guitar.
+	Penultima (High): Non-elemental attack. Single-range. Power (V.High).
+	Fragile All (Mid): Adds Fragile. Party-range, always hits.
+	Depress All (Mid): Adds Depress. Party-range, always hits.
+	Imbalance (Mid): Make target weak to a random element (out of Holy, Dark, Fire, Ice, and Electric) that he was previously neutral towards. If he wasn't neutral towards anything, has no effect. Formally, this spell adds one of Holyweak, Darkweak, Fireweak, Iceweak, or Electricweak status, chosen as described. It can be used repeatedly on the same target, in which case it won't repeat the same weakness twice.
+	Grave (Low): Adds Grave. Party-range, always hits (even works on dead targets, unlike other statuses).
+
+-------------
+ WHITE MAGIC
+-------------
+White Magic is generally susceptible to Reflect/Nullify.
+
+	Heal (Low) Heals. Power (Low). Single.
+	Aura Heal (Mid): Heals. Power (Low). Party.
+	Mega Heal (Mid): Power (Mid). Single.
+	Full Heal (High): Heals 9999 HP. Single-range.
+	Panacea (Low): Removes Poison, Enervate, Blind, Confuse, Charm, Silence, Seal, Sleep, Paralysis, and (if the target is alive) Grave. Single-range.
+	Refresh (Low): Removes Slow, Weak, Fragile, Depress, Tangle, Fugue. Single-range.
+	Dispel (Mid): Removes Quick, Might, Protect, Barrier, Accurate, Evade, Enlighten, Invincible, Lifeline, Regenerate, Nullify, Reflect, Counter, Neutro.
+	Revive (Mid): Revives with 25% HP. Single-range.
+	Mega Revive (V.High): Revives with full HP. Single-range.
+	Quicken (Mid): Adds Quick. Single-range.
+	Might (Low): Adds Might. Single-range.
+	Enlighten (Low): Adds Enlighten. Single-range.
+	Lifeline (Mid): Adds Lifeline. Single-range.
+	Regen (Low): Adds Regeneration. Single-range.
+	Shield (Mid): Adds Protect. Single-range.
+	Barrier (Mid): Adds Barrier. Single-range.
+	Reflect (Mid): Adds Reflect. Single-range.
+	Seal (Low): Adds Seal. Party-range, base success 75%.
+	Slow (Mid): Adds Slow. Single-range, always hits.
+	Invisibility (High): Have no random encounters for a while. Menu only.
+	Neon Justice (V.High): Holy attack. Party-range. Adds Grave (always, but only on living enemies). Power (High).
+	Punish (Low): Holy attack. Single-range. Power (Low).
+	Quicken All (High): Adds Quick. Party-range.
+	Might All (High): Adds Might. Party-range.
+	Enlighten All (Mid): Adds Enlighten. Party-range.
+	Regen All (Mid): Adds Regeneration. Party-range.
+	Barrier All (High): Adds Barrier. Party-range.
+	Shield All (High): Adds Protect. Party-range.
+	Slow All (High): Adds Slow. Party-range. Always hits.
+
+---------------
+ FUCHSIA MAGIC
+---------------
+Fuchsia Magic is generally susceptible to Reflect/Nullify.
+
+	Ravish (High): Reduces HP to 1. This counts as Reduction-elemental damage (see Divide). Single-target.
+	Fabulous (High): Adds Invincibility. Single-range.
+	Sex Bomb (High): Adds Charm. Always works unless target is immune. Party-target.
+	Redecorate (Mid): Removes all status effects except Rewarding on everyone (including dead). Targets both parties.
+	Death Magenta (V.High): Ultimate attack spell (non-elemental). Party-range, Power (V.High). 
+
+------
+ JIVE
+------
+	
+	Smoove (High):  Steals item. Is twice as likely to work as an ordinary theft. Single-range.
+	Strobe (Mid): Adds Blind. Party-range. Success 75%.
+	Move Buster (Low): Normal attack with STK+1, but substitute user's MAG for STR and substitute (Skill's Pwr) for user's ATK. Each hit has a 20% chance to add Confuse and a 20% chance to add Blind (unmodified by stats).
+	Funky Flow (Low): Adds Quick. Self only.
+	Bling Blast (High): Non-elemental magic attack. Deals damage based on party's total money (doesn't actually cost money to use, though). Single-target.
+
+
+----------
+ TRICKERY
+----------
+Trickery skills are often limited more by charge/delay than by MP costs.
+
+	Eagle Eye (Low): Adds Accurate. Single-range.
+	Air Guard (Low): Adds Evade. Single-range.
+	Blind (Low): Adds Blind. Single-range, base success 100%.
+	Tangle (Low): Adds Tangle. Single-range, always hits.
+	Retreat (Low): The whole party escapes automatically.
+	Decoy (0 MP): Removes user from combat and replaces him with a character called Decoy. This character cannot act or counterattack and has only 1 HP, but when he is killed he explodes, doing a bunch of non-elemental damage to the party responsible for his death. Unfortunately, the person who originally used the skill is gone for the rest of the fight. Decoy is immune to all status effects, good or bad.
+	Backlash (0 MP): User gains Accurate, Evade, and Counter for a duration equal to the skill's wait time.
+	Sneak (Low): Reduce encounter rate for a time. Menu only.
+	Pillage (Low): Get money from an enemy. Amount is based on (but less than) its drop cash. Base success rate 75% (test HIT versus DOD). Can be used repeatedly on the same enemy.
+	Jackpot (Mid): Deals an amount of physical, non-elemental damage equal to the last two digits of the group's money total. However, it doesn't let on that this is how it calculates it. Party-target. Ignores defense, but is still reduced by Protect.
+
+
+--------
+ SUMMON
+--------
+Summon skills have long charge times, but are not subject to Reflect or Nullify.
+
+	Firefox (Mid): Fire attack. Party-range. Power (High). Adds Confuse at 50%.
+	Iceweasel (Mid): Ice attack. Party-range. Power (High). Adds Seal at 50%.	
+	Thunderbird (Mid): Electric attack. Party-range. Power (High). Adds Sleep at 50%.
+	Mozilla (Mid): Non-elemental attack. Party-range. Power (High).
+	Joe (High): Holy attack. Party-range. Power (V.High). Adds Death at 33%.
+	Glogy (Mid): Adds Blind, Charm, Poison, Enervate, Seal, Sleep, and Paralysis at 75% each. Party-range.
+	Sancho (Mid): Adds Slow, Weak, Fragile, Depress, Tangle and Fugue. All hit automatically. Party-range.	
+
+
+---------------
+ SWORDSMANSHIP
+---------------
+	
+	Sword Dance (Mid): Make a normal attack with doubled STK. 
+	Cleave (Low): If 250% of the user's normal attack damage would be enough to kill target enemy, deal that much damage. Otherwise, deal 1 damage. Single-range. Damage is always physical and non-elemental. Has a to-hit check the same as that of a normal attack.
+	Wave Blade (Low): Physical attack skill (not normal attack) at standard weapon damage. Uses equipped weapon's element. Party-range.
+	Counter (0 MP): Adds Counter. Self only.
+	Desperation (High): Deals non-elemental physical damage equal to the HP user is currently missing, ignoring defense (but not Protect). Single-target.
+	Flashblade (Low): Completely normal attack (has extremely low delay).
+	Stonewall (Low): For the duration of the skill, user gains Invincible. Self only.
+	Magic Sword (0 MP): Make a normal attack, but it's magical, not physical, and the enemy resists with MGR rather than with his defense value. Uses the weapon's own element. Rather than normal Attack Value, uses an effective Attack Value of (MAG*ATK).
+	Quincunx (High): Five physical blasts that always hit (not nornmal attacks). Each is a different element, in the order Fire, Ice, Electric, Dark, Holy. Single-target.
+
+
+-------------
+ SHAKE SPEAR
+-------------
+Shake Spear skills never cost MP, so they're balanced by charge/delay.
+
+	Dark Spear (0 MP): Dark-elemental normal attack (still physical). Does 150% normal damage.
+	Brain Stab (0 MP): Normal attack at half STR (or, equivalently, at half Attack Value or half damage), damages MP instead of HP. (Have a sound effect of Hans Moleman saying "Oh no, my brains!" ...maybe not.)
+	Blast Quads (0 MP): Adds Might. Self only.
+	Frenzy (0 MP): Make a normal attack with STK+1, but attack a different random living (HP > 0) target in the selected party for each strike. Party-range (random single targets within party).
+	Armor Break (0 MP): Adds Fragile. Single-range, 75% base hit rate (STR versus END). 
+	Rush (0 MP): Make a normal attack with halved HIT and 999 FER. 
+	Impale (0 MP): Perfectly kills anyone who is not immune to death (always works). Against those who are immune, does 5x the damage of a single strike (physical, uses weapon's element, not a normal attack). Single-range, always hits.
+	Soul Bleed (0 MP): Adds Enervate. Single-range, 75% base hit rate (HIT versus DOD).
+	Snuff Spirit (0 MP): Physical non-elemental attack (not a normal attack). Single-range, always hits. Does 4.5x usual damage, but this is reduced by the percentage of his total MP that the target still has. Against targets with 0 max MP it does the full damage.
+	
+
+----------
+ GADGETRY
+----------
+	
+	Monkeywrench (0 MP): Normal attack with AntiMech element. Single-target. Machines are critically weak to the AntiMech element, while everyone else is immune to it. 
+	Grenade (Low): Physical non-elemental attack (not normal attack). Uses STR*MAG for damage, but does 3x the usual amount of damage. Can't critical, but can miss -- has a base hit rate of 50% (modified using HIT vs DOD, like an attack). Party-range.
+	Hypno-Ray (V.Low): Adds Sleep, Paralysis, Confuse and Enervate at 33% each. Single-target.
+	Scanner (0 MP): See info on target. Single-range, always hits.
+	Bazooka (High): Physical non-elemental attack (not normal attack). Uses STR*MAG for damage, but does 5x the usual amount of damage. Single-range.
+	Self-Destruct (Low): Deals non-elemental magical damage equal to the user's current HP, but kills user. Party-range.
+	Forcefield (High): Adds Barrier and Protect. Self only.
+	Fire Hose (V.Low): Removes an enemy from combat (the enemy gives no exp, items or money, and it cannot be revived since it is totally gone). Doesn't work on bosses or on enemies that are immune to instant death; always works on others. 
+	Chaos Orb (Mid): Attack that selects a random 80x64 area of the battlefield (fully within the region in which enemies can be located) and deals non-elemental magical damage to all enemies whose sprites overlap that area (if any). Never misses, Power (High).
+	Immunize (Low): Adds Immune. Single-range.
+
+-----------------
+ PERSONAL SKILLS
+-----------------
+These are the skills that appear at the top level of people's menus. Most people have two skills. Sara has a ton, but which ones she can use depends on which accessories she wears, so it's likely that she'd only have one or even none at any given time. Users are only recommended -- you might want to change them. Sara might get some more added as time goes on, but Dexter and Paxton only have 1 since they have two skill groups (eventually, in Dexter's case)..
+No personal skills cost MP, so they often have charge or delay times. Even the healing ones are battle-only.
+
+	Aim (Darin): Make a normal attack that never misses (but can still critical).
+	Guard (Darin): The ally targeted takes half damage from everything for the duration of the skill.
+	Slap (Crystal): Does 1 physical non-elemental damage. Always hits. Increases the target's Charge or Delay by 50% of its CURRENT value (the maximum is still 300). Bosses only take half the effect from the slowdown (25% increase). Single-range.
+	Assist (Crystal): Reduce target ally's Charge or Delay (whichever is relevant) to 0. This action has a Delay equal to the amount the other person's was reduced (minimum 1).
+	Think (Dexter): Adds Enlighten. Self only. 
+	Funk (Dexter): Changes the battle music to one of a few ridiculous tunes (randomly chosen). Only acquired after funk training.
+	HP Bond (Paxton): Targets allies only. Combine ally's curr HP with user's to get a pooled value, then set both people's curr HP to half that amount. If one of the two has a max HP lower than half the pooled value, refill him completely and give the surplus to the other person. Usable outside combat.
+	MP Bond (Paxton): Works like Bond, but for MP rather than HP. Usable outside combat.
+	Steal (Lance): Attempt to steal an item. Single-range.
+	Fortune (Lance): Random effect (see "Fortune," below)
+	Cancel (Galfrey): Cancel the charging action of a single target. If target is not charging, has no effect. 90% base success rate on normal enemies, 50% on bosses (test user's STR versus target's END).
+	Sweep (Galfrey): Make a normal attack at STK 1. Never criticals. Party-target.
+	Sunray (Sara): Fire-elemental magical attack. Party-range. Power (Mid). It'd be cool if this could have a longer charge time indoors, where "indoors" is defined by some global.
+	Negate (Sara): Adds Nullify. Self only.
+	Charge (Sara): Restores 1/3 of *missing* HP. Self only. It'd be cool if this could have a longer charge time indoors, where "indoors" is defined by some global.
+	Taser (Sara): Normal attack, but is Electric-elemental and counts as magical, not physical (Uses normal Attack Value, but is resisted by MGR, not defense value). 
+	Neutro (Sara): Adds Neutro (resist elemental damage). Self only. Note that Neutro cannot be removed with Dispel.
+	Turbo (Sara): Adds Accurate and Evade. Self only.
+
+
+---------
+ FORTUNE
+---------
+These are the random effects that Lance's "Fortune" ability can produce. None of them cost MP, and none of them are subject to Reflect or Nullify. Since they don't count as skills, they can be used even when Lance is Sealed.
+Fortune abilities never trigger counterattacks.
+
+	Curse: User is automatically afflicted with Poison, Enervate, Blind, Charm, Seal, Sleep, Paralysis, Slow, Weak, Fragile, Depress, Tangle, and Fugue. Each status effect always hits unless user is immune.
+	Snake Eyes: User's current HP are set to 2 (even if they were 1 before).
+	Antimagic: Everyone in both parties gets Nullify status. Always hits unless immune.
+	Hat Trick: Does three magical attack spells, each on a random single enemy, all at Power (Mid). The first is Fire 	elemental, the second is Ice elemental, and the third is Electric elemental.
+	Second Wind: Cures everything that Panacea and Refresh would cure on all allies, and revives any dead allies with 25% of their HP.
+	Dud: Nothing happens. Well, maybe a goofy sound effect or something.
+	Clean Slate: Functions the same as Redecorate.
+	Heat Wave: Identical to the Inferno spell, except can't be reflected/nullified.
+	Cold Snap: Identical to the Blizzard spell, except can't be reflected/nullified.
+	Thunderhead: Identical to the Storm spell, except can't be reflected/nullified.
+	Pick-Me-Up: Identical to the Aura Heal spell, except can't be reflected/nullified.
+	Ace of Spades: Adds Death to all enemies. Base success 50%.
+	Zero-Sum: A Drain-elemental magical attack against all enemies at power (V.Low). The total damage dealt is pooled and given to the user as HP gain.
+	Tweak: Deals 1 physical, non-elemental damage to a randomly chosen enemy.
+	Anvil: Physical non-elemental attack (not a normal attack). Calculates damage as STR*(V.High). Targets one randomly-chosen enemy.
+	Sweet Dreams: Adds Sleep to all enemies at 75% base success.
+	Nirvana: User's MP are totally refilled.
+	Payout: Party gains an amount of money equal to (total money held / 10), rounded down to the nearest power of 10, minimum 1. So, if the party has 12345 clams, they get 1000 clams; if they have 40 clams, they get 1 clam, if they have 999999 clams, they get 10000 clams, and so on. Announce the amount gained in the battle text.
+	Punchy: Ten half-STR physical attacks (not normal attacks) in rapid succession, each on a different random target in *either* party.
+	Sympathy: Each ally's current HP are set to be equal to user's current HP (or their maximum, whichever is less).
+	Lucky Day: All enemies' steal and drop rates are set to 100% via the Rewarding status. Irreversible, but won't affect any other enemies that get summoned afterward. This affects even on dead enemies, since the drop chance is only calculated at the end of the fight.
+	Handicap: Reduces the HP of all enemies by 75%. This counts as Reduction-elemental damage (see Divide).
+	Time Warp: Sets all *other* non-disabled allies' charge or delay (whichever is relevant) to 0. Does nothing to dead or disabled characters.
+	Backfire: Magical non-elemental attack (not normal attack) against all *allies* at power (V.Low).
+	Chaos: Adds Confuse to everyone in both parties. Always hits unless immune.
+	Gold Standard: All allies regain 9999 HP, are revived with full HP if dead, regain half their missing MP (*not* half their total MP) and are cured of anything that Panacea or Refresh can remove.
+	Rice Up: Randomly chosen ally gains Protect, Barrier, Might, Enlighten, Quick, Evade, and Accurate at duration 75.
+
+This is the way Fortune works out which ability gets used: Generate a random number from 0 to 99, then consult the listing below. If Lance has the Rabbit's Foot equipped, roll for Fortune twice and use the higher number. Equipping two Rabbit's Feet has no extra effect.
+
+                      
+Roll    Abil          Chance
+----------------------------
+0-1     Curse         2%    
+2-6     Snake Eyes    5%    
+7-10    Backfire      4%    
+11-12   Antimagic     2%     
+13-16   Punchy        4%     
+17-19   Chaos         3%     
+20-28   Dud           9%    
+29-33   Tweak         5%    
+34-38   Clean Slate   5%     
+39-42   Sympathy      4%    
+43-48   Second Wind   6%     
+49-51   Zero-Sum      3%     
+52-60   Pick-Me-Up    9%    
+61-63   Sweet Dreams  3%    
+64-66   Heat Wave     3%    
+67-69   Cold Snap     3%     
+70-72   Thunderhead   3%    
+73-74   Ace of Spades 2%     
+75-78   Rice Up       4%    
+79-80   Nirvana       2%    
+81-84   Payout        4%     
+85-88   Lucky Day     4%    
+89-91   Hat Trick     3%    
+92-94   Anvil         3%    
+95-96   Handicap      2%    
+97-98   Time Warp     2%    
+99      Gold Standard 1%     
+
+
+----------------------
+ MAGIC SALE LOCATIONS 
+----------------------
+There are six places in the game where magic can be bought. They are: Bumsville, Dwarfville, Rodne, Seaview, the Sage's Cave, and the Hidden Studio (where Fuchsia Magic is learned, an adjunct of the Bumsville salon). This chart shows what spells are available there (the Hidden Studio sells all the Fuchsia spells and nothing else, so it's not included). Note that the Sage's shop, despite appearing very early, actually sells some of the best magic in the game. This is balanced by the fact that it's heinously expensive.
+
+BLACK                                 WHITE
+        BUM  DWF  ROD  SEA  SAG               BUM  DWF  ROD  SEA  SAG       
+Flame    X    X    .    .    .        Heal     X    X    X    .    .
+Infern   .    .    X    X    .        AuraHl   .    .    X    X    .
+MgaFlm   .    .    .    X    X        MegaHl   .    .    .    X    .
+Ice      X    X    .    .    .        FullHl   .    .    .    .    X
+Blizrd   .    .    X    X    .        Panace   X    X    .    .    .
+MgaIce   .    .    .    X    X        Refrsh   X    .    .    .    .
+Bolt     X    X    .    .    .        Dispel   .    .    X    .    .
+Storm    .    .    X    X    .        Revive   .    X    X    .    .
+MgaBlt   .    .    .    X    X        MgaRev   .    .    .    .    X
+Baffle   X    .    .    .    .        Quickn   .    X    X    .    .
+Charm    .    .    X    .    .        Might    X    .    .    .    .
+Fragil   .    X    .    .    .        Enlgtn   X    .    .    .    .
+Depres   .    X    .    .    .        Lifeln   .    .    .    .    X
+Gank     .    .    .    X    .        Regen    X    X    .    .    .
+BldSck   .    X    .    .    .        Shield   .    X    .    .    .
+SoulDr   .    .    .    X    .        Barrie   .    X    .    .    .
+Divide   .    .    X    X    .        Reflct   .    .    .    X    .
+Sleep    X    .    .    .    .        Seal     X    X    .    .    .
+Stun     .    .    X    .    .        Slow     .    X    X    .    .
+Miasma   X    .    .    .    .        Invis    .    .    .    X    .
+Dispos   .    X    .    .    .        NeonJs   .    .    .    .    X
+Troubl   X    .    .    .    .        Punish   .    .    X    X    .
+Penult   .    .    .    .    X        QknAll   .    .    .    .    X
+FrgAll   .    .    X    .    .        MgtAll   .    .    X    .    .
+DprAll   .    .    X    .    .        EnlAll   .    .    X    .    .
+Imblnc   .    .    .    .    X        RgnAll   .    .    X    .    .
+Grave    .    X    .    .    .        BrrAll   .    .    .    X    .
+                                      ShdAll   .    .    .    X    .
+                                      SlwAll   .    .    .    X    .
+
+-----------------
+ MAGIC USABILITY
+-----------------
+Not everybody can use every spell in a given skill group even if he knows that group. The following are the spells accessible to each magic-using character:
+
+Darin (White): Heal, Aura Heal, Panacea, Refresh, Revive, Quicken, Might, Enlighten, Regen, Shield, Barrier, Seal, Slow, Punish
+Crystal (White): All white magic
+Dexter (Black, Fuchsia): All black magic
+Lance (Black): Flame, Ice, Bolt, Baffle, Charm, Fragile, Depress, Gank, Blood Suck, Soul Drain, Sleep, Stun, Miasma, Trouble, Fragile All, Depress All, Imbalance, Grave
+Paxton (White): All white magic EXCEPT Mega Revive, Punish and Neon Justice
+Mr. E (White, Black): All white and black magic
+
+
