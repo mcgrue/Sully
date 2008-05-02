@@ -143,7 +143,6 @@ void endOfBattle()
         WipeAllyBattleModifiers( party[i] );
     }
 	
-
 	ClearBattleMessage();
 	SetTargetBox(battlemessagebox);
    	FreeBox(0);
@@ -380,7 +379,7 @@ void DrawBattleHUD()
         y += FontHeight(fontBattleWhite) + 1;
     }
     
-    DrawBattleMessageBox();
+    //DrawBattleMessageBox();
 }
 
 void DrawBattleMeters( int x, int y, int cast_idx )
@@ -1371,7 +1370,7 @@ int _bm_idx, _prev_bm_idx;
 /// call this when starting up a battle menu for the first time for an action.
 void TurnBattleMenuOn( int cast_idx )
 {	
-
+	SetBattleMessage("Penis!",0,1,300);
 //Log( "TurnBattleMenuOn("+str(cast_idx)+")..." );
 
     if( _prev_bm_idx >= 0 )
@@ -1735,8 +1734,7 @@ void LoseBattleEffect() {
 int __initRewards = 0;
 int __victory_end_timerStart = 0;
 void BattleVictoryEffect() 
-{
-	SetBattleMessage("Penis!",0,1,300);
+{	
     if( !__initRewards ) {
         CalculatePhatBattleBooty();
         __initRewards = 1;
@@ -1790,11 +1788,15 @@ void setStartingBattleSpriteAnimations( int party_idx, int sprite_idx )
 
 
 // Initializes the battle message box, reserving its handle.
-void PrepBattleMessageBox() {
-	SetTargetBox(battlemessagebox);
+void PrepBattleMessageBox() {	
 	battlemessagebox = NewBox( "BoxLib_V1Border", "BoxLib_V1BG" );
+	SetTargetBox(battlemessagebox);
 	battlemessage_deathtime = BMSG_INDEFINITE_DURATION;
 	SetBoxPadding(2,2,2,2);
+    SetBoxColor( 0, rgb(0, 0, 0) );
+    SetBoxColor( 1, rgb(112, 112, 112) );
+    SetBoxColor( 2, rgb(144, 144, 144) );
+    SetBoxColor( 3, rgb(0, 0, 255) );	
 }
 
 // This function actually makes the battle message box ready to draw, setting up the image 

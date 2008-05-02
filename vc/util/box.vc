@@ -202,7 +202,7 @@ void PrerenderBox()
 	}
 	
 	if( !FunctionExists(master_box[_bx].bg_callfunc) ) {
-		ErrorHandler( "Box::RenderBox(): cannot render box, there is no border callfunc of the name '"+master_box[_bx].bg_callfunc+"'." );
+		ErrorHandler( "Box::RenderBox(): cannot render box, there is no background callfunc of the name '"+master_box[_bx].bg_callfunc+"'." );
 		return;
 	}
 	
