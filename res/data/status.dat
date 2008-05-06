@@ -291,7 +291,7 @@ REMOVE on_death, on_end
 Regenerate
 //Icon	Dur	RenderFunc	EffectFunc
 152	100	SR_Regenerate	-
-DESC "Reaction speed increased."
+DESC "Gradually regain HP."
 REMOVE on_death, on_end
 
 --
@@ -424,10 +424,20 @@ Immune
 DESC "Protected from ailments."
 REMOVE on_end, on_death
 
+--
+
+Lucky
+//Icon	Dur	RenderFunc	EffectFunc
+X	-1	SR_Lucky	-
+DESC "Maybe something good will happen?"
+REMOVE on_end, on_death
+
+
 // NEW STATUS EFFECTS:
 // Neutro halves Fire, Ice, Electric, Dark, and Holy damage. It's applied as if you had a halve effect on top of whatever other elemental effects you already have.
 // The *Weak statuses cause you to take double damage from the specified element. Unlike Neutro, these supersede all other elemental resistances, including Neutro -- even if you normally absorb the element, you take double damage as though you were simply weak to it.
 // Rewarding causes the affected enemy to have a 100% drop/steal chance, assuming it has anything to drop or be stolen.
 // Immune makes the character immune to any status effect that Panacea can remove. Note that it does not remove these status effects if they're already on the target.
+// Lucky allows you to roll twice and use the better roll with the Fortune skill. It has no use for anyone but Lance.
 
 END_OF_FILE

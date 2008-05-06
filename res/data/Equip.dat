@@ -46,304 +46,1062 @@
 //   blank lines and/or commented lines are ignored as par usual for these
 //   datafiles.  Go nuts.
 
-Dagger
-all_classes
-right_hand
-
-ATK	+21
-STK	+10
-STR	+10
-
-- 
-
-Iron_Sword
-Knight, Spearguy
-right_hand
-
-ATK +30
-
-- 
-
-Wand
-Priest, Wizard
+Wooden_Sword
+Knight, Spearguy, Avatar
 right_hand
 
 ATK +15
-MAG +5
-
 - 
 
-Staff
-all_classes
+Iron_Sword
+Knight, Spearguy, Avatar
 right_hand
 
-ATK +20
-MAG +8
-
+ATK +22
 - 
 
-Sting_Whip
-priest //WHAT KIND OF RELIGION IS THIS?!
+White_Sword
+Knight, Spearguy, Avatar
 right_hand
 
-ATK +30
-HIT +10
-
+ATK +32
 - 
 
-Brass_Pipe
-Knight, Engineer, Spearguy
+Paired_Swords
+Knight, Avatar
 right_hand
 
-ATK +20
-
+ATK +24
+STK +1
 - 
 
-Lead_Wrench
-Engineer
+Flaming_Sword
+Knight, Spearguy, Avatar
 right_hand
 
-ATK +25
+ELEMENT Fire
+ATK +45
+-
 
-- 
-
-Spear
-Spearguy
+Dark_Sword
+Knight, Spearguy, Avatar
 right_hand
 
-ATK +30
-
-- 
-
-Steel_Lance
-Spearguy
-right_hand
-
-ATK +40
-
-- 
-
-Garment
-ALL_CLASSES
-body
-
-DEF +20
-
-- 
-
-Cloak
-ALL_CLASSES
-body
-
-DEF +15
-MGR +5
-- 
-
-Robe
-Priest, Wizard
-body
-
-DEF +20
-MGR +8
-
-- 
-
-Leather_Vest
-Knight, Engineer, Spearguy
-body
-
-DEF +28
-
-- 
-
-Titanium_Suit
-Knight, Engineer, Spearguy
-body
-
-DEF +35
-
-- 
-
-Bronze_Armor
-Knight, Spearguy
-body
-
-DEF +50
-REA -1
-
-- 
-
-Headband
-ALL_CLASSES
-accessory
-
-DEF +3
-- 
-
-Hood
-Wizard, Priest
-accessory
-
-DEF +2
-MAG +2
-
-- 
-
-Cap // Short lines bust my ass
-Knight, Engineer, Spearguy
-accessory
-
-DEF +5
-
-- 
-
-Tiara
-Priest, Engineer
-accessory
-
-DEF +5
-MAG +3
-
-- 
-
-Head_Brace
-Engineer
-accessory
-
-DEF +9
-
-- 
-
-Gold_Helmet
-Knight, Spearguy
-accessory
-
-DEF +12
-
-- 
-
-Bracer
-ALL_CLASSES
-accessory
-DEF +3
-
-- 
-
-Silver_Brace
-Engineer, Priest
-accessory
-
-DEF +5
-MGR +3
-
-- 
-
-Buckler
-Knight, Engineer, Spearguy
-accessory
-
-DEF +7
-
-- 
-
-Laser_Shield
-Engineer
-left_hand
-
-ATK +3
-DEF +10
-
-- 
-
-Tower_Shield
-Knight, Spearguy
-left_hand
-
-DEF +15
-
-- 
-
-Blur_Ring
-ALL_CLASSES
-left_hand
-
-DOD +30
-- 
-
-Fury_Ring
-ALL_CLASSES
-left_hand
-
-FER +5
-
-- 
-
-Running_Boots
-ALL_CLASSES
-accessory
-
-REA +2
-DOD +10
-- 
-
-Protect_Locket
-ALL_CLASSES
-accessory
-
-MGR +15
-- 
+ELEMENT Dark
+ATK +52
+CTR +5
+// ALSO add Death
+-
 
 Carrot_Blade
 Knight
 right_hand
 
-ATK +60
-- 
-
-Pharaoh_Sceptre
-Wizard
-right_hand
-
-ATK +30
-MAG +30
-MAX_HP +100
-MAX_MP +50
-FER +3
-
+ELEMENT Holy
+ATK +65
+IMMUNE Blind
+// ALSO add Grave on hit
 -
 
-Dark_Sword
+Saladbolg
 Knight, Spearguy
 right_hand
 
 ATK +40
-CTR +5
-
-ELEMENT Dark
+STR +5
+HIT +30
+FER +100
 -
 
-Speed_Boots
+
+Hand_Axe
+Knight, Spearguy, Avatar
+right_hand
+
+ATK +26
+FER +25
+-
+
+Battleaxe
+Knight, Spearguy, Avatar
+right_hand
+
+ATK +40
+FER +25
+-
+
+
+Spear
+Spearguy, Avatar
+right_hand
+
+ATK +30
+HIT +10
+-
+
+Steel_Lance
+Spearguy, Avatar
+right_hand
+
+ATK +42
+HIT +15
+-
+
+Thunderstroke
+Spearguy
+right_hand
+
+ELEMENT Electric
+ATK +56
+HIT +30
+// ALSO add Paralysis
+-
+
+Gungnir
+Spearguy
+right_hand
+
+ATK +62
+HIT +15
+AUTO Accurate
+IMMUNE Blind, Weak
+-
+
+
+Staff
+ALL_CLASSES
+right_hand
+
+ATK +10
+MAG +4
+-
+
+Wand
+Knight, Priest, Wizard, Thief, Cleric, Avatar
+right_hand
+
+ATK +6
+MAG +9
+CTR -999
+FER -999
+-
+
+Pastoral_Staff
+Knight, Priest, Cleric, Avatar
+right_hand
+
+ELEMENT Holy
+ATK +12
+MAG +6
+-
+
+Mace
+ALL_CLASSES
+right_hand
+
+ATK +16
+MAG +4
+-
+
+Jeweled_Rod
+Priest, Wizard, Cleric, Avatar
+right_hand
+
+ATK +15
+MAG +8
+-
+
+Druid_Staff
+Priest, Wizard, Cleric, Avatar
+right_hand
+
+ATK +23
+MAG +10
+-
+
+Pharaoh_Sceptre
+Wizard, Avatar
+right_hand
+
+ELEMENT Dark
+ATK +25
+MAG +25
+MAX_MP +10
+// ALSO add Depress
+-
+
+Croziest
+Cleric
+right_hand
+
+ELEMENT Holy
+ATK +40
+MAG +20
+FER +20
+MAX_HP +15
+-
+
+Wonder_Wand
+Priest, Wizard
+right_hand
+
+ATK +10
+MAG +15
+CTR -999
+FER -999
+AUTO Enlighten
+-
+
+Support_Staff
+Priest, Wizard, Cleric, Avatar
+right_hand
+
+ATK +40
+MAG +4
+MGR +12
+END +12
+-
+
+Stylin'_Cane
+Wizard
+right_hand
+
+ATK +30
+HIT +15
+MAG +12
+CTR +100
+// ALSO add Charm
+-
+
+Diamond_Staff
+Priest 
+right_hand
+
+ATK +35
+MAG +25
+MGR +20
+END +5
+IMMUNE Seal, Silence
+// ALSO add Grave
+-
+
+
+Sting_Whip
+Avatar, Priest //WHAT KIND OF RELIGION IS THIS?!
+right_hand
+
+ATK +28
+HIT +10
+FER +10
+// ALSO add Slow
+-
+
+Frostbite
+Avatar, Priest 
+right_hand
+
+ELEMENT Ice
+ATK +36
+HIT +15
+FER +10
+// ALSO add Sleep
+-
+
+Fairy_Lash
+Priest 
+right_hand
+
+ATK +48
+HIT +20
+FER +10
+// ALSO add Charm
+-
+
+
+Wrench
+Engineer, Avatar
+right_hand
+
+ATK +24
+HIT -5
+-
+
+Lead_Pipe
+Knight, Engineer, Spearguy, Avatar
+right_hand
+
+ATK +30
+-
+
+Nightstick
+Engineer, Spearguy, Avatar
+right_hand
+
+ATK +42
+FER +5
+-
+
+Sledgehammer
+Engineer, Spearguy, Avatar
+right_hand
+
+ATK +55
+FER +25
+CTR -5
+HIT -8
+REA -1
+// ALSO add Fragile
+-
+
+Science!
+Engineer
+right_hand
+
+ATK +40
+STR +15
+MAG +8
+HIT +8
+IMMUNE Weak, Fugue
+// ALSO add Blind
+-
+
+
+Brass_Knuckles
+Engineer, Avatar
+right_hand
+
+ATK +15
+STK +1
+CTR +15
+FER +20
+-
+
+Razor_Claws
+Engineer, Avatar
+right_hand
+
+ATK +26
+STK +1
+CTR +15
+FER +20
+-
+
+Giant_Robot_Hands
+Engineer, Avatar
+right_hand
+
+ATK +30
+STK +2
+CTR +15
+FER +20
+// ALSO add Confuse
+-
+
+
+Dagger
+ALL_CLASSES
+right_hand
+
+ATK	+10
+- 
+
+Poison_Dagger
+ALL_CLASSES
+right_hand
+
+ATK +13
+// ALSO add Poison
+
+Stiletto
+Knight, Wizard, Engineer, Thief, Avatar
+right_hand
+
+ATK	+18
+HIT +5
+FER +5
+- 
+
+Khukri
+Knight, Thief, Avatar
+right_hand
+
+ATK	+30
+FER +10
+- 
+
+North_Wind
+Knight, Thief, Avatar
+right_hand
+
+ELEMENT Ice
+ATK	+15
+HIT +10
+STK +1
+- 
+
+Assassin's_Knife
+Thief
+right_hand
+
+ATK	+42
+HIT +20
+MAG +6
+// ALSO add Death
+- 
+
+
+Sting_Needle
+ALL_CLASSES
+right_hand
+
+ATK +10
+HIT +10
+STK +2
+CTR +50
+FER -999
+-
+
+Syringe
+ALL_CLASSES
+right_hand
+
+ELEMENT Drain
+HIT +15
+STK -999
+CTR -999
+FER -999
+// ALSO add Poison, Enervate, Blind, Confuse, Seal, Sleep
+-
+
+
+Buckler
+Knight, Engineer, Spearguy, Avatar
+left_hand
+DEF +5
+DOD +5
+- 
+
+Laser_Shield
+Engineer, Avatar
+left_hand
+
+DEF +7
+DOD +7
+HALVE Electric
+- 
+
+Tower_Shield
+Knight, Spearguy, Avatar
+left_hand
+
+DEF +10
+DOD +10
+- 
+
+Sunburst_Shield
+Knight, Spearguy, Avatar
+left_hand
+
+DEF +15
+DOD +10
+HALVE Fire, Holy
+- 
+
+
+Spellbook
+Wizard, Avatar
+left_hand
+
+MAG +4
+MGR +4
+- 
+
+Grimoire
+Wizard, Avatar
+left_hand
+
+MAG +10
+MGR +10	
+- 
+
+Main_Gauche
+Knight, Thief, Avatar
+left_hand
+
+ATK +5
+CTR +5
+DOD +5
+-
+
+Swordbreaker
+Knight, Thief, Avatar
+left_hand
+
+ATK +10
+CTR +10
+DOD +10
+-
+
+Rosary
+Priest, Cleric, Avatar
+left_hand
+
+MGR +3
+IMMUNE Confuse, Charm, Seal, Silence, Grave
+HALVE Reduction
+- 
+
+Bracer
+ALL_CLASSES
+left_hand
+
+DEF +4
+- 
+
+Silver_Bracer
+ALL_CLASSES
+left_hand
+
+DEF +10
+- 
+
+Muscle_Band
+ALL_CLASSES
+left_hand
+
+ATK +6
+IMMUNE Weak
+- 
+
+Wisdom_Band
+ALL_CLASSES
+left_hand
+
+MAG +6
+IMMUNE Fugue
+- 
+
+Tornado_Bracelet
+Knight, Spearguy, Engineer, Thief, Avatar
+left_hand
+
+STK +1
+HIT -7
+-
+
+Crystal_Ball
+Priest, Wizard, Cleric, Avatar
+left_hand
+
+MAX_MP +10
+IMMUNE Enervate
+-
+
+Wristwatch
+ALL_CLASSES
+left_hand
+
+REA +1
+IMMUNE Slow
+-
+
+
+Garment
+ALL_CLASSES
+body
+
+DEF +10
+-
+
+Cloak
+ALL_CLASSES
+body
+
+DEF +12
+MGR +3
+-
+
+Robe
+ALL_CLASSES
+body
+
+DEF +18
+MGR +6
+-
+
+Vestments
+Priest, Cleric, Avatar
+body
+
+DEF +15
+MGR +10
+NEGATE Holy
+-
+
+Black_Robe
+Wizard, Spearguy, Avatar
+body
+
+DEF +20
+MAG +3
+MGR +3
+NEGATE Dark
+DOUBLE Holy
+-
+
+Long_Coat
+Priest, Cleric, Wizard, Thief, Engineer, Avatar
+body
+
+DEF +26
+MGR +9	
+-
+
+Silk_Clothes
+Priest, Cleric, Wizard, Thief, Avatar
+body
+
+DEF +12
+MGR +6
+DOD +25
+IMMUNE Tangle
+-
+
+Jogging_Suit
+ALL_CLASSES
+body
+
+DEF +20
+REA +1
+-
+
+Ninja_Suit
+Wizard, Engineer, Thief, Avatar
+body
+
+DEF +30
+DOD +20
+CTR +10
+AUTO Evade
+IMMUNE Tangle
+-
+
+Innocence_Frock
+Priest, Cleric, Avatar
+body
+
+DEF +35
+MGR +15
+MAX_HP +15
+IMMUNE Grave, Death
+ABSORB Holy
+DOUBLE Dark
+-
+
+Flame_Robe
+Priest, Cleric, Wizard, Avatar
+body
+
+DEF +38
+MGR +12
+ABSORB Fire
+DOUBLE Ice, Electric
+-
+
+Frost_Robe
+Priest, Cleric, Wizard, Avatar
+body
+
+DEF +38
+MGR +12
+ABSORB Ice
+DOUBLE Fire, Electric
+-
+
+Spark_Robe
+Priest, Cleric, Wizard, Thief, Avatar
+body
+
+DEF +38
+MGR +12
+ABSORB Electric
+DOUBLE Fire, Ice
+-
+
+Dream_Mantle
+Priest, Cleric, Wizard, Thief, Avatar
+body
+
+DEF +46
+MGR +15
+MAX_MP +10
+-
+
+
+Leather_Vest
+Knight, Cleric, Spearguy, Engineer, Thief, Avatar
+body
+
+DEF +15
+-
+
+Chain_Mail
+Knight, Cleric, Spearguy, Engineer, Thief, Avatar
+body
+
+DEF +22
+-
+
+Iron_Suit
+Knight, Engineer, Spearguy, Avatar
+body
+
+DEF +30
+DOD -10
+IMMUNE Fragile
+-
+
+Titanium_Suit
+Knight, Engineer, Spearguy, Avatar
+body
+
+DEF +42
+DOD -10
+IMMUNE Fragile
+-
+
+Dwarven_Mail
+Knight, Spearguy, Avatar
+body
+
+DEF +35
+NEGATE Fire
+DOUBLE Ice
+-
+
+Plate_Mail
+Knight, Spearguy, Avatar
+body
+
+DEF +45
+DOD -5
+-
+
+Steel_Frame
+Engineer
+body
+
+DEF +48
+MGR +4
+END +4
+ABSORB Electric
+-
+
+Rock_Mail
+Knight, Spearguy, Engineer, Avatar
+body
+
+DEF +55
+MGR +5
+DOD -15
+IMMUNE Fragile
+-
+
+Dragon_Armor
+Knight, Spearguy, Avatar
+body
+
+DEF +54
+HALVE Fire, Ice
+-
+
+Stan's_Armor
+Spearguy
+body
+
+DEF +60
+MAX_HP +15
+CTR +15
+ABSORB Dark
+DOUBLE Holy
+NEGATE Drain
+-
+
+Atlas_Plate
+Knight, Spearguy
+body
+
+DEF +60
+MGR +6
+STR +6
+END +6
+-
+
+Heroic_Panoply
+Knight
+body
+
+DEF +65
+MGR +6
+IMMUNE Death, Grave
+HALVE Holy, Dark
+NEGATE Reduction
+-
+
+Turtle_Shell
+ALL_CLASSES
+body
+
+END +120
+MGR +120
+DEF +30
+REA -999
+DOD -15
+AUTO Protect, Barrier
+NEGATE Reduction
+-
+
+
+Capacitor_Array
+Engineer
+accessory
+
+HIT +3
+HALVE Electric
+// ALSO enable Taser
+-
+
+Solar_Lens
+Engineer
+accessory
+
+ATK +5
+IMMUNE Enervate, Fugue, Blind
+// ALSO enable Sunray
+-
+
+Turbocharger
+Engineer
+accessory
+
+REA +1
+IMMUNE Tangle
+// ALSO enable Turbo
+-
+
+Photoaccumulator
+Engineer
+accessory
+
+HP +5
+IMMUNE Weak, Fugue, Depress, Tangle, Fragile, Slow
+// ALSO enable Charge
+-
+
+Neutralizer
+Engineer
+accessory
+
+MGR +3
+DEF +3
+END +3
+IMMUNE FireWeak, IceWeak, ElectricWeak, HolyWeak, DarkWeak, Depress, Fragile
+// ALSO enable Neutro
+-
+
+Antimagic_Field
+Engineer
+accessory
+
+MGR +6
+// ALSO add Silence
+// ALSO enable Negate
+-
+
+
+Headband
+ALL_CLASSES
+accessory
+
+DOD +3
+-
+
+Hood
+Wizard, Priest, Cleric, Avatar
+accessory
+
+DEF +1
+MGR +2
+MAG +3
+-
+
+Silver_Circlet
+Wizard, Priest, Cleric, Avatar
+accessory
+
+DEF +3
+MGR +5
+MAG +7
+-
+
+Jaunty_Cap
+ALL_CLASSES
+accessory
+
+MAG +2
+DOD +3
+-
+
+My_Grand_Hat
+ALL_CLASSES
+accessory
+
+DEF +5
+MGR +5
+DOD +5
+IMMUNE Weak, Fugue, Depress, Tangle, Fragile, Slow
+-
+
+Helmet
+Knight, Spearguy, Avatar
+accessory
+
+DEF +5
+-
+
+Tiara
+Priest, Engineer, Avatar
+accessory
+
+DEF +3
+MGR +3
+MAG +3
+-
+
+Gold Helmet
+Knight, Spearguy, Avatar
+accessory
+
+DEF +10
+-
+
+Blur_Ring
+ALL_CLASSES
+accessory
+
+DOD +20
+REA +1
+IMMUNE Slow, Tangle
+-
+
+Fury_Ring
+ALL_CLASSES
+accessory
+
+STR +3
+FER +30
+CTR +5
+-
+
+Life_Ring
+ALL_CLASSES
+accessory
+
+MAX_HP +12
+IMMUNE Death, Grave
+-
+
+Maiden_Flower
+ALL_CLASSES
+accessory
+
+IMMUNE Poison, Enervate, Blind, Confuse, Charm, Silence, Seal, Sleep, Paralysis, Slow, Weak, Fragile, Depress, Tangle, Fugue, Death, Grave, FireWeak, IceWeak, ElectricWeak, DarkWeak, HolyWeak
+-
+
+Protect_Locket
+ALL_CLASSES
+accessory
+
+MGR +10
+- 
+
+Justice_Badge
+ALL_CLASSES
+accessory
+
+CTR +250
+-
+
+Running_Shoes
 ALL_CLASSES
 accessory
 
 REA +2
+-
+
+War_Paint
+ALL_CLASSES
+accessory
+
+REA +2
+HIT +10
+ATK +20
+STR +20
+CTR +250
+FER +250
+AUTO Confuse, Might
+IMMUNE Poison, Enervate, Blind, Charm, Sleep, Paralysis, Slow, Weak, Fragile, Depress, Tangle, Fugue, Death
+-
+
+Blade_Spirit
+ALL_CLASSES
+accessory
+
+STK +1
+-
+
+Nature_Charm
+ALL_CLASSES
+accessory
+
+HALVE Fire, Ice, Electric
+-
+
+Moral_Relativism_Charm
+ALL_CLASSES
+accessory
+
+HALVE Dark, Holy
 -
 
 Omni_Charm
 ALL_CLASSES
 accessory
 
-REA +1
+HALVE Fire, Ice, Electric, Dark, Holy
+-
 
-ELEMENT Dark
+Rabbit's_Foot
+Thief
+accessory
 
-AUTO	Might
-IMMUNE 	Confuse, Poison, Death
+AUTO Lucky
+-
 
-ABSORB  Fire
-NEGATE	Light
-HALVE 	Lightning
-DOUBLE	Ice
+Scope
+ALL_CLASSES
+accessory
+
+HIT +20
+IMMUNE Blind
+-
+
+Texas_Belt_Buckle
+ALL_CLASSES
+accessory
+
+ATK +6
+STR +6
 -
 
 

@@ -33,7 +33,7 @@ string sprfile_dir		= "res/images/sprites/";
 #define MAX_CLASSES		10
 #define MAX_SKILLS		200
 #define MAX_CAST		10
-#define MAX_ITEMS		100
+#define MAX_ITEMS		800
 
 // These are the maximums for Max HP, Max MP, and all other stats. 
 // Enemies are bound to the normal stat maximums, but not the HP/MP maximums.
