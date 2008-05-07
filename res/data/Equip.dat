@@ -893,7 +893,7 @@ Photoaccumulator
 Engineer
 accessory
 
-HP +5
+MAX_HP +5
 IMMUNE Weak, Fugue, Depress, Tangle, Fragile, Slow
 // ALSO enable Charge
 -
@@ -975,10 +975,10 @@ accessory
 
 DEF +3
 MGR +3
-MAG +3
+MAG +4
 -
 
-Gold Helmet
+Gold_Helmet
 Knight, Spearguy, Avatar
 accessory
 

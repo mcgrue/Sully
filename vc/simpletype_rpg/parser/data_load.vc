@@ -622,7 +622,7 @@ int LoadStructEquip()
 				else
 				{
 					lseq_pos++; // Looks for .equ_classes line next
-					FlagSet(lseq_count + 192); // Remove if not in test bed
+					//FlagSet(lseq_count + 192); // Remove if not in test bed
 					ShowFlagScreen(); // Remove if not in test bed
 					lseq_count++; // Increments current data entry
 				}
@@ -697,7 +697,7 @@ int LoadStructItems()
 			for (lsit_i = 0; lsit_i < MAX_CLASSES; lsit_i++) // Loops through classes that can equip and nulls
 			{ master_items[lsit_count].equ_classes[lsit_i] = 0; }
 
-			FlagSet(lsit_count + 128); // Remove if not in test bed
+			//FlagSet(lsit_count + 128); // Remove if not in test bed
 			ShowFlagScreen(); // Remove if not in test bed
 			lsit_count++; // Increments current data entry
 		}

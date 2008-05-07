@@ -360,26 +360,21 @@ void newgame() {
 	curpartysize = 0;
 	
 	//let's give everyone their initial equipment....
-	ForceEquip( "Darin", "Dagger", SLOT_RHAND );
-	ForceEquip( "Darin", "Headband", SLOT_ACC1 );
+	ForceEquip( "Darin", "Wooden_Sword", SLOT_RHAND );	
 	ForceEquip( "Darin", "Garment", SLOT_BODY );
 
-	ForceEquip( "Sara", "Brass_Pipe", SLOT_RHAND );
-	ForceEquip( "Sara", "Cap", SLOT_ACC1 );
-	ForceEquip( "Sara", "Bracer", SLOT_ACC2 );
-	ForceEquip( "Sara", "Garment", SLOT_BODY );
+	ForceEquip( "Sara", "Wrench", SLOT_RHAND );
+	ForceEquip( "Sara", "Capacitor_Array", SLOT_ACC1 );
+	ForceEquip( "Sara", "Iron_Suit", SLOT_BODY );
 
-	ForceEquip( "Dexter", "Dagger",  SLOT_RHAND );
-	ForceEquip( "Dexter", "Headband", SLOT_ACC1 );
-	ForceEquip( "Dexter", "Garment",  SLOT_BODY );
-
-	ForceEquip( "Crystal", "Staff",  SLOT_RHAND );
-	ForceEquip( "Crystal", "Garment", SLOT_BODY );
+	ForceEquip( "Dexter", "Staff",  SLOT_RHAND );
+	ForceEquip( "Dexter", "Hood", SLOT_ACC1 );
+	ForceEquip( "Dexter", "Cloak",  SLOT_BODY );
 
 	ForceEquip("Galfrey","Spear",SLOT_RHAND);
 	ForceEquip("Galfrey","Gold_Helmet",SLOT_ACC1);
-	ForceEquip("Galfrey","Leather_Vest",SLOT_BODY);
-	ForceEquip("Galfrey","Buckler",SLOT_ACC2);
+	ForceEquip("Galfrey","Plate_Mail",SLOT_BODY);
+	ForceEquip("Galfrey","Buckler",SLOT_LHAND);
 	
 	GrantSkill( "Darin", "Aim" );
 	GrantSkill( "Darin", "Guard" );
