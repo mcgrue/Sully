@@ -363,6 +363,10 @@ void newgame() {
 	ForceEquip( "Darin", "Wooden_Sword", SLOT_RHAND );	
 	ForceEquip( "Darin", "Garment", SLOT_BODY );
 
+	ForceEquip( "Crystal", "Dagger", SLOT_RHAND );	
+	ForceEquip( "Crystal", "Garment", SLOT_BODY );
+	ForceEquip( "Crystal", "Headband", SLOT_ACC1 );
+
 	ForceEquip( "Sara", "Wrench", SLOT_RHAND );
 	ForceEquip( "Sara", "Capacitor_Array", SLOT_ACC1 );
 	ForceEquip( "Sara", "Iron_Suit", SLOT_BODY );

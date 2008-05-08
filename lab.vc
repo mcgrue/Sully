@@ -451,7 +451,7 @@ void chest_d() /* 19 */
 {
     if( OpenTreasure(CHEST_LAB_D, 22,80, 280, 0) )
     {
-        FindItem( "Silver_Brace", 1 );
+        FindItem( "Silver_Bracer", 1 );
     }
 }
 

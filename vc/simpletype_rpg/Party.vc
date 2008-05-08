@@ -761,6 +761,8 @@ void _AssemblePartyMovestringSetup()
         // Save initial coordinates in the temp array
         artemp[(apscount-1)*2] = entity.x[master_cast[party[apscount]].entity]; 
         artemp[((apscount-1)*2)+1] = entity.y[master_cast[party[apscount]].entity];
+        // make sure entity isn't going to bump into anything
+        entity.obstructable[apscount] = 0;
     }
     CutsceneOff(); // Set everyone to stalk, moving them into stalking position
     // Set up movescripts for each person (except the leader, who stays where he is, hence starting at 1),

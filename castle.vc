@@ -828,7 +828,7 @@ void Chest_C()
 {
     if( OpenTreasure(CHEST_HECK_B1C, 6,110, 443, 0) )
     {
-        FindItem( "Bronze_Armor", 1 );
+        FindItem( "Dragon_Armor", 1 );
     }
 }
 
@@ -844,7 +844,7 @@ void Chest_E()
 {
     if( OpenTreasure(CHEST_HECK_B1E, 8,110, 443, 0) )
     {
-        FindItem( "Running_Boots", 1 );
+        FindItem( "Running_Shoes", 1 );
     }
 }
 

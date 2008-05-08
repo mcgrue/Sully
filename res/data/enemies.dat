@@ -14,13 +14,89 @@
 
 -
 
-McGrue // name goes here
+// BALANCED ENEMIES (for level 1-3 or so)
+
+Evil_Carot // name goes here
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+20		12		13	40	18	32	18	8	1	15	3	20	100	40
+
+SPRITE	carot.spr
+ICON	2
+AI	DefaultEnemyAI // I just picked this as an example
+DROP	pooh, 12
+ELEMENT Dark
+
+- // end of this enemy, start of next
+
+Bunny
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+3		12		6	6	8	7	10	25	1	5	6	0	5	1
+
+SPRITE	bunny.spr
+ICON	2
+AI		DefaultEnemyAI 
+DROP	pooh, 12
+
+-
+
+Evil_Bunny
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+36		40		9	8	14	9	12	22	1	10	5	0	30	4
+
+SPRITE	evil_bunny.spr
+ICON	2
+AI		DefaultEnemyAI 
+DROP	pooh, 12
+ABSORB	Dark
+DOUBLE	Holy
+
+-
+
+Drama_Clubber
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+32		50		11	16	26	20	16	12	1	5	4	20	100	4
+
+SPRITE	vampire.spr
+ICON	2
+AI	DefaultEnemyAI 
+DROP	pooh, 12
+HALVE Dark, Ice
+DOUBLE Holy, Fire
+
+-
+
+Slime
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+40		0		8	6	8	6	11	8	1	5	4	0	100	40
+
+SPRITE	green_slime.spr
+ICON	2
+AI	DefaultEnemyAI 
+DROP	pooh, 12
+AUTO	Might
+DOUBLE Ice
+-
+
+Red_Slime
+//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
+40		0		12	9	12	8	12	10	1	5	4	0	100	40
+
+SPRITE	red_slime.spr
+ICON	2
+AI	DefaultEnemyAI 
+DROP	pooh, 12
+DOUBLE Ice
+-
+
+// NONBALANCED ENEMIES
+
+McGrue 
 //maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
 75	100	20	20	22	30	20	25	1	15	4	10	100	40	
 
 SPRITE	vampire.spr
 ICON	0
-AI	DefaultEnemyAI  // I just picked this as an example
+AI	DefaultEnemyAI  
 STEAL	Starlight, 100
 DROP	Starlight, 50
 
@@ -33,7 +109,7 @@ HALVE 	Lightning
 DOUBLE	Ice
 BOSS
 
-- // end of this enemy, start of next
+- 
 
 Sperm 
 //maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
@@ -60,52 +136,6 @@ IMMUNE	Enlighten
 
 -
 
-Drama_Clubber
-//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
-40	50	12	16	26	24	16	22	2	5	5	10	100	40
-
-SPRITE	vampire.spr
-ICON	2
-AI	DefaultEnemyAI 
-DROP	pooh, 12
-
--
-
-Evil_Carot
-//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
-20	10	20	60	18	50	24	8	1	10	4	20	100	40
-
-SPRITE	carot.spr
-ICON	2
-AI	DefaultEnemyAI 
-DROP	pooh, 12
-ELEMENT Dark
-
--
-
-Slime
-//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
-10	0	14	14	12	12	15	18	1	5	4	0	100	40
-
-SPRITE	green_slime.spr
-ICON	2
-AI	DefaultEnemyAI 
-DROP	pooh, 12
-AUTO	Might
-
--
-
-Red_Slime
-//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
-25	0	24	20	20	18	16	20	1	7	4	0	100	40
-
-SPRITE	red_slime.spr
-ICON	2
-AI	DefaultEnemyAI 
-DROP	pooh, 12
-ELEMENT Fire
--
-
 Blue_Slime
 //maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
 25	30	17	16	30	25	12	23	1	5	4	0	100	40
@@ -115,29 +145,6 @@ ICON	2
 AI	DefaultEnemyAI 
 DROP	pooh, 12
 ELEMENT Ice
-
--
-
-Bunny
-//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
-20	10	12	10	15	14	14	25	1	5	6	0	100	40
-
-SPRITE	bunny.spr
-ICON	2
-AI	DefaultEnemyAI 
-DROP	pooh, 12
-
--
-
-Evil_Bunny
-//maxhp	maxmp	str	end	mag	mgr	hit	dod	stk	fer	rea	ctr	mon	exp
-40	15	20	15	30	20	22	25	1	10	6	5	100	40
-
-SPRITE	evil_bunny.spr
-ICON	2
-AI	DefaultEnemyAI 
-DROP	pooh, 12
-ELEMENT Dark
 
 -
 
