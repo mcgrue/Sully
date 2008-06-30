@@ -15,6 +15,8 @@
 #define FACE_LEFT       3
 #define FACE_RIGHT      4
 
+#define TRUE 1
+#define FALSE 0
 
 
 // These four functions return true if the player entity is facing in the specified

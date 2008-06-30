@@ -22,6 +22,17 @@ void bLog( String s )
 /// the iconfile index for a weaponless (bare hands) attack.
 #define ICON_NO_WEAPON  0
 
+/// What percentage of their default share of EXP dead party members get. This works a little differently
+/// depending on whether EXP is divided or assigned equally to everyone: see the EXP policies below.
+#define DEAD_EXP_SHARE 100 // Being dead is no reason to discriminate against someone!
+
+/// Set to a number that determines the policy for assigning combat EXP. 
+/// >> POLICY 0: The summed EXP is given to every living character, with dead characters getting DEAD_EXP_SHARE% of that amount.
+/// >> POLICY 1: The summed EXP is divided equally among all characters, rounding down. If DEAD_EXP_SHARE is 0, dead characters are excluded. If it's any nonzero value, they get their full share.
+#define EXP_POLICY 0
+
+#define EXP_POLICY_TOTAL 0
+#define EXP_POLICY_DIVIDE 1
 
 /// Set to a number that determines the elemental overlap policy. This is what happens when a character has multiple equipment effects (either innate or worn) that modify the same elemental damage. There are three policies:
 /// >> POLICY 0: The best elemental modifier (the one that provides the least damage or most HP gain) prevails.
@@ -86,7 +97,7 @@ int battlemessage_loc; // x coordinate of the actual x-position of this box (as 
 #define BMSG_FORMAT_FULL 0 // span most of the screen regardless of message length
 #define BMSG_FORMAT_MINIMAL 0 // take up only what space is needed
 
-#define BMSG_TOP_Y 220
+#define BMSG_TOP_Y 216
 #define BMSG_LEFT_X 5       // leftmost edge when message box is full screen size
 #define BMSG_RIGHT_X 315    // rightmost edge when message box is full screen size
 #define BMSG_HEIGHT FontHeight(v1rpg_LargeFont)
@@ -363,7 +374,8 @@ void DrawBattleHUD()
     
     for( i=0; i<PartySize(); i++ )
     {
-        if( master_cast[party[i]].cur_hp > 0 )
+        if( master_cast[party[i]].cur_hp > 0 ) // YOU KNOW, WE DO HAVE ACCESSORS FOR THIS KIND OF THING
+                                               // 		I'M JUST SAYING
         {
             PrintString( x,y, screen, fontBattleWhite, master_cast[party[i]].name );
             PrintRight( x+101,y, screen, fontBattleWhite, str(master_cast[party[i]].cur_hp) );
@@ -381,7 +393,7 @@ void DrawBattleHUD()
         y += FontHeight(fontBattleWhite) + 1;
     }
     
-    //DrawBattleMessageBox();
+    DrawBattleMessageBox();
 }
 
 void DrawBattleMeters( int x, int y, int cast_idx )
@@ -1371,8 +1383,7 @@ int _bm_idx, _prev_bm_idx;
 
 /// call this when starting up a battle menu for the first time for an action.
 void TurnBattleMenuOn( int cast_idx )
-{   
-    SetBattleMessage("Penis!",0,1,300);
+{		
 //Log( "TurnBattleMenuOn("+str(cast_idx)+")..." );
 
     if( _prev_bm_idx >= 0 )
@@ -1708,7 +1719,7 @@ void PlayBattleGameOver()
 /// Dance and show XP gains and stuff.  Yaaay!
 void PlayBattleVictory()
 {
-    int i;
+    int i;	
 
     /// this prevents the battle queue from advancing, and isn't cleared 
     /// by anything else since GATTACA has already fired.
@@ -1719,7 +1730,7 @@ void PlayBattleVictory()
     for( i=0; i<PartySize(); i++ )
     {
         if( !allyIsIncapacitated(i) )
-        {
+        {	
             if( !equ(GetCurrentSpriteStrand(master_cast[party[i]].battle_ref),"dance") )
             {
                 ChangeSpriteAnimation( master_cast[party[i]].battle_ref, "dance" );
@@ -1737,28 +1748,19 @@ int __initRewards = 0;
 int __victory_end_timerStart = 0;
 void BattleVictoryEffect() 
 {   
-    if( !__initRewards ) {
-        CalculatePhatBattleBooty();
-        __initRewards = 1;
-        __victory_end_timerStart = systemtime;
-    }
-
-    PrintString( 10,200,screen,fontBattleWhite, "Way to win the battle!." );
-    
-    if( (__victory_end_timerStart + 300) < systemtime ) 
-    {
-        PrintString( 10,220,screen,fontBattleWhite, "Press Enter to continues." );
-        
-        if( key[SCAN_ENTER] ) {
-            TurnOffTheBattle();
-        }
-    }
+	if (!__initRewards) { 
+		CalculatePhatBattleBooty(); 
+		__victory_end_timerStart = timer;	
+	}
+	
+	if (timer - __victory_end_timerStart < 300 && timer - __victory_end_timerStart > 30 && MenuConfirm()) { TurnOffTheBattle(); }	
+	else if (timer - __victory_end_timerStart >= 300) { TurnOffTheBattle(); }		
 }
 
 
 void DrawBattleQueue()
 {
-
+	
 }
 
 
@@ -1766,13 +1768,80 @@ void DrawBattleQueue()
 void DrawBattleMessageBox() {
     SetTargetBox(battlemessagebox);
     if (BattleMessageExists()) {
-        if (systemtime < battlemessage_deathtime) DrawBox(battlemessage_loc, BMSG_TOP_Y, screen);
+        if (battlemessage_deathtime == BMSG_INDEFINITE_DURATION || systemtime < battlemessage_deathtime) DrawBox(battlemessage_loc, BMSG_TOP_Y, screen);
         else ClearBattleMessage();
     }
 }
 
+
+int _oldlevel[MAX_PARTY_SIZE]; // each ally's level prior to combat exp.
+                               // this should probably be designed to be of
+                               // local scope to CalculatePhatBattleBooty
+                               // using Lua, but for now it isn't. Lol?
+
 void CalculatePhatBattleBooty() {
-    //exit( "CalculatePhatBattleBooty" );
+	int i, n;
+    int reward;
+    string output;
+	// This assumes that all the enemies currently in the party were defeated legitimately.
+	// If we want to allow for some enemies to stay in the party without giving loot this
+	// will require a bit of additional code.
+    
+    // Calculate EXP
+    reward = 0;
+    for (i = 0; i < EnemyPartySize(); i++) { reward += nme_exp(i); }
+
+	// If the EXP division policy is used, EXP policy is divided between all party
+	// members (if DEAD_EXP_SHARE is nonzero) or between all living party members
+	// (if DEAD_EXP_SHARE is 0). Note that this uses integer division, so it can 
+	// reduce small EXP totals to 0.
+	if (EXP_POLICY == EXP_POLICY_DIVIDE) {
+		if (DEAD_EXP_SHARE != 0) { reward = reward / PartySize(); } // count all PCs
+		else { // count only living PCs
+			n = 0;
+			for (i = 0; i < PartySize(); i++) {
+				if (!bat_is_dead(i, PARTY_ALLY)) n++;
+			}			
+			if (n <= 0) { ErrorHandler("Error in CalculatePhatBattleBooty: Somehow the number of living PCs was less than or equal to 0, even though the party won."); }
+			reward = reward / n;
+		}
+	}
+	
+	if (reward < 0) { 
+		ErrorHandler("Error in CalculatePhatBattleBooty: A negative amount of XP (" + str(reward) + ") was awarded."); 
+		reward = 0;
+	}
+	
+	for (i = 0; i < PartySize(); i++) { 
+		_oldlevel[i] = getLevel(party[i]); // save what level the person was originally 
+		if (reward > 0) {
+			if (bat_is_dead(i, PARTY_ALLY)) {
+				if (EXP_POLICY == EXP_POLICY_TOTAL && DEAD_EXP_SHARE > 0) GiveXPI(party[i], reward*DEAD_EXP_SHARE/100); // reward = DEAD_EXP_SHARE% usual
+				else if (EXP_POLICY == EXP_POLICY_DIVIDE && DEAD_EXP_SHARE != 0) GiveXPI(party[i], reward); // reward = full if DEAD_EXP_SHARE nonzero, 0 otherwise
+			}
+			else GiveXPI(party[i], reward);
+		}		
+	} 
+	
+	output = "Received " + str(reward) + " EXP and ";
+
+    // Calculate moneys
+    reward = 0;
+    for (i = 0; i < EnemyPartySize(); i++) { reward += nme_money(i); }
+
+	if (reward < 0) { 
+		ErrorHandler("Error in CalculatePhatBattleBooty: A negative amount of money (" + str(reward) + ") was awarded."); 
+		reward = 0;
+	}
+	
+	money += reward; // there doesn't appear to be a function to set money without fanfare
+
+	output = output + str(reward) + " " + moneyname + "."; 
+	SetBattleMessage(output, 1, 0, BMSG_INDEFINITE_DURATION);
+	
+	// Level up animation goes here
+
+	__initRewards = 1;	
 }
 
 
@@ -1790,11 +1859,12 @@ void setStartingBattleSpriteAnimations( int party_idx, int sprite_idx )
 
 
 // Initializes the battle message box, reserving its handle.
-void PrepBattleMessageBox() {   
-    battlemessagebox = NewBox( "BoxLib_V1Border", "BoxLib_V1BG" );
-    SetTargetBox(battlemessagebox);
-    battlemessage_deathtime = BMSG_INDEFINITE_DURATION;
-    SetBoxPadding(2,2,2,2);
+void PrepBattleMessageBox() {	
+	battlemessagebox = NewBox( "BoxLib_V1Border", "BoxLib_V1BG" );
+	SetTargetBox(battlemessagebox);
+	SetBoxBordersize(5,5,5,5);
+	battlemessage_deathtime = BMSG_INDEFINITE_DURATION;
+	SetBoxPadding(0,0,0,0);
     SetBoxColor( 0, rgb(0, 0, 0) );
     SetBoxColor( 1, rgb(112, 112, 112) );
     SetBoxColor( 2, rgb(144, 144, 144) );
@@ -1809,31 +1879,33 @@ void PrepBattleMessageBox() {
 // Lifetime defines the maximum lifetime of the message in centiseconds, after which
 // it will destroy itself. Set to BMSG_INDEFINITE_DURATION to make a permanent message.
 void SetBattleMessage(string message, int fullwidth, int centred, int lifetime) {
-    int img;
-    SetTargetBox(battlemessagebox);
-    if (fullwidth) {
-        img = NewImage(BMSG_RIGHT_X - BMSG_LEFT_X, BMSG_HEIGHT);
-        if (!centred) PrintString(0, 0, img, v1rpg_LargeFont, message);
-        else PrintCenter(ImageWidth(img)/2, 0, img, v1rpg_LargeFont, message);
-        SetBoxContent(img);
-        battlemessage_loc = BMSG_LEFT_X;
-    }
-    else {
-        img = NewImage(TextWidth(v1rpg_LargeFont, message), BMSG_HEIGHT);
-        PrintString(0, 0, img, v1rpg_LargeFont, message);
-        SetBoxContent(img);
-        battlemessage_loc = ((ImageWidth(screen)-ImageWidth(master_box[_bx].im_content))/2) - GetBoxLeftOffset();
-    }
-    if (lifetime == BMSG_INDEFINITE_DURATION) battlemessage_deathtime = BMSG_INDEFINITE_DURATION;
-    else battlemessage_deathtime = systemtime + lifetime;
+	int img;
+	SetTargetBox(battlemessagebox);
+	if (fullwidth) {
+		img = NewImage(BMSG_RIGHT_X - BMSG_LEFT_X - GetBoxLeftOffset() - GetBoxRightOffset(), BMSG_HEIGHT);
+		RectFill( 0,0,ImageWidth(img),ImageHeight(img), transcolor, img);
+		if (!centred) PrintString(0, 0, img, v1rpg_LargeFont, message);
+		else PrintCenter(ImageWidth(img)/2, 0, img, v1rpg_LargeFont, message);
+		SetBoxContent(img);
+		battlemessage_loc = BMSG_LEFT_X;
+	}
+	else {
+		img = NewImage(TextWidth(v1rpg_LargeFont, message), BMSG_HEIGHT);
+		RectFill( 0,0,ImageWidth(img),ImageHeight(img), transcolor, img);
+		PrintString(0, 0, img, v1rpg_LargeFont, message);
+		SetBoxContent(img);
+		battlemessage_loc = ((ImageWidth(screen)-ImageWidth(master_box[_bx].im_content))/2) - GetBoxLeftOffset();
+	}
+	if (lifetime == BMSG_INDEFINITE_DURATION) battlemessage_deathtime = BMSG_INDEFINITE_DURATION;
+	else battlemessage_deathtime = systemtime + lifetime;
 }
 
 void ClearBattleMessage() {
-    if (ImageValid(master_box[battlemessagebox].im_content)) 
-        FreeImage(master_box[battlemessagebox].im_content);
-    master_box[battlemessagebox].im_content = 0;
-    battlemessage_loc = 0;
-    battlemessage_deathtime = BMSG_INDEFINITE_DURATION; 
+	if (ImageValid(master_box[battlemessagebox].im_content)) 
+		FreeImage(master_box[battlemessagebox].im_content);
+	master_box[battlemessagebox].im_content = 0;
+	battlemessage_loc = 0;
+	battlemessage_deathtime = BMSG_INDEFINITE_DURATION; 
 }
 
 int BattleMessageExists() { return (ImageValid(master_box[battlemessagebox].im_content)); }
