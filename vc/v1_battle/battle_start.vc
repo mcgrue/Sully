@@ -27,6 +27,7 @@ void doBattle( String battle_group_dat_area )
             __sully_battle_flag = 0;
 
             endOfBattle();
+            return;
         }
 
     //  BasicTohit( SelectRandomAlly(1), PARTY_ALLY, SelectRandomEnemy(1), PARTY_ENEMY, Random(0,1) );

@@ -723,6 +723,19 @@ void mcgrender_old() {
     }   
 }
 
+void mcg_turn_off( int ref ) {
+
+    if( ref < 0 || ref >= mcgIV_heap_count ) {
+        ErrorHandler("mcgrender.vc::mcg_turn_off(): invalid index given ("+str(ref)+").  Valid range (0-"+str(mcgIV_heap_count-1)+").");
+    }
+    
+    if( !mcgIV_heap[ref].is_on ) {
+        ErrorHandler("mcgrender.vc::mcg_turn_off(): attempted to turn ref ("+str(ref)+") off when it was already off.");
+    }
+    
+    mcgIV_heap[ref].is_on = 0;
+}
+
 int getCurrentMcGIdx()
 {
     return __mcg_cur_node;
