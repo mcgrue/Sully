@@ -240,9 +240,6 @@ void ExecuteLoveSkill( string _key )
     /// 2-a. Turn on the MP Use flaggy thingy.
     SetTargettingSkillMPDecr( GetSkillMpCostI(i) );
 
-    /// new step: make sure the skill has a valid target!
-    Exit( "BOOGA TACO FLOOP: how about we make sure the skill can have a valid target before turning off the menu?  If it doesn't, do a buzz and send a battle message along the lines of 'lol, no valid targets.'" );
-
     /// 2. Set the targetting cursor to the item's icon.
     set_selectmap_cursor_image( icon_get(GetSkillParentTypeIconIdx(i)) );
     
