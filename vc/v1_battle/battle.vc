@@ -87,8 +87,8 @@ int battlemessage_loc; // x coordinate of the actual x-position of this box (as 
 #define BMSG_FORMAT_MINIMAL 0 // take up only what space is needed
 
 #define BMSG_TOP_Y 220
-#define BMSG_LEFT_X 5		// leftmost edge when message box is full screen size
-#define BMSG_RIGHT_X 315	// rightmost edge when message box is full screen size
+#define BMSG_LEFT_X 5       // leftmost edge when message box is full screen size
+#define BMSG_RIGHT_X 315    // rightmost edge when message box is full screen size
 #define BMSG_HEIGHT FontHeight(v1rpg_LargeFont)
 
 #define BMSG_INDEFINITE_DURATION -1 // set lifetime to this value for a battle message that lasts until removed.
@@ -142,10 +142,12 @@ void endOfBattle()
         trigger_on_end( party[i] );
         WipeAllyBattleModifiers( party[i] );
     }
-	
-	ClearBattleMessage();
-	SetTargetBox(battlemessagebox);
-   	FreeBox(0);
+    
+    ClearBattleMessage();
+    TurnBattleEffectOff(0);
+    
+    SetTargetBox(battlemessagebox);
+    FreeBox(0);
    
     if( mode_battle_debug )
     {
@@ -224,8 +226,8 @@ _debug_tick_counter = 0;
     ///turn the slashy library off!
     TurnSlashyOff();
     
-	// Initialize the battle message box
-	PrepBattleMessageBox();    
+    // Initialize the battle message box
+    PrepBattleMessageBox();    
     
     /// zero out the battle effect delay variable.
     __after_effect_targtime = 0;
@@ -1369,8 +1371,8 @@ int _bm_idx, _prev_bm_idx;
 
 /// call this when starting up a battle menu for the first time for an action.
 void TurnBattleMenuOn( int cast_idx )
-{	
-	SetBattleMessage("Penis!",0,1,300);
+{   
+    SetBattleMessage("Penis!",0,1,300);
 //Log( "TurnBattleMenuOn("+str(cast_idx)+")..." );
 
     if( _prev_bm_idx >= 0 )
@@ -1734,7 +1736,7 @@ void LoseBattleEffect() {
 int __initRewards = 0;
 int __victory_end_timerStart = 0;
 void BattleVictoryEffect() 
-{	
+{   
     if( !__initRewards ) {
         CalculatePhatBattleBooty();
         __initRewards = 1;
@@ -1762,11 +1764,11 @@ void DrawBattleQueue()
 
 
 void DrawBattleMessageBox() {
-	SetTargetBox(battlemessagebox);
-	if (BattleMessageExists()) {
-		if (systemtime < battlemessage_deathtime) DrawBox(battlemessage_loc, BMSG_TOP_Y, screen);
-		else ClearBattleMessage();
-	}
+    SetTargetBox(battlemessagebox);
+    if (BattleMessageExists()) {
+        if (systemtime < battlemessage_deathtime) DrawBox(battlemessage_loc, BMSG_TOP_Y, screen);
+        else ClearBattleMessage();
+    }
 }
 
 void CalculatePhatBattleBooty() {
@@ -1788,15 +1790,15 @@ void setStartingBattleSpriteAnimations( int party_idx, int sprite_idx )
 
 
 // Initializes the battle message box, reserving its handle.
-void PrepBattleMessageBox() {	
-	battlemessagebox = NewBox( "BoxLib_V1Border", "BoxLib_V1BG" );
-	SetTargetBox(battlemessagebox);
-	battlemessage_deathtime = BMSG_INDEFINITE_DURATION;
-	SetBoxPadding(2,2,2,2);
+void PrepBattleMessageBox() {   
+    battlemessagebox = NewBox( "BoxLib_V1Border", "BoxLib_V1BG" );
+    SetTargetBox(battlemessagebox);
+    battlemessage_deathtime = BMSG_INDEFINITE_DURATION;
+    SetBoxPadding(2,2,2,2);
     SetBoxColor( 0, rgb(0, 0, 0) );
     SetBoxColor( 1, rgb(112, 112, 112) );
     SetBoxColor( 2, rgb(144, 144, 144) );
-    SetBoxColor( 3, rgb(0, 0, 255) );	
+    SetBoxColor( 3, rgb(0, 0, 255) );   
 }
 
 // This function actually makes the battle message box ready to draw, setting up the image 
@@ -1807,31 +1809,31 @@ void PrepBattleMessageBox() {
 // Lifetime defines the maximum lifetime of the message in centiseconds, after which
 // it will destroy itself. Set to BMSG_INDEFINITE_DURATION to make a permanent message.
 void SetBattleMessage(string message, int fullwidth, int centred, int lifetime) {
-	int img;
-	SetTargetBox(battlemessagebox);
-	if (fullwidth) {
-		img = NewImage(BMSG_RIGHT_X - BMSG_LEFT_X, BMSG_HEIGHT);
-		if (!centred) PrintString(0, 0, img, v1rpg_LargeFont, message);
-		else PrintCenter(ImageWidth(img)/2, 0, img, v1rpg_LargeFont, message);
-		SetBoxContent(img);
-		battlemessage_loc = BMSG_LEFT_X;
-	}
-	else {
-		img = NewImage(TextWidth(v1rpg_LargeFont, message), BMSG_HEIGHT);
-		PrintString(0, 0, img, v1rpg_LargeFont, message);
-		SetBoxContent(img);
-		battlemessage_loc = ((ImageWidth(screen)-ImageWidth(master_box[_bx].im_content))/2) - GetBoxLeftOffset();
-	}
-	if (lifetime == BMSG_INDEFINITE_DURATION) battlemessage_deathtime = BMSG_INDEFINITE_DURATION;
-	else battlemessage_deathtime = systemtime + lifetime;
+    int img;
+    SetTargetBox(battlemessagebox);
+    if (fullwidth) {
+        img = NewImage(BMSG_RIGHT_X - BMSG_LEFT_X, BMSG_HEIGHT);
+        if (!centred) PrintString(0, 0, img, v1rpg_LargeFont, message);
+        else PrintCenter(ImageWidth(img)/2, 0, img, v1rpg_LargeFont, message);
+        SetBoxContent(img);
+        battlemessage_loc = BMSG_LEFT_X;
+    }
+    else {
+        img = NewImage(TextWidth(v1rpg_LargeFont, message), BMSG_HEIGHT);
+        PrintString(0, 0, img, v1rpg_LargeFont, message);
+        SetBoxContent(img);
+        battlemessage_loc = ((ImageWidth(screen)-ImageWidth(master_box[_bx].im_content))/2) - GetBoxLeftOffset();
+    }
+    if (lifetime == BMSG_INDEFINITE_DURATION) battlemessage_deathtime = BMSG_INDEFINITE_DURATION;
+    else battlemessage_deathtime = systemtime + lifetime;
 }
 
 void ClearBattleMessage() {
-	if (ImageValid(master_box[battlemessagebox].im_content)) 
-		FreeImage(master_box[battlemessagebox].im_content);
-	master_box[battlemessagebox].im_content = 0;
-	battlemessage_loc = 0;
-	battlemessage_deathtime = BMSG_INDEFINITE_DURATION; 
+    if (ImageValid(master_box[battlemessagebox].im_content)) 
+        FreeImage(master_box[battlemessagebox].im_content);
+    master_box[battlemessagebox].im_content = 0;
+    battlemessage_loc = 0;
+    battlemessage_deathtime = BMSG_INDEFINITE_DURATION; 
 }
 
 int BattleMessageExists() { return (ImageValid(master_box[battlemessagebox].im_content)); }
