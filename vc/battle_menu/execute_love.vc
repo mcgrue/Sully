@@ -6,6 +6,10 @@ int __current_targ_batact_delay;
 /// set how long to shove this new action into the battle queue for!
 void SetTargettedActionDelay( int delay )
 {
+    if( delay == 0 ) {
+        delay = 1;
+    }
+
     __current_targ_batact_delay = delay;
 }
 
@@ -240,7 +244,7 @@ void ExecuteLoveSkill( string _key )
     SetTargettingSkillMPDecr( GetSkillMpCostI(i) );
 
     /// new step: make sure the skill has a valid target!
-//    Exit( "BOOGA TACO FLOOP: how about we make sure the skill can have a valid target before turning off the menu?  If it doesn't, do a buzz and send a battle message along the lines of 'lol, no valid targets.'" );
+    //Exit( "BOOGA TACO FLOOP: how about we make sure the skill can have a valid target before turning off the menu?  If it doesn't, do a buzz and send a battle message along the lines of 'lol, no valid targets.'" );
 
     /// 2. Set the targetting cursor to the item's icon.
     set_selectmap_cursor_image( icon_get(GetSkillParentTypeIconIdx(i)) );
@@ -431,6 +435,8 @@ void DoSimpleSelfEffect( string _resolvefunc, int _delay )
         _delay = BASE_DELAY;
     else if( _delay > MAX_DELAY )
         _delay = MAX_DELAY;
+    else if( _delay == 0 ) 
+        _delay = 1;
     
     SetTargettedActionDelay( _delay );
     SetActiveBattleMenuTargetting( _resolvefunc );
