@@ -40,7 +40,7 @@ void PrepBattleMessageBox() {
     SetBoxColor( 1, rgb(112, 112, 112) );
     SetBoxColor( 2, rgb(144, 144, 144) );
     SetBoxColor( 3, rgb(0, 0, 255) );   
-    TurnBattleEffectOn( "DrawBattleMessageBox" );
+    ref_battlemessage = mcg_add_complex( "DrawBattleMessageBox", -1 );
 }
 
 // This function actually makes the battle message box ready to draw, setting up the image 

@@ -105,7 +105,7 @@ int imBattleActorPointer;
 
 int fontBattleWhite, fontBattleGreen, fontBattleRed, fontBattleGrey;
 
-int ref_BattleHUD, ref_BattleQueue, ref_bouncynums, ref_slashy, ref_battlemenu, ref_battletarg;
+int ref_BattleHUD, ref_BattleQueue, ref_bouncynums, ref_slashy, ref_battlemenu, ref_battletarg, ref_battlemessage;
 
 int ref_effects;
 
@@ -225,10 +225,7 @@ _debug_tick_counter = 0;
     
     ///turn the slashy library off!
     TurnSlashyOff();
-    
-    // Initialize the battle message box
-    PrepBattleMessageBox();    
-    
+        
     /// zero out the battle effect delay variable.
     __after_effect_targtime = 0;
     

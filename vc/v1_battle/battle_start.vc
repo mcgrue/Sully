@@ -201,6 +201,7 @@ int initBattleRenderer()
     ref_slashy = mcg_add_complex( "DoSlashy", -1 );
     ref_bouncynums = mcg_add_complex( "DoBouncy", -1 );
     ref_BattleHUD = mcg_add_complex( "DrawBattleHUD", -1 );
+    PrepBattleMessageBox();
     //ref_BattleQueue = mcg_add_complex( "DrawBattleQueue", -1 );
     //ref_BattleQueue = mcg_add_complex( "", -1 );
     ref_battlemenu = mcg_add_complex( "HandleBattleMenu", -1 );
