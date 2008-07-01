@@ -1,7 +1,4 @@
 * Directionals aren't unpressed when entering a battle
-* Something is up with retargeting actions whose original targets have died
 * If you used an item on the last turn in battle, it thinks your new action is an item use as well
 * Item descriptions are currently WAY too long for the space provided. 
-
-
-Also, non-replicated so far, but I had some crazy battle-groups error at one point while wandering around the map.
+* There's some weirdness with the battle groups -- some groups trigger errors on fight start, and some groups' enemies bleed into other groups.

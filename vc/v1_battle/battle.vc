@@ -75,6 +75,9 @@ void bLog( String s )
 /// the main battle loop!
 #include "vc/v1_battle/battle_start.vc"
 
+// the battle message queue, for skill names and "Justice is not the only right in this world" and stuff.
+#include "vc/v1_battle/battle_message.vc"
+
 /// flag denoting if we're presently in a battle or not.
 int __sully_battle_flag;
 
@@ -89,21 +92,6 @@ int bs_ally_sprite_ref[MAX_PARTY_SIZE];
 
 /// just a container for cleanup purposes...
 int previous_battle_allycount;
-
-int battlemessagebox; // box handle
-int battlemessage_deathtime; // systime when this message will disappear. set to BMSG_INDEFINITE_DURATION to make permanent.
-int battlemessage_loc; // x coordinate of the actual x-position of this box (as opposed to BMSG_LEFT_X, which is for only the fullscreen case)
-
-#define BMSG_FORMAT_FULL 0 // span most of the screen regardless of message length
-#define BMSG_FORMAT_MINIMAL 0 // take up only what space is needed
-
-#define BMSG_TOP_Y 216
-#define BMSG_LEFT_X 5       // leftmost edge when message box is full screen size
-#define BMSG_RIGHT_X 315    // rightmost edge when message box is full screen size
-#define BMSG_HEIGHT FontHeight(v1rpg_LargeFont)
-
-#define BMSG_INDEFINITE_DURATION -1 // set lifetime to this value for a battle message that lasts until removed.
-
 
 // this is to return 1 when we're in a battle, 0 when we're not!
 int IsInBattle() 
@@ -394,7 +382,6 @@ void DrawBattleHUD()
         y += FontHeight(fontBattleWhite) + 1;
     }
     
-    DrawBattleMessageBox();
 }
 
 void DrawBattleMeters( int x, int y, int cast_idx )
@@ -1773,24 +1760,6 @@ void DrawBattleQueue()
 }
 
 
-
-void DrawBattleMessageBox() {
-    SetTargetBox(battlemessagebox);
-    if( BattleMessageExists() ) {
-        
-        if( 
-            battlemessage_deathtime == BMSG_INDEFINITE_DURATION 
-            || systemtime < battlemessage_deathtime
-        ) {
-            DrawBox(battlemessage_loc, BMSG_TOP_Y, screen);
-        }
-        else {
-            ClearBattleMessage();
-        }
-    }
-}
-
-
 int _oldlevel[MAX_PARTY_SIZE]; // each ally's level prior to combat exp.
                                // this should probably be designed to be of
                                // local scope to CalculatePhatBattleBooty
@@ -1874,58 +1843,6 @@ void setStartingBattleSpriteAnimations( int party_idx, int sprite_idx )
     }
 }
 
-
-// Initializes the battle message box, reserving its handle.
-void PrepBattleMessageBox() {   
-    battlemessagebox = NewBox( "BoxLib_V1Border", "BoxLib_V1BG" );
-    SetTargetBox(battlemessagebox);
-    SetBoxBordersize(5,5,5,5);
-    battlemessage_deathtime = BMSG_INDEFINITE_DURATION;
-    SetBoxPadding(0,0,0,0);
-    SetBoxColor( 0, rgb(0, 0, 0) );
-    SetBoxColor( 1, rgb(112, 112, 112) );
-    SetBoxColor( 2, rgb(144, 144, 144) );
-    SetBoxColor( 3, rgb(0, 0, 255) );   
-}
-
-// This function actually makes the battle message box ready to draw, setting up the image 
-// full of text for it to contain.
-// Fullwidth determines whether the box covers the full screen or just the 
-// Centred determines whether the text within the box (rather than the box itself) is centred 
-// or left-justified, and only matters when fullwidth is true.
-// Lifetime defines the maximum lifetime of the message in centiseconds, after which
-// it will destroy itself. Set to BMSG_INDEFINITE_DURATION to make a permanent message.
-void SetBattleMessage(string message, int fullwidth, int centred, int lifetime) {
-    int img;
-    SetTargetBox(battlemessagebox);
-    if (fullwidth) {
-        img = NewImage(BMSG_RIGHT_X - BMSG_LEFT_X - GetBoxLeftOffset() - GetBoxRightOffset(), BMSG_HEIGHT);
-        RectFill( 0,0,ImageWidth(img),ImageHeight(img), transcolor, img);
-        if (!centred) PrintString(0, 0, img, v1rpg_LargeFont, message);
-        else PrintCenter(ImageWidth(img)/2, 0, img, v1rpg_LargeFont, message);
-        SetBoxContent(img);
-        battlemessage_loc = BMSG_LEFT_X;
-    }
-    else {
-        img = NewImage(TextWidth(v1rpg_LargeFont, message), BMSG_HEIGHT);
-        RectFill( 0,0,ImageWidth(img),ImageHeight(img), transcolor, img);
-        PrintString(0, 0, img, v1rpg_LargeFont, message);
-        SetBoxContent(img);
-        battlemessage_loc = ((ImageWidth(screen)-ImageWidth(master_box[_bx].im_content))/2) - GetBoxLeftOffset();
-    }
-    if (lifetime == BMSG_INDEFINITE_DURATION) battlemessage_deathtime = BMSG_INDEFINITE_DURATION;
-    else battlemessage_deathtime = systemtime + lifetime;
-}
-
-void ClearBattleMessage() {
-    if (ImageValid(master_box[battlemessagebox].im_content)) 
-        FreeImage(master_box[battlemessagebox].im_content);
-    master_box[battlemessagebox].im_content = 0;
-    battlemessage_loc = 0;
-    battlemessage_deathtime = BMSG_INDEFINITE_DURATION; 
-}
-
-int BattleMessageExists() { return (ImageValid(master_box[battlemessagebox].im_content)); }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
