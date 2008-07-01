@@ -41,7 +41,7 @@ void DoBattleEffects()
 }
 
 void SimpleDefendResolver() {
-    add_guard_action( battle_queue[0].batent_ref, PARTY_ALLY, BASE_DELAY, STANDARD_DEFEND_POWER );
+    add_guard_action( battle_queue[0].batent_ref, PARTY_ALLY, GetSkillDelayTime(GetSkill("__Defend")), STANDARD_DEFEND_POWER );
 }
 
 void SimpleMeditateResolver() {}
@@ -70,7 +70,7 @@ Log( "DoBasicAttack()..." );
     
     SetTargettingEffectFunc( "BasicAttackFunc" );
     
-    SetTargettedActionDelay( BASE_DELAY );
+    SetTargettedActionDelay( GetSkillDelayTime(GetSkill("__Attack")) );
     
     SetActiveBattleMenuTargetting( "LIVE_OC_targ" );
     

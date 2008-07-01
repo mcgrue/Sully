@@ -94,8 +94,7 @@ void ExecuteLoveItem( string _key )
     SetTargettingEffectFunc( GetItemEffectFunc(i) );
     
     /// 3.6. set how long it'll take to do this action
-    /// (gayo's spec says item use's charge time takes the 'base delay' of 100...)
-    SetTargettedActionDelay( BASE_DELAY );
+    SetTargettedActionDelay( GetSkillDelayTime(GetSkill("__Item")) );
     
 
     /// 3.10 set the "decrement this item when used" device.
@@ -240,6 +239,9 @@ void ExecuteLoveSkill( string _key )
     /// 2-a. Turn on the MP Use flaggy thingy.
     SetTargettingSkillMPDecr( GetSkillMpCostI(i) );
 
+    /// new step: make sure the skill has a valid target!
+//    Exit( "BOOGA TACO FLOOP: how about we make sure the skill can have a valid target before turning off the menu?  If it doesn't, do a buzz and send a battle message along the lines of 'lol, no valid targets.'" );
+
     /// 2. Set the targetting cursor to the item's icon.
     set_selectmap_cursor_image( icon_get(GetSkillParentTypeIconIdx(i)) );
     
@@ -342,15 +344,15 @@ void ExecuteLoveSpecial( string _key )
     }
     else if( equ(_key, "Defend") )
     {
-        DoSimpleSelfEffect( "SimpleDefendResolver", BASE_DELAY );
+        DoSimpleSelfEffect( "SimpleDefendResolver", GetSkillDelayTime(GetSkill("__Defend")) );
     }
     else if( equ(_key, "Meditate") )
     {
-        DoSimpleSelfEffect( "SimpleMeditateResolver", BASE_DELAY );
+        DoSimpleSelfEffect( "SimpleMeditateResolver", GetSkillDelayTime(GetSkill("Meditate")) );
     }
     else if( equ(_key, "Parry") )
     {
-        DoSimpleSelfEffect( "SimpleParryResolver", BASE_DELAY );
+        DoSimpleSelfEffect( "SimpleParryResolver", GetSkillDelayTime(GetSkill("__Defend")) );
     }
     else if( equ(_key, "Run") )
     {

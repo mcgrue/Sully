@@ -563,6 +563,8 @@ void ResolveAction( int actor_idx, int actor_party, string action_data )
         /// if there's an MP requirement and it wasn't met, just bail out.  
         else 
         {
+            //Should use this for the skill name instead of BASE_DELAY --> GetSkillDelayTime(GetSkill("Parry"))
+        
             add_battle_queue_entry( BASE_DELAY, actor_idx, actor_party, BACT_DELAY, "" );
             return;
         }
