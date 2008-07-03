@@ -231,6 +231,8 @@ _debug_tick_counter = 0;
 
     /// battle can't be over if it's just startin'.  Woo!    
     ____battle_over_maaaan = 0;
+    
+    Unpress(0);
 }
 
 
@@ -1401,6 +1403,7 @@ void TurnBattleMenuOn( int cast_idx )
 //dump_bm( menu_cast ); //removing this causes great sorrow in the battle system
 
 
+    Unpress(0);
 
 //Log( "Starting BM..." );
     StartBattleMenu( menu_cast );
