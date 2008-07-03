@@ -142,12 +142,9 @@ void endOfBattle()
         WipeAllyBattleModifiers( party[i] );
     }
     
-    ClearBattleMessage();
+    DestroyBattleMessage();
     TurnBattleEffectOff(0);
-    
-    SetTargetBox(battlemessagebox);
-    FreeBox(0);
-   
+       
     if( mode_battle_debug )
     {
         WindowClose( h_window_debug );
@@ -1730,24 +1727,11 @@ void LoseBattleEffect() {
 }
 
 int __initRewards = 0;
-int __victory_end_timerStart = 0;
 void BattleVictoryEffect() 
 {   
-    if( !__initRewards ) { 
-        CalculatePhatBattleBooty(); 
-        __victory_end_timerStart = timer;   
-    }
+    if (!__initRewards) { CalculatePhatBattleBooty(); }
     
-    if( 
-        (
-            (timer - __victory_end_timerStart) < 300 
-            && (timer - __victory_end_timerStart) > 30 
-            && MenuConfirm()
-        )
-        || (timer - __victory_end_timerStart) >= 300
-    ) {        
-        TurnOffTheBattle(); 
-    }   
+    if (!BattleMessageExists()) { TurnOffTheBattle(); }   
 }
 
 
@@ -1820,7 +1804,14 @@ void CalculatePhatBattleBooty() {
     money += reward; // there doesn't appear to be a function to set money without fanfare
 
     output = output + str(reward) + " " + moneyname + "."; 
-    SetBattleMessage(output, 1, 0, BMSG_INDEFINITE_DURATION);
+    QueueBattleMessage(output, TRUE, FALSE, TRUE, BMSG_TYPICAL_DURATION);
+    QueueBattleMessage("And I guess maybe you got some items?", TRUE, FALSE, TRUE, BMSG_TYPICAL_DURATION);
+    QueueBattleMessage("I have to code that part still.", TRUE, FALSE, TRUE, BMSG_TYPICAL_DURATION);
+    QueueBattleMessage("Really I'm just testing the queue here.", TRUE, FALSE, TRUE, BMSG_TYPICAL_DURATION);
+    QueueBattleMessage("KILL THEM ALL", TRUE, FALSE, FALSE, 10);
+    QueueBattleMessage("This one looks different!", FALSE, FALSE, TRUE, BMSG_TYPICAL_DURATION);
+    QueueBattleMessage("And you can't skip this one.", TRUE, FALSE, FALSE, 200);
+    QueueBattleMessage("ok im done now", TRUE, TRUE, TRUE, BMSG_TYPICAL_DURATION);
     
     // Level up animation goes here
 
