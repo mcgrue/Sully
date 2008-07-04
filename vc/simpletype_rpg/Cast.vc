@@ -1491,3 +1491,7 @@ string _BM_SkillGroupHelper( int c, int sg, int mp_flag, int battle_mode )
     
     return tmp;
 }
+
+// Returns the number of skills a character learns in advancing from oldlevel to newlevel.
+// Because skill learning on level up is not yet implemented, this always returns 0.
+int _skillsLearned(int cast_idx, int oldlevel, int newlevel) { return 0; }

@@ -22,7 +22,7 @@ struct enemy
 	int e_flags[ENEMY_FLAGS]; // Enemy flags go here. All default to 0.
 	string ai; // AI callfunc
 
-	int items[ENEMY_ITEMS]; // Index of dropped and stolen item (empty if none)
+	int items[ENEMY_ITEMS]; // Index of dropped and stolen item (-1 if none)
 	int itemchance[ENEMY_ITEMS]; // Percent chance of dropping/stealing item
 	int e_money; // The money this enemy drops
 	int e_exp; // The exp this enemy gives

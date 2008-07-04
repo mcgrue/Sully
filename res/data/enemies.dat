@@ -23,7 +23,7 @@ Evil_Carot // name goes here
 SPRITE	carot.spr
 ICON	2
 AI	DefaultEnemyAI // I just picked this as an example
-DROP	pooh, 12
+DROP	Herb, 100
 ELEMENT Dark
 
 - // end of this enemy, start of next
@@ -35,7 +35,7 @@ Bunny
 SPRITE	bunny.spr
 ICON	2
 AI		DefaultEnemyAI 
-DROP	pooh, 12
+DROP	Pooh, 50
 
 -
 
@@ -46,7 +46,7 @@ Evil_Bunny
 SPRITE	evil_bunny.spr
 ICON	2
 AI		DefaultEnemyAI 
-DROP	pooh, 12
+DROP	Atlas_Scroll, 15
 ABSORB	Dark
 DOUBLE	Holy
 
@@ -59,7 +59,7 @@ Drama_Clubber
 SPRITE	vampire.spr
 ICON	2
 AI	DefaultEnemyAI 
-DROP	pooh, 12
+DROP	Cloak, 20
 HALVE Dark, Ice
 DOUBLE Holy, Fire
 -
@@ -71,7 +71,6 @@ Slime
 SPRITE	green_slime.spr
 ICON	2
 AI	DefaultEnemyAI 
-DROP	pooh, 12
 AUTO	Might
 DOUBLE Ice
 -
@@ -83,7 +82,6 @@ Red_Slime
 SPRITE	red_slime.spr
 ICON	2
 AI	DefaultEnemyAI 
-DROP	pooh, 12
 DOUBLE Ice
 -
 

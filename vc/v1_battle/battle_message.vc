@@ -171,8 +171,8 @@ void _killCurrentMessage() {
     battlemessage_skiptime = BMSG_INDEFINITE_DURATION; 
 
 	if (ImageValid(message_image)) FreeImage(message_image);
-	SetTargetBox(battlemessagebox);	
-    SetBoxContent(-1);	
+	//SetTargetBox(battlemessagebox);	
+    //SetBoxContent(-1);	
 }
 
 // Move on to the next queued message, if any. If the queue is empty, does nothing.

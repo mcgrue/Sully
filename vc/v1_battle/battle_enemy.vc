@@ -41,7 +41,7 @@ int addEnemyToBattle( int idx, int render_idx, int is_leader )
 	battle_enemies[i].render_idx		= render_idx;
 	battle_enemies[i].cur_hp		= master_enemy[idx].stats[STAT_MAX_HP];
 	battle_enemies[i].cur_mp		= master_enemy[idx].stats[STAT_MAX_MP];
-	battle_enemies[i].stole_flag		= 0;
+	battle_enemies[i].stole_flag		= 0; // this is also used to calculate drops at fight end, by setting it to -1. So...don't set it to -1 otherwise!. 
 	battle_enemies[i].dead_flag		= 0;
 	
 	
@@ -251,6 +251,8 @@ int nme_getIcon( int bidx )  { return master_enemy[battle_enemies[bidx].master_e
 string nme_getName( int bidx ) { return master_enemy[battle_enemies[bidx].master_enemy_idx].name; }
 string nme_getAI( int bidx ) { return master_enemy[battle_enemies[bidx].master_enemy_idx].ai; }
 
+// These return the index and percent chance (out of 100) for the dropped and stolen items, respectively.
+// If the enemy has no item of that type, an index of -1 will be returned.
 int nme_DropItemIdx( int bidx ) { return master_enemy[battle_enemies[bidx].master_enemy_idx].items[ITEM_DROPPED]; }
 int nme_DropItemChance( int bidx ) { return master_enemy[battle_enemies[bidx].master_enemy_idx].items[ITEM_DROPPED]; }
 int nme_StealItemIdx( int bidx ) { return master_enemy[battle_enemies[bidx].master_enemy_idx].items[ITEM_STOLEN]; }
@@ -665,6 +667,14 @@ void nme_HurtMP( int bidx, int amount ) {
 void nme_TakeMP( int bidx, int amount ) { nme_HurtMP( bidx, amount ); }
 
 
+// This value tests whether an enemy drops its item, returning 1 if so and 0 otherwise.
+// Enemies have [nme_DropItemChance]% chance to drop their item normally, and enemies
+// with the Rewarding status effect always drop their item, if they have any.
+int nme_dropCheck(int bidx) {
+	if (nme_DropItemIdx(bidx) < 0) return 0; // no item
+	if (nme_hasStatus(bidx, "Rewarding") || Random(1,100) <= nme_DropItemChance(bidx)) return 1;
+	return 0;
+}
 
 
 
