@@ -254,9 +254,9 @@ string nme_getAI( int bidx ) { return master_enemy[battle_enemies[bidx].master_e
 // These return the index and percent chance (out of 100) for the dropped and stolen items, respectively.
 // If the enemy has no item of that type, an index of -1 will be returned.
 int nme_DropItemIdx( int bidx ) { return master_enemy[battle_enemies[bidx].master_enemy_idx].items[ITEM_DROPPED]; }
-int nme_DropItemChance( int bidx ) { return master_enemy[battle_enemies[bidx].master_enemy_idx].items[ITEM_DROPPED]; }
+int nme_DropItemChance( int bidx ) { return master_enemy[battle_enemies[bidx].master_enemy_idx].itemchance[ITEM_DROPPED]; }
 int nme_StealItemIdx( int bidx ) { return master_enemy[battle_enemies[bidx].master_enemy_idx].items[ITEM_STOLEN]; }
-int nme_StealItemChance( int bidx ) { return master_enemy[battle_enemies[bidx].master_enemy_idx].items[ITEM_STOLEN]; }
+int nme_StealItemChance( int bidx ) { return master_enemy[battle_enemies[bidx].master_enemy_idx].itemchance[ITEM_STOLEN]; }
 
 int nme_money( int bidx ) { return master_enemy[battle_enemies[bidx].master_enemy_idx].e_money; }
 int nme_exp( int bidx ) { return master_enemy[battle_enemies[bidx].master_enemy_idx].e_exp; }
