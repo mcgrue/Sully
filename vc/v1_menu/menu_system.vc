@@ -90,8 +90,8 @@ int sfx_beep = LoadSound( "res/system/menu/happy_beep.wav" );
 int sfx_buzz = LoadSound( "res/system/menu/angry_buzz.wav" );
 int sfx_page = LoadSound( "res/system/menu/pageturn.wav" );
 int sfx_wush = LoadSound( "res/system/menu/woosh.wav" );
-int     sfx_mony = LoadSound( "res/system/menu/BUYSELL.WAV" );
-int     sfx_eqip = LoadSound( "res/system/menu/EQUIP.WAV" );
+int sfx_mony = LoadSound( "res/system/menu/BUYSELL.WAV" );
+int sfx_eqip = LoadSound( "res/system/menu/EQUIP.WAV" );
 
 //        --------------------------
 //        Menu Initialisation
@@ -751,11 +751,13 @@ void MenuBlitCast(int member, int location, int frame)
 {
     MenuBlitCastFull(MENU_CAST_X, MENU_CAST_Y + (location * 42), member, frame);
 
-    // This was a stupid function that was removed by Gayo. It no longer exists, but it
-    // was left as a comment in memory of those who have fallen to produce a satisfactory
-    // gaming experience.
-    // MenuBlitCastPoints(MENU_CAST_X, MENU_CAST_Y + (location * 42), member, location);
 }
+
+// This was a stupid function that was removed by Gayo. It no longer exists, but it
+// was left as a comment in memory of those who have fallen to produce a satisfactory
+// gaming experience.
+// MenuBlitCastPoints(MENU_CAST_X, MENU_CAST_Y + (location * 42), member, location);
+
 
 // Displays info about one party member
 void MenuBlitCastFull(int x, int y, int member, int frame)

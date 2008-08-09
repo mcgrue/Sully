@@ -131,10 +131,9 @@ void MenuDrawSkill()
 
 	// Draw the current selected party member and skill type
 	MenuBlitCast(menu_cast, 0, 0);
-	
-	int y_ptr = 120;
-	int sg_count, tmp, i;
-		
+    MenuPrintStat(MENU_CAST_X, MENU_CAST_Y, STAT_MAX_HP, menu_font[0], GetMaxHP(party[menu_cast]));      
+	MenuPrintStat(MENU_CAST_X, MENU_CAST_Y, STAT_MAX_MP, menu_font[0], GetMaxMP(party[menu_cast]));	
+			
 	//CheckHelpMode( menu_cast );
 	
 	if( ___menu_skill_at_base ) SetLucent(50);

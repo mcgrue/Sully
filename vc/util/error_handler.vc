@@ -26,12 +26,16 @@
 
 // Used as a count of the line number in currently open file for error reporting
 int global_linenum;
-
+int superfluous_global_variable = random(0,499);
 
 void ErrorHandler(string error_content)
 {
 	if (ERROR_HANDLING & 1) Log(error_content);
-	if (ERROR_HANDLING & 2) MessageBox(error_content);
+	if (ERROR_HANDLING & 2) {
+		if (!superfluous_global_variable) MessageBox(error_content + " OH GOD WHAT DO I DO? HELP ME VECNA");			
+		else MessageBox(error_content);			
+	}
+	
 }
 
 void ErrorCountOut(string erco_filename)

@@ -1,6 +1,13 @@
+BATTLE SYSTEM
+
 * If you used an item on the last turn in battle, it thinks your new action is an item use as well
-* Item descriptions are currently WAY too long for the space provided. 
 * There's some weirdness with the battle groups -- some groups trigger errors on fight start, and some groups' enemies bleed into other groups.
 * Actions are resolving in the wrong order (something up with the queue, said Grue?)
 * Actions that are ineffective on dead targets (which currently means all of them) don't retarget if the original target dies before they happen.
 * After your first fight, the party begins every fight doing the victory dance.
+* Wtf is up with that keys.vc error that happens once in a while? It seems to have nothing to do with keys.vc, at least -- I was getting something similar earlier when I was fucking up image handles, so maybe it's related to that.
+
+NON-BATTLE-SYSTEM
+
+* Item descriptions are currently WAY too long for the space provided. 
+* Out-of-battle skill usage is broken (or at least Heal is broken). BTW, looking in ExecuteLove it seemed that the battle menu execution gives an error if you try to use something disabled in battle. If I'm right in thinking that, then there could be problems with using the battle menu for out-of-battle skill use.
