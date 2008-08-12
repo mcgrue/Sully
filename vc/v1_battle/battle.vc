@@ -148,7 +148,7 @@ void endOfBattle()
     if( mode_battle_debug )
     {
         WindowClose( h_window_debug );
-        mcg_turn_off( ref_BattleQueue );
+        mcg_turn_invisible( ref_BattleQueue );
     }
     
     V1_StartMusic( __music_before_battle );
@@ -1402,7 +1402,6 @@ void TurnBattleMenuOn( int cast_idx )
 //Log( "Dumping the BM for " + master_cast[menu_cast].name );
 //dump_bm( menu_cast ); //removing this causes great sorrow in the battle system
 
-
     Unpress(0);
 
 //Log( "Starting BM..." );
@@ -1811,44 +1810,44 @@ void CalculatePhatBattleBooty() {
     
     // Level up animation goes here
 
-	// Declare any new skills gained on level-up. (Doesn't announce skill names, because I'm lazy.)
+    // Declare any new skills gained on level-up. (Doesn't announce skill names, because I'm lazy.)
     for (i = 0; i < PartySize(); i++) { 
-    	if (_oldLevel[i] < getLevel(party[i])) {    		
-    		n =	_skillsLearned(party[i], _oldLevel[i], getLevel(party[i]));
-    		if (n == 1) QueueBattleMessage( bat_getName(i,PARTY_ALLY) + " learned a new skill.", TRUE, FALSE, TRUE, BMSG_TYPICAL_DURATION);
-    		else if (n > 1) QueueBattleMessage( bat_getName(i,PARTY_ALLY) + " learned " + str(n) + " new skills.", TRUE, FALSE, TRUE, BMSG_TYPICAL_DURATION);
-    	}    	
+        if (_oldLevel[i] < getLevel(party[i])) {            
+            n = _skillsLearned(party[i], _oldLevel[i], getLevel(party[i]));
+            if (n == 1) QueueBattleMessage( bat_getName(i,PARTY_ALLY) + " learned a new skill.", TRUE, FALSE, TRUE, BMSG_TYPICAL_DURATION);
+            else if (n > 1) QueueBattleMessage( bat_getName(i,PARTY_ALLY) + " learned " + str(n) + " new skills.", TRUE, FALSE, TRUE, BMSG_TYPICAL_DURATION);
+        }       
     } 
 
-	// Now for the item drops, In this loop, reward holds the index of the item being considered.
-	// It's initialized to -1 and we go through until we find an enemy that dropped something, then
-	// sum up all the drops of that particular item, award them, and go back to the beginning.
-	// If the whole loop completes with reward at -1 we surmise there is nothing left to assign.
-	// Enemies we have already accounted for have their steal flag set to -1 to mark them as done.
-	reward = 0;
-	while (reward >= 0) {
-		reward = -1; // initialize to no item
-		for (i = 0; i < EnemyPartySize(); i++) {
-			if (battle_enemies[i].stole_flag != -1) { // unprocessed enemy
-				if (reward == -1) { // Not considering any item yet -- maybe this will be the first?					
-					if (nme_dropCheck(i)) { // dropCheck only returns TRUE if the enemy has an item and actually rolls to drop it.
-						reward = nme_DropItemIdx(i);  
-						n = 1; // first one counted						
-					}					
-					battle_enemies[i].stole_flag = -1; // don't look at this enemy again
-				}
-				else if (reward == nme_DropItemIdx(i)) { // This enemy drops the item we're looking for right now
-					if (nme_dropCheck(i)) n++; 					
-					battle_enemies[i].stole_flag = -1; // don't look at this enemy again
-				}
-			}
-		}
-		
-		if (reward >= 0) {
-			GiveItemI(reward, n);
-			QueueBattleMessage( "Procured " + GetItemNameI(reward) + " x" + str(n), TRUE, FALSE, TRUE, BMSG_TYPICAL_DURATION);
-		}
-	}
+    // Now for the item drops, In this loop, reward holds the index of the item being considered.
+    // It's initialized to -1 and we go through until we find an enemy that dropped something, then
+    // sum up all the drops of that particular item, award them, and go back to the beginning.
+    // If the whole loop completes with reward at -1 we surmise there is nothing left to assign.
+    // Enemies we have already accounted for have their steal flag set to -1 to mark them as done.
+    reward = 0;
+    while (reward >= 0) {
+        reward = -1; // initialize to no item
+        for (i = 0; i < EnemyPartySize(); i++) {
+            if (battle_enemies[i].stole_flag != -1) { // unprocessed enemy
+                if (reward == -1) { // Not considering any item yet -- maybe this will be the first?                    
+                    if (nme_dropCheck(i)) { // dropCheck only returns TRUE if the enemy has an item and actually rolls to drop it.
+                        reward = nme_DropItemIdx(i);  
+                        n = 1; // first one counted                     
+                    }                   
+                    battle_enemies[i].stole_flag = -1; // don't look at this enemy again
+                }
+                else if (reward == nme_DropItemIdx(i)) { // This enemy drops the item we're looking for right now
+                    if (nme_dropCheck(i)) n++;                  
+                    battle_enemies[i].stole_flag = -1; // don't look at this enemy again
+                }
+            }
+        }
+        
+        if (reward >= 0) {
+            GiveItemI(reward, n);
+            QueueBattleMessage( "Procured " + GetItemNameI(reward) + " x" + str(n), TRUE, FALSE, TRUE, BMSG_TYPICAL_DURATION);
+        }
+    }
 
 
     __initRewards = 1;  

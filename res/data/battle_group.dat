@@ -84,11 +84,11 @@ Bunny       150 150
 Bunny       50  100 
 =END=
 
-#Area   Undersea_Cave   50  -
-#Starfish   1   1
-#Dark_Tuna  17  34
-#Dark_Tuna  88  88
-#=END=
+Area   Undersea_Cave   50  -
+Starfish   1   1
+Dark_Tuna  17  34
+Dark_Tuna  88  88
+=END=
 
 Area    Overworld_A 30  dramatic_music
 Drama_Clubber   10  100
