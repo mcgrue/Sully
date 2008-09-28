@@ -46,7 +46,7 @@ int FileSize( string myfile )
 // 333 returns a value one-third of the total distance away from the first value,
 // and so on. 
 int interpolate(int v1, int v2, int prop) {
-	return v1 + ((v2-v1)*prop/1000);
+    return v1 + ((v2-v1)*prop/1000);
 }
 
 /// Returns the contents of a file as one large string.
@@ -279,7 +279,7 @@ void AlignStalker(int stalker, int stalkee)
         curx = entity.x[stalker]; // Preserve initial coordinates
         cury = entity.y[stalker];        
 
-		entity.obstructable[stalker] = 0;         
+        entity.obstructable[stalker] = 0;         
         // Set the entity to stalk, check where it ends up, and then unset it and move it back.
         // This is necessary because EntityStalk's results cannot be predicted easily.
         EntityStalk(stalker, stalkee); // will move the entity into stalking position
@@ -397,4 +397,19 @@ void SetObsRect(int x1p, int y1p, int x2p, int y2p, int obstile)
 int bound(int minVal, int maxVal, int trueVal)
 {
     return min(maxVal,max(minVal, trueVal));
+}
+
+// Removes all tabs and space from a string. Begins at the _startpt-th word, omitting anything before it.
+// (startpt 0 is the whole string, startpt 1 is everything but first word, etc).
+string _stripWhitespace(string _whitestring, int _startpt)
+{
+    int _swi, _swnum;
+    string _stripstring = "";
+    _swnum = TokenCount(_whitestring,"   ");
+    for (_swi = _startpt; _swi < _swnum; _swi++) 
+    {
+        // Concatenate all the white-delimited tokens together.
+        _stripstring = _stripstring + GetToken(_whitestring,"    ",_swi);
+    }
+      return _stripstring;
 }
