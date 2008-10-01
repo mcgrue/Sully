@@ -399,17 +399,19 @@ int bound(int minVal, int maxVal, int trueVal)
     return min(maxVal,max(minVal, trueVal));
 }
 
+string ___strip_whitespace_tokens = " "+chr(9);
+
 // Removes all tabs and space from a string. Begins at the _startpt-th word, omitting anything before it.
 // (startpt 0 is the whole string, startpt 1 is everything but first word, etc).
 string _stripWhitespace(string _whitestring, int _startpt)
 {
     int _swi, _swnum;
     string _stripstring = "";
-    _swnum = TokenCount(_whitestring,"   ");
+    _swnum = TokenCount(_whitestring,___strip_whitespace_tokens);
     for (_swi = _startpt; _swi < _swnum; _swi++) 
     {
         // Concatenate all the white-delimited tokens together.
-        _stripstring = _stripstring + GetToken(_whitestring,"    ",_swi);
+        _stripstring = _stripstring + GetToken(_whitestring,___strip_whitespace_tokens,_swi);
     }
       return _stripstring;
 }

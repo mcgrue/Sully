@@ -104,32 +104,56 @@ int LoadSprite( string filename, int sprite_type )
         ldsp_currline = trim(GetToken(ldsp_file, chr(10), ldsp_linenum-1)); // Get line and strip beginning and end whitespace.
         if (strcmp("//", left(ldsp_currline, 2)) != 0 && len(ldsp_currline) >= MIN_LINE_LENGTH) // If the line is not junk
         {
-            if (equ(GetToken(ldsp_currline, ldsp_token, 0), "anim")) // check first token -- if it's "anim", this is an animstrand
+            if( equ(GetToken(ldsp_currline, ldsp_token, 0), "anim") ) // check first token -- if it's "anim", this is an animstrand
             {
-                if (TokenCount(ldsp_currline, ldsp_token) < 3) { FreeImage(ldsp_image); ErrorHandler("Error in " + filename + ": Expected animation strand, but found: '" + ldsp_currline + "'."); return 0-1; } // If there aren't enough tokens for a strand definition, stop and pass an error.
-                
+                if(
+                    TokenCount(ldsp_currline, ldsp_token) < 3
+                ) {
+                    // If there aren't enough tokens for a strand definition, stop and pass an error.
+                    FreeImage(ldsp_image); 
+                    ErrorHandler("Error in " + filename + ": Expected animation strand, but found: '" + ldsp_currline + "'."); 
+                    return -1; 
+                }                    
+                               
                 // Now validate this strand and load it into the struct.
-                if ( _setupAnimationStrand(ldsp_idx, GetToken(ldsp_currline, ldsp_token, 1), _stripWhiteSpace(ldsp_currline,2) ) )       
-                {
+                if( 
+                    _setupAnimationStrand(
+                        ldsp_idx, 
+                        GetToken(ldsp_currline, ldsp_token, 1), 
+                        _stripWhiteSpace(ldsp_currline,2) 
+                    ) 
+                ) {
                     sprite_heap[ldsp_idx].anim_strand_count++;
-                }
-                else { FreeImage(ldsp_image); ErrorHandler("Error in " + filename + ": Animation strand: '" + GetToken(ldsp_currline, ldsp_token, 1) + "' is invalid."); return 0-1; } // If there's anything wrong with the strand, stop and pass an error.
+                
+                } else { 
+                    // If there's anything wrong with the strand, stop and pass an error.
+                    FreeImage(ldsp_image); 
+                    ErrorHandler("Error in " + filename + ": Animation strand: '" + GetToken(ldsp_currline, ldsp_token, 1) + "' is invalid."); 
+                    return -1; 
+                } 
             }
             else // Parser can't figure out what this line means. Stop and pass error. You could just comment this block out if you want it to ignore such lines.
             {
                 FreeImage(ldsp_image);
                 ErrorHandler("Error in " + filename + ": Unparseable line: " + ldsp_currline);
-                return 0-1;
+                return -1;
             }
         }
+        
         ldsp_linenum++;
     }
-    if (!_checkMandatoryStrands(ldsp_idx, sprite_type)) { FreeImage(ldsp_image); ErrorHandler("Error in " + filename + ": Missing one or more mandatory animation strands for type specified."); return 0-1; } // If mandatory animation strands are missing, stop and pass back an error,
+    
+    if( !_checkMandatoryStrands(ldsp_idx, sprite_type) ) { 
+        // If mandatory animation strands are missing, stop and pass back an error,
+        FreeImage(ldsp_image); 
+        ErrorHandler("Error in " + filename + ": Missing one or more mandatory animation strands for type specified."); 
+        return -1; 
+    } 
     
     // All animation strands have been validated and loaded. Now, use the base image and the stored statistics
     // to generate the animation filmstrip.
-    
     sprite_heap[ldsp_idx].sanim_t = _generateAnimationFromImage(ldsp_image); // Create filmstrip and animation. No need for errorchecking because LoadAnimation suicides on an error.   
+
     // At this point, the info in artemp[] is no longer important.
     FreeImage(ldsp_image); // Dealloc the source image now that the filmstrip is made.
     
@@ -263,21 +287,27 @@ int _spriteSufficientSize(int _spriteimg)
 // Loads an animation strand into the sprite struct specified, then returns 1.
 // On an error, returns 0 immediately.
 // The strand can have comments, but all whitespace should be stripped from it.
-int _setupAnimationStrand(int _idx, string _strandname, string _animstrand) 
+int _setupAnimationStrand( int _idx, string _strandname, string _strand ) 
 {   
-    string _strand = _animstrand;   
     string _topchar;
+
+    if( equ(_strand,"") ) {
+        ErrorHandler("Bad animation strand hit: animations cannot be empty.");
+    }
         
     if (sprite_heap[_idx].anim_strand_count > 0) // If there are any strands already in, check for name collision..
     {
-        if (!_confirmStrandNameUniqueness(_idx, _strandname)) { ErrorHandler("Duplicate animation strand name (" + _strandname + ")."); } // If name is a duplicate, stop and pass an error.
+        if (!_confirmStrandNameUniqueness(_idx, _strandname)) { 
+            // If name is a duplicate, stop and pass an error.
+            ErrorHandler("Duplicate animation strand name (" + _strandname + ")."); 
+        } 
     }   
     sprite_heap[_idx].strand_names[sprite_heap[_idx].anim_strand_count] = _strandname; // Assign strand name
       
-      sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] = ""; // start out with a blank strand 
-      sprite_heap[_idx].strand_length[sprite_heap[_idx].anim_strand_count] = 0; // Strand length starts at 0.
-    while (!equ(_strand, ""))
-    {
+    sprite_heap[_idx].strands[sprite_heap[_idx].anim_strand_count] = ""; // start out with a blank strand 
+    sprite_heap[_idx].strand_length[sprite_heap[_idx].anim_strand_count] = 0; // Strand length starts at 0.
+      
+    while (!equ(_strand, "")) {
         _topchar = left(_strand,1); // get leftmost char for analysis
         // These helper functions will fill in the struct and set _strand to "err" if they encounter a problem.
         if (equ(_topchar,"f")) { _strand = _f_strandcheck(_strand, _idx, artemp[2]*artemp[3]); } // Frame code
@@ -445,7 +475,7 @@ int _confirmStrandNameUniqueness(int _idx, string _strandname)
     int _cui;
     for (_cui = 0; _cui < sprite_heap[_idx].anim_strand_count; _cui++)
     {
-        if ( equ(sprite_heap[_idx].strand_names[_cui], _strandname ) ) return 0;
+        if ( equ(sprite_heap[_idx].strand_names[_cui], _strandname) ) return 0;
     }
     return 1;
 }
