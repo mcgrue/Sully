@@ -3,17 +3,17 @@
 /// Stores case-insensitive keys.  If you add a key that aleady exists, it overwrites the old key's value.
 ///
 
-#define MAX_DIRTY_HASH_CONTENT		255
-#define MAX_DIRTY_HASHES		10
+#define MAX_DIRTY_HASH_CONTENT      255
+#define MAX_DIRTY_HASHES        10
 
 struct dirtyhash
 {
-	string name;
-	
-	string hash_key[MAX_DIRTY_HASH_CONTENT];
-	string value[MAX_DIRTY_HASH_CONTENT];
-	
-	int count;	
+    string name;
+    
+    string hash_key[MAX_DIRTY_HASH_CONTENT];
+    string value[MAX_DIRTY_HASH_CONTENT];
+    
+    int count;  
 }
 
 dirtyhash master_dirtyhash[MAX_DIRTY_HASHES];
@@ -22,76 +22,76 @@ int _dirtyhash_count;
 /// Returns the idx if the given key is already in the DirtyHash, -1 if not.
 int GetIndexDH( int dh_idx, string k )
 {
-	
+    
 
-	int i;
-	for( i=0; i<master_dirtyhash[dh_idx].count; i++ )
-	{
-		if( !strcmp(master_dirtyhash[dh_idx].hash_key[i],k) )
-		{
-			return i;
-		}
-	}
-	
-	return 0-1;
+    int i;
+    for( i=0; i<master_dirtyhash[dh_idx].count; i++ )
+    {
+        if( !strcmp(master_dirtyhash[dh_idx].hash_key[i],k) )
+        {
+            return i;
+        }
+    }
+    
+    return 0-1;
 }
 
 /// Returns 1 if the key exists, 0 if not.
 int KeyExistsDH( int dh_idx, string k )
 {
-	if( GetIndexDH(dh_idx,k) < 0 )
-		return 0;
-	return 1;		
+    if( GetIndexDH(dh_idx,k) < 0 )
+        return 0;
+    return 1;       
 }
 
 /// Allocates a Dirtyhash from the stack of dirtyhashes.
 ///
 int InitDirtyHash()
 {
-	int i = _dirtyhash_count;
-	if( _dirtyhash_count < MAX_DIRTY_HASHES )
-	{
-		_dirtyhash_count++;
-		return i;
-	}
-	else
-	{
-		exit( "InitDirtyHash(): tried to allocate more DirtyHashes than MAX_DIRTY_HASHES allows for." );
-	}
+    int i = _dirtyhash_count;
+    if( _dirtyhash_count < MAX_DIRTY_HASHES )
+    {
+        _dirtyhash_count++;
+        return i;
+    }
+    else
+    {
+        exit( "InitDirtyHash(): tried to allocate more DirtyHashes than MAX_DIRTY_HASHES allows for." );
+    }
 }
 
 /// Adds an element with case insensitive key k, and value v.
 /// If the key already exists, overwrites the old value.  DIRTY!
 void AddLineDH( int dh_idx, string k, string v )
 {
-	k = trim(k);
-	v = trim(v);
-	int i = GetIndexDH(dh_idx, ToUpper(k));
-	
-	if( i < 0 )
-	{
-		master_dirtyhash[dh_idx].hash_key[master_dirtyhash[dh_idx].count]	= ToUpper(k);
-		master_dirtyhash[dh_idx].value[master_dirtyhash[dh_idx].count]		= v;
-	
-		master_dirtyhash[dh_idx].count++;
-	}
-	else
-	{
-		master_dirtyhash[dh_idx].hash_key[i]	= ToUpper(k);
-		master_dirtyhash[dh_idx].value[i]	= v;	
-	}
+    k = trim(k);
+    v = trim(v);
+    int i = GetIndexDH(dh_idx, ToUpper(k));
+    
+    if( i < 0 )
+    {
+        master_dirtyhash[dh_idx].hash_key[master_dirtyhash[dh_idx].count]   = ToUpper(k);
+        master_dirtyhash[dh_idx].value[master_dirtyhash[dh_idx].count]      = v;
+    
+        master_dirtyhash[dh_idx].count++;
+    }
+    else
+    {
+        master_dirtyhash[dh_idx].hash_key[i]    = ToUpper(k);
+        master_dirtyhash[dh_idx].value[i]   = v;    
+    }
 }
 
 /// returns the value for the given case insens key. 
 /// returns an empty string if the value doesn't exist.  DIRTY!
 string GetValDH( int dh_idx, string k )
 {
-	int i = GetIndexDH(dh_idx, ToUpper(trim(k)));
-	
-	if( i < 0 )
-		return "";
-	else
-		return master_dirtyhash[dh_idx].value[i];
+    int i = GetIndexDH(dh_idx, ToUpper(trim(k)));
+    
+    if( i < 0 )
+        return "";
+    else
+        return master_dirtyhash[dh_idx].value[i];
 }
 
 /// Populate the Dirtyhash from a simple file.
@@ -100,48 +100,49 @@ string GetValDH( int dh_idx, string k )
 /// and leading/trailing whitespace is trimmed.
 void PopulateFromSimpleFileDH( int dh_idx, string filepath )
 {
-	string s = FileToString( filepath );
-	string tmp, k, v;
-	
-	int i;
-	for( i=0; i<TokenCount(s,chr(10)); i++ )
-	{
-		tmp = trim(GetToken(s,chr(10),i));
-		
-		///if it's *not* a commented line...
-		if( strcmp("#",left(tmp,1)) && strcmp("",tmp) )
-		{
+    string s = FileToString( filepath );
+    string tmp, k, v;
+    
+    int i;
+    for( i=0; i<TokenCount(s,chr(10)); i++ )
+    {
+        tmp = trim(GetToken(s,chr(10),i));
+        
+        ///if it's *not* a commented line...
+        if( strcmp("#",left(tmp,1)) && strcmp("",tmp) )
+        {
 
-			k = GetToken(tmp,"	",0);
-			v = GetToken(tmp,"	",1);
+            k = GetToken(tmp,___strip_whitespace_tokens,0);
+            v = GetToken(tmp,___strip_whitespace_tokens,1);
 //Log( "Adding "+k );
 //Log( "Adding "+v );
 //Log( "" );
-			AddLineDH( dh_idx, k, v );
-		}
-	}
+            AddLineDH( dh_idx, k, v );
+        }
+    }
 }
 
 void LogDH( int dh_idx )
 {
-	Log( "==============" );
-	Log( "LogDH( "+str(dh_idx)+" )..." );
-	Log( "==============" );
-	
-	int i;
-	for( i=0; i<master_dirtyhash[dh_idx].count; i++ )
-	{
-		Log( 	"["					+
-			str(i)					+
-			"]:	'"				+
-			master_dirtyhash[dh_idx].hash_key[i]	+
-			"' 	=> '"				+
-			master_dirtyhash[dh_idx].value[i]	+
-			"'"
-		);
-	}
-	
-	Log( "==============" );
-	Log( "...LogDH( "+str(dh_idx)+" ) Done." );
-	Log( "==============" );
+    Log( "==============" );
+    Log( "LogDH( "+str(dh_idx)+" )..." );
+    Log( "==============" );
+    
+    int i;
+    for( i=0; i<master_dirtyhash[dh_idx].count; i++ )
+    {
+        Log(    
+            "["                                      +
+                str(i)                               +
+            "]: '"                                   +
+                master_dirtyhash[dh_idx].hash_key[i] +
+            "'  => '"                                +
+                master_dirtyhash[dh_idx].value[i]    +
+            "'"
+        );
+    }
+    
+    Log( "==============" );
+    Log( "...LogDH( "+str(dh_idx)+" ) Done." );
+    Log( "==============" );
 }

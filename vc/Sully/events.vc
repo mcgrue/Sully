@@ -1,6 +1,6 @@
 /// The maximum number of events in master_events[].  
 /// alter this value if you need more.  It is at the top of events.vc
-#define	MAX_EVENTS	50
+#define MAX_EVENTS  50
 
 /// The string variable containing the location of the events datafile.
 /// This variable is located at the top
@@ -14,13 +14,13 @@ string event_datafile = "res/data/events.dat";
 /// If you are unfamiliar with Anachronox, go buy it!  TOM HALL FOREVER!
 struct event
 {
-	string name;		/// the name of this event.  Unique.
-	string parent_name;	/// the name of this event's parent event, may either be "" or a name of another valid event.
-	int parent_id;		/// the master_events[] index of the event named in event.parent_name
-	string desc;		/// the event's description.
-	
-	int visbile;		/// 1 if this event is visible in the event menu, 0 if not.
-	int complete;		/// 1 if this event is completed, 0 if not.
+    string name;        /// the name of this event.  Unique.
+    string parent_name; /// the name of this event's parent event, may either be "" or a name of another valid event.
+    int parent_id;      /// the master_events[] index of the event named in event.parent_name
+    string desc;        /// the event's description.
+    
+    int visbile;        /// 1 if this event is visible in the event menu, 0 if not.
+    int complete;       /// 1 if this event is completed, 0 if not.
 }
 
 /// The global array of event structs that all of the event functions deal with.
@@ -46,64 +46,64 @@ int master_event_count;
 /// and it is suggested that unless you Know What You're Doing, you use that 
 /// method and not call this function yourself.
 ///
-/// @param name			This event's name.  Must be unique in all events in master_events[]
-/// @param parent_name 	The name of this event's parent.  must either be "", "-", or a valid name of
-/// @param description	This is the text associated with this event in the menu.
+/// @param name         This event's name.  Must be unique in all events in master_events[]
+/// @param parent_name  The name of this event's parent.  must either be "", "-", or a valid name of
+/// @param description  This is the text associated with this event in the menu.
 ///
 /// @see master_event_count
 /// @see MAX_EVENTS
 /// @see init_events_integrate()
 void create_event( string name, string parent_name, string description )
 {
-	if( master_event_count >= MAX_EVENTS )
-	{
-		ErrorHandler("events.vc::create_event(): You have exceded the maximum amount of events defined in MAX_EVENTS ("+str(MAX_EVENTS)+").  You may want to increase this.");
-		return;
-	}
-	
-	//if the name is nothing...
-	if( equ(name,"") )
-	{
-		ErrorHandler("events.vc::create_event(): the specified name was an empty string.  THIS WILL NOT DO.");
-		return;
-	}
-	
-	int i;
-	
-	for( i=0; i<master_event_count; i++ )
-	{
-		if( equ(master_events[i].name,name) ) //if this name is already in the list, it's not unique!  ERROR OUT.
-		{
-			ErrorHandler("events.vc::create_event(): Attempted to add a duplicate event '"+name+"'.");
-			return;
-		}
-	}
-	
-	i = master_event_count;
-	
-	if( equ(name,parent_name) )
-	{
-		ErrorHandler("events.vc::create_event(): Attempted to create a new event '"+name+"' that was it's own parent.  No dice, Zaphod.");
-		master_events[i].parent_name 	= "";
-	}
-	else
-	{
-		if( equ(parent_name, "-") )
-		{
-			master_events[i].parent_name 	= "";
-		}
-		else
-		{
-			master_events[i].parent_name 	= parent_name;
-		}
-	}
-	
+    if( master_event_count >= MAX_EVENTS )
+    {
+        ErrorHandler("events.vc::create_event(): You have exceded the maximum amount of events defined in MAX_EVENTS ("+str(MAX_EVENTS)+").  You may want to increase this.");
+        return;
+    }
+    
+    //if the name is nothing...
+    if( equ(name,"") )
+    {
+        ErrorHandler("events.vc::create_event(): the specified name was an empty string.  THIS WILL NOT DO.");
+        return;
+    }
+    
+    int i;
+    
+    for( i=0; i<master_event_count; i++ )
+    {
+        if( equ(master_events[i].name,name) ) //if this name is already in the list, it's not unique!  ERROR OUT.
+        {
+            ErrorHandler("events.vc::create_event(): Attempted to add a duplicate event '"+name+"'.");
+            return;
+        }
+    }
+    
+    i = master_event_count;
+    
+    if( equ(name,parent_name) )
+    {
+        ErrorHandler("events.vc::create_event(): Attempted to create a new event '"+name+"' that was it's own parent.  No dice, Zaphod.");
+        master_events[i].parent_name    = "";
+    }
+    else
+    {
+        if( equ(parent_name, "-") )
+        {
+            master_events[i].parent_name    = "";
+        }
+        else
+        {
+            master_events[i].parent_name    = parent_name;
+        }
+    }
+    
 
-	master_events[i].name 			= name;	
-	master_events[i].parent_id 		= 0-1;
-	master_events[i].desc 			= description;
-	
-	master_event_count++;
+    master_events[i].name           = name; 
+    master_events[i].parent_id      = 0-1;
+    master_events[i].desc           = description;
+    
+    master_event_count++;
 }
 
 /// Enforces the integrity of the master_events[] array
@@ -114,40 +114,40 @@ void create_event( string name, string parent_name, string description )
 /// Soft errors if the parent_name is the name, and sets the parent_name to ""
 void init_events_integrate()
 {
-	int i, idx;
-	
-	for( i=0; i<master_event_count; i++ )
-	{
-		//if the parent_name and name are the same, something's wrong.  Null out the parent_name.
-		if( equ(master_events[i].parent_name,master_events[i].name) )
-		{
-			ErrorHandler("events.vc::init_events_integrate(): event #"+str(i)+" had it's parent_name set to it's name ("+master_events[i].name+").  How did this happen?  Create_Event() prevents this!");
-			master_events[i].parent_name = "";
-			master_events[i].parent_id = 0-1;
-		}
-		else 
-		{
-			if( equ(master_events[i].parent_name,"") ) //if there's no parent
-			{
-				master_events[i].parent_id = 0-1;
-			}
-			else //there is an alleged parent!
-			{
-				idx = GetEvent( master_events[i].parent_name );
+    int i, idx;
+    
+    for( i=0; i<master_event_count; i++ )
+    {
+        //if the parent_name and name are the same, something's wrong.  Null out the parent_name.
+        if( equ(master_events[i].parent_name,master_events[i].name) )
+        {
+            ErrorHandler("events.vc::init_events_integrate(): event #"+str(i)+" had it's parent_name set to it's name ("+master_events[i].name+").  How did this happen?  Create_Event() prevents this!");
+            master_events[i].parent_name = "";
+            master_events[i].parent_id = 0-1;
+        }
+        else 
+        {
+            if( equ(master_events[i].parent_name,"") ) //if there's no parent
+            {
+                master_events[i].parent_id = 0-1;
+            }
+            else //there is an alleged parent!
+            {
+                idx = GetEvent( master_events[i].parent_name );
 
-				if( idx < 0 ) //this parent doesn't exist!
-				{
-					ErrorHandler("events.vc::init_events_integrate(): The specified parent_name ("+master_events[i].parent_name+") did not exist.  Check the datafile at '"+event_datafile+"' if you are using the default system.");
-					master_events[i].parent_name = "";
-					master_events[i].parent_id = 0-1;
-				}
-				else //we're good!  Yay!
-				{
-					master_events[i].parent_id = idx;
-				}				
-			}
-		}
-	}
+                if( idx < 0 ) //this parent doesn't exist!
+                {
+                    ErrorHandler("events.vc::init_events_integrate(): The specified parent_name ("+master_events[i].parent_name+") did not exist.  Check the datafile at '"+event_datafile+"' if you are using the default system.");
+                    master_events[i].parent_name = "";
+                    master_events[i].parent_id = 0-1;
+                }
+                else //we're good!  Yay!
+                {
+                    master_events[i].parent_id = idx;
+                }               
+            }
+        }
+    }
 }
 
 
@@ -167,58 +167,58 @@ void init_events_integrate()
 /// @see init_events_integrate()
 void init_events()
 {
-	int fHand, parsemode;
-	string tempLine;
-	string toks = " 	";
-	string tok_name, tok_parent, tok_desc;
-	
-	
-	fHand = FileOpen( event_datafile, 1 );
-	
-	if( !fHand ) {
-		ErrorHandler( "events.vc::init_events() Could not open the event data file '"+event_datafile+"'" );
-		return;
-	}
-	
+    int fHand, parsemode;
+    string tempLine;
+    string toks = ___strip_whitespace_tokens;
+    string tok_name, tok_parent, tok_desc;
+    
+    
+    fHand = FileOpen( event_datafile, 1 );
+    
+    if( !fHand ) {
+        ErrorHandler( "events.vc::init_events() Could not open the event data file '"+event_datafile+"'" );
+        return;
+    }
+    
 //Log( "init_events(): starting to parse "+event_datafile+"..." );
-	
-	tempLine = Trim(FileReadln(fHand));
-	while( !equ( tempLine, "END_OF_FILE" ) ) {	//checks for the end-of-file sentinel: ">>EOF<<".  
-													//If it's there, end the parsing.
-		
-		//checks for comments and empty lines.  Ignores them.
-		if( equ( left(tempLine,2 ), "//" ) || len(tempLine)==0 ) {	
+    
+    tempLine = Trim(FileReadln(fHand));
+    while( !equ( tempLine, "END_OF_FILE" ) ) {  //checks for the end-of-file sentinel: ">>EOF<<".  
+                                                    //If it's there, end the parsing.
+        
+        //checks for comments and empty lines.  Ignores them.
+        if( equ( left(tempLine,2 ), "//" ) || len(tempLine)==0 ) {  
 //Log( "init_events(): COMMENT" );
-		} 
-		else //this line is probably data.  Let's do more verificationing!
-		{ 
-			if( TokenCount(tempLine, chr(34)) < 2 )
-			{
-				ErrorHandler( "events.vc::init_events() The line '"+tempLine+"' doesn't have a valid description." );
-			}
-			else if( TokenCount(tempLine,toks) < 3 )
-			{
-				ErrorHandler( "events.vc::init_events() The line '"+tempLine+"' doesn't have a valid amount of arguments" );
-			}
-			else
-			{
-				tok_name	= GetToken( tempLine,toks,0 );
-				tok_parent	= GetToken( tempLine,toks,1 );
-				tok_desc	= GetToken( tempLine,chr(34),1 );
-				
-				create_event( tok_name, tok_parent, tok_desc );
-			}
-	
-//Log( str(master_event_count) + ": '" +tempLine+ "'" );			
-		}
-		
-		tempLine = Trim(FileReadln(fHand));	//get the next line
-	}
-	
-	// parent integrity preserver thingy!
-	init_events_integrate();
-	
-//Log( "init_events(): ...done parsing." );	
+        } 
+        else //this line is probably data.  Let's do more verificationing!
+        { 
+            if( TokenCount(tempLine, chr(34)) < 2 )
+            {
+                ErrorHandler( "events.vc::init_events() The line '"+tempLine+"' doesn't have a valid description." );
+            }
+            else if( TokenCount(tempLine,toks) < 3 )
+            {
+                ErrorHandler( "events.vc::init_events() The line '"+tempLine+"' doesn't have a valid amount of arguments" );
+            }
+            else
+            {
+                tok_name    = GetToken( tempLine,toks,0 );
+                tok_parent  = GetToken( tempLine,toks,1 );
+                tok_desc    = GetToken( tempLine,chr(34),1 );
+                
+                create_event( tok_name, tok_parent, tok_desc );
+            }
+    
+//Log( str(master_event_count) + ": '" +tempLine+ "'" );            
+        }
+        
+        tempLine = Trim(FileReadln(fHand)); //get the next line
+    }
+    
+    // parent integrity preserver thingy!
+    init_events_integrate();
+    
+//Log( "init_events(): ...done parsing." ); 
 }
 
 /// takes a potential case-insenstive event name, returns 1 if it's an event.  0 if not.
@@ -226,16 +226,16 @@ void init_events()
 /// @param name the master_events[] name of the event to verify the existance of.
 int IsEvent( string name )
 {
-	int i;
-	for( i=0; i<master_event_count; i++ )
-	{
-		if( equ(name, master_events[i].name) )
-		{
-			return 1;
-		}
-	}
-	
-	return 0;
+    int i;
+    for( i=0; i<master_event_count; i++ )
+    {
+        if( equ(name, master_events[i].name) )
+        {
+            return 1;
+        }
+    }
+    
+    return 0;
 }
 
 /// Returns the index of the event for the given name.  returns -1 if the name is invalid.
@@ -243,16 +243,16 @@ int IsEvent( string name )
 /// @param name the the master_events[] name of the event to look for the master_events[] index of.
 int GetEvent( string name )
 {
-	int i;
-	for( i=0; i<master_event_count; i++ )
-	{
-		if( equ(name, master_events[i].name) )
-		{
-			return i;
-		}
-	}
-	
-	return 0-1;
+    int i;
+    for( i=0; i<master_event_count; i++ )
+    {
+        if( equ(name, master_events[i].name) )
+        {
+            return i;
+        }
+    }
+    
+    return 0-1;
 }
 
 /// sets an event on, based on a valid case-insensitive event name.
@@ -261,15 +261,15 @@ int GetEvent( string name )
 /// @param name the master_events[] name of the event to set on.
 void SetEventOn( string name )
 {
-	int idx = GetEvent(name);
-	
-	if( idx < 0 )
-	{
-		ErrorHandler( "events.vc::SetEventOn() The event '"+name+"' is not a valid event name.  Sorry." );
-		return;
-	}
-	
-	master_events[idx].visbile = 1;
+    int idx = GetEvent(name);
+    
+    if( idx < 0 )
+    {
+        ErrorHandler( "events.vc::SetEventOn() The event '"+name+"' is not a valid event name.  Sorry." );
+        return;
+    }
+    
+    master_events[idx].visbile = 1;
 }
 
 
@@ -280,13 +280,13 @@ void SetEventOn( string name )
 /// @param idx the master_events[] index of the event to set on.
 void SetEventOnI( int idx )
 {
-	if( idx < 0 || idx >= master_event_count )
-	{
-		ErrorHandler( "events.vc::SetEventOnI() The index '"+str(idx)+"' is not a valid index (0-"+str(master_event_count-1)+")" );
-		return;
-	}
-	
-	master_events[idx].visbile = 1;
+    if( idx < 0 || idx >= master_event_count )
+    {
+        ErrorHandler( "events.vc::SetEventOnI() The index '"+str(idx)+"' is not a valid index (0-"+str(master_event_count-1)+")" );
+        return;
+    }
+    
+    master_events[idx].visbile = 1;
 }
 
 /// sets an event as complete, based on a valid case-insensitive event name.
@@ -295,15 +295,15 @@ void SetEventOnI( int idx )
 /// @param idx the master_events[] name of the event to set complete.
 void SetEventComplete( string name )
 {
-	int idx = GetEvent(name);
-	
-	if( idx < 0 )
-	{
-		ErrorHandler( "events.vc::SetEventComplete() The event '"+name+"' is not a valid event name.  Sorry." );
-		return;
-	}
-	
-	master_events[idx].complete = 1;
+    int idx = GetEvent(name);
+    
+    if( idx < 0 )
+    {
+        ErrorHandler( "events.vc::SetEventComplete() The event '"+name+"' is not a valid event name.  Sorry." );
+        return;
+    }
+    
+    master_events[idx].complete = 1;
 }
 
 /// sets an event as complete, based on it's master_events[] index.
@@ -312,14 +312,14 @@ void SetEventComplete( string name )
 /// @param idx the master_events[] index of the event to set complete.
 void SetEventCompleteI( int idx )
 {
-	if( idx < 0 || idx >= master_event_count )
-	{
-		ErrorHandler( "events.vc::SetEventComplete() The index '"+str(idx)+"' is not a valid index (0-"+str(master_event_count-1)+")" );
-		return;
-	}
-	
+    if( idx < 0 || idx >= master_event_count )
+    {
+        ErrorHandler( "events.vc::SetEventComplete() The index '"+str(idx)+"' is not a valid index (0-"+str(master_event_count-1)+")" );
+        return;
+    }
+    
 
-	master_events[idx].complete = 1;
+    master_events[idx].complete = 1;
 }
 
 
@@ -329,15 +329,15 @@ void SetEventCompleteI( int idx )
 /// @param name the master_events[] name of the event to check for visibility.
 int IsEventOn( string name )
 {
-	int idx = GetEvent(name);
-	
-	if( idx < 0 )
-	{
-		ErrorHandler( "events.vc::IsEventOn() The event '"+name+"' is not a valid event name.  Sorry." );
-		return 0;
-	}
-	
-	return master_events[idx].visbile;
+    int idx = GetEvent(name);
+    
+    if( idx < 0 )
+    {
+        ErrorHandler( "events.vc::IsEventOn() The event '"+name+"' is not a valid event name.  Sorry." );
+        return 0;
+    }
+    
+    return master_events[idx].visbile;
 }
 
 
@@ -347,13 +347,13 @@ int IsEventOn( string name )
 /// @param idx the master_events[] index of the event to check for visibility.
 int IsEventOnI( int idx )
 {
-	if( idx < 0 || idx >= master_event_count )
-	{
-		ErrorHandler( "events.vc::IsEventCompleteI() The index '"+str(idx)+"' is not a valid index (0-"+str(master_event_count-1)+")" );
-		return 0;
-	}
-	
-	return master_events[idx].visbile;
+    if( idx < 0 || idx >= master_event_count )
+    {
+        ErrorHandler( "events.vc::IsEventCompleteI() The index '"+str(idx)+"' is not a valid index (0-"+str(master_event_count-1)+")" );
+        return 0;
+    }
+    
+    return master_events[idx].visbile;
 }
 
 /// returns 1 if this event is active, 0 if inactive
@@ -362,15 +362,15 @@ int IsEventOnI( int idx )
 /// @param idx the master_events[] name of the event to check for completion.
 int IsEventComplete( string name )
 {
-	int idx = GetEvent(name);
-	
-	if( idx < 0 )
-	{
-		ErrorHandler( "events.vc::IsEventComplete() The event '"+name+"' is not a valid event name.  Sorry." );
-		return 0;
-	}
-	
-	return master_events[idx].complete;
+    int idx = GetEvent(name);
+    
+    if( idx < 0 )
+    {
+        ErrorHandler( "events.vc::IsEventComplete() The event '"+name+"' is not a valid event name.  Sorry." );
+        return 0;
+    }
+    
+    return master_events[idx].complete;
 }
 
 // returns 1 if this event is completed, 0 if not
@@ -379,56 +379,56 @@ int IsEventComplete( string name )
 /// @param idx the master_events[] index of the event to check for completion.
 int IsEventCompleteI( int idx )
 {
-	if( idx < 0 || idx >= master_event_count )
-	{
-		ErrorHandler( "events.vc::IsEventCompleteI() The index '"+str(idx)+"' is not a valid index (0-"+str(master_event_count-1)+")" );
-		return 0;
-	}
-	
-	return master_events[idx].complete;
+    if( idx < 0 || idx >= master_event_count )
+    {
+        ErrorHandler( "events.vc::IsEventCompleteI() The index '"+str(idx)+"' is not a valid index (0-"+str(master_event_count-1)+")" );
+        return 0;
+    }
+    
+    return master_events[idx].complete;
 }
 
 
 /// Dumps the contents of the master_events[] array into the log.
 void dump_events()
 {
-	log( "" );
-	log( "=============" );
-	log( "dump_events()" );
-	log( "=============" );
-	log( "master_event_count: " + str(master_event_count) );
-	
-	int i;
-	for( i=0; i<master_event_count; i++ )
-	{
-		log( "-" );
-		log( "master_events["+str(i)+"]: " );
-		log( "        name: '"+master_events[i].name+"'" );
-		log( " parent_name: '"+master_events[i].parent_name+"'" );
-		log( "   parent_id: "+str(master_events[i].parent_id) );
-		log( " description: '"+master_events[i].desc+"'" );
-		
-		if( master_events[i].visbile )
-		{
-			log( " description: '"+master_events[i].desc+"'" );
-			log( "     visible: yes ("+str(master_events[i].visbile)+")" );
-		}
-		else
-		{
-			log( "     visible: no" );
-		}
-		
-		if( master_events[i].complete )
-		{
-			log( "    complete: yes ("+str(master_events[i].complete)+")" );
-		}
-		else
-		{
-			log( "    complete: no" );
-		}
-	}
-	log( "-" );
-	log( "" );
-	log( "END dump_events()" );
-	log( "=================" );
+    log( "" );
+    log( "=============" );
+    log( "dump_events()" );
+    log( "=============" );
+    log( "master_event_count: " + str(master_event_count) );
+    
+    int i;
+    for( i=0; i<master_event_count; i++ )
+    {
+        log( "-" );
+        log( "master_events["+str(i)+"]: " );
+        log( "        name: '"+master_events[i].name+"'" );
+        log( " parent_name: '"+master_events[i].parent_name+"'" );
+        log( "   parent_id: "+str(master_events[i].parent_id) );
+        log( " description: '"+master_events[i].desc+"'" );
+        
+        if( master_events[i].visbile )
+        {
+            log( " description: '"+master_events[i].desc+"'" );
+            log( "     visible: yes ("+str(master_events[i].visbile)+")" );
+        }
+        else
+        {
+            log( "     visible: no" );
+        }
+        
+        if( master_events[i].complete )
+        {
+            log( "    complete: yes ("+str(master_events[i].complete)+")" );
+        }
+        else
+        {
+            log( "    complete: no" );
+        }
+    }
+    log( "-" );
+    log( "" );
+    log( "END dump_events()" );
+    log( "=================" );
 }

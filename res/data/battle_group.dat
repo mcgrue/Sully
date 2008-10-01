@@ -80,7 +80,6 @@ Area    Overworld_A 90  -
 Bunny       110 110
 Bunny       150 110
 Bunny       150 150
-Bunny       150 150
 Bunny       50  100 
 =END=
 
@@ -107,7 +106,7 @@ Slime       20  100
 Slime       85  100
 Slime       150 100
 Slime       20  160
-Slime       85  160 Leader
+Red_Slime   85  160 Leader
 Slime       150 160 
 =END=
 

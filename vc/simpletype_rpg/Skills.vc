@@ -7,14 +7,14 @@
 /// this is a really shitty test ATM, btw.  
 int SkillTypeCount()
 {
-	int i;
-	for(i=0; i<MAX_SKILLTYPES; i++)
-	{
-		if( equ(master_skilltypes[i].name,"") )
-			return i;
-	}
-	
-	return i;
+    int i;
+    for(i=0; i<MAX_SKILLTYPES; i++)
+    {
+        if( equ(master_skilltypes[i].name,"") )
+            return i;
+    }
+    
+    return i;
 }
 
 
@@ -23,44 +23,44 @@ int SkillTypeCount()
 /// @return 1 if it's a valid index, 0 if not.
 int IsSkillTypeI( int idx )
 {
-	if( idx < 0 || idx >= SkillTypeCount() ) return 0;
-	return 1;
+    if( idx < 0 || idx >= SkillTypeCount() ) return 0;
+    return 1;
 }
 
 /// Returns 1 if master_skilltypes[idx] is a normal group of skills, 0 if not.
 /// errors and returns 0 on an invalid idx
 int IsSkillTypeNormalI( int idx )
 {
-	if( idx < 0 || idx >= SkillTypeCount() )
-	{
-		ErrorHandler( "IsSkillTypeNormalI("+str(idx)+"): Invalid index (valid range 0-"+str(MAX_SKILLTYPES)+")." );
-		return 0;
-	}
-	
-	if( master_skilltypes[idx].visibility == ST_VISI_NORMAL )
-	{
-		return 1;	
-	}
-	
-	return 0;
+    if( idx < 0 || idx >= SkillTypeCount() )
+    {
+        ErrorHandler( "IsSkillTypeNormalI("+str(idx)+"): Invalid index (valid range 0-"+str(MAX_SKILLTYPES)+")." );
+        return 0;
+    }
+    
+    if( master_skilltypes[idx].visibility == ST_VISI_NORMAL )
+    {
+        return 1;   
+    }
+    
+    return 0;
 }
 
 /// Returns 1 if master_skilltypes[idx]'s known children are to be shown on the main menu, 0 if not.
 /// errors and returns 0 on an invalid idx
 int IsSkillTypeMenuVisibleI( int idx )
 {
-	if( idx < 0 || idx >= SkillTypeCount() )
-	{
-		ErrorHandler( "IsSkillTypeMenuVisibleI("+str(idx)+"): Invalid index (valid range 0-"+str(MAX_SKILLTYPES)+")." );
-		return 0;
-	}
-	
-	if( master_skilltypes[idx].visibility == ST_VISI_NORMAL || master_skilltypes[idx].visibility == ST_VISI_MENU )
-	{
-		return 1;
-	}
-	
-	return 0;
+    if( idx < 0 || idx >= SkillTypeCount() )
+    {
+        ErrorHandler( "IsSkillTypeMenuVisibleI("+str(idx)+"): Invalid index (valid range 0-"+str(MAX_SKILLTYPES)+")." );
+        return 0;
+    }
+    
+    if( master_skilltypes[idx].visibility == ST_VISI_NORMAL || master_skilltypes[idx].visibility == ST_VISI_MENU )
+    {
+        return 1;
+    }
+    
+    return 0;
 }
 
 /// returns the value of a skill's useflag.
@@ -70,11 +70,11 @@ int IsSkillTypeMenuVisibleI( int idx )
 /// @param flag the useflag to check for (USE_BATTLE and USE_MENU valid)
 int CheckSkillUseflagI( int idx, int flag ) 
 {
-	int i;
-	
-	i = master_skills[idx].use_flag & flag;
-	
-	return i;
+    int i;
+    
+    i = master_skills[idx].use_flag & flag;
+    
+    return i;
 }
 
 
@@ -83,15 +83,15 @@ int CheckSkillUseflagI( int idx, int flag )
 ///
 /// @param name the master_skills[] name of a skill.
 int GetSkill( string name ) {
-	int i;
-	
-	for( i=0; i<MAX_SKILLS; i++ )
-	{
-		if( equ(master_skills[i].name,name) )
-			return i;
-	}
-	
-	return 0-1;
+    int i;
+    
+    for( i=0; i<MAX_SKILLS; i++ )
+    {
+        if( equ(master_skills[i].name,name) )
+            return i;
+    }
+    
+    return 0-1;
 }
 
 /// Takes a name of a skilltype.
@@ -100,15 +100,15 @@ int GetSkill( string name ) {
 /// @param name the master_skilltypes[] name of a skilltype.
 int GetSkillType( string name )
 {
-	int i;
-	
-	for( i=0; i<MAX_SKILLTYPES; i++ )
-	{
-		if( equ(master_skilltypes[i].name,name) )
-			return i;
-	}
-	
-	return 0-1;
+    int i;
+    
+    for( i=0; i<MAX_SKILLTYPES; i++ )
+    {
+        if( equ(master_skilltypes[i].name,name) )
+            return i;
+    }
+    
+    return 0-1;
 }
 
 /// Takes a name of a skill.
@@ -117,9 +117,9 @@ int GetSkillType( string name )
 /// @param name the master_skills[] name of a skill.
 int IsSkill( string name )
 {
-	if( GetSkill(name) < 0 )
-		return 0;
-	return 1;
+    if( GetSkill(name) < 0 )
+        return 0;
+    return 1;
 }
 
 
@@ -128,13 +128,13 @@ int IsSkill( string name )
 /// errors on an invalid index and returns -1.
 int IsCommandSkillI( int skill_idx )
 {
-	if( skill_idx <0 || skill_idx >= MAX_SKILLS ) {
-		ErrorHandler( "IsCommandSkillI("+str(skill_idx)+"): Invalid index (valid range 0-"+str(MAX_SKILLS)+")." );
-		return 0-1;
-	}
+    if( skill_idx <0 || skill_idx >= MAX_SKILLS ) {
+        ErrorHandler( "IsCommandSkillI("+str(skill_idx)+"): Invalid index (valid range 0-"+str(MAX_SKILLS)+")." );
+        return 0-1;
+    }
 
-	if( master_skills[skill_idx].type < 0 )	return 1;
-	return 0;
+    if( master_skills[skill_idx].type < 0 ) return 1;
+    return 0;
 }
 
 
@@ -144,25 +144,25 @@ int IsCommandSkillI( int skill_idx )
 ///
 int hasSkillTypeI( int c_idx, int st_idx )
 {
-	int i;
+    int i;
 
-	if( st_idx <0 || st_idx >= MAX_SKILLTYPES ) {
-		ErrorHandler( "hasSkillTypeI(): Invalid skill index("+str(st_idx)+"), (valid range 0-"+str(MAX_SKILLTYPES)+")." );
-		return 0;
-	}
+    if( st_idx <0 || st_idx >= MAX_SKILLTYPES ) {
+        ErrorHandler( "hasSkillTypeI(): Invalid skill index("+str(st_idx)+"), (valid range 0-"+str(MAX_SKILLTYPES)+")." );
+        return 0;
+    }
 
-	if( c_idx <0 || c_idx >= MAX_CAST ) {
-		ErrorHandler( "hasSkillTypeI(): Invalid cast index("+str(c_idx)+"), (valid range 0-"+str(MAX_CAST)+")." );
-		return 0;
-	}
-	
-	for( i=0; i<MAX_SKILLGROUPS_PER_CLASS; i++ )
-	{
-		if( st_idx == master_classes[master_cast[c_idx].class_ref].skill_groups[i] )
-			return 1;
-	}
+    if( c_idx <0 || c_idx >= MAX_CAST ) {
+        ErrorHandler( "hasSkillTypeI(): Invalid cast index("+str(c_idx)+"), (valid range 0-"+str(MAX_CAST)+")." );
+        return 0;
+    }
+    
+    for( i=0; i<MAX_SKILLGROUPS_PER_CLASS; i++ )
+    {
+        if( st_idx == master_classes[master_cast[c_idx].class_ref].skill_groups[i] )
+            return 1;
+    }
 
-	return 0;
+    return 0;
 }
 
 
@@ -174,22 +174,22 @@ int hasSkillTypeI( int c_idx, int st_idx )
 /// @return 1 if successfully added, 0 if it was already there.
 int GrantSkill( string cast_name, string skill_name )
 {
-	int s_idx = GetSkill( skill_name );
-	int c_idx = GetCast( cast_name );
-	 
-	if( s_idx < 0 )
-	{
-		ErrorHandler( "GrantSkill(): Invalid skill name ("+skill_name+")." );
-		return 0;
-	}
-	 
-	if( c_idx < 0 )
-	{
-		ErrorHandler( "GrantSkill(): Invalid cast name ("+cast_name+")." );
-		return 0;
-	}
-	
-	return GrantSkillI( c_idx, s_idx );
+    int s_idx = GetSkill( skill_name );
+    int c_idx = GetCast( cast_name );
+     
+    if( s_idx < 0 )
+    {
+        ErrorHandler( "GrantSkill(): Invalid skill name ("+skill_name+")." );
+        return 0;
+    }
+     
+    if( c_idx < 0 )
+    {
+        ErrorHandler( "GrantSkill(): Invalid cast name ("+cast_name+")." );
+        return 0;
+    }
+    
+    return GrantSkillI( c_idx, s_idx );
 }
 
 
@@ -202,37 +202,37 @@ int GrantSkill( string cast_name, string skill_name )
 /// @return 1 if successfully added, 0 if it was already there.
 int GrantSkillI( int c_idx, int s_idx )
 {
-	if( s_idx <0 || s_idx >= MAX_SKILLS ) {
-		ErrorHandler( "GrantSkillI(): Invalid skill index("+str(s_idx)+"), (valid range 0-"+str(MAX_SKILLS)+")." );
-		return 0;
-	}
+    if( s_idx <0 || s_idx >= MAX_SKILLS ) {
+        ErrorHandler( "GrantSkillI(): Invalid skill index("+str(s_idx)+"), (valid range 0-"+str(MAX_SKILLS)+")." );
+        return 0;
+    }
 
-	if( c_idx <0 || c_idx >= MAX_CAST ) {
-		ErrorHandler( "GrantSkillI(): Invalid cast index("+str(c_idx)+"), (valid range 0-"+str(MAX_CAST)+")." );
-		return 0;
-	}
-	
-	int i;
-	
-	
-	if( IsCommandSkillI( s_idx ) )
-	{
-		return _addSkill( c_idx, s_idx );			
-	}
-	else
-	{
-		i = master_skills[s_idx].type;
-		
-		if( hasSkillTypeI(c_idx, i) )
-		{
-			return _addSkill( c_idx, s_idx );
-		}
-		else
-		{
-			ErrorHandler( "GrantSkillI(): Invalid cast index("+str(c_idx)+" ('"+master_cast[c_idx].name+"')) , totally doesn't have access to skill group ("+str(i)+"('"+master_skilltypes[i].name+"'))." );
-			return 0;
-		}
-	}
+    if( c_idx <0 || c_idx >= MAX_CAST ) {
+        ErrorHandler( "GrantSkillI(): Invalid cast index("+str(c_idx)+"), (valid range 0-"+str(MAX_CAST)+")." );
+        return 0;
+    }
+    
+    int i;
+    
+    
+    if( IsCommandSkillI( s_idx ) )
+    {
+        return _addSkill( c_idx, s_idx );           
+    }
+    else
+    {
+        i = master_skills[s_idx].type;
+        
+        if( hasSkillTypeI(c_idx, i) )
+        {
+            return _addSkill( c_idx, s_idx );
+        }
+        else
+        {
+            ErrorHandler( "GrantSkillI(): Invalid cast index("+str(c_idx)+" ('"+master_cast[c_idx].name+"')) , totally doesn't have access to skill group ("+str(i)+"('"+master_skilltypes[i].name+"'))." );
+            return 0;
+        }
+    }
 }
 
 /// helper function.  Adds skill idx i to cast member c
@@ -240,25 +240,25 @@ int GrantSkillI( int c_idx, int s_idx )
 /// returns 1 if newly added, 0 if not.
 int _addSkill( int c, int s )
 {
-	int i;
+    int i;
 Log( "adding skill "+master_skills[s].name+" to "+master_cast[c].name+"'s list..." );
-	
-	for( i=0; i<master_cast[c].skillcount; i++ )
-	{
-		if( master_cast[c].skills[i] == s )
-		{
-			return 0;
-		}
-	}
-	
-	 master_cast[c].skills[master_cast[c].skillcount] = s;
-	 master_cast[c].skillcount++;
-	 
+    
+    for( i=0; i<master_cast[c].skillcount; i++ )
+    {
+        if( master_cast[c].skills[i] == s )
+        {
+            return 0;
+        }
+    }
+    
+     master_cast[c].skills[master_cast[c].skillcount] = s;
+     master_cast[c].skillcount++;
+     
 _sortMySkills( c );
-	 	
+        
 //dumpMySkills(c);
-	 
-	 return 1;
+     
+     return 1;
 }
 
 /// helper function.  Sorts a cast member's skills by skilltype idx, then skill idx.
@@ -266,118 +266,118 @@ _sortMySkills( c );
 /// @TODO make it less dependant upon arTemp (also, MAX_SCRATCH needs to be forward-lookedup or something...)
 int _sortMySkills( int c )
 {
-	int i, j, cur_skilltype, capture_count;
-	string tmpstr;
-	int start, end, curcount, k;
-	
-	/*MAX_SCRATCH*/ 
-	if( master_cast[c].skillcount > 100 )
-	{
-		ErrorHandler( "_sortMySkills(): Holy jee-whiz.  You've totally exceeded the arTemp scratch size in that dude's skilllist.  You need to make MAX_SCRATCH bigger (and update the check in _sortMySkills after you do that), or make _sortMySkills more efficient, or something." );
-		exit( "FATAL ERROR!" );
-	}
-	
-	/// for each skilltype that there is (starting with -1 because that's the Command skilltype...)
-	for( cur_skilltype = 0-1; cur_skilltype<MAX_SKILLTYPES; cur_skilltype++ )
-	{
-		tmpstr = "";
-		
-		/// ...iterate over all of this dude's skills..
-		for( i=0; i<master_cast[c].skillcount; i++ )
-		{
-			/// and if the current iterative skill that this dude owns matches the current skilltype,
-			/// add it to the csv tmpstr.
-			if(  master_skills[master_cast[c].skills[i]].type == cur_skilltype )
-			{
-				tmpstr = tmpstr + str(master_cast[c].skills[i]) + ",";
-				capture_count++;
-			}
-		}
-		
-		
-		if( strcmp(tmpstr,"") )
-		{
-			arTempStr[j] = tmpstr;
-			j++;
-		}
-		
-		/// if we're done, escape this loop early.
-		if( capture_count == master_cast[c].skillcount )
-		{
-			cur_skilltype = MAX_SKILLTYPES;
-		}
-	}
-	
-	start = 0;
-	/// j now has the count of semisorted tmpStrs...
-	for( i=0; i<j; i++ )
-	{	
-		curcount = TokenCount( arTempStr[i], "," );
-		end = start + curcount;
-		
-		for( k=start; k<end; k++ )
-		{
-			arTemp[k] = val(GetToken( arTempStr[i], ",", k-start ));
-		}
-		
-		sortArTemp( start, end-1 );
-		start = end;
-	}
+    int i, j, cur_skilltype, capture_count;
+    string tmpstr;
+    int start, end, curcount, k;
+    
+    /*MAX_SCRATCH*/ 
+    if( master_cast[c].skillcount > 100 )
+    {
+        ErrorHandler( "_sortMySkills(): Holy jee-whiz.  You've totally exceeded the arTemp scratch size in that dude's skilllist.  You need to make MAX_SCRATCH bigger (and update the check in _sortMySkills after you do that), or make _sortMySkills more efficient, or something." );
+        exit( "FATAL ERROR!" );
+    }
+    
+    /// for each skilltype that there is (starting with -1 because that's the Command skilltype...)
+    for( cur_skilltype = 0-1; cur_skilltype<MAX_SKILLTYPES; cur_skilltype++ )
+    {
+        tmpstr = "";
+        
+        /// ...iterate over all of this dude's skills..
+        for( i=0; i<master_cast[c].skillcount; i++ )
+        {
+            /// and if the current iterative skill that this dude owns matches the current skilltype,
+            /// add it to the csv tmpstr.
+            if(  master_skills[master_cast[c].skills[i]].type == cur_skilltype )
+            {
+                tmpstr = tmpstr + str(master_cast[c].skills[i]) + ",";
+                capture_count++;
+            }
+        }
+        
+        
+        if( strcmp(tmpstr,"") )
+        {
+            arTempStr[j] = tmpstr;
+            j++;
+        }
+        
+        /// if we're done, escape this loop early.
+        if( capture_count == master_cast[c].skillcount )
+        {
+            cur_skilltype = MAX_SKILLTYPES;
+        }
+    }
+    
+    start = 0;
+    /// j now has the count of semisorted tmpStrs...
+    for( i=0; i<j; i++ )
+    {   
+        curcount = TokenCount( arTempStr[i], "," );
+        end = start + curcount;
+        
+        for( k=start; k<end; k++ )
+        {
+            arTemp[k] = val(GetToken( arTempStr[i], ",", k-start ));
+        }
+        
+        sortArTemp( start, end-1 );
+        start = end;
+    }
 
-	for( i=0; i<end; i++ )
-	{
+    for( i=0; i<end; i++ )
+    {
 
-		master_cast[c].skills[i] = arTemp[i];
-	}
-	
-	return end;
+        master_cast[c].skills[i] = arTemp[i];
+    }
+    
+    return end;
 }
 
 void dumpMySkills(int c)
 {
-	int i;
-	
-	Log( "dumpMySkills: '"+master_cast[c].name+"', "+str(master_cast[c].skillcount)+" skills..." );
-	
-	Log( "count	name	group	group_id	skill_id");
-	for( i=0; i<master_cast[c].skillcount; i++ )
-	{
-		if( master_skills[master_cast[c].skills[i]].type >= 0 )
-		{
-			Log( 
-				str(i)+"	"+ 
-				master_skills[master_cast[c].skills[i]].name +"	"+
-				master_skilltypes[master_skills[master_cast[c].skills[i]].type].name+"	"+
-				str(master_skills[master_cast[c].skills[i]].type) + "	" +
-				str(master_cast[c].skills[i]) 
-			);
-		}
-		else
-		{
-			Log( 
-				str(i)+"	"+ 
-				master_skills[master_cast[c].skills[i]].name +"	"+
-				"COMMAND	"+
-				str(master_skills[master_cast[c].skills[i]].type) + "	" +
-				str(master_cast[c].skills[i]) 
-			);
-		}
-		
-	}
-	
-	Log( "...dumpMySkills: '"+master_cast[c].name+"', done." );
+    int i;
+    
+    Log( "dumpMySkills: '"+master_cast[c].name+"', "+str(master_cast[c].skillcount)+" skills..." );
+    
+    Log( "count name    group   group_id    skill_id");
+    for( i=0; i<master_cast[c].skillcount; i++ )
+    {
+        if( master_skills[master_cast[c].skills[i]].type >= 0 )
+        {
+            Log( 
+                str(i)+_tab+ 
+                master_skills[master_cast[c].skills[i]].name +_tab+
+                master_skilltypes[master_skills[master_cast[c].skills[i]].type].name+_tab+
+                str(master_skills[master_cast[c].skills[i]].type) + _tab +
+                str(master_cast[c].skills[i]) 
+            );
+        }
+        else
+        {
+            Log( 
+                str(i)+_tab+ 
+                master_skills[master_cast[c].skills[i]].name +_tab+
+                "COMMAND"+_tab+
+                str(master_skills[master_cast[c].skills[i]].type) + _tab +
+                str(master_cast[c].skills[i]) 
+            );
+        }
+        
+    }
+    
+    Log( "...dumpMySkills: '"+master_cast[c].name+"', done." );
 }
 
 
 
 string GetSkillTargFunc( int sidx )
 {
-	return master_skills[sidx].target_func;
+    return master_skills[sidx].target_func;
 }
 
 string GetSkillEffectFunc( int sidx ) 
 {
-	return master_skills[sidx].effect_func;
+    return master_skills[sidx].effect_func;
 }
 
 /// returns the skilltype icon if the skill has a valid skilltype.
@@ -385,58 +385,58 @@ string GetSkillEffectFunc( int sidx )
 /// reference are invalid, in which case it returns 0.
 int GetSkillParentTypeIconIdx( int skill_idx )
 {
-	if( skill_idx < 0 )
-		return 0;
-	if( master_skills[skill_idx].type >= 0 )
-		return master_skilltypes[master_skills[skill_idx].type].icon;
-	else if( master_skills[skill_idx].icon >= 0 )
-		return master_skills[skill_idx].icon;
-	return 0;
+    if( skill_idx < 0 )
+        return 0;
+    if( master_skills[skill_idx].type >= 0 )
+        return master_skilltypes[master_skills[skill_idx].type].icon;
+    else if( master_skills[skill_idx].icon >= 0 )
+        return master_skills[skill_idx].icon;
+    return 0;
 }
 
 
 /// returns the number of Statuses that can Disable this skill.
 int GetSkillDisablingStatusCount( int skill_idx )
 {
-	return GetSkillTypeDisablingStatusCount(master_skills[skill_idx].type);
+    return GetSkillTypeDisablingStatusCount(master_skills[skill_idx].type);
 }
 
 /// returns the name of a given Status that can Disable this skill.
 string GetSkillDisablingStatusByIdx( int skill_idx, int offs )
 {
-	return GetSkillTypeDisablingStatusByIdx(master_skills[skill_idx].type, offs);
+    return GetSkillTypeDisablingStatusByIdx(master_skills[skill_idx].type, offs);
 }
 
 /// returns the number of Statuses that can Disable this skilltype.
 int GetSkillTypeDisablingStatusCount( int skilltype_idx )
 {
-	if( equ(master_skilltypes[skilltype_idx].disabling_status_ailments,"") )
-	{
-		return 0;
-	}
-	else
-	{
-		return TokenCount(master_skilltypes[skilltype_idx].disabling_status_ailments, ",");
-	}	
+    if( equ(master_skilltypes[skilltype_idx].disabling_status_ailments,"") )
+    {
+        return 0;
+    }
+    else
+    {
+        return TokenCount(master_skilltypes[skilltype_idx].disabling_status_ailments, ",");
+    }   
 }
 
 /// returns the name of a given Status that can Disable this skilltype.
 string GetSkillTypeDisablingStatusByIdx( int skilltype_idx, int offs )
 {
-	return GetToken(master_skilltypes[skilltype_idx].disabling_status_ailments, ",",offs);
+    return GetToken(master_skilltypes[skilltype_idx].disabling_status_ailments, ",",offs);
 }
 
 
 /// returns the amount of time this skill sets you back on the battle queue before it goes off.
 int GetSkillChargeTime( int s_idx )
 {
-	return master_skills[s_idx].charge_time;
+    return master_skills[s_idx].charge_time;
 }
 
 /// returns the amount of time this skill sets you back on the battle queue after use.
 int GetSkillDelayTime( int s_idx )
 {
-	return master_skills[s_idx].delay_time;
+    return master_skills[s_idx].delay_time;
 }
 
 
@@ -444,41 +444,41 @@ int GetSkillDelayTime( int s_idx )
 /// errors and returns 0 if an invalid index was passwd.
 int GetSkillMpCostI( int skill_idx )
 {
-	if( skill_idx < 0 || skill_idx >= MAX_SKILLS )
-	{
-		ErrorHandler( "GetSkillMpCostI("+str(skill_idx)+"): Invalid index (valid range 0-"+str(MAX_SKILLS)+")." );
-		return 0;
-	}
-	
-	return master_skills[skill_idx].mp_cost;
+    if( skill_idx < 0 || skill_idx >= MAX_SKILLS )
+    {
+        ErrorHandler( "GetSkillMpCostI("+str(skill_idx)+"): Invalid index (valid range 0-"+str(MAX_SKILLS)+")." );
+        return 0;
+    }
+    
+    return master_skills[skill_idx].mp_cost;
 }
 
 
 void DumpSkill( int idx )
 {
-	Log( "DUMPSKILL( "+str(idx)+" )" );
-	Log( "=============================" );
-	Log( "          name: " + master_skills[idx].name );
-	Log( "          desc: " + master_skills[idx].desc );
-	Log( "          icon: " + str(master_skills[idx].icon) );
-	Log( "      use_flag: " + str(master_skills[idx].use_flag) );
-	Log( "   target_func: " + master_skills[idx].target_func );
-	Log( "   effect_func: " + master_skills[idx].effect_func );
-	Log( "       mp_cost: " + str(master_skills[idx].mp_cost) );
-	Log( "          type: " + str(master_skills[idx].type) );
-	Log( "   charge_time: " + str(master_skills[idx].charge_time) );
-	Log( "    delay_time: " + str(master_skills[idx].delay_time) );
-	Log( "is_reflectable: " + str(master_skills[idx].is_reflectable) );
-	Log( "   is_nullable: " + str(master_skills[idx].is_nullable) );
-	Log( "=============================" );
+    Log( "DUMPSKILL( "+str(idx)+" )" );
+    Log( "=============================" );
+    Log( "          name: " + master_skills[idx].name );
+    Log( "          desc: " + master_skills[idx].desc );
+    Log( "          icon: " + str(master_skills[idx].icon) );
+    Log( "      use_flag: " + str(master_skills[idx].use_flag) );
+    Log( "   target_func: " + master_skills[idx].target_func );
+    Log( "   effect_func: " + master_skills[idx].effect_func );
+    Log( "       mp_cost: " + str(master_skills[idx].mp_cost) );
+    Log( "          type: " + str(master_skills[idx].type) );
+    Log( "   charge_time: " + str(master_skills[idx].charge_time) );
+    Log( "    delay_time: " + str(master_skills[idx].delay_time) );
+    Log( "is_reflectable: " + str(master_skills[idx].is_reflectable) );
+    Log( "   is_nullable: " + str(master_skills[idx].is_nullable) );
+    Log( "=============================" );
 }
 
 int IsSkillReflectable( int idx )
 {
-	return master_skills[idx].is_reflectable;
+    return master_skills[idx].is_reflectable;
 }
 
 int IsSkillNullable( int idx )
 {
-	return master_skills[idx].is_nullable;
+    return master_skills[idx].is_nullable;
 }
