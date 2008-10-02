@@ -380,6 +380,22 @@ void DrawBattleHUD()
     
 }
 
+int _DrawBattleMeters_maxwid = 34;
+
+
+
+int _DrawBattleMeters_calcPix( int max_, int cur_ ) {
+    if(max_==cur_) {
+        return _DrawBattleMeters_maxwid;
+    } else if( cur_ == 0 ) {
+        return 0;
+    } else {
+        arTemp[0] = _DrawBattleMeters_maxwid*100000/max_;
+        arTemp[0] = cur_*arTemp[0];
+        return arTemp[0]/100000;
+    }
+}
+
 void DrawBattleMeters( int x, int y, int cast_idx )
 {   
     // border
@@ -391,17 +407,33 @@ void DrawBattleMeters( int x, int y, int cast_idx )
     Line( x+1,y, x+35,y, RGB(0,0,0), screen);
     Line( x+1,y+4, x+35,y+4, RGB(0,0,0), screen);
     Line( x+1,y+8, x+35,y+8, RGB(0,0,0), screen);
-    
-    
+
+    int pixels = _DrawBattleMeters_calcPix(GetMaxHP(cast_idx),GetCurHP(cast_idx));
+
     // hp
-    Line( x+1,y+1, x+35,y+1, RGB(255,0,0), screen);
-    Line( x+1,y+2, x+35,y+2, RGB(255,42,42), screen);
-    Line( x+1,y+3, x+35,y+3, RGB(255,0,0), screen);
-    
+    RectFill(
+        x+1,y+1,
+        x+35,y+3,
+        RGB(0,0,0),
+        screen
+    );
+    Line( x+1,y+1, x+pixels,y+1, RGB(255,0,0), screen);
+    Line( x+1,y+2, x+pixels,y+2, RGB(255,42,42), screen);
+    Line( x+1,y+3, x+pixels,y+3, RGB(255,0,0), screen);
+
     // mp
-    Line( x+1,y+5, x+35,y+5, RGB(0,0,255), screen);
-    Line( x+1,y+6, x+35,y+6, RGB(42,42,255), screen);
-    Line( x+1,y+7, x+35,y+7, RGB(0,0,255), screen);
+    pixels = _DrawBattleMeters_calcPix(GetMaxMP(cast_idx),GetCurMP(cast_idx));
+
+    // mp
+    RectFill(
+        x+1,y+5,
+        x+35,y+7,
+        RGB(0,0,0),
+        screen
+    );
+    Line( x+1,y+5, x+1+pixels,y+5, RGB(0,0,255), screen);
+    Line( x+1,y+6, x+1+pixels,y+6, RGB(42,42,255), screen);
+    Line( x+1,y+7, x+1+pixels,y+7, RGB(0,0,255), screen);
 }
 
 /// -1 if the allys are ambushed, 1 if the enemies are ambushed, 0 if nobody is ambushed.

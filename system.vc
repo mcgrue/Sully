@@ -4,19 +4,13 @@
 // Open this file to learn more if you don't already know!
 #include "flags.vc"
 
-
-
 // The master include file for all the vc libraries.  Open this up to
 // See where all of the vc system source is.
 #include "vc/includes.vc"
 
-
-
 // This is a file that holds Targetting and effect functions 
 // that items.dat and skills.dat would ask for,
 #include "effects.vc"
-
-
 
 // notice that there is no "v3splash.vc" in the base directory of this game.
 // This is because "v3splash.vc", and all the files it needs, are stored 
@@ -29,7 +23,6 @@
 // in the game directory.  Load up PackEd.exe yourself and open this file up to 
 // look inside!
 #include "v3splash.vc"
-
 
 // Some various Story-related variables and effects. 
 //
