@@ -8,16 +8,16 @@
 
 /**************************** data ****************************/
 
-#define MAX_ANIMATIONS 	100	// Tweak this to your liking!
-#define NO_INDEX	65535	// This is just a sentinel.
+#define MAX_ANIMATIONS  100 // Tweak this to your liking!
+#define NO_INDEX    65535   // This is just a sentinel.
 
 struct anim_t
 {
-	int sizex, sizey;
-	int numframes;
-	int active;
-	int image;
-	int bufimage, bufferedframe;
+    int sizex, sizey;
+    int numframes;
+    int active;
+    int image;
+    int bufimage, bufferedframe;
 };
 
 anim_t anims[MAX_ANIMATIONS];
@@ -25,7 +25,7 @@ anim_t anims[MAX_ANIMATIONS];
 
 struct patterned_anim_t
 {
-	int anim_idx;	// the index of the animation.
+    int anim_idx;   // the index of the animation.
 
 }
 
@@ -43,48 +43,48 @@ struct patterned_anim_t
 /// @param sizey the vertical size of a frame, in pixels.
 int LoadAnimation(string filename, int sizex, int sizey)
 {
-	int i, index;
-	
-	// find a free animation slot thingy
-	index = NO_INDEX;
-	for (i=0; i<MAX_ANIMATIONS; i++)
-		if (!anims[i].active && i<index)
-			index = i;
+    int i, index;
+    
+    // find a free animation slot thingy
+    index = NO_INDEX;
+    for (i=0; i<MAX_ANIMATIONS; i++)
+        if (!anims[i].active && i<index)
+            index = i;
 
-	// exit if none available
-	if (index == NO_INDEX) 
-		Exit("LoadAnimation: No free slots available! Increase MAX_ANIMATIONS!");
+    // exit if none available
+    if (index == NO_INDEX) 
+        Exit("LoadAnimation: No free slots available! Increase MAX_ANIMATIONS!");
 
-	// load up this animation, detect number of frames
-	anims[index].image = LoadImage0(filename);
-	anims[index].active = 1;
-	anims[index].sizex = sizex;
-	anims[index].sizey = sizey;
-	anims[index].numframes = ImageHeight(anims[index].image) / sizey;
-	anims[index].bufimage = NewImage(sizex, sizey);
-	anims[index].bufferedframe = 65535;
-	return index;
+    // load up this animation, detect number of frames
+    anims[index].image = LoadImage0(filename);
+    anims[index].active = 1;
+    anims[index].sizex = sizex;
+    anims[index].sizey = sizey;
+    anims[index].numframes = ImageHeight(anims[index].image) / sizey;
+    anims[index].bufimage = NewImage(sizex, sizey);
+    anims[index].bufferedframe = 65535;
+    return index;
 }
 
 /// Takes an anim_t index and frees that from the stack.
 /// Quietly logs an error if you attempt to free an unused index.
 void FreeAnimation(int index)
 {
-	if (!anims[index].active)
-	{
-		Log("FreeAnimation() - Requested index is not in use!!!");
-		return; 
-	}
-	
-	FreeImage(anims[index].image);
-	FreeImage(anims[index].bufimage);
-	anims[index].image = 0;
-	anims[index].sizex = 0;
-	anims[index].sizey = 0;
-	anims[index].numframes = 0;
-	anims[index].active = 0;
-	anims[index].bufimage = 0;
-	anims[index].bufferedframe = 65535;
+    if (!anims[index].active)
+    {
+        Log("FreeAnimation() - Requested index is not in use!!!");
+        return; 
+    }
+    
+    FreeImage(anims[index].image);
+    FreeImage(anims[index].bufimage);
+    anims[index].image = 0;
+    anims[index].sizex = 0;
+    anims[index].sizey = 0;
+    anims[index].numframes = 0;
+    anims[index].active = 0;
+    anims[index].bufimage = 0;
+    anims[index].bufferedframe = 65535;
 }
 
 /// blits a frame from anim to dest at x,y.
@@ -93,46 +93,46 @@ void FreeAnimation(int index)
 ///
 void BlitFrame(int x, int y, int anim, int frame, int dest)
 {
-	int frametop;
+    int frametop;
 
-	if (!anims[anim].active)
-		Exit("BlitFrame() - Requested animation is empty!!");
+    if (!anims[anim].active)
+        Exit("BlitFrame() - Requested animation is empty!!");
 
-	if (frame > anims[anim].numframes)
-		return;
-		
-	if (frame == anims[anim].bufferedframe)
-	{
-		Blit(x, y, anims[anim].bufimage, dest);
-		return;
-	}
-			
-	frametop = anims[anim].sizey * frame;
-	GrabRegion(0, frametop, anims[anim].sizex-1, frametop+anims[anim].sizey-1, 0, 0, anims[anim].image, anims[anim].bufimage);
-	anims[anim].bufferedframe = frame;
-	Blit(x, y, anims[anim].bufimage, dest);
+    if (frame > anims[anim].numframes)
+        return;
+        
+    if (frame == anims[anim].bufferedframe)
+    {
+        Blit(x, y, anims[anim].bufimage, dest);
+        return;
+    }
+            
+    frametop = anims[anim].sizey * frame;
+    GrabRegion(0, frametop, anims[anim].sizex-1, frametop+anims[anim].sizey-1, 0, 0, anims[anim].image, anims[anim].bufimage);
+    anims[anim].bufferedframe = frame;
+    Blit(x, y, anims[anim].bufimage, dest);
 }
 
 void TBlitFrame(int x, int y, int anim, int frame, int dest)
 {
-	int frametop;
+    int frametop;
 
-	if (!anims[anim].active)
-		Exit("TBlitFrame() - Requested animation is empty!!");
+    if (!anims[anim].active)
+        Exit("TBlitFrame() - Requested animation is empty!!");
 
-	if (frame > anims[anim].numframes)
-		return;
-		
-	if (frame == anims[anim].bufferedframe)
-	{
-		TBlit(x, y, anims[anim].bufimage, dest);
-		return;
-	}
-			
-	frametop = anims[anim].sizey * frame;
-	GrabRegion(0, frametop, anims[anim].sizex-1, frametop+anims[anim].sizey-1, 0, 0, anims[anim].image, anims[anim].bufimage);
-	anims[anim].bufferedframe = frame;
-	TBlit(x, y, anims[anim].bufimage, dest);
+    if (frame > anims[anim].numframes)
+        return;
+        
+    if (frame == anims[anim].bufferedframe)
+    {
+        TBlit(x, y, anims[anim].bufimage, dest);
+        return;
+    }
+            
+    frametop = anims[anim].sizey * frame;
+    GrabRegion(0, frametop, anims[anim].sizex-1, frametop+anims[anim].sizey-1, 0, 0, anims[anim].image, anims[anim].bufimage);
+    anims[anim].bufferedframe = frame;
+    TBlit(x, y, anims[anim].bufimage, dest);
 }
 
 // Transparently draws frame #'frame of animation 'anim' onto 'dest' with the frame centered on (x,y)
@@ -141,33 +141,33 @@ void TBlitFrame(int x, int y, int anim, int frame, int dest)
 // the frame must be a valid frame for the animation.
 void BlitFrameAt(int x, int y, int anim, int frame, int dest)
 {
-	int frametop;
+    int frametop;
 
-	if (!anims[anim].active)
-		Exit("BlitFrameAt() - Requested animation is empty!!");
+    if (!anims[anim].active)
+        Exit("BlitFrameAt() - Requested animation is empty!!");
 
-	if (frame > anims[anim].numframes)
-		return;
-		
-	if (frame < 0)
-		return;
+    if (frame > anims[anim].numframes)
+        return;
+        
+    if (frame < 0)
+        return;
 
-	if (frame == anims[anim].bufferedframe)
-	{
-		TBlit(x-(anims[anim].sizex/2), y-(anims[anim].sizey/2), anims[anim].bufimage, dest);
-		return;
-	}
-			
-	frametop = anims[anim].sizey * frame;
-	GrabRegion(0, frametop, anims[anim].sizex-1, frametop+anims[anim].sizey-1, 0, 0, anims[anim].image, anims[anim].bufimage);
-	anims[anim].bufferedframe = frame;
-	TBlit(x-(anims[anim].sizex/2),  y-(anims[anim].sizey/2), anims[anim].bufimage, dest);
-	
+    if (frame == anims[anim].bufferedframe)
+    {
+        TBlit(x-(anims[anim].sizex/2), y-(anims[anim].sizey/2), anims[anim].bufimage, dest);
+        return;
+    }
+            
+    frametop = anims[anim].sizey * frame;
+    GrabRegion(0, frametop, anims[anim].sizex-1, frametop+anims[anim].sizey-1, 0, 0, anims[anim].image, anims[anim].bufimage);
+    anims[anim].bufferedframe = frame;
+    TBlit(x-(anims[anim].sizex/2),  y-(anims[anim].sizey/2), anims[anim].bufimage, dest);
+    
 }
 
 // Transparently draws 'img' onto 'dest' with 'img' centered on (x,y)
 // 'img' and 'dest' must be valid v3 image references.
 void BlitAt(int x, int y, int img, int dest)
 {
-	TBlit(x-(ImageWidth(img)/2), y-(ImageWidth(img)/2), img, dest);
+    TBlit(x-(ImageWidth(img)/2), y-(ImageWidth(img)/2), img, dest);
 }

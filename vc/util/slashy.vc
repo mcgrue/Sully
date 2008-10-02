@@ -6,16 +6,16 @@
 
 struct slashy
 {
-	string path;
-	int sizex, sizey, framecount;
-	int img_ref;
+    string path;
+    int sizex, sizey, framecount;
+    int img_ref;
 }
 
 struct slashy_instance
 {
-	int x, y;
-	int slashy_idx;
-	int done;
+    int x, y;
+    int slashy_idx;
+    int done;
 }
 
 
@@ -38,40 +38,40 @@ int cur_slashes_count;
 
 void InitSlashy()
 {
-	LoadSlashy( "res\images\battle\slash_monster1.png",32 );
-	LoadSlashy( "res\images\battle\slash_sword1.png",32 );
+    LoadSlashy( "res\images\battle\slash_monster1.png",32 );
+    LoadSlashy( "res\images\battle\slash_sword1.png",32 );
 }
 
 /// Loads a slashy animation into memory.  No errorchecking at present.
 /// Expects no filler space in slashy graphic at present.
 int LoadSlashy( string fname, int fheight )
 {
-	int i = my_slashies_count;
-	
-	my_slashies[i].path = fname;
-	my_slashies[i].img_ref = LoadImage( fname );
-	
-	my_slashies[i].sizex = ImageWidth( my_slashies[i].img_ref );
-	my_slashies[i].sizey = fheight;
-	my_slashies[i].framecount = ImageHeight(my_slashies[i].img_ref) / fheight;
-	
-	my_slashies_count++;
+    int i = my_slashies_count;
+    
+    my_slashies[i].path = fname;
+    my_slashies[i].img_ref = LoadImage( fname );
+    
+    my_slashies[i].sizex = ImageWidth( my_slashies[i].img_ref );
+    my_slashies[i].sizey = fheight;
+    my_slashies[i].framecount = ImageHeight(my_slashies[i].img_ref) / fheight;
+    
+    my_slashies_count++;
 }
 
 //Draws a slashie 
 void DrawSlashy( int i )
-{	
-	int im;
-	int f = (systemtime - slashtime_start) / SLASH_DELAY;
-	
-	if( f < my_slashies[i].framecount )
-	{
-		im = ImageShell( 0, f*my_slashies[ cur_slashes[i].slashy_idx ].sizey, my_slashies[ cur_slashes[i].slashy_idx ].sizex, my_slashies[ cur_slashes[i].slashy_idx ].sizey, my_slashies[ cur_slashes[i].slashy_idx ].img_ref );
+{   
+    int im;
+    int f = (systemtime - slashtime_start) / SLASH_DELAY;
+    
+    if( f < my_slashies[i].framecount )
+    {
+        im = ImageShell( 0, f*my_slashies[ cur_slashes[i].slashy_idx ].sizey, my_slashies[ cur_slashes[i].slashy_idx ].sizex, my_slashies[ cur_slashes[i].slashy_idx ].sizey, my_slashies[ cur_slashes[i].slashy_idx ].img_ref );
 
-		TBlit( cur_slashes[i].x, cur_slashes[i].y, im, screen );
+        TBlit( cur_slashes[i].x, cur_slashes[i].y, im, screen );
 
-		FreeImage( im );
-	}
+        FreeImage( im );
+    }
 }
 
 
@@ -79,91 +79,91 @@ void DrawSlashy( int i )
 //hook this to retrace
 void DoSlashy()
 {
-	int i,j,k;
+    int i,j,k;
 
 //**// Log( "DoSlashy (cur_slashes_count: "+str(cur_slashes_count)+")" );
 
-	for(i=0;i<cur_slashes_count;i++)
-	{
-		if( !cur_slashes[i].done )
-		{
-			UpdateSlashy( i );
-			
-			DrawSlashy(i);
-		}
-	}
-	
-	if( !cur_slashes_count )
-		__slashy_on = 0;
+    for(i=0;i<cur_slashes_count;i++)
+    {
+        if( !cur_slashes[i].done )
+        {
+            UpdateSlashy( i );
+            
+            DrawSlashy(i);
+        }
+    }
+    
+    if( !cur_slashes_count )
+        __slashy_on = 0;
 }
 
 void UpdateSlashy( int i )
 {
-	int j;
+    int j;
 //Log( "UpdateSlashy!" );
-	if( slashtime_start + (my_slashies[cur_slashes[i].slashy_idx].framecount * SLASH_DELAY) <= systemtime ) 
-	{
-		cur_slashes[i].done = 1;
-		
-		for( j=0; j<cur_slashes_count; j++ )
-		{
-			if( !cur_slashes[j].done )
-				return;
-		}
-		
-		cur_slashes_count = 0;
-		__slashy_on = 0;
-	}
+    if( slashtime_start + (my_slashies[cur_slashes[i].slashy_idx].framecount * SLASH_DELAY) <= systemtime ) 
+    {
+        cur_slashes[i].done = 1;
+        
+        for( j=0; j<cur_slashes_count; j++ )
+        {
+            if( !cur_slashes[j].done )
+                return;
+        }
+        
+        cur_slashes_count = 0;
+        __slashy_on = 0;
+    }
 }
 
 
 int AddCurrentSlashy( int battle_ref, int slash_ref )
 {
-	int i = cur_slashes_count;
-	int tx, ty;
-	
-	tx = mcg_getX( battle_ref ) + ( mcg_width(battle_ref)/2 );
-	ty = mcg_getY( battle_ref ) + ( mcg_height(battle_ref)/2 );
-	
-	tx = tx - (my_slashies[slash_ref].sizex/2);
-	ty = ty - (my_slashies[slash_ref].sizey/2);
-		
-	cur_slashes[i].slashy_idx = slash_ref;
-	cur_slashes[i].x = tx;
-	cur_slashes[i].y = ty;	
-	
-	cur_slashes_count++;
+    int i = cur_slashes_count;
+    int tx, ty;
+    
+    tx = mcg_getX( battle_ref ) + ( mcg_width(battle_ref)/2 );
+    ty = mcg_getY( battle_ref ) + ( mcg_height(battle_ref)/2 );
+    
+    tx = tx - (my_slashies[slash_ref].sizex/2);
+    ty = ty - (my_slashies[slash_ref].sizey/2);
+        
+    cur_slashes[i].slashy_idx = slash_ref;
+    cur_slashes[i].x = tx;
+    cur_slashes[i].y = ty;  
+    
+    cur_slashes_count++;
 }
 
 int __slashy_on = 0;
 void StartCurrentSlashy()
 {
-	int i;
-	
-	__slashy_on = 1;
-	
-	for( i=0; i<cur_slashes_count; i++ )
-	{
-		cur_slashes[i].done = 0;
-	}
-	
-	slashtime_start = systemtime;
+    int i;
+    
+    __slashy_on = 1;
+    
+    for( i=0; i<cur_slashes_count; i++ )
+    {
+        cur_slashes[i].done = 0;
+    }
+    
+    slashtime_start = systemtime;
 }
 
 int IsSlashyOn() {
-	return __slashy_on;
+    return __slashy_on;
 }
 
 int TurnSlashyOff() {
 
-	int j;
-	
-	__slashy_on = 0;
-	
-	for( j=0; j<cur_slashes_count; j++ )
-	{
-		cur_slashes[j].done = 1;
-	}
-	
-	cur_slashes_count = 0;
+    int j;
+    
+    __slashy_on = 0;
+    
+    for( j=0; j<cur_slashes_count; j++ )
+    {
+        cur_slashes[j].done = 1;
+    }
+    
+    cur_slashes_count = 0;
 }

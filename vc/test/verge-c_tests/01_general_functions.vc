@@ -6,23 +6,23 @@
 int ___testCallFunction = 0;
 void _testCallFunction()
 {
-	___testCallFunction = 17;
+    ___testCallFunction = 17;
 }
 
 /// CallFunction() Executes a function by the name it's given.
 void testCallFunction()
 {
-	___testCallFunction = 0;
-	
-	CallFunction("_testCallFunction");
-	
-	assertTrue( ___testCallFunction==17 );
+    ___testCallFunction = 0;
+    
+    CallFunction("_testCallFunction");
+    
+    assertTrue( ___testCallFunction==17 );
 }
 
 void testFunctionExists()
 {
-	assertTrue( FunctionExists("testFunctionExists") );
-	assertFalse( FunctionExists("This_Is_A_fake_function_name_that_shouldnt_exist") );
+    assertTrue( FunctionExists("testFunctionExists") );
+    assertFalse( FunctionExists("This_Is_A_fake_function_name_that_shouldnt_exist") );
 }
 
 

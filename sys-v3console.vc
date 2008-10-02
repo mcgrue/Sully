@@ -243,7 +243,7 @@ void V3Console__ParsePrompt(string a)
     //EXIT VERGE
     if(!strcmp(s,"exit") || !strcmp(s,"quit") )
     {
-    	console.activated = 0;
+        console.activated = 0;
         //exit(a);
     }
     //GET THE VERSION

@@ -5,29 +5,29 @@
 /// 4 for verge standard, 8 for SNES.
 #define CURRENT_KEYCOUNT 8
 
-#define KEY_A		0
-#define KEY_B		1
-#define KEY_X		2
-#define KEY_Y		3
-#define KEY_L		4
-#define KEY_R		5
-#define KEY_SELECT	6
-#define KEY_START	7
+#define KEY_A       0
+#define KEY_B       1
+#define KEY_X       2
+#define KEY_Y       3
+#define KEY_L       4
+#define KEY_R       5
+#define KEY_SELECT  6
+#define KEY_START   7
 
 /// directional obfuscation
 /// at this time, these are not remappable.
-#define KEY_UP		0
-#define KEY_DOWN	1
-#define KEY_LEFT	2
-#define KEY_RIGHT	3
+#define KEY_UP      0
+#define KEY_DOWN    1
+#define KEY_LEFT    2
+#define KEY_RIGHT   3
 
 /// These define the extended default keyset
 /// (shoulder buttons, select and start)
 ///
-#define BUTTON_DEFAULT_LT	30	//SCAN_A
-#define BUTTON_DEFAULT_RT	31	//SCAN_S
-#define BUTTON_DEFAULT_SEL	32	//SCAN_D
-#define BUTTON_DEFAULT_STA	33	//SCAN_F
+#define BUTTON_DEFAULT_LT   30  //SCAN_A
+#define BUTTON_DEFAULT_RT   31  //SCAN_S
+#define BUTTON_DEFAULT_SEL  32  //SCAN_D
+#define BUTTON_DEFAULT_STA  33  //SCAN_F
 
 int sfx_keyconf_buzz;
 int fnt_kyconf;
@@ -35,37 +35,37 @@ int fnt_kyconf;
 /// returns the volume level for the config menu's soundeffects.
 int GetKeyConfVol()
 {
-	return 75;
+    return 75;
 }
 
 void init_keyconf()
 {
-	init_keyconfig();
-	
-	sfx_keyconf_buzz = LoadSound( "/res/system/keyconf/angry_buzz.wav" );
-	fnt_kyconf = LoadFontEx("vc\keyconf\grue_5x5.gif", 5, 5);
-	EnableVariableWidth(fnt_kyconf);
+    init_keyconfig();
+    
+    sfx_keyconf_buzz = LoadSound( "/res/system/keyconf/angry_buzz.wav" );
+    fnt_kyconf = LoadFontEx("vc\keyconf\grue_5x5.gif", 5, 5);
+    EnableVariableWidth(fnt_kyconf);
 }
 
 string GetKeyConfName( int _my_keys_idx )
 {
-	string s;
-	
-	if( _my_keys_idx < 0 || _my_keys_idx > CURRENT_KEYCOUNT )	ButtonError( "GetKeyConfName" );
-		
-	switch( _my_keys_idx )
-	{
-		case 0: s = "accept";
-		case 1: s = "cancel";
-		case 2: s = "menu";
-		case 3: s = "aux";
-		case 4: s = "left shoulder";
-		case 5: s = "right shoulder";
-		case 6: s = "select";
-		case 7: s = "start";
-	}
-	
-	return s;
+    string s;
+    
+    if( _my_keys_idx < 0 || _my_keys_idx > CURRENT_KEYCOUNT )   ButtonError( "GetKeyConfName" );
+        
+    switch( _my_keys_idx )
+    {
+        case 0: s = "accept";
+        case 1: s = "cancel";
+        case 2: s = "menu";
+        case 3: s = "aux";
+        case 4: s = "left shoulder";
+        case 5: s = "right shoulder";
+        case 6: s = "select";
+        case 7: s = "start";
+    }
+    
+    return s;
 }
 
 /// stores the current key configuration
@@ -98,199 +98,199 @@ int _my_dirs_unpress[4];
 
 /// 0 for 'unset', 1 for keyboard, 2 for joystick.
 
-#define	KEYMODE_DEFAULT		0
-#define	KEYMODE_CUST_KEYBOARD	1
-#define	KEYMODE_CUST_JOYSTICK	2
+#define KEYMODE_DEFAULT     0
+#define KEYMODE_CUST_KEYBOARD   1
+#define KEYMODE_CUST_JOYSTICK   2
 
 int _keymode;
 
 /// buttonpresses will repeat every freq/100 seconds.  set negative to turn off.
 void SetRepeaterModeMcFAIL( int freq )
 {
-	_key_delay = freq;
+    _key_delay = freq;
 }
 
 /// Updates the states for all of the McFAIL virtual button bindings.
 void UpdateControlsMcFAIL()
 {
-	UpdateControls();
-	_UpdateDirs();
-	_UpdateLastKeys();
-	
-	switch( _keymode )
-	{
-		case  KEYMODE_DEFAULT:
-			_UpdateControlsStdMcFAIL();
+    UpdateControls();
+    _UpdateDirs();
+    _UpdateLastKeys();
+    
+    switch( _keymode )
+    {
+        case  KEYMODE_DEFAULT:
+            _UpdateControlsStdMcFAIL();
 
-		case  KEYMODE_CUST_KEYBOARD:
-			_UpdateCustKeyMcFAIL();
+        case  KEYMODE_CUST_KEYBOARD:
+            _UpdateCustKeyMcFAIL();
 
-		case  KEYMODE_CUST_JOYSTICK:
-			_UpdateCustJoyMcFAIL();
+        case  KEYMODE_CUST_JOYSTICK:
+            _UpdateCustJoyMcFAIL();
 
-		default:
-			ButtonError( "UpdateGrueControls(), unknown _keymode (was passed "+str(_keymode)+")" );
-	}
-	
-	_UpdateUnpress();
+        default:
+            ButtonError( "UpdateGrueControls(), unknown _keymode (was passed "+str(_keymode)+")" );
+    }
+    
+    _UpdateUnpress();
 }
 
 void _UpdateUnpress()
 {
-	int i;
-	for(i=0; i<CURRENT_KEYCOUNT; i++)
-	{
-		if( !_my_keys_cur[i] )
-		{
-			_my_keys_unpress[i] = 1;
-		}
-	}
-	
-	for(i=0; i<4; i++)
-	{
-		if( !_my_dirs_cur[i] )
-		{
-			_my_dirs_unpress[i] = 1;
-		}
-	}
+    int i;
+    for(i=0; i<CURRENT_KEYCOUNT; i++)
+    {
+        if( !_my_keys_cur[i] )
+        {
+            _my_keys_unpress[i] = 1;
+        }
+    }
+    
+    for(i=0; i<4; i++)
+    {
+        if( !_my_dirs_cur[i] )
+        {
+            _my_dirs_unpress[i] = 1;
+        }
+    }
 }
 
 /// updates _my_dirs_cur and _my_dirs_last
 void _UpdateDirs()
 {
-	int i;
-	for(i=0; i<4; i++)
-	{
-		_my_dirs_last[i] = _my_dirs_cur[i];
-	}
-	
-	_my_dirs_cur[KEY_UP]	= up;
-	_my_dirs_cur[KEY_DOWN]	= down;
-	_my_dirs_cur[KEY_LEFT]	= left;
-	_my_dirs_cur[KEY_RIGHT]	= right;
-	
-	if( _key_delay >= 0 )
-	{
-		for(i=0; i<4; i++)
-		{
-			if( !_my_dirs_unpress[i] )
-			{
-				if( systemtime >= _my_dirs_repeater[i] )
-				{
-					_my_dirs_unpress[i] = 1;
-				}
-			}
-		}
-	}
+    int i;
+    for(i=0; i<4; i++)
+    {
+        _my_dirs_last[i] = _my_dirs_cur[i];
+    }
+    
+    _my_dirs_cur[KEY_UP]    = up;
+    _my_dirs_cur[KEY_DOWN]  = down;
+    _my_dirs_cur[KEY_LEFT]  = left;
+    _my_dirs_cur[KEY_RIGHT] = right;
+    
+    if( _key_delay >= 0 )
+    {
+        for(i=0; i<4; i++)
+        {
+            if( !_my_dirs_unpress[i] )
+            {
+                if( systemtime >= _my_dirs_repeater[i] )
+                {
+                    _my_dirs_unpress[i] = 1;
+                }
+            }
+        }
+    }
 }
 
 /// Shuffles the current virtual key states into memory so that the new ones may be set.
 void _UpdateLastKeys()
 {
-	int i;
-	for(i=0; i<CURRENT_KEYCOUNT; i++)
-	{
-		_my_keys_last[i] = _my_keys_cur[i];
-	}
-	
-	if( _key_delay >= 0 )
-	{
-		for(i=0; i<CURRENT_KEYCOUNT; i++)
-		{
-			if( !_my_keys_unpress[i] )
-			{
-				if( systemtime >= _my_keys_repeater[i] )
-				{
-					_my_keys_unpress[i] = 1;
-				}
-			}
-		}
-	}
+    int i;
+    for(i=0; i<CURRENT_KEYCOUNT; i++)
+    {
+        _my_keys_last[i] = _my_keys_cur[i];
+    }
+    
+    if( _key_delay >= 0 )
+    {
+        for(i=0; i<CURRENT_KEYCOUNT; i++)
+        {
+            if( !_my_keys_unpress[i] )
+            {
+                if( systemtime >= _my_keys_repeater[i] )
+                {
+                    _my_keys_unpress[i] = 1;
+                }
+            }
+        }
+    }
 }
 
 /// sets _my_keys_cur and _my_keys_last for the default bindings.
 void _UpdateControlsStdMcFAIL()
 {
-	int i;	
-	for(i=0; i<CURRENT_KEYCOUNT; i++)
-	{
-		switch(i)
-		{
-			case  KEY_A:
-				_my_keys_cur[KEY_A] = b1;
-				
-			case  KEY_B:
-				_my_keys_cur[KEY_B] = b2;
-				
-			case  KEY_X:
-				_my_keys_cur[KEY_X] = b3;
-				
-			case  KEY_Y:
-				_my_keys_cur[KEY_Y] = b4;
-				
-			case  KEY_L:
-				_my_keys_cur[KEY_L] = key[BUTTON_DEFAULT_LT];
-				
-			case  KEY_R:
-				_my_keys_cur[KEY_R] = key[BUTTON_DEFAULT_RT];
-				
-			case  KEY_SELECT:
-				_my_keys_cur[KEY_SELECT] = key[BUTTON_DEFAULT_SEL];
-				
-			case  KEY_START:
-				_my_keys_cur[KEY_START] = key[BUTTON_DEFAULT_STA];
-				
-			default:
-				ButtonError( "_UpdateGrueControlsStd, curkey update index invalid (was passed "+str(i)+")" );
-		}
-	}	
+    int i;  
+    for(i=0; i<CURRENT_KEYCOUNT; i++)
+    {
+        switch(i)
+        {
+            case  KEY_A:
+                _my_keys_cur[KEY_A] = b1;
+                
+            case  KEY_B:
+                _my_keys_cur[KEY_B] = b2;
+                
+            case  KEY_X:
+                _my_keys_cur[KEY_X] = b3;
+                
+            case  KEY_Y:
+                _my_keys_cur[KEY_Y] = b4;
+                
+            case  KEY_L:
+                _my_keys_cur[KEY_L] = key[BUTTON_DEFAULT_LT];
+                
+            case  KEY_R:
+                _my_keys_cur[KEY_R] = key[BUTTON_DEFAULT_RT];
+                
+            case  KEY_SELECT:
+                _my_keys_cur[KEY_SELECT] = key[BUTTON_DEFAULT_SEL];
+                
+            case  KEY_START:
+                _my_keys_cur[KEY_START] = key[BUTTON_DEFAULT_STA];
+                
+            default:
+                ButtonError( "_UpdateGrueControlsStd, curkey update index invalid (was passed "+str(i)+")" );
+        }
+    }   
 }
 
 /// sets _my_keys_cur for the custom keyboard.
 void _UpdateCustKeyMcFAIL()
 {
-	int i;	
-	for(i=0; i<CURRENT_KEYCOUNT; i++)
-	{
-		_my_keys_cur[i] = key[_my_keys[i]];
-	}
+    int i;  
+    for(i=0; i<CURRENT_KEYCOUNT; i++)
+    {
+        _my_keys_cur[i] = key[_my_keys[i]];
+    }
 }
 
 /// sets _my_keys_cur for the custom joystick.
 void _UpdateCustJoyMcFAIL()
 {
-	int i;	
-	for(i=0; i<CURRENT_KEYCOUNT; i++)
-	{
-		_my_keys_cur[i] = joy.button[_my_keys[i]];
-	}
+    int i;  
+    for(i=0; i<CURRENT_KEYCOUNT; i++)
+    {
+        _my_keys_cur[i] = joy.button[_my_keys[i]];
+    }
 }
 
 
 /// This is called if the _keymode is invalid.
 void ButtonError( string s )
 {
-	exit( "ButtonError("+s+"): _keymode was " + str(_keymode) );
+    exit( "ButtonError("+s+"): _keymode was " + str(_keymode) );
 }
 
 void _SetUnpressKey( int idx )
 {
-	_my_keys_unpress[idx] = 0;
-	
-	if( _key_delay >= 0 )
-	{
-		_my_keys_repeater[idx] = systemtime + _key_delay;
-	}
+    _my_keys_unpress[idx] = 0;
+    
+    if( _key_delay >= 0 )
+    {
+        _my_keys_repeater[idx] = systemtime + _key_delay;
+    }
 }
 
 void _SetUnpressDir( int idx )
 {
-	_my_dirs_unpress[idx] = 0;
-	
-	if( _key_delay >= 0 )
-	{
-		_my_dirs_repeater[idx] = systemtime + _key_delay;
-	}
+    _my_dirs_unpress[idx] = 0;
+    
+    if( _key_delay >= 0 )
+    {
+        _my_dirs_repeater[idx] = systemtime + _key_delay;
+    }
 }
 
 
@@ -298,15 +298,15 @@ void _SetUnpressDir( int idx )
 /// unpresses the button if it was pressed and unp was true.
 int ButtonAccept( int unp )
 {
-	if( _my_keys_cur[KEY_A] && _my_keys_unpress[KEY_A] && unp )
-	{
-		_SetUnpressKey(KEY_A);
-		return 1;
-	}
-		
-	if( _my_keys_cur[KEY_A] && _my_keys_unpress[KEY_A])
-		return 1;
-	return 0;
+    if( _my_keys_cur[KEY_A] && _my_keys_unpress[KEY_A] && unp )
+    {
+        _SetUnpressKey(KEY_A);
+        return 1;
+    }
+        
+    if( _my_keys_cur[KEY_A] && _my_keys_unpress[KEY_A])
+        return 1;
+    return 0;
 }
 
 
@@ -314,30 +314,30 @@ int ButtonAccept( int unp )
 /// unpresses the button if it was pressed and unp was true.
 int ButtonCancel( int unp )
 {
-	if( _my_keys_cur[KEY_B]&& _my_keys_unpress[KEY_B] && unp )
-	{
-		_SetUnpressKey(KEY_B);
-		return 1;
-	}
-		
-	if( _my_keys_cur[KEY_B] && _my_keys_unpress[KEY_B] )
-		return 1;
-	return 0;
+    if( _my_keys_cur[KEY_B]&& _my_keys_unpress[KEY_B] && unp )
+    {
+        _SetUnpressKey(KEY_B);
+        return 1;
+    }
+        
+    if( _my_keys_cur[KEY_B] && _my_keys_unpress[KEY_B] )
+        return 1;
+    return 0;
 }
 
 /// Returns the state of the "menu" button.  
 /// unpresses the button if it was pressed and unp was true.
 int ButtonMenu( int unp )
 {
-	if( _my_keys_cur[KEY_X] && _my_keys_unpress[KEY_X] && unp )
-	{
-		_SetUnpressKey(KEY_X);
-		return 1;
-	}
-		
-	if( _my_keys_cur[KEY_X] && _my_keys_unpress[KEY_X] )
-		return 1;
-	return 0;
+    if( _my_keys_cur[KEY_X] && _my_keys_unpress[KEY_X] && unp )
+    {
+        _SetUnpressKey(KEY_X);
+        return 1;
+    }
+        
+    if( _my_keys_cur[KEY_X] && _my_keys_unpress[KEY_X] )
+        return 1;
+    return 0;
 }
 
 
@@ -346,15 +346,15 @@ int ButtonMenu( int unp )
 /// unpresses the button if it was pressed and unp was true.
 int ButtonAux( int unp )
 {
-	if( (_my_keys_cur[KEY_Y]&_my_keys_unpress[KEY_Y]) && unp )
-	{
-		_SetUnpressKey(KEY_Y);
-		return 1;
-	}
-		
-	if(  _my_keys_cur[KEY_Y] && _my_keys_unpress[KEY_Y] )
-		return 1;
-	return 0;
+    if( (_my_keys_cur[KEY_Y]&_my_keys_unpress[KEY_Y]) && unp )
+    {
+        _SetUnpressKey(KEY_Y);
+        return 1;
+    }
+        
+    if(  _my_keys_cur[KEY_Y] && _my_keys_unpress[KEY_Y] )
+        return 1;
+    return 0;
 }
 
 
@@ -363,23 +363,23 @@ int ButtonAux( int unp )
 /// unpresses the button if it was pressed and unp was true.
 int ButtonLeftTop( int unp )
 {
-	if( CURRENT_KEYCOUNT > KEY_L )
-	{
-		if( _my_keys_cur[KEY_L] && _my_keys_unpress[KEY_L] && unp )
-		{
-			_SetUnpressKey(KEY_L);
-			return 1;
-		}
+    if( CURRENT_KEYCOUNT > KEY_L )
+    {
+        if( _my_keys_cur[KEY_L] && _my_keys_unpress[KEY_L] && unp )
+        {
+            _SetUnpressKey(KEY_L);
+            return 1;
+        }
 
-		if( _my_keys_cur[KEY_L] && _my_keys_unpress[KEY_L] )
-			return 1;
-		return 0;
-	}
-	else
-	{
-		ButtonError( "ButtonLeftTop(), CURRENT_KEYCOUNT too low ("+str(CURRENT_KEYCOUNT)+")" );
-		return 0;
-	}
+        if( _my_keys_cur[KEY_L] && _my_keys_unpress[KEY_L] )
+            return 1;
+        return 0;
+    }
+    else
+    {
+        ButtonError( "ButtonLeftTop(), CURRENT_KEYCOUNT too low ("+str(CURRENT_KEYCOUNT)+")" );
+        return 0;
+    }
 }
 
 
@@ -388,46 +388,46 @@ int ButtonLeftTop( int unp )
 /// unpresses the button if it was pressed and unp was true.
 int ButtonRightTop( int unp )
 {
-	if( CURRENT_KEYCOUNT > KEY_R )
-	{
-		if( _my_keys_cur[KEY_R] && _my_keys_unpress[KEY_R] && unp )
-		{
-			_SetUnpressKey(KEY_R);
-			return 1;
-		}
+    if( CURRENT_KEYCOUNT > KEY_R )
+    {
+        if( _my_keys_cur[KEY_R] && _my_keys_unpress[KEY_R] && unp )
+        {
+            _SetUnpressKey(KEY_R);
+            return 1;
+        }
 
-		if( _my_keys_cur[KEY_R] && _my_keys_unpress[KEY_R] )
-			return 1;
-		return 0;
-	}
-	else
-	{
-		ButtonError( "ButtonLeftTop(), CURRENT_KEYCOUNT too low ("+str(CURRENT_KEYCOUNT)+")" );
-		return 0;
-	}	
+        if( _my_keys_cur[KEY_R] && _my_keys_unpress[KEY_R] )
+            return 1;
+        return 0;
+    }
+    else
+    {
+        ButtonError( "ButtonLeftTop(), CURRENT_KEYCOUNT too low ("+str(CURRENT_KEYCOUNT)+")" );
+        return 0;
+    }   
 }
 
 /// Returns the state of the "select" button.  
 /// unpresses the button if it was pressed and unp was true.
 int ButtonSelect( int unp )
 {
-	if( CURRENT_KEYCOUNT > KEY_SELECT )
-	{
-		if( _my_keys_cur[KEY_SELECT] && _my_keys_unpress[KEY_SELECT] && unp )
-		{
-			_SetUnpressKey(KEY_SELECT);
-			return 1;
-		}
+    if( CURRENT_KEYCOUNT > KEY_SELECT )
+    {
+        if( _my_keys_cur[KEY_SELECT] && _my_keys_unpress[KEY_SELECT] && unp )
+        {
+            _SetUnpressKey(KEY_SELECT);
+            return 1;
+        }
 
-		if( _my_keys_cur[KEY_SELECT] && _my_keys_unpress[KEY_SELECT] )
-			return 1;
-		return 0;
-	}
-	else
-	{
-		ButtonError( "ButtonSelect(), CURRENT_KEYCOUNT too low ("+str(CURRENT_KEYCOUNT)+")" );
-		return 0;
-	}	
+        if( _my_keys_cur[KEY_SELECT] && _my_keys_unpress[KEY_SELECT] )
+            return 1;
+        return 0;
+    }
+    else
+    {
+        ButtonError( "ButtonSelect(), CURRENT_KEYCOUNT too low ("+str(CURRENT_KEYCOUNT)+")" );
+        return 0;
+    }   
 }
 
 
@@ -435,134 +435,134 @@ int ButtonSelect( int unp )
 /// unpresses the button if it was pressed and unp was true.
 int ButtonStart( int unp )
 {
-	if( CURRENT_KEYCOUNT > KEY_START )
-	{
-		if( _my_keys_cur[KEY_START] && _my_keys_unpress[KEY_START] && unp )
-		{
-			_SetUnpressKey(KEY_START);
-			return 1;
-		}
+    if( CURRENT_KEYCOUNT > KEY_START )
+    {
+        if( _my_keys_cur[KEY_START] && _my_keys_unpress[KEY_START] && unp )
+        {
+            _SetUnpressKey(KEY_START);
+            return 1;
+        }
 
-		if( _my_keys_cur[KEY_START] && _my_keys_unpress[KEY_START] )
-			return 1;
-		return 0;
-	}
-	else
-	{
-		ButtonError( "ButtonStart(), CURRENT_KEYCOUNT too low ("+str(CURRENT_KEYCOUNT)+")" );
-		return 0;
-	}	
+        if( _my_keys_cur[KEY_START] && _my_keys_unpress[KEY_START] )
+            return 1;
+        return 0;
+    }
+    else
+    {
+        ButtonError( "ButtonStart(), CURRENT_KEYCOUNT too low ("+str(CURRENT_KEYCOUNT)+")" );
+        return 0;
+    }   
 }
 
 /// Returns the state of the "up" button.  
 /// unpresses the button if it was pressed and unp was true.
 int ButtonUp( int unp )
 {
-	if( _my_dirs_cur[KEY_UP] && _my_dirs_unpress[KEY_UP] && unp )
-	{
-		_SetUnpressDir(KEY_UP);
-		return 1;
-	}
-		
-	if( _my_dirs_cur[KEY_UP] &&  _my_dirs_unpress[KEY_UP])
-		return 1;
-	return 0;
+    if( _my_dirs_cur[KEY_UP] && _my_dirs_unpress[KEY_UP] && unp )
+    {
+        _SetUnpressDir(KEY_UP);
+        return 1;
+    }
+        
+    if( _my_dirs_cur[KEY_UP] &&  _my_dirs_unpress[KEY_UP])
+        return 1;
+    return 0;
 }
 
 /// Returns the state of the "up" button.  
 /// unpresses the button if it was pressed and unp was true.
 int ButtonDown( int unp )
 {
-	if( _my_dirs_cur[KEY_DOWN] && _my_dirs_unpress[KEY_DOWN] && unp )
-	{
-		_SetUnpressDir(KEY_DOWN);
-		return 1;
-	}
-		
-	if( _my_dirs_cur[KEY_DOWN] &&  _my_dirs_unpress[KEY_DOWN])
-		return 1;
-	return 0;
+    if( _my_dirs_cur[KEY_DOWN] && _my_dirs_unpress[KEY_DOWN] && unp )
+    {
+        _SetUnpressDir(KEY_DOWN);
+        return 1;
+    }
+        
+    if( _my_dirs_cur[KEY_DOWN] &&  _my_dirs_unpress[KEY_DOWN])
+        return 1;
+    return 0;
 }
 
 /// Returns the state of the "up" button.  
 /// unpresses the button if it was pressed and unp was true.
 int ButtonLeft( int unp )
 {
-	if( _my_dirs_cur[KEY_LEFT] && _my_dirs_unpress[KEY_LEFT] && unp )
-	{
-		_SetUnpressDir(KEY_LEFT);
-		return 1;
-	}
-		
-	if( _my_dirs_cur[KEY_LEFT] &&  _my_dirs_unpress[KEY_LEFT])
-		return 1;
-	return 0;
+    if( _my_dirs_cur[KEY_LEFT] && _my_dirs_unpress[KEY_LEFT] && unp )
+    {
+        _SetUnpressDir(KEY_LEFT);
+        return 1;
+    }
+        
+    if( _my_dirs_cur[KEY_LEFT] &&  _my_dirs_unpress[KEY_LEFT])
+        return 1;
+    return 0;
 }
 
 /// Returns the state of the "up" button.  
 /// unpresses the button if it was pressed and unp was true.
 int ButtonRight( int unp )
 {
-	if( _my_dirs_cur[KEY_RIGHT] && _my_dirs_unpress[KEY_RIGHT] && unp )
-	{
-		_SetUnpressDir(KEY_RIGHT);
-		return 1;
-	}
-		
-	if( _my_dirs_cur[KEY_RIGHT] &&  _my_dirs_unpress[KEY_RIGHT])
-		return 1;
-	return 0;
+    if( _my_dirs_cur[KEY_RIGHT] && _my_dirs_unpress[KEY_RIGHT] && unp )
+    {
+        _SetUnpressDir(KEY_RIGHT);
+        return 1;
+    }
+        
+    if( _my_dirs_cur[KEY_RIGHT] &&  _my_dirs_unpress[KEY_RIGHT])
+        return 1;
+    return 0;
 }
 
 
 int tf(int i)
 {
-	if(i) return 1;
-	return 0;
+    if(i) return 1;
+    return 0;
 }
 
 void McFAIL_Debug( int x, int y, int img )
 {
-	int x1 = x + 10;
-	int x2 = x + 30;
-	int x3 = x + 50;
-	int x4 = x + 70;
-	
-	PrintString( x1, y, img, 0, "lst" );
-	PrintString( x2, y, img, 0, "btn" );
-	PrintString( x3, y, img, 0, "unp" );
-	PrintString( x4, y, img, 0, " = " );
-	
-	y += 8;
-	
-	PrintString( x,    y, img, 0, "A" );
-	PrintString( x1, y, img, 0, str(tf(_my_keys_last[KEY_A])) );
-	PrintString( x2, y, img, 0, str(tf(_my_keys_cur[KEY_A])) );
-	PrintString( x3, y, img, 0, str(tf(_my_keys_unpress[KEY_A])) );
-	PrintString( x4, y, img, 0, str(tf(ButtonAccept(0))) );
+    int x1 = x + 10;
+    int x2 = x + 30;
+    int x3 = x + 50;
+    int x4 = x + 70;
+    
+    PrintString( x1, y, img, 0, "lst" );
+    PrintString( x2, y, img, 0, "btn" );
+    PrintString( x3, y, img, 0, "unp" );
+    PrintString( x4, y, img, 0, " = " );
+    
+    y += 8;
+    
+    PrintString( x,    y, img, 0, "A" );
+    PrintString( x1, y, img, 0, str(tf(_my_keys_last[KEY_A])) );
+    PrintString( x2, y, img, 0, str(tf(_my_keys_cur[KEY_A])) );
+    PrintString( x3, y, img, 0, str(tf(_my_keys_unpress[KEY_A])) );
+    PrintString( x4, y, img, 0, str(tf(ButtonAccept(0))) );
 
-	y += 8;
-	
-	PrintString( x,    y, img, 0, "B" );
-	PrintString( x1, y, img, 0, str(tf(_my_keys_last[KEY_B])) );
-	PrintString( x2, y, img, 0, str(tf(_my_keys_cur[KEY_B])) );
-	PrintString( x3, y, img, 0, str(tf(_my_keys_unpress[KEY_B])) );
-	PrintString( x4, y, img, 0, str(tf(ButtonCancel(0))) );	
-	
-	y += 8;
-	
-	PrintString( x,    y, img, 0, "X" );
-	PrintString( x1, y, img, 0, str(tf(_my_keys_last[KEY_X])) );
-	PrintString( x2, y, img, 0, str(tf(_my_keys_cur[KEY_X])) );
-	PrintString( x3, y, img, 0, str(tf(_my_keys_unpress[KEY_X])) );
-	PrintString( x4, y, img, 0, str(tf(ButtonMenu(0))) );	
-	
-	y += 8;
-	
-	PrintString( x,    y, img, 0, "Y" );
-	PrintString( x1, y, img, 0, str(tf(_my_keys_last[KEY_Y])) );
-	PrintString( x2, y, img, 0, str(tf(_my_keys_cur[KEY_Y])) );
-	PrintString( x3, y, img, 0, str(tf(_my_keys_unpress[KEY_Y])) );
-	PrintString( x4, y, img, 0, str(tf(ButtonAux(0))) );	
-	
+    y += 8;
+    
+    PrintString( x,    y, img, 0, "B" );
+    PrintString( x1, y, img, 0, str(tf(_my_keys_last[KEY_B])) );
+    PrintString( x2, y, img, 0, str(tf(_my_keys_cur[KEY_B])) );
+    PrintString( x3, y, img, 0, str(tf(_my_keys_unpress[KEY_B])) );
+    PrintString( x4, y, img, 0, str(tf(ButtonCancel(0))) ); 
+    
+    y += 8;
+    
+    PrintString( x,    y, img, 0, "X" );
+    PrintString( x1, y, img, 0, str(tf(_my_keys_last[KEY_X])) );
+    PrintString( x2, y, img, 0, str(tf(_my_keys_cur[KEY_X])) );
+    PrintString( x3, y, img, 0, str(tf(_my_keys_unpress[KEY_X])) );
+    PrintString( x4, y, img, 0, str(tf(ButtonMenu(0))) );   
+    
+    y += 8;
+    
+    PrintString( x,    y, img, 0, "Y" );
+    PrintString( x1, y, img, 0, str(tf(_my_keys_last[KEY_Y])) );
+    PrintString( x2, y, img, 0, str(tf(_my_keys_cur[KEY_Y])) );
+    PrintString( x3, y, img, 0, str(tf(_my_keys_unpress[KEY_Y])) );
+    PrintString( x4, y, img, 0, str(tf(ButtonAux(0))) );    
+    
 }

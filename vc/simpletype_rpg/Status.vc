@@ -15,24 +15,24 @@
 
 struct status
 {
-	string name; /// The name of the status effect
-	string desc; /// A description of the status effect
-	int icon; /// Icon associated with the status (-1 if none)
-	int duration; /// Default duration of the status (negative value means indefinite)
+    string name; /// The name of the status effect
+    string desc; /// A description of the status effect
+    int icon; /// Icon associated with the status (-1 if none)
+    int duration; /// Default duration of the status (negative value means indefinite)
 
-	/// Variables dealing with the removal conditions for the effect: the conditions under which the effect goes away.
-	string remove[MAX_STATUS_REMOVES]; /// An array of removal conditions that apply to this status, in no particular order.
-	int numremoves; /// The number of removal conditions that apply to this status. 
+    /// Variables dealing with the removal conditions for the effect: the conditions under which the effect goes away.
+    string remove[MAX_STATUS_REMOVES]; /// An array of removal conditions that apply to this status, in no particular order.
+    int numremoves; /// The number of removal conditions that apply to this status. 
 
-	/// These next two variables deal with effects that are exclusive with this one. Validity checking is not performed 
-	/// when parsing these and loading them into the struct, so it's possible that some of them won't be real statuses. 
-	/// Also be aware that mutuality is not assured -- it's theoretically possible for A to cancel B but not vice versa, if you 
-	/// define things that way.
-	string cancels[MAX_STATUS_CANCELS]; /// An array of names of statuses that this effect conflicts with
-	int numcancels; /// The number of effects that conflict with this effect. 
-	
-	/// Callfuncs have been validity-checked by the parser.
-	string callfunc[NUM_STATUS_CALLFUNCS]; /// The array of callfuncs for this status. Order DOES matter for these. An empty string indicates no callfunc.
+    /// These next two variables deal with effects that are exclusive with this one. Validity checking is not performed 
+    /// when parsing these and loading them into the struct, so it's possible that some of them won't be real statuses. 
+    /// Also be aware that mutuality is not assured -- it's theoretically possible for A to cancel B but not vice versa, if you 
+    /// define things that way.
+    string cancels[MAX_STATUS_CANCELS]; /// An array of names of statuses that this effect conflicts with
+    int numcancels; /// The number of effects that conflict with this effect. 
+    
+    /// Callfuncs have been validity-checked by the parser.
+    string callfunc[NUM_STATUS_CALLFUNCS]; /// The array of callfuncs for this status. Order DOES matter for these. An empty string indicates no callfunc.
 }
 
 status master_status[MAX_ENEMIES];
@@ -43,15 +43,15 @@ int num_status;
 ///
 /// @param name the master_status[] name of a status.
 int GetStatus( string name ) {
-	int i;
-	
-	for( i=0; i<num_status; i++ )
-	{
-		if( equ(master_status[i].name,name) )
-			return i;
-	}
-	
-	return -1;
+    int i;
+    
+    for( i=0; i<num_status; i++ )
+    {
+        if( equ(master_status[i].name,name) )
+            return i;
+    }
+    
+    return -1;
 }
 
 /// Takes a name of a status.
@@ -59,19 +59,19 @@ int GetStatus( string name ) {
 /// You have to be pretty lazy to use this!
 int IsStatus( string name )
 {
-	if( GetStatus(name) < 0 )
-		return 0;
-	return 1;
+    if( GetStatus(name) < 0 )
+        return 0;
+    return 1;
 }
 
 /// Takes a potential indice of a status.
 /// Returns true if it's valid, false if not.
 int IsStatusI( int s_idx )
 {
-	if( s_idx >= 0 && s_idx < num_status )
-		return 1;
-	
-	return 0;
+    if( s_idx >= 0 && s_idx < num_status )
+        return 1;
+    
+    return 0;
 }
 
 /// Checks to see if the removal condition specified is in the list of valid removal conditions. The list, held in
@@ -79,8 +79,8 @@ int IsStatusI( int s_idx )
 /// Obviously, it returns 1 if valid and 0 if not.
 int ValidRemoveCondition( string remcond )
 {
-	if (FindToken(remcond, status_removal_conditions, ",") >= 0) return 1; // FindToken returns -1 if the token is not in the string.
-	else return 0;
+    if (FindToken(remcond, status_removal_conditions, ",") >= 0) return 1; // FindToken returns -1 if the token is not in the string.
+    else return 0;
 }
 
 /// Checks whether the specified status effect is removed by the specified removal condition.
@@ -93,13 +93,13 @@ int ValidRemoveCondition( string remcond )
 /// @param removename the name of a valid remove condition, as defined in status.dat.
 int StatusRemovedBy(string statusname, string removename)
 {
-	int statusindex = GetStatus(statusname); // Get master_status index
-	if (statusindex < 0) // If no such status exists
-	{
-		ErrorHandler("Error in StatusRemovedBy: '" + statusname + "' is not a status effect.");
-		return 0;									
-	}
-	return StatusRemovedByI(statusindex, removename); // otherwise, pass the index on to StatusRemovedByI for it to do the heavy lifting.
+    int statusindex = GetStatus(statusname); // Get master_status index
+    if (statusindex < 0) // If no such status exists
+    {
+        ErrorHandler("Error in StatusRemovedBy: '" + statusname + "' is not a status effect.");
+        return 0;                                   
+    }
+    return StatusRemovedByI(statusindex, removename); // otherwise, pass the index on to StatusRemovedByI for it to do the heavy lifting.
 }
 
 
@@ -111,20 +111,20 @@ int StatusRemovedBy(string statusname, string removename)
 /// useful when you want to check every status effect for a single removal condition.
 int StatusRemovedByI(int statusidx, string removename)
 {
-	int rbicount;
-	if (statusidx < 0 || statusidx >= num_status)
-	{
-		ErrorHandler("Error in StatusRemovedByI: Invalid master_status index " + str(statusidx) + ". Only " + str(num_status) + " effects are defined in status.dat.");
-		return 0;									
-	}
-	
-	for (rbicount=0; rbicount<master_status[statusidx].numremoves; rbicount++)
-	{
-		// Go through the list of removes for this status, checking each in turn.
-		// This loop doesn't execute at all if the status's numremoves is 0.
-		if (equ(master_status[statusidx].remove[rbicount], removename)) return 1;
-	}
-	return 0; // If none of the effect's remove conditions match up, return 0
+    int rbicount;
+    if (statusidx < 0 || statusidx >= num_status)
+    {
+        ErrorHandler("Error in StatusRemovedByI: Invalid master_status index " + str(statusidx) + ". Only " + str(num_status) + " effects are defined in status.dat.");
+        return 0;                                   
+    }
+    
+    for (rbicount=0; rbicount<master_status[statusidx].numremoves; rbicount++)
+    {
+        // Go through the list of removes for this status, checking each in turn.
+        // This loop doesn't execute at all if the status's numremoves is 0.
+        if (equ(master_status[statusidx].remove[rbicount], removename)) return 1;
+    }
+    return 0; // If none of the effect's remove conditions match up, return 0
 }
 
 /// Checks whether the first effect cancels the second. Note that A cancels B does not assure 
@@ -137,13 +137,13 @@ int StatusRemovedByI(int statusidx, string removename)
 /// @param removename the name of another status effect, as defined in status.dat.
 int StatusCancels(string statusname, string cancelname)
 {
-	int statusindex = GetStatus(statusname); // Get master_status index
-	if (statusindex < 0) // If no such status exists
-	{
-		ErrorHandler("Error in StatusCancels: '" + statusname + "' is not a status effect.");
-		return 0;									
-	}
-	return StatusCancelsI(statusindex, cancelname); // otherwise, pass the index on to StatusRemovedByI for it to do the heavy lifting.
+    int statusindex = GetStatus(statusname); // Get master_status index
+    if (statusindex < 0) // If no such status exists
+    {
+        ErrorHandler("Error in StatusCancels: '" + statusname + "' is not a status effect.");
+        return 0;                                   
+    }
+    return StatusCancelsI(statusindex, cancelname); // otherwise, pass the index on to StatusRemovedByI for it to do the heavy lifting.
 }
 
 /// Checks whether the first effect cancels the second. Note that A cancels B does not assure 
@@ -156,56 +156,56 @@ int StatusCancels(string statusname, string cancelname)
 /// useful when you want to check every status effect for a single cancellation effect.
 int StatusCancelsI( int statusidx, string cancelname )
 {
-	int cicount;
-	if(statusidx < 0 || statusidx >= num_status)
-	{
-		ErrorHandler("Error in StatusCancelsI: Invalid master_status index " + str(statusidx) + ". Only " + str(num_status) + " effects are defined in status.dat.");
-		return 0;									
-	}
-	
-	for (cicount=0; cicount<master_status[statusidx].numcancels; cicount++)
-	{
-		// Go through the list of cancels for this status, checking each in turn.
-		// This loop doesn't execute at all if the status's numcancels is 0.
-		if (equ(master_status[statusidx].cancels[cicount], cancelname))
-		{
-			return 1;
-		}
+    int cicount;
+    if(statusidx < 0 || statusidx >= num_status)
+    {
+        ErrorHandler("Error in StatusCancelsI: Invalid master_status index " + str(statusidx) + ". Only " + str(num_status) + " effects are defined in status.dat.");
+        return 0;                                   
+    }
+    
+    for (cicount=0; cicount<master_status[statusidx].numcancels; cicount++)
+    {
+        // Go through the list of cancels for this status, checking each in turn.
+        // This loop doesn't execute at all if the status's numcancels is 0.
+        if (equ(master_status[statusidx].cancels[cicount], cancelname))
+        {
+            return 1;
+        }
 
-	}
-	return 0; // If none of the effect's exclusions match up, return 0
+    }
+    return 0; // If none of the effect's exclusions match up, return 0
 }
 
 
 // Dumps all status data into the log for checking. 
 void DumpStructStatus()
 {
-	int das_counter;
-	for (das_counter=0;das_counter<num_status;das_counter++) DumpStatus(das_counter);	
+    int das_counter;
+    for (das_counter=0;das_counter<num_status;das_counter++) DumpStatus(das_counter);   
 }
 
 // Dumps a single effect's data into the log.
 void DumpStatus( int dumpst_idx )
 {
-	int dumpst_count; // counter for iterating through arrays
-	string dumpst_string = ""; // string built up by for loops
-	log("-----");
-	log("Dump of status #" + str(dumpst_idx)); // status index
-	log("NAME: '" + master_status[dumpst_idx].name+"'"); // status name
-	log("DESC: '" + master_status[dumpst_idx].desc+"'"); // status sprite (sans path)
-	log("ICON: " + str(master_status[dumpst_idx].icon)); // status icon #
-	log("DURATION: " + str(master_status[dumpst_idx].duration)); // status AI function
-	dumpst_string = "REMOVE:";
-	for (dumpst_count=0;dumpst_count<master_status[dumpst_idx].numremoves;dumpst_count++) // Collect removal conditions
-	{
-		dumpst_string ==  dumpst_string + " " + master_status[dumpst_idx].remove[dumpst_count];
-	}
-	log(dumpst_string); // status removal conditions
-	dumpst_string = "CANCELS:";
-	for (dumpst_count=0;dumpst_count<master_status[dumpst_idx].numcancels;dumpst_count++) // Collect cancelled effects
-	{
-		dumpst_string ==  dumpst_string + " " + master_status[dumpst_idx].cancels[dumpst_count];
-	}
-	log(dumpst_string); // status cancelled effects
-	log("-----");	
+    int dumpst_count; // counter for iterating through arrays
+    string dumpst_string = ""; // string built up by for loops
+    log("-----");
+    log("Dump of status #" + str(dumpst_idx)); // status index
+    log("NAME: '" + master_status[dumpst_idx].name+"'"); // status name
+    log("DESC: '" + master_status[dumpst_idx].desc+"'"); // status sprite (sans path)
+    log("ICON: " + str(master_status[dumpst_idx].icon)); // status icon #
+    log("DURATION: " + str(master_status[dumpst_idx].duration)); // status AI function
+    dumpst_string = "REMOVE:";
+    for (dumpst_count=0;dumpst_count<master_status[dumpst_idx].numremoves;dumpst_count++) // Collect removal conditions
+    {
+        dumpst_string ==  dumpst_string + " " + master_status[dumpst_idx].remove[dumpst_count];
+    }
+    log(dumpst_string); // status removal conditions
+    dumpst_string = "CANCELS:";
+    for (dumpst_count=0;dumpst_count<master_status[dumpst_idx].numcancels;dumpst_count++) // Collect cancelled effects
+    {
+        dumpst_string ==  dumpst_string + " " + master_status[dumpst_idx].cancels[dumpst_count];
+    }
+    log(dumpst_string); // status cancelled effects
+    log("-----");   
 }

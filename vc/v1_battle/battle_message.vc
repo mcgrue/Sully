@@ -19,8 +19,8 @@ int base_message_image = 0; // this holds the full-sized base image for the mess
 int message_image = 0; // and this holds the cropped subset that needs to be shown
 
 struct queued_message {
-	int fullwidth, centred, skippable, lifetime;
-	string message;
+    int fullwidth, centred, skippable, lifetime;
+    string message;
 }
 
 #define MAX_QUEUED_MESSAGES 20
@@ -33,7 +33,7 @@ int messages_queued;
 void DrawBattleMessageBox() {
     SetTargetBox(battlemessagebox);
     if( BattleMessageExists() ) { 
-    	DrawBox(battlemessage_loc, BMSG_TOP_Y, screen);        
+        DrawBox(battlemessage_loc, BMSG_TOP_Y, screen);        
         if (battlemessage_deathtime != BMSG_INDEFINITE_DURATION 
             && systemtime >= battlemessage_deathtime) {
             SkipBattleMessage(); // time's up; move to the next message in the queue, if any
@@ -71,41 +71,41 @@ void PrepBattleMessageBox() {
 // Lifetime defines the maximum lifetime of the message in centiseconds, after which
 // it will destroy itself. Set to BMSG_INDEFINITE_DURATION to make a permanent message.
 void SetBattleMessage(string message, int fullwidth, int centred, int skippable, int lifetime) {
-	_battleMessageSetup(message, fullwidth, centred, skippable, lifetime, TRUE);
+    _battleMessageSetup(message, fullwidth, centred, skippable, lifetime, TRUE);
 }
 
 // This function is identical to SetBattleMessage save that it queues the message if there's
 // a message already being displayed. It currently delivers an error if the queue is full,
 // but you can easily cut that part out if it causes trouble.
 void QueueBattleMessage(string message, int fullwidth, int centred, int skippable, int lifetime) {
-	int next_free;
-	if (!BattleMessageExists()) SetBattleMessage(message, fullwidth, centred, skippable, lifetime);
-	else if (messages_queued >= MAX_QUEUED_MESSAGES) { 
-		ErrorHandler( 
-			"Error in QueueBattleMessage: The message queue is full. You will need to " +
-			"increase MAX_QUEUED_MESSAGES (currently " + str(MAX_QUEUED_MESSAGES) + ").");
-	}
-	else {
-		next_free = (next_queued_message + messages_queued) % MAX_QUEUED_MESSAGES; // we wrap around at the end of the queue
-		battle_message_queue[next_free].fullwidth = fullwidth;
-		battle_message_queue[next_free].centred = centred;
-		battle_message_queue[next_free].skippable = skippable;
-		battle_message_queue[next_free].lifetime = lifetime;
-		battle_message_queue[next_free].message = message;
-		messages_queued++;		
-	}
+    int next_free;
+    if (!BattleMessageExists()) SetBattleMessage(message, fullwidth, centred, skippable, lifetime);
+    else if (messages_queued >= MAX_QUEUED_MESSAGES) { 
+        ErrorHandler( 
+            "Error in QueueBattleMessage: The message queue is full. You will need to " +
+            "increase MAX_QUEUED_MESSAGES (currently " + str(MAX_QUEUED_MESSAGES) + ").");
+    }
+    else {
+        next_free = (next_queued_message + messages_queued) % MAX_QUEUED_MESSAGES; // we wrap around at the end of the queue
+        battle_message_queue[next_free].fullwidth = fullwidth;
+        battle_message_queue[next_free].centred = centred;
+        battle_message_queue[next_free].skippable = skippable;
+        battle_message_queue[next_free].lifetime = lifetime;
+        battle_message_queue[next_free].message = message;
+        messages_queued++;      
+    }
 }
 
 // This stops the current battle message from displaying, and moves on to the next in the queue.
 void SkipBattleMessage() {
-	_killCurrentMessage();
+    _killCurrentMessage();
     _advanceBattleMessageQueue();
 }
 
 // This stops the battle message from displaying, and clears out the message queue.
 void ClearBattleMessage() {
     _killCurrentMessage();
-    EmptyBattleMessageQueue();	
+    EmptyBattleMessageQueue();  
 }
 
 // This frees the resources allocated to battle messages. Only use it at the end of battle.
@@ -117,10 +117,10 @@ void DestroyBattleMessage() {
     battlemessage_loc = 0;
     battlemessage_deathtime = BMSG_INDEFINITE_DURATION; 
     battlemessage_skiptime = BMSG_INDEFINITE_DURATION; 
-	EmptyBattleMessageQueue();
+    EmptyBattleMessageQueue();
     
-	SetTargetBox(battlemessagebox);
-	FreeBox(FALSE);
+    SetTargetBox(battlemessagebox);
+    FreeBox(FALSE);
 }
 
 int BattleMessageExists() { return (ImageValid(master_box[battlemessagebox].im_content)); }
@@ -152,14 +152,14 @@ void _battleMessageSetup(string message, int fullwidth, int centred, int skippab
         
     if (fullwidth) battlemessage_loc = BMSG_LEFT_X;
     else battlemessage_loc = ((ImageWidth(screen)-message_w)/2) - GetBoxLeftOffset(); 
-    	        
+                
     if (lifetime == BMSG_INDEFINITE_DURATION) battlemessage_deathtime = BMSG_INDEFINITE_DURATION;
     else battlemessage_deathtime = systemtime + lifetime;
 
-	if (!skippable) battlemessage_skiptime = BMSG_INDEFINITE_DURATION;
-	else battlemessage_skiptime = systemtime + BMSG_TIME_BEFORE_SKIPPABLE;
+    if (!skippable) battlemessage_skiptime = BMSG_INDEFINITE_DURATION;
+    else battlemessage_skiptime = systemtime + BMSG_TIME_BEFORE_SKIPPABLE;
     
-	if (clear_queue) EmptyBattleMessageQueue();    
+    if (clear_queue) EmptyBattleMessageQueue();    
 }
 
 // Removes the message currently being displayed. Don't call this directly -- use either
@@ -170,18 +170,18 @@ void _killCurrentMessage() {
     battlemessage_deathtime = BMSG_INDEFINITE_DURATION; 
     battlemessage_skiptime = BMSG_INDEFINITE_DURATION; 
 
-	if (ImageValid(message_image)) { FreeImage(message_image); message_image = -1; }
-	SetTargetBox(battlemessagebox);	
-    SetBoxContent(-1);	
+    if (ImageValid(message_image)) { FreeImage(message_image); message_image = -1; }
+    SetTargetBox(battlemessagebox); 
+    SetBoxContent(-1);  
 }
 
 // Move on to the next queued message, if any. If the queue is empty, does nothing.
 // Note that this does NOT remove the current message, so if you want to do that,
 // use SkipBattleMessage instead to prevent resource leakage.
 void _advanceBattleMessageQueue() {
-	if (messages_queued > 0) {
-		messages_queued--;				
-		_battleMessageSetup(battle_message_queue[next_queued_message].message, battle_message_queue[next_queued_message].fullwidth, battle_message_queue[next_queued_message].centred, battle_message_queue[next_queued_message].skippable, battle_message_queue[next_queued_message].lifetime, FALSE); // I would eat a horse turd to have name completion right now
-		next_queued_message = (next_queued_message + 1) % MAX_QUEUED_MESSAGES; // the queue wraps around at the end
-	}
+    if (messages_queued > 0) {
+        messages_queued--;              
+        _battleMessageSetup(battle_message_queue[next_queued_message].message, battle_message_queue[next_queued_message].fullwidth, battle_message_queue[next_queued_message].centred, battle_message_queue[next_queued_message].skippable, battle_message_queue[next_queued_message].lifetime, FALSE); // I would eat a horse turd to have name completion right now
+        next_queued_message = (next_queued_message + 1) % MAX_QUEUED_MESSAGES; // the queue wraps around at the end
+    }
 }

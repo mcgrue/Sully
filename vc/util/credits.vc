@@ -16,40 +16,40 @@ string _arCredStr[MAX_CREDIT_LINES];
 //
 void addIntroLine( int offs, string text )
 {
-	if( _creditCount >= MAX_CREDIT_LINES )
-	{
-		ErrorHandler( "credits.vc::addIntroLine(), You attempted to add too many lines to a credit sequence.  Try increasing MAX_CREDIT_LINES" );
-		return;
-	}
-	
-	_arCredStr[_creditCount] = text;	
-	_arCred[_creditCount] = offs;
-	
-	_creditCount++;
-	
+    if( _creditCount >= MAX_CREDIT_LINES )
+    {
+        ErrorHandler( "credits.vc::addIntroLine(), You attempted to add too many lines to a credit sequence.  Try increasing MAX_CREDIT_LINES" );
+        return;
+    }
+    
+    _arCredStr[_creditCount] = text;    
+    _arCred[_creditCount] = offs;
+    
+    _creditCount++;
+    
 }
 
 // renders the credit sequence.
 //
 void doSimpleCredits( int fnt )
 {
-	int i;
-	
-	if(_creditCount==0) return;
-	if(_creditCount>=MAX_CREDIT_LINES)
-	
-	timer = 0;
-	while( timer < _arCred[(_creditCount-1)]*4 )
-	{
-		Render();
-		
-		for( i=0; i<_creditCount; i++ )
-		{
-			PrintCenter(ImageWidth(screen)/2, ImageHeight(screen)+_arCred[i]-(timer/4), screen, fnt, _arCredStr[i]);		
-		}
-		
-		ShowPage();
-	}
+    int i;
+    
+    if(_creditCount==0) return;
+    if(_creditCount>=MAX_CREDIT_LINES)
+    
+    timer = 0;
+    while( timer < _arCred[(_creditCount-1)]*4 )
+    {
+        Render();
+        
+        for( i=0; i<_creditCount; i++ )
+        {
+            PrintCenter(ImageWidth(screen)/2, ImageHeight(screen)+_arCred[i]-(timer/4), screen, fnt, _arCredStr[i]);        
+        }
+        
+        ShowPage();
+    }
 }
 
 
@@ -57,8 +57,8 @@ void doSimpleCredits( int fnt )
 //
 void resetCredits()
 {
-	_creditCount =0;
-	_creditOffs	=0;
+    _creditCount =0;
+    _creditOffs =0;
 }
 
 // </pre>

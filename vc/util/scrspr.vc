@@ -2,54 +2,54 @@
 /// requires grues icon library.
 /// requires general utility library
 
-#define SPRITE_IDLE	0
-#define SPRITE_WEAK	1
-#define SPRITE_ATTACK	2
-#define SPRITE_HIT	3
-#define SPRITE_DYING	4
-#define SPRITE_DEAD	5
+#define SPRITE_IDLE 0
+#define SPRITE_WEAK 1
+#define SPRITE_ATTACK   2
+#define SPRITE_HIT  3
+#define SPRITE_DYING    4
+#define SPRITE_DEAD 5
 
 /// The scripted sprite struct!
 ///
 /// @author grue
 struct scrspr_t
 {
-	int anim_idx;		// this sprite's anim_t index
-	string spr_file;	// this sprite's sprite definition file.
-	
-	string img_file;	// this sprite's base image file.
-	int per_row;		// how many frames per row the image file had.
-	int row_count;		// how many rows the image file had.
-	int padding;		// was the image file padded?
-	
-				// the required anim strings.
-	string IDLE, WEAK, ATTACK, HIT, DEATH, DEAD;
-	int state;		// the current animation state of this sprite.
-	
-	/*
-	#wd	ht	per_row	rows	padding
-	16	32	15	1	1
-	
-	IDLE:	F0 W15 F1 W15
-	WEAK:	F2 W15 F3 W15
-	ATTACK:	F5 W15 F6 W15 F7 W15 F8 W20
-	HIT:	F4
-	DEATH:	F9 W5 F10 W5 F11 W5 F12 W5 F13 W5 F14
-	DEAD:	F14
-	
-	int numframes;		// the total framecount of this animation
-	int active;		// the status of this animation (0 means the slot is free for plundering!)
-	int image;		// the reference to the base image data.
-	
-	int bufimage;		// a new image one frame in size that is a copy of the current frame.
-	int bufferedframe;	//.the index of the presently buffered frame.  65535 is a sentinel.
-	*/
-	
-	int x, y;		//current location of this sprite.
-	int is_on;		//is this sprite to be drawn?
+    int anim_idx;       // this sprite's anim_t index
+    string spr_file;    // this sprite's sprite definition file.
+    
+    string img_file;    // this sprite's base image file.
+    int per_row;        // how many frames per row the image file had.
+    int row_count;      // how many rows the image file had.
+    int padding;        // was the image file padded?
+    
+                // the required anim strings.
+    string IDLE, WEAK, ATTACK, HIT, DEATH, DEAD;
+    int state;      // the current animation state of this sprite.
+    
+    /*
+    #wd ht  per_row rows    padding
+    16  32  15  1   1
+    
+    IDLE:   F0 W15 F1 W15
+    WEAK:   F2 W15 F3 W15
+    ATTACK: F5 W15 F6 W15 F7 W15 F8 W20
+    HIT:    F4
+    DEATH:  F9 W5 F10 W5 F11 W5 F12 W5 F13 W5 F14
+    DEAD:   F14
+    
+    int numframes;      // the total framecount of this animation
+    int active;     // the status of this animation (0 means the slot is free for plundering!)
+    int image;      // the reference to the base image data.
+    
+    int bufimage;       // a new image one frame in size that is a copy of the current frame.
+    int bufferedframe;  //.the index of the presently buffered frame.  65535 is a sentinel.
+    */
+    
+    int x, y;       //current location of this sprite.
+    int is_on;      //is this sprite to be drawn?
 };
 
-#define MAX_SCRSPRS	200
+#define MAX_SCRSPRS 200
 scrspr_t scripted_sprites[MAX_SCRSPRS];
 
 
@@ -58,29 +58,29 @@ scrspr_t scripted_sprites[MAX_SCRSPRS];
 ///
 void LoadScrSprFromFile( string f )
 {
-	string s = FileToString(f);
-	string ln;
-	
-	if( !strcmp(s,"") )
-	{
-		exit( "LoadScrSprFromFile( '"f+"' ), file didn't exist.  CHUMP." );
-	}
-	
-	int i, mode;
-	for( i=0; i<TokenCount(s,chr(10)); i++ )
-	{
-		ln = trim( GetToken(s,chr( 10 ),i) );
-		
-		if( !strcmp(left(ln,1),"#") || !strcmp(left(ln,2),"//") || !strcmp(ln,"") )
-		{
+    string s = FileToString(f);
+    string ln;
+    
+    if( !strcmp(s,"") )
+    {
+        exit( "LoadScrSprFromFile( '"f+"' ), file didn't exist.  CHUMP." );
+    }
+    
+    int i, mode;
+    for( i=0; i<TokenCount(s,chr(10)); i++ )
+    {
+        ln = trim( GetToken(s,chr( 10 ),i) );
+        
+        if( !strcmp(left(ln,1),"#") || !strcmp(left(ln,2),"//") || !strcmp(ln,"") )
+        {
 LOG( "COMMENTED: '" + ln + "'"  );
-		}
-		else
-		{
-		
-		}
-	
-	}
+        }
+        else
+        {
+        
+        }
+    
+    }
 
 }
 

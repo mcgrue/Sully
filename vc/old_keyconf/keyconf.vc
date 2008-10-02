@@ -5,23 +5,23 @@
 /// 4 for verge standard, 8 for SNES.
 #define CURRENT_KEYCOUNT 8
 
-#define KEY_A		0
-#define KEY_B		1
-#define KEY_X		2
-#define KEY_Y		3
-#define KEY_L		4
-#define KEY_R		5
-#define KEY_SELECT	6
-#define KEY_START	7
+#define KEY_A       0
+#define KEY_B       1
+#define KEY_X       2
+#define KEY_Y       3
+#define KEY_L       4
+#define KEY_R       5
+#define KEY_SELECT  6
+#define KEY_START   7
 
 
 /// These define the extended default keyset
 /// (shoulder buttons, select and start)
 ///
-#define BUTTON_DEFAULT_LT	30	//SCAN_A
-#define BUTTON_DEFAULT_RT	31	//SCAN_S
-#define BUTTON_DEFAULT_SEL	32	//SCAN_D
-#define BUTTON_DEFAULT_STA	33	//SCAN_F
+#define BUTTON_DEFAULT_LT   30  //SCAN_A
+#define BUTTON_DEFAULT_RT   31  //SCAN_S
+#define BUTTON_DEFAULT_SEL  32  //SCAN_D
+#define BUTTON_DEFAULT_STA  33  //SCAN_F
 
 int sfx_keyconf_buzz;
 int fnt_kyconf;
@@ -29,37 +29,37 @@ int fnt_kyconf;
 /// returns the volume level for the config menu's soundeffects.
 int GetKeyConfVol()
 {
-	return 75;
+    return 75;
 }
 
 void init_keyconf()
 {
-	init_keyconfig();
-	
-	sfx_keyconf_buzz = LoadSound( "/res/system/keyconf/angry_buzz.wav" );
-	fnt_kyconf = LoadFontEx("vc\keyconf\grue_5x5.gif", 5, 5);
-	EnableVariableWidth(fnt_kyconf);
+    init_keyconfig();
+    
+    sfx_keyconf_buzz = LoadSound( "/res/system/keyconf/angry_buzz.wav" );
+    fnt_kyconf = LoadFontEx("vc\keyconf\grue_5x5.gif", 5, 5);
+    EnableVariableWidth(fnt_kyconf);
 }
 
 string GetKeyConfName( int _my_keys_idx )
 {
-	string s;
-	
-	if( _my_keys_idx < 0 || _my_keys_idx > CURRENT_KEYCOUNT )	ButtonError( "GetKeyConfName" );
-	
-	switch( _my_keys_idx )
-	{
-		case 0: s = "accept";
-		case 1: s = "cancel";
-		case 2: s = "menu";
-		case 3: s = "aux";
-		case 4: s = "left shoulder";
-		case 5: s = "right shoulder";
-		case 6: s = "select";
-		case 7: s = "start";
-	}
-	
-	return s;
+    string s;
+    
+    if( _my_keys_idx < 0 || _my_keys_idx > CURRENT_KEYCOUNT )   ButtonError( "GetKeyConfName" );
+    
+    switch( _my_keys_idx )
+    {
+        case 0: s = "accept";
+        case 1: s = "cancel";
+        case 2: s = "menu";
+        case 3: s = "aux";
+        case 4: s = "left shoulder";
+        case 5: s = "right shoulder";
+        case 6: s = "select";
+        case 7: s = "start";
+    }
+    
+    return s;
 }
 
 /// stores the current key configuration
@@ -75,49 +75,49 @@ int _keymode;
 /// This is called if the _keymode is invalid.
 void ButtonError( string s )
 {
-	exit( "ButtonError("+s+"): _keymode was " + str(_keymode) );
+    exit( "ButtonError("+s+"): _keymode was " + str(_keymode) );
 }
 
 int ButtonSimple( int v_butt, int ext_butt )
 {
-	if ( !_keymode )
-	{
-		if( b1 )
-		{
-			return 1;	
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if( _keymode==1 )
-	{
-		if( key[_my_keys[KEY_A]] )
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if( _keymode == 2 )
-	{
-		if( joy.button[_my_keys[KEY_A]] )
-		{
-			return 1;
-		}
-		else
-		{			
-			return 0;
-		}
-	}
-	else
-	{
-		ButtonError("ButtonSimple");
-		return 0;
-	}
+    if ( !_keymode )
+    {
+        if( b1 )
+        {
+            return 1;   
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if( _keymode==1 )
+    {
+        if( key[_my_keys[KEY_A]] )
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if( _keymode == 2 )
+    {
+        if( joy.button[_my_keys[KEY_A]] )
+        {
+            return 1;
+        }
+        else
+        {           
+            return 0;
+        }
+    }
+    else
+    {
+        ButtonError("ButtonSimple");
+        return 0;
+    }
 }
 
 
@@ -128,53 +128,53 @@ int ButtonSimple( int v_butt, int ext_butt )
 int ButtonAccept( int unp )
 {
 
-	if ( !_keymode )
-	{
-		if( b1 )
-		{
-			if( unp ) Unpress(b1);
-			return 1;	
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if( _keymode==1 )
-	{
-		if( key[_my_keys[KEY_A]] )
-		{
-			if( unp ) key[_my_keys[KEY_A]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if( _keymode == 2 )
-	{
-		if( joy.button[_my_keys[KEY_A]] )
-		{
-			if( unp )
-			{
-				joy.button[_my_keys[KEY_A]] = 0;
-			}
-			else
-			{
-				return 1;
-			}
-		}
-		else
-		{			
-			return 0;
-		}
-	}
-	else
-	{
-		ButtonError("ButtonAccept");
-		return 0;
-	}
+    if ( !_keymode )
+    {
+        if( b1 )
+        {
+            if( unp ) Unpress(b1);
+            return 1;   
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if( _keymode==1 )
+    {
+        if( key[_my_keys[KEY_A]] )
+        {
+            if( unp ) key[_my_keys[KEY_A]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if( _keymode == 2 )
+    {
+        if( joy.button[_my_keys[KEY_A]] )
+        {
+            if( unp )
+            {
+                joy.button[_my_keys[KEY_A]] = 0;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+        else
+        {           
+            return 0;
+        }
+    }
+    else
+    {
+        ButtonError("ButtonAccept");
+        return 0;
+    }
 }
 
 
@@ -182,47 +182,47 @@ int ButtonAccept( int unp )
 /// unpresses the button if it was pressed and unp was true.
 int ButtonCancel( int unp )
 {
-	if ( !_keymode )
-	{
-		if( b2 )
-		{
-			if( unp ) Unpress(b2);
-			return 1;	
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if( _keymode==1 )
-	{
-		if( key[_my_keys[KEY_B]] )
-		{
-			if( unp ) key[_my_keys[KEY_B]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if( _keymode == 2 )
-	{
-		if( joy.button[_my_keys[KEY_B]] )
-		{
-			if( unp ) joy.button[_my_keys[KEY_B]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else
-	{
-		ButtonError("ButtonCancel");
-		return 0;
-	}
+    if ( !_keymode )
+    {
+        if( b2 )
+        {
+            if( unp ) Unpress(b2);
+            return 1;   
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if( _keymode==1 )
+    {
+        if( key[_my_keys[KEY_B]] )
+        {
+            if( unp ) key[_my_keys[KEY_B]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if( _keymode == 2 )
+    {
+        if( joy.button[_my_keys[KEY_B]] )
+        {
+            if( unp ) joy.button[_my_keys[KEY_B]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        ButtonError("ButtonCancel");
+        return 0;
+    }
 }
 
 
@@ -230,47 +230,47 @@ int ButtonCancel( int unp )
 /// unpresses the button if it was pressed and unp was true.
 int ButtonMenu( int unp )
 {
-	if ( !_keymode )
-	{
-		if( b3 )
-		{
-			if( unp ) Unpress(b3);
-			return 1;	
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if( _keymode==1 )
-	{
-		if( key[_my_keys[KEY_X]] )
-		{
-			if(unp) key[_my_keys[KEY_X]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if( _keymode == 2 )
-	{
-		if( joy.button[_my_keys[KEY_X]] )
-		{
-			if(unp) joy.button[_my_keys[KEY_X]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else
-	{
-		ButtonError("ButtonMenu");
-		return 0;
-	}
+    if ( !_keymode )
+    {
+        if( b3 )
+        {
+            if( unp ) Unpress(b3);
+            return 1;   
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if( _keymode==1 )
+    {
+        if( key[_my_keys[KEY_X]] )
+        {
+            if(unp) key[_my_keys[KEY_X]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if( _keymode == 2 )
+    {
+        if( joy.button[_my_keys[KEY_X]] )
+        {
+            if(unp) joy.button[_my_keys[KEY_X]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        ButtonError("ButtonMenu");
+        return 0;
+    }
 }
 
 
@@ -279,47 +279,47 @@ int ButtonMenu( int unp )
 /// unpresses the button if it was pressed and unp was true.
 int ButtonAux( int unp )
 {
-	if ( !_keymode )
-	{
-		if( b4 )
-		{
-			if( unp ) Unpress(b4);
-			return 1;	
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if( _keymode==1 )
-	{
-		if( key[_my_keys[KEY_Y]] )
-		{
-			if(unp) key[_my_keys[KEY_Y]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if( _keymode == 2 )
-	{
-		if( joy.button[_my_keys[KEY_Y]] )
-		{
-			if(unp) joy.button[_my_keys[KEY_Y]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else
-	{
-		ButtonError("ButtonAux");
-		return 0;
-	}
+    if ( !_keymode )
+    {
+        if( b4 )
+        {
+            if( unp ) Unpress(b4);
+            return 1;   
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if( _keymode==1 )
+    {
+        if( key[_my_keys[KEY_Y]] )
+        {
+            if(unp) key[_my_keys[KEY_Y]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if( _keymode == 2 )
+    {
+        if( joy.button[_my_keys[KEY_Y]] )
+        {
+            if(unp) joy.button[_my_keys[KEY_Y]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        ButtonError("ButtonAux");
+        return 0;
+    }
 }
 
 
@@ -328,47 +328,47 @@ int ButtonAux( int unp )
 /// unpresses the button if it was pressed and unp was true.
 int ButtonLeftTop( int unp )
 {
-	if( !_keymode )
-	{
-		if( key[BUTTON_DEFAULT_LT] )
-		{
-			if( unp ) key[BUTTON_DEFAULT_LT] = 0;
-			return 1;	
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	if( _keymode==1 )
-	{
-		if( key[_my_keys[KEY_L]] )
-		{
-			if(unp) key[_my_keys[KEY_L]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if( _keymode == 2 )
-	{
-		if( joy.button[_my_keys[KEY_L]] )
-		{
-			if(unp) joy.button[_my_keys[KEY_L]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else
-	{
-		ButtonError("ButtonLeftTop");
-		return 0;
-	}
+    if( !_keymode )
+    {
+        if( key[BUTTON_DEFAULT_LT] )
+        {
+            if( unp ) key[BUTTON_DEFAULT_LT] = 0;
+            return 1;   
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    if( _keymode==1 )
+    {
+        if( key[_my_keys[KEY_L]] )
+        {
+            if(unp) key[_my_keys[KEY_L]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if( _keymode == 2 )
+    {
+        if( joy.button[_my_keys[KEY_L]] )
+        {
+            if(unp) joy.button[_my_keys[KEY_L]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        ButtonError("ButtonLeftTop");
+        return 0;
+    }
 }
 
 
@@ -377,47 +377,47 @@ int ButtonLeftTop( int unp )
 /// unpresses the button if it was pressed and unp was true.
 int ButtonRightTop( int unp )
 {
-	if( !_keymode )
-	{
-		if( key[BUTTON_DEFAULT_RT] )
-		{
-			if( unp ) key[BUTTON_DEFAULT_RT] = 0;
-			return 1;	
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	if( _keymode==1 )
-	{
-		if( key[_my_keys[KEY_R]] )
-		{
-			if(unp) key[_my_keys[KEY_R]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if( _keymode == 2 )
-	{
-		if( joy.button[_my_keys[KEY_R]] )
-		{
-			if(unp) joy.button[_my_keys[KEY_R]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else
-	{
-		ButtonError("ButtonRightTop");
-		return 0;
-	}
+    if( !_keymode )
+    {
+        if( key[BUTTON_DEFAULT_RT] )
+        {
+            if( unp ) key[BUTTON_DEFAULT_RT] = 0;
+            return 1;   
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    if( _keymode==1 )
+    {
+        if( key[_my_keys[KEY_R]] )
+        {
+            if(unp) key[_my_keys[KEY_R]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if( _keymode == 2 )
+    {
+        if( joy.button[_my_keys[KEY_R]] )
+        {
+            if(unp) joy.button[_my_keys[KEY_R]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        ButtonError("ButtonRightTop");
+        return 0;
+    }
 }
 
 
@@ -425,47 +425,47 @@ int ButtonRightTop( int unp )
 /// unpresses the button if it was pressed and unp was true.
 int ButtonStart( int unp )
 {
-	if( !_keymode )
-	{
-		if( key[BUTTON_DEFAULT_STA] )
-		{
-			if( unp ) key[BUTTON_DEFAULT_STA] = 0;
-			return 1;	
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	if( _keymode==1 )
-	{
-		if( key[_my_keys[KEY_START]] )
-		{
-			if(unp) key[_my_keys[KEY_START]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if( _keymode == 2 )
-	{
-		if( joy.button[_my_keys[KEY_START]] )
-		{
-			if(unp) joy.button[_my_keys[KEY_START]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else
-	{
-		ButtonError("ButtonStart");
-		return 0;
-	}
+    if( !_keymode )
+    {
+        if( key[BUTTON_DEFAULT_STA] )
+        {
+            if( unp ) key[BUTTON_DEFAULT_STA] = 0;
+            return 1;   
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    if( _keymode==1 )
+    {
+        if( key[_my_keys[KEY_START]] )
+        {
+            if(unp) key[_my_keys[KEY_START]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if( _keymode == 2 )
+    {
+        if( joy.button[_my_keys[KEY_START]] )
+        {
+            if(unp) joy.button[_my_keys[KEY_START]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        ButtonError("ButtonStart");
+        return 0;
+    }
 }
 
 
@@ -473,46 +473,46 @@ int ButtonStart( int unp )
 /// unpresses the button if it was pressed and unp was true.
 int ButtonSelect( int unp )
 {
-	if( !_keymode )
-	{
-		if( key[BUTTON_DEFAULT_SEL] )
-		{
-			if( unp ) key[BUTTON_DEFAULT_SEL] = 0;
-			return 1;	
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	if( _keymode==1 )
-	{
-		if( key[_my_keys[KEY_SELECT]] )
-		{
-			if(unp) key[_my_keys[KEY_SELECT]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if( _keymode == 2 )
-	{
-		if( joy.button[_my_keys[KEY_SELECT]] )
-		{
-			if(unp) joy.button[_my_keys[KEY_SELECT]] = 0;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else
-	{
-		ButtonError("ButtonSelect");
-		return 0;
-	}
+    if( !_keymode )
+    {
+        if( key[BUTTON_DEFAULT_SEL] )
+        {
+            if( unp ) key[BUTTON_DEFAULT_SEL] = 0;
+            return 1;   
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    if( _keymode==1 )
+    {
+        if( key[_my_keys[KEY_SELECT]] )
+        {
+            if(unp) key[_my_keys[KEY_SELECT]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if( _keymode == 2 )
+    {
+        if( joy.button[_my_keys[KEY_SELECT]] )
+        {
+            if(unp) joy.button[_my_keys[KEY_SELECT]] = 0;
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        ButtonError("ButtonSelect");
+        return 0;
+    }
 }
 

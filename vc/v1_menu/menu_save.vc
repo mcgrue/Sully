@@ -20,16 +20,16 @@
 
 int EncodeVersionNumber( int _4, int _3, int _2, int _1 )
 {
-	return (_4 << 24) + (_3 << 16) + (_2 << 8) + _1;
+    return (_4 << 24) + (_3 << 16) + (_2 << 8) + _1;
 }
 
 // Data structure for holding core information on a savegame
 struct save_display_struct
 {
-	int image; // Mini pic of location saved at
-	int gametime; // How long that game has been underway
-	string text; // Descriptive text about save
-	string time; // Time saved, from computer clock
+    int image; // Mini pic of location saved at
+    int gametime; // How long that game has been underway
+    string text; // Descriptive text about save
+    string time; // Time saved, from computer clock
 }
 // Make
 save_display_struct save_display[5];
@@ -39,67 +39,67 @@ save_display_struct save_display[5];
 // Some scary stuff here to navigate the sub window and ensure resources are freed
 void MenuControlSave()
 {
-	// If saving, move between number of saves plus one (for 'New save' slot)
-	if (menu_option == 5) menu_item = MenuControlArrows(menu_item, menu_sub + 1);
-	// If loading move between number of saves
-	else menu_item = MenuControlArrows(menu_item, menu_sub);
+    // If saving, move between number of saves plus one (for 'New save' slot)
+    if (menu_option == 5) menu_item = MenuControlArrows(menu_item, menu_sub + 1);
+    // If loading move between number of saves
+    else menu_item = MenuControlArrows(menu_item, menu_sub);
 
-	// This handles if the focus of the sub window changes, necessitating freeing/loading slots
-	if (menu_start + 5 == menu_item) // If moving one slot down
-	{
-		MenuFreeSaveDisplay(menu_start % 5); // Free slot at top of sub window
-		if (menu_item < menu_sub) MenuLoadSaveDisplay(menu_item); // Load new slot if needed
-		menu_start++; // Increment first item displayed
-	}
-	else if (menu_start - 1 == menu_item) // If moving one slot up
-	{
-		if (menu_item + 5 < menu_sub) MenuFreeSaveDisplay(menu_item + 5); // Free slot at bottom of sub window if needed
-		MenuLoadSaveDisplay(menu_item); // Load new slot
-		menu_start = menu_item; // First item becomes current item
-	}
-	else if (menu_start + 4 < menu_item) // If 'gone off top' of sub window
-	{
-		menu_start = menu_item - 4; // First item becomes item four before current item
-		MenuRefreshSlots(); // Clear all slots and reload
-	}
-	else if (menu_start > menu_item) // If 'gone off bottom' of sub window
-	{
-		menu_start = menu_item; // First item becomes current item
-		MenuRefreshSlots(); // Clear all slots and reload
-	}
+    // This handles if the focus of the sub window changes, necessitating freeing/loading slots
+    if (menu_start + 5 == menu_item) // If moving one slot down
+    {
+        MenuFreeSaveDisplay(menu_start % 5); // Free slot at top of sub window
+        if (menu_item < menu_sub) MenuLoadSaveDisplay(menu_item); // Load new slot if needed
+        menu_start++; // Increment first item displayed
+    }
+    else if (menu_start - 1 == menu_item) // If moving one slot up
+    {
+        if (menu_item + 5 < menu_sub) MenuFreeSaveDisplay(menu_item + 5); // Free slot at bottom of sub window if needed
+        MenuLoadSaveDisplay(menu_item); // Load new slot
+        menu_start = menu_item; // First item becomes current item
+    }
+    else if (menu_start + 4 < menu_item) // If 'gone off top' of sub window
+    {
+        menu_start = menu_item - 4; // First item becomes item four before current item
+        MenuRefreshSlots(); // Clear all slots and reload
+    }
+    else if (menu_start > menu_item) // If 'gone off bottom' of sub window
+    {
+        menu_start = menu_item; // First item becomes current item
+        MenuRefreshSlots(); // Clear all slots and reload
+    }
 
-	if (MenuConfirm())
-	{
-		if (menu_option == 5) // If saving
-		{
-			MenuSaveGame(menu_item + 1);
-			MenuHappyBeep();
-			MenuMinibox("Game saved in slot "+str(menu_item + 1), "MenuDrawSave");
-			MenuRoot(); // Return to main menu
-		}
-		else if (menu_sub) // If loading, and there is 1 or more saved games
-		{
-			menu_done = 1; // Close the menu when the game is loaded
-			MenuHappyBeep();
-			MenuMinibox("Loading game from slot "+str(menu_item + 1), "MenuDrawSave");
-			MenuLoadGame(menu_item + 1);
-		}
-		else MenuAngryBuzz();
-	}
+    if (MenuConfirm())
+    {
+        if (menu_option == 5) // If saving
+        {
+            MenuSaveGame(menu_item + 1);
+            MenuHappyBeep();
+            MenuMinibox("Game saved in slot "+str(menu_item + 1), "MenuDrawSave");
+            MenuRoot(); // Return to main menu
+        }
+        else if (menu_sub) // If loading, and there is 1 or more saved games
+        {
+            menu_done = 1; // Close the menu when the game is loaded
+            MenuHappyBeep();
+            MenuMinibox("Loading game from slot "+str(menu_item + 1), "MenuDrawSave");
+            MenuLoadGame(menu_item + 1);
+        }
+        else MenuAngryBuzz();
+    }
 
-	if (MenuCancel())
-	{
-		MenuHappyBeep();
-		MenuClearDisplay(); // Free images and data used for display from memory
-		
-		if( _title_menu )
-		{
-			_title_menu_load_done = 1;
-			return;
-		}
-		
-		MenuRoot(); // Return to main menu
-	}
+    if (MenuCancel())
+    {
+        MenuHappyBeep();
+        MenuClearDisplay(); // Free images and data used for display from memory
+        
+        if( _title_menu )
+        {
+            _title_menu_load_done = 1;
+            return;
+        }
+        
+        MenuRoot(); // Return to main menu
+    }
 }
 
 // Drawing function for the Save and Load screens of the menu
@@ -107,39 +107,39 @@ void MenuControlSave()
 // Not quite as scary as it looks at first
 void MenuDrawSave()
 {
-	int i;
+    int i;
 
-	// Draw the background but no title
-	MenuBlitRight(0, menu_option);
-	MenuDrawBackground(MENU_A_X1, MENU_A_Y1, MENU_A_X2, MENU_A_Y2, MenuIsActive("Save"));
+    // Draw the background but no title
+    MenuBlitRight(0, menu_option);
+    MenuDrawBackground(MENU_A_X1, MENU_A_Y1, MENU_A_X2, MENU_A_Y2, MenuIsActive("Save"));
 
-	if (menu_option == 5) // If saving
-	{
-		// Draw title and sub window for number of saves plus one (for 'New save' slot)
-		PrintRight(220, 15, screen, menu_font[0], "Save");
-		MenuDrawSubWindow(20, 45, 220, 210, menu_item, 31, menu_sub + 1, menu_start, 0);
-	}
-	else // If Loading
-	{
-		// Draw title and sub window for number of saves
-		PrintRight(220, 15, screen, menu_font[0], "Load");
-		MenuDrawSubWindow(20, 45, 220, 210, menu_item, 31, menu_sub, menu_start, 0);
-	}
+    if (menu_option == 5) // If saving
+    {
+        // Draw title and sub window for number of saves plus one (for 'New save' slot)
+        PrintRight(220, 15, screen, menu_font[0], "Save");
+        MenuDrawSubWindow(20, 45, 220, 210, menu_item, 31, menu_sub + 1, menu_start, 0);
+    }
+    else // If Loading
+    {
+        // Draw title and sub window for number of saves
+        PrintRight(220, 15, screen, menu_font[0], "Load");
+        MenuDrawSubWindow(20, 45, 220, 210, menu_item, 31, menu_sub, menu_start, 0);
+    }
 
-	// Loop through currently displayed slots
-	for (i = menu_start; i < menu_sub; i++)
-	{
-		MenuBlitSaveSlot(i - menu_start, save_display[i % 5].text, save_display[i % 5].image); // Display the save info
-		if (menu_start + 4 <= i) i = menu_sub + 1; // Break out after drawing 5
-	}
-	// If no break out occured, and if saving, display an 'empty' slot to save in
-	if (i == menu_sub && menu_option == 5) MenuBlitSaveSlot(i - menu_start, "New Save Game", 0-1);
+    // Loop through currently displayed slots
+    for (i = menu_start; i < menu_sub; i++)
+    {
+        MenuBlitSaveSlot(i - menu_start, save_display[i % 5].text, save_display[i % 5].image); // Display the save info
+        if (menu_start + 4 <= i) i = menu_sub + 1; // Break out after drawing 5
+    }
+    // If no break out occured, and if saving, display an 'empty' slot to save in
+    if (i == menu_sub && menu_option == 5) MenuBlitSaveSlot(i - menu_start, "New Save Game", 0-1);
 
-	if (menu_item < menu_sub) // If a full save slot is currently selected
-	{
-		PrintRight(220, 35, screen, 0, save_display[(menu_item) % 5].time); // Print when game was saved
-		PrintString(20, 35, screen, 0, GetTimeString(save_display[menu_item % 5].gametime)); // Print playtime of game
-	}
+    if (menu_item < menu_sub) // If a full save slot is currently selected
+    {
+        PrintRight(220, 35, screen, 0, save_display[(menu_item) % 5].time); // Print when game was saved
+        PrintString(20, 35, screen, 0, GetTimeString(save_display[menu_item % 5].gametime)); // Print playtime of game
+    }
 }
 
 // Blits a save slot to the screen from passed information (does not look in save_display[] struct)
@@ -147,27 +147,27 @@ void MenuBlitSaveSlot(int location, string text, int image)
 // Pass: Location within sub window, text to display, and image (pass negative for no image)
 // Clips long descriptions, no other error detection
 {
-	int i;
-	
-	String delim = chr(10); // was previously "|";
-	
-	text = WrapText(menu_font[0], text, 125); // Wrap any text passed
-	int lines = TokenCount(text, "|"); // Count lines used
-	if (lines > 2) // If there are more than two lines
-	{
-		text = GetToken(text, delim, 0) + delim + GetToken(text, delim, 1) + "..."; // Performs a little clipping
-		lines = 2;
-	}
-	for (i = 0; i < lines; i++) // Loops throught text lines
-	{
-		// Displays the text
-		PrintString(40, 52 + (menu_fonth * i) + (location * 31), screen, menu_font[0], GetToken(text, delim, i));
-	}
-	// Displays a rectangle if no image was passed, otherwise blits the image
-	if (image < 0) Rect(172, 51 + (location * 31), 203, 74 + (location * 31), menu_colour[2], screen);
-	else Blit(172, 51 + (location * 31), image, screen);
-	// Pretty outer rectangle for framing purposes
-	Rect(35, 49 + (location * 31), 205, 76 + (location * 31), menu_colour[2], screen);
+    int i;
+    
+    String delim = chr(10); // was previously "|";
+    
+    text = WrapText(menu_font[0], text, 125); // Wrap any text passed
+    int lines = TokenCount(text, "|"); // Count lines used
+    if (lines > 2) // If there are more than two lines
+    {
+        text = GetToken(text, delim, 0) + delim + GetToken(text, delim, 1) + "..."; // Performs a little clipping
+        lines = 2;
+    }
+    for (i = 0; i < lines; i++) // Loops throught text lines
+    {
+        // Displays the text
+        PrintString(40, 52 + (menu_fonth * i) + (location * 31), screen, menu_font[0], GetToken(text, delim, i));
+    }
+    // Displays a rectangle if no image was passed, otherwise blits the image
+    if (image < 0) Rect(172, 51 + (location * 31), 203, 74 + (location * 31), menu_colour[2], screen);
+    else Blit(172, 51 + (location * 31), image, screen);
+    // Pretty outer rectangle for framing purposes
+    Rect(35, 49 + (location * 31), 205, 76 + (location * 31), menu_colour[2], screen);
 }
 
 // Called before the saves are displayed, checks number of saves and loads data to slots
@@ -175,22 +175,22 @@ int MenuInitSave()
 // Return: the number of save games
 // Checks for existance of save files. Can be fooled by renaming or deletion.
 {
-	int count = 1; // Assume first save exists
-	int file = FileOpen("save/save001.sve", FILE_READ); // Trys to open the save file 001
-	while(file) // As long as the save can be opened
-	{
-		FileClose(file); // Close the current save
-		count++; // Increase the number of saves found
-		file = FileOpen("save/save"+ThreeDigit(count)+".sve", FILE_READ); // Try to open next save
-	}
-	file = count - 1; // Reuse file variable to store number of save games succesfully opened
-	if (file > 5) file = 5; // If more than five saves exist, still only load 5 file headers
-	while (file > 0) // Count down the save games
-	{
-		MenuLoadSaveDisplay(file - 1); // Load the save header, minus 1 as array starts at 0
-		file--;
-	}
-	return count - 1; // Total number of saves is one less than count, as the last open must have failed
+    int count = 1; // Assume first save exists
+    int file = FileOpen("save/save001.sve", FILE_READ); // Trys to open the save file 001
+    while(file) // As long as the save can be opened
+    {
+        FileClose(file); // Close the current save
+        count++; // Increase the number of saves found
+        file = FileOpen("save/save"+ThreeDigit(count)+".sve", FILE_READ); // Try to open next save
+    }
+    file = count - 1; // Reuse file variable to store number of save games succesfully opened
+    if (file > 5) file = 5; // If more than five saves exist, still only load 5 file headers
+    while (file > 0) // Count down the save games
+    {
+        MenuLoadSaveDisplay(file - 1); // Load the save header, minus 1 as array starts at 0
+        file--;
+    }
+    return count - 1; // Total number of saves is one less than count, as the last open must have failed
 }
 
 // Writes the system time at the current postion of a file
@@ -198,14 +198,14 @@ void WriteSystemTime(int filehandle)
 // Pass: An open file handle in FILE_WRITE mode
 // No error checking
 {
-	FileWriteQuad(filehandle, sysdate.year);	// the system clock year
-	FileWriteQuad(filehandle, sysdate.month);	// current month
-	FileWriteQuad(filehandle, sysdate.day);	// current day-of-month
-	//int sysdate.dayofweek; 	// current day of week (0=sunday, 6=saturday)
+    FileWriteQuad(filehandle, sysdate.year);    // the system clock year
+    FileWriteQuad(filehandle, sysdate.month);   // current month
+    FileWriteQuad(filehandle, sysdate.day); // current day-of-month
+    //int sysdate.dayofweek;    // current day of week (0=sunday, 6=saturday)
 
-	FileWriteQuad(filehandle, systime.hour);	// system clock hour (24hour format)
-	FileWriteQuad(filehandle, systime.minute);	// current clock minute
-	FileWriteQuad(filehandle, systime.second);	// current clock second*/
+    FileWriteQuad(filehandle, systime.hour);    // system clock hour (24hour format)
+    FileWriteQuad(filehandle, systime.minute);  // current clock minute
+    FileWriteQuad(filehandle, systime.second);  // current clock second*/
 }
 
 // Reads a date from current postion in file, and returns in string form
@@ -214,15 +214,15 @@ string ReadSystemTime(int filehandle)
 // Returns a string in pretty date format
 // No error checking
 {
-	int year, month, day, hour, minute, second;
-	year = FileReadQuad(filehandle);
-	month = FileReadQuad(filehandle);
-	day = FileReadQuad(filehandle);
+    int year, month, day, hour, minute, second;
+    year = FileReadQuad(filehandle);
+    month = FileReadQuad(filehandle);
+    day = FileReadQuad(filehandle);
 
-	hour = FileReadQuad(filehandle);
-	minute = FileReadQuad(filehandle);
-	second = FileReadQuad(filehandle);
-	return TwoDigit(hour)+":"+TwoDigit(minute)+":"+TwoDigit(second)+"  "+TwoDigit(day)+"/"+TwoDigit(month)+"/"+str(year);
+    hour = FileReadQuad(filehandle);
+    minute = FileReadQuad(filehandle);
+    second = FileReadQuad(filehandle);
+    return TwoDigit(hour)+":"+TwoDigit(minute)+":"+TwoDigit(second)+"  "+TwoDigit(day)+"/"+TwoDigit(month)+"/"+str(year);
 }
 
 // Saves the current position in the game to file specified
@@ -231,208 +231,208 @@ string ReadSystemTime(int filehandle)
 // In Sully this is just 10*5=50 so the scratch of 1000 is plenty!
 void MenuSaveGame(int slot)
 {
-	int xc, yc, i, j;
-	string gamedesc = "Save game in file: save/save"+ThreeDigit(slot)+".sve";
-	int ver = EncodeVersionNumber(VERSION_4_BYTE, VERSION_3_BYTE, VERSION_2_BYTE, VERSION_1_BYTE);
-	int screenshot = NewImage(ImageWidth(screen), ImageHeight(screen));
-	int mini = NewImage(32, 24);
-	// Check that there's enough scratch space to do the equipment-remembering.
-	// We need one space for each slot for each cast member.
-	if (MAX_SCRATCH < MAX_CAST * MAX_EQUIP_SLOTS) ErrorHandler("MenuSaveGame(): Not enough scratch space to handle equipment shuffling. Make sure MAX_SCRATCH is at least as big as MAX_CAST*MAX_EQUIP_SLOTS (" + str(MAX_CAST*MAX_EQUIP_SLOTS) + ").");
-	RenderMap(xwin, ywin, screenshot);
-	ScaleBlit(0, 0, 32, 24, screenshot, mini);
-	int savegame = FileOpen("save/save"+ThreeDigit(slot)+".sve", FILE_WRITE);
-	// [4] Header Size
-		FileWriteQuad(savegame, 3120 + len(VERSION_STRING) + len(gamedesc));
-	// [4] Version Number
-		FileWriteQuad(savegame, ver);
-	// [6 + LEN] Version String
-		FileWriteQuad(savegame, len(VERSION_STRING));
-		FileWriteString(savegame, VERSION_STRING);
-	// [4] Game Time Count
-		FileWriteQuad(savegame, global_gametime + systemtime);
-	// [24] System Time
-		WriteSystemTime(savegame);
-	// [6 + LEN] Game Description
-		FileWriteQuad(savegame, len(gamedesc));
-		FileWriteString(savegame, gamedesc);
-	// [3072] Mini Screenshot
-		for (yc = 0; yc <  24; yc++)
-		{
-			for (xc = 0; xc <  32; xc++)
-			{
-				FileWriteQuad(savegame, GetPixel(xc, yc, mini));
-			}
-		}
-	// Party Data
-		FileWriteQuad(savegame, PartySize());
-		FileWriteQuad(savegame, MAX_PARTY_SIZE);
-		for (yc = 0; yc <  MAX_PARTY_SIZE; yc++)
-		{
-			FileWriteQuad(savegame, party[yc]);
-		}
+    int xc, yc, i, j;
+    string gamedesc = "Save game in file: save/save"+ThreeDigit(slot)+".sve";
+    int ver = EncodeVersionNumber(VERSION_4_BYTE, VERSION_3_BYTE, VERSION_2_BYTE, VERSION_1_BYTE);
+    int screenshot = NewImage(ImageWidth(screen), ImageHeight(screen));
+    int mini = NewImage(32, 24);
+    // Check that there's enough scratch space to do the equipment-remembering.
+    // We need one space for each slot for each cast member.
+    if (MAX_SCRATCH < MAX_CAST * MAX_EQUIP_SLOTS) ErrorHandler("MenuSaveGame(): Not enough scratch space to handle equipment shuffling. Make sure MAX_SCRATCH is at least as big as MAX_CAST*MAX_EQUIP_SLOTS (" + str(MAX_CAST*MAX_EQUIP_SLOTS) + ").");
+    RenderMap(xwin, ywin, screenshot);
+    ScaleBlit(0, 0, 32, 24, screenshot, mini);
+    int savegame = FileOpen("save/save"+ThreeDigit(slot)+".sve", FILE_WRITE);
+    // [4] Header Size
+        FileWriteQuad(savegame, 3120 + len(VERSION_STRING) + len(gamedesc));
+    // [4] Version Number
+        FileWriteQuad(savegame, ver);
+    // [6 + LEN] Version String
+        FileWriteQuad(savegame, len(VERSION_STRING));
+        FileWriteString(savegame, VERSION_STRING);
+    // [4] Game Time Count
+        FileWriteQuad(savegame, global_gametime + systemtime);
+    // [24] System Time
+        WriteSystemTime(savegame);
+    // [6 + LEN] Game Description
+        FileWriteQuad(savegame, len(gamedesc));
+        FileWriteString(savegame, gamedesc);
+    // [3072] Mini Screenshot
+        for (yc = 0; yc <  24; yc++)
+        {
+            for (xc = 0; xc <  32; xc++)
+            {
+                FileWriteQuad(savegame, GetPixel(xc, yc, mini));
+            }
+        }
+    // Party Data
+        FileWriteQuad(savegame, PartySize());
+        FileWriteQuad(savegame, MAX_PARTY_SIZE);
+        for (yc = 0; yc <  MAX_PARTY_SIZE; yc++)
+        {
+            FileWriteQuad(savegame, party[yc]);
+        }
 
-		FileWriteQuad(savegame, MAX_CAST);
-		FileWriteQuad(savegame, MAX_STATS);
-		FileWriteQuad(savegame, MAX_EQUIP_SLOTS);
-		for (yc = 0; yc <  MAX_CAST; yc++)
-		{
-			// Level, XP and cur HP/MP are saved first. By saving these things 
-			// before dequipping gear we make the assumption that changing gear
-			// won't alter then. Gear actually CAN alter cur HP/MP by lowering 
-			// the max below the current value, but this happens at a higher
-			// level than the equip/dequip functions called here, so we can
-			// be confident that they'll remain untouched.
-			FileWriteQuad(savegame, master_cast[yc].level);
-			FileWriteQuad(savegame, master_cast[yc].exp);
-			FileWriteQuad(savegame, master_cast[yc].cur_hp);
-			FileWriteQuad(savegame, master_cast[yc].cur_mp);
-			// First things first, store  all equipment so it can be removed safely. This is done to 
-			// ensure that only the true values are saved. Then everything is re-equipped when you 
-			// reload, so that the game can robustly handle it when you save, quit, change equipment 
-			// stats, and reload. Yes, this does mean that the game is removing EVERYTHING from 
-			// EVERYBODY and then re-equipping it every time you save. Who knew, eh?
-			for (xc = 0; xc < MAX_EQUIP_SLOTS; xc++)
-			{			
-				arTemp[(yc*MAX_EQUIP_SLOTS)+xc] = master_cast[yc].equipment[xc];
-				// Unequip gear to get true stat, skill and condition information.
-				// This function differs from the top-level dequipper in that it
-				// doesn't alter current HP/MP if they're now too high, that it
-				// doesn't give you a copy of the item in inventory, and that it
-				// doesn't account for changes to condition. The first two things
-				// are good in this context; the third is done explicitly later.				
-				_removeEquipment(yc,xc);
-			}
-			/// now rebuild the status and element modifiers.
-			ResetAllyEquipmentModifiers(yc);					
-			// Now save stats.
-			for (xc = 0; xc < MAX_STATS; xc++)
-			{
-				FileWriteQuad(savegame, master_cast[yc].stats[xc]);
-			}
-			// Now save equipment. Wouldn't it make more sense to do this in the
-			// dequipping loop? Yes, it would! However, Sully was designed under
-			// the assumption that the order in which things appear in the savefile
-			// would not change between save formats and I was not eager to alter
-			// this. (Gayo)
-			for (xc = 0; xc <  MAX_EQUIP_SLOTS; xc++)
-			{
-				// Save gear using the remembered temporary info that was stored
-				// during the dequip loop.
-				FileWriteQuad(savegame, arTemp[(yc*MAX_EQUIP_SLOTS)+xc]);
-				//log("Char " + str(yc) + " Slot " + str(xc) + ": " + str(arTemp[(yc*MAX_EQUIP_SLOTS)+xc]) + " " + str((yc*MAX_EQUIP_SLOTS)+xc));
-			}			
-		}
-	// Item Data
-		FileWriteQuad(savegame, money); // Nearly forgot!
-		FileWriteQuad(savegame, _supply_count);
-		FileWriteQuad(savegame, MAX_SUPPLIES);
-		for (yc = 0; yc <  MAX_SUPPLIES; yc++)
-		{
-			FileWriteQuad(savegame, supply_inventory[yc].item_ref);
-			FileWriteQuad(savegame, supply_inventory[yc].quant);
-		}
+        FileWriteQuad(savegame, MAX_CAST);
+        FileWriteQuad(savegame, MAX_STATS);
+        FileWriteQuad(savegame, MAX_EQUIP_SLOTS);
+        for (yc = 0; yc <  MAX_CAST; yc++)
+        {
+            // Level, XP and cur HP/MP are saved first. By saving these things 
+            // before dequipping gear we make the assumption that changing gear
+            // won't alter then. Gear actually CAN alter cur HP/MP by lowering 
+            // the max below the current value, but this happens at a higher
+            // level than the equip/dequip functions called here, so we can
+            // be confident that they'll remain untouched.
+            FileWriteQuad(savegame, master_cast[yc].level);
+            FileWriteQuad(savegame, master_cast[yc].exp);
+            FileWriteQuad(savegame, master_cast[yc].cur_hp);
+            FileWriteQuad(savegame, master_cast[yc].cur_mp);
+            // First things first, store  all equipment so it can be removed safely. This is done to 
+            // ensure that only the true values are saved. Then everything is re-equipped when you 
+            // reload, so that the game can robustly handle it when you save, quit, change equipment 
+            // stats, and reload. Yes, this does mean that the game is removing EVERYTHING from 
+            // EVERYBODY and then re-equipping it every time you save. Who knew, eh?
+            for (xc = 0; xc < MAX_EQUIP_SLOTS; xc++)
+            {           
+                arTemp[(yc*MAX_EQUIP_SLOTS)+xc] = master_cast[yc].equipment[xc];
+                // Unequip gear to get true stat, skill and condition information.
+                // This function differs from the top-level dequipper in that it
+                // doesn't alter current HP/MP if they're now too high, that it
+                // doesn't give you a copy of the item in inventory, and that it
+                // doesn't account for changes to condition. The first two things
+                // are good in this context; the third is done explicitly later.                
+                _removeEquipment(yc,xc);
+            }
+            /// now rebuild the status and element modifiers.
+            ResetAllyEquipmentModifiers(yc);                    
+            // Now save stats.
+            for (xc = 0; xc < MAX_STATS; xc++)
+            {
+                FileWriteQuad(savegame, master_cast[yc].stats[xc]);
+            }
+            // Now save equipment. Wouldn't it make more sense to do this in the
+            // dequipping loop? Yes, it would! However, Sully was designed under
+            // the assumption that the order in which things appear in the savefile
+            // would not change between save formats and I was not eager to alter
+            // this. (Gayo)
+            for (xc = 0; xc <  MAX_EQUIP_SLOTS; xc++)
+            {
+                // Save gear using the remembered temporary info that was stored
+                // during the dequip loop.
+                FileWriteQuad(savegame, arTemp[(yc*MAX_EQUIP_SLOTS)+xc]);
+                //log("Char " + str(yc) + " Slot " + str(xc) + ": " + str(arTemp[(yc*MAX_EQUIP_SLOTS)+xc]) + " " + str((yc*MAX_EQUIP_SLOTS)+xc));
+            }           
+        }
+    // Item Data
+        FileWriteQuad(savegame, money); // Nearly forgot!
+        FileWriteQuad(savegame, _supply_count);
+        FileWriteQuad(savegame, MAX_SUPPLIES);
+        for (yc = 0; yc <  MAX_SUPPLIES; yc++)
+        {
+            FileWriteQuad(savegame, supply_inventory[yc].item_ref);
+            FileWriteQuad(savegame, supply_inventory[yc].quant);
+        }
 
-		FileWriteQuad(savegame, _equip_count);		
-		FileWriteQuad(savegame, MAX_EQUIPMENT);
-		for (yc = 0; yc <  MAX_EQUIPMENT; yc++)
-		{
-			FileWriteQuad(savegame, equipment_inventory[yc].item_ref);
-			FileWriteQuad(savegame, equipment_inventory[yc].quant);
-		}
+        FileWriteQuad(savegame, _equip_count);      
+        FileWriteQuad(savegame, MAX_EQUIPMENT);
+        for (yc = 0; yc <  MAX_EQUIPMENT; yc++)
+        {
+            FileWriteQuad(savegame, equipment_inventory[yc].item_ref);
+            FileWriteQuad(savegame, equipment_inventory[yc].quant);
+        }
 
-		FileWriteQuad(savegame, _key_count);
-		FileWriteQuad(savegame, MAX_KEY_ITEMS);
-		for (yc = 0; yc <  MAX_KEY_ITEMS; yc++)
-		{
-			FileWriteQuad(savegame, key_item_inventory[yc].item_ref);
-			FileWriteQuad(savegame, key_item_inventory[yc].quant);
-		}
-	// Options Data
-		FileWriteQuad(savegame, global_music_volume);
-		FileWriteQuad(savegame, sfx_volume);
-		FileWriteQuad(savegame, interface_volume);
-		FileWriteQuad(savegame, global_noscroll);
-		FileWriteQuad(savegame, global_menuluc);
-		FileWriteQuad(savegame, _menu_on);
-		FileWriteQuad(savegame, 0); // Padding
-		FileWriteQuad(savegame, MENU_COLOUR_NUM);
-		for (yc = 0; yc <  MENU_COLOUR_NUM; yc++)
-		{
-			FileWriteQuad(savegame, menu_colour[yc]);
-		}
-	// Flag Data
-		FileWriteQuad(savegame, MAX_FLAGS);
-		for (yc = 0; yc <  MAX_FLAGS; yc++)
-		{
-			FileWriteQuad(savegame, flags[yc]);
-		}
-	// Map Data
-		FileWriteQuad(savegame, len(curmap.path));
-		FileWriteString(savegame, curmap.path);
-		FileWriteQuad(savegame, entity.x[playerent]);
-		FileWriteQuad(savegame, entity.y[playerent]);
-		
-///// BEGIN 0.0.2.0	
+        FileWriteQuad(savegame, _key_count);
+        FileWriteQuad(savegame, MAX_KEY_ITEMS);
+        for (yc = 0; yc <  MAX_KEY_ITEMS; yc++)
+        {
+            FileWriteQuad(savegame, key_item_inventory[yc].item_ref);
+            FileWriteQuad(savegame, key_item_inventory[yc].quant);
+        }
+    // Options Data
+        FileWriteQuad(savegame, global_music_volume);
+        FileWriteQuad(savegame, sfx_volume);
+        FileWriteQuad(savegame, interface_volume);
+        FileWriteQuad(savegame, global_noscroll);
+        FileWriteQuad(savegame, global_menuluc);
+        FileWriteQuad(savegame, _menu_on);
+        FileWriteQuad(savegame, 0); // Padding
+        FileWriteQuad(savegame, MENU_COLOUR_NUM);
+        for (yc = 0; yc <  MENU_COLOUR_NUM; yc++)
+        {
+            FileWriteQuad(savegame, menu_colour[yc]);
+        }
+    // Flag Data
+        FileWriteQuad(savegame, MAX_FLAGS);
+        for (yc = 0; yc <  MAX_FLAGS; yc++)
+        {
+            FileWriteQuad(savegame, flags[yc]);
+        }
+    // Map Data
+        FileWriteQuad(savegame, len(curmap.path));
+        FileWriteString(savegame, curmap.path);
+        FileWriteQuad(savegame, entity.x[playerent]);
+        FileWriteQuad(savegame, entity.y[playerent]);
+        
+///// BEGIN 0.0.2.0 
 
-	// Keyconf data
-		FileWriteQuad(savegame, CURRENT_KEYCOUNT);
-		
-		for( i=0; i<32; i++ )
-		{
-			if( i < CURRENT_KEYCOUNT )
-			{
-				FileWriteQuad(savegame, _my_keys[i] );
-			}
-			else
-			{
-				FileWriteQuad(savegame, 0);
-			}
-		}
-		
-		FileWriteQuad(savegame, _keymode);
+    // Keyconf data
+        FileWriteQuad(savegame, CURRENT_KEYCOUNT);
+        
+        for( i=0; i<32; i++ )
+        {
+            if( i < CURRENT_KEYCOUNT )
+            {
+                FileWriteQuad(savegame, _my_keys[i] );
+            }
+            else
+            {
+                FileWriteQuad(savegame, 0);
+            }
+        }
+        
+        FileWriteQuad(savegame, _keymode);
 ///// BEGIN 0.0.3.0
-	
-	//cast skill data
-		FileWriteQuad(savegame, MAX_CAST);
+    
+    //cast skill data
+        FileWriteQuad(savegame, MAX_CAST);
 //Log( "Wrote a quad (MAX_CAST): "+str(MAX_CAST) );
-		for (yc = 0; yc <  MAX_CAST; yc++)
-		{
-			FileWriteQuad( savegame, master_cast[yc].skillcount );
+        for (yc = 0; yc <  MAX_CAST; yc++)
+        {
+            FileWriteQuad( savegame, master_cast[yc].skillcount );
 //Log( "Wrote a quad (master_cast["+str(yc)+"].skillcount): "+str(master_cast[yc].skillcount) );
 
-			for (xc = 0; xc < master_cast[yc].skillcount; xc++)
-			{
+            for (xc = 0; xc < master_cast[yc].skillcount; xc++)
+            {
 //Log( "Wrote a quad (master_cast["+str(yc)+"].skills["+str(xc)+"]): "+str( master_cast[yc].skills[xc] ) );
-				FileWriteQuad( savegame, master_cast[yc].skills[xc] );
-			}
-		}
-		
+                FileWriteQuad( savegame, master_cast[yc].skills[xc] );
+            }
+        }
+        
 ///// BEGIN 0.0.4.0 
-		for(xc = 0; xc < MAX_CAST; xc++)
-		{
-			FileWriteString(savegame, master_cast[xc].condition);
-		}
-		
-///// END OF SAVE FILE	
-	// Footer
-		FileWriteQuad(savegame, FileCurrentPos(savegame));
-		
-	FileClose(savegame);
-	FreeImage(mini);
-	FreeImage(screenshot);
-	// And we're done! Now reequip all the stuff we took off of people.
-	for(yc = 0; yc < MAX_CAST; yc++)
-	{
-		for (xc = 0; xc < MAX_EQUIP_SLOTS; xc++)
-		{			
-			// Don equipment using temporarily saved data.
-			if (arTemp[(yc*MAX_EQUIP_SLOTS)+xc] >= 0)
-				_applyEquipment(yc, arTemp[(yc*MAX_EQUIP_SLOTS)+xc], xc);
-		}
-		/// restore original status and element modifiers.
-		ResetAllyEquipmentModifiers(yc);				
-	}
+        for(xc = 0; xc < MAX_CAST; xc++)
+        {
+            FileWriteString(savegame, master_cast[xc].condition);
+        }
+        
+///// END OF SAVE FILE  
+    // Footer
+        FileWriteQuad(savegame, FileCurrentPos(savegame));
+        
+    FileClose(savegame);
+    FreeImage(mini);
+    FreeImage(screenshot);
+    // And we're done! Now reequip all the stuff we took off of people.
+    for(yc = 0; yc < MAX_CAST; yc++)
+    {
+        for (xc = 0; xc < MAX_EQUIP_SLOTS; xc++)
+        {           
+            // Don equipment using temporarily saved data.
+            if (arTemp[(yc*MAX_EQUIP_SLOTS)+xc] >= 0)
+                _applyEquipment(yc, arTemp[(yc*MAX_EQUIP_SLOTS)+xc], xc);
+        }
+        /// restore original status and element modifiers.
+        ResetAllyEquipmentModifiers(yc);                
+    }
 
 }
 
@@ -442,343 +442,343 @@ void MenuSaveGame(int slot)
 // In Sully this is just 10*5=50 so the scratch of 1000 is plenty!
 void MenuLoadGame(int slot)
 {
-	log( "MenuLoadGame("+str(slot)+")" );
-	
-	int xc, yc, i, xcoord, ycoord;
-	string mapname;
-	int savegame = FileOpen("save/save"+ThreeDigit(slot)+".sve", FILE_READ);
-	// Header Size
-	
-	int header_size = FileReadQuad(savegame);
-	int version_number = FileReadQuad(savegame);
+    log( "MenuLoadGame("+str(slot)+")" );
+    
+    int xc, yc, i, xcoord, ycoord;
+    string mapname;
+    int savegame = FileOpen("save/save"+ThreeDigit(slot)+".sve", FILE_READ);
+    // Header Size
+    
+    int header_size = FileReadQuad(savegame);
+    int version_number = FileReadQuad(savegame);
 
-	// Check that there's enough scratch space to do the equipment-remembering.
-	// We need one space for each slot for each cast member.
-	if (MAX_SCRATCH < MAX_CAST * MAX_EQUIP_SLOTS) ErrorHandler("MenuSaveGame(): Not enough scratch space to handle equipment shuffling. Make sure MAX_SCRATCH is at least as big as MAX_CAST*MAX_EQUIP_SLOTS (" + str(MAX_CAST*MAX_EQUIP_SLOTS) + ").");
-	
-		FileSeekPos(savegame, header_size, SEEK_SET);
-	// Party Data
-		curpartysize = FileReadQuad(savegame);
-		if (FileReadQuad(savegame) != MAX_PARTY_SIZE) ErrorHandler("Your MAX_PARTY_SIZE is screwed");
-		for (yc = 0; yc <  MAX_PARTY_SIZE; yc++)
-		{
-			party[yc] = FileReadQuad(savegame);
-		}
+    // Check that there's enough scratch space to do the equipment-remembering.
+    // We need one space for each slot for each cast member.
+    if (MAX_SCRATCH < MAX_CAST * MAX_EQUIP_SLOTS) ErrorHandler("MenuSaveGame(): Not enough scratch space to handle equipment shuffling. Make sure MAX_SCRATCH is at least as big as MAX_CAST*MAX_EQUIP_SLOTS (" + str(MAX_CAST*MAX_EQUIP_SLOTS) + ").");
+    
+        FileSeekPos(savegame, header_size, SEEK_SET);
+    // Party Data
+        curpartysize = FileReadQuad(savegame);
+        if (FileReadQuad(savegame) != MAX_PARTY_SIZE) ErrorHandler("Your MAX_PARTY_SIZE is screwed");
+        for (yc = 0; yc <  MAX_PARTY_SIZE; yc++)
+        {
+            party[yc] = FileReadQuad(savegame);
+        }
 
-		if (FileReadQuad(savegame) != MAX_CAST) ErrorHandler("Your MAX_CAST is screwed");
-		if (FileReadQuad(savegame) != MAX_STATS) ErrorHandler("Your MAX_STATS is screwed");
-		if (FileReadQuad(savegame) != MAX_EQUIP_SLOTS) ErrorHandler("Your MAX_EQUIP_SLOTS is screwed");
-		ClearCast(); 
-		for (yc = 0; yc <  MAX_CAST; yc++)
-		{
-			master_cast[yc].level = FileReadQuad(savegame);
-			master_cast[yc].exp = FileReadQuad(savegame);
-			master_cast[yc].cur_hp = FileReadQuad(savegame);
-			master_cast[yc].cur_mp = FileReadQuad(savegame);
-			for (xc = 0; xc <  MAX_STATS; xc++)
-			{
-				master_cast[yc].stats[xc] = FileReadQuad(savegame);
-			}
-			for (xc = 0; xc <  MAX_EQUIP_SLOTS; xc++)
-			{				
-				// We don't want to equip stuff just yet, so let's load it to a
-				// temporary location and then equip it at the end.				
-				arTemp[(yc*MAX_EQUIP_SLOTS)+xc] = FileReadQuad(savegame);
-				//log("Char " + str(yc) + " Slot " + str(xc) + ": " + str(arTemp[(yc*MAX_EQUIP_SLOTS)+xc]) + " " + str((yc*MAX_EQUIP_SLOTS)+xc));
-			}
-		}
-	// Item Data
-		money = FileReadQuad(savegame); // Nearly forgot!
-		_supply_count = FileReadQuad(savegame);
-		if (FileReadQuad(savegame) != MAX_SUPPLIES) ErrorHandler("Your MAX_SUPPLIES is screwed");
-		for (yc = 0; yc <  MAX_SUPPLIES; yc++)
-		{
-			supply_inventory[yc].item_ref = FileReadQuad(savegame);
-			supply_inventory[yc].quant = FileReadQuad(savegame);
-		}
+        if (FileReadQuad(savegame) != MAX_CAST) ErrorHandler("Your MAX_CAST is screwed");
+        if (FileReadQuad(savegame) != MAX_STATS) ErrorHandler("Your MAX_STATS is screwed");
+        if (FileReadQuad(savegame) != MAX_EQUIP_SLOTS) ErrorHandler("Your MAX_EQUIP_SLOTS is screwed");
+        ClearCast(); 
+        for (yc = 0; yc <  MAX_CAST; yc++)
+        {
+            master_cast[yc].level = FileReadQuad(savegame);
+            master_cast[yc].exp = FileReadQuad(savegame);
+            master_cast[yc].cur_hp = FileReadQuad(savegame);
+            master_cast[yc].cur_mp = FileReadQuad(savegame);
+            for (xc = 0; xc <  MAX_STATS; xc++)
+            {
+                master_cast[yc].stats[xc] = FileReadQuad(savegame);
+            }
+            for (xc = 0; xc <  MAX_EQUIP_SLOTS; xc++)
+            {               
+                // We don't want to equip stuff just yet, so let's load it to a
+                // temporary location and then equip it at the end.             
+                arTemp[(yc*MAX_EQUIP_SLOTS)+xc] = FileReadQuad(savegame);
+                //log("Char " + str(yc) + " Slot " + str(xc) + ": " + str(arTemp[(yc*MAX_EQUIP_SLOTS)+xc]) + " " + str((yc*MAX_EQUIP_SLOTS)+xc));
+            }
+        }
+    // Item Data
+        money = FileReadQuad(savegame); // Nearly forgot!
+        _supply_count = FileReadQuad(savegame);
+        if (FileReadQuad(savegame) != MAX_SUPPLIES) ErrorHandler("Your MAX_SUPPLIES is screwed");
+        for (yc = 0; yc <  MAX_SUPPLIES; yc++)
+        {
+            supply_inventory[yc].item_ref = FileReadQuad(savegame);
+            supply_inventory[yc].quant = FileReadQuad(savegame);
+        }
 
-		_equip_count = FileReadQuad(savegame);
-		if (FileReadQuad(savegame) != MAX_EQUIPMENT) ErrorHandler("Your MAX_EQUIPMENT is screwed");
-		for (yc = 0; yc <  MAX_EQUIPMENT; yc++)
-		{
-			equipment_inventory[yc].item_ref = FileReadQuad(savegame);
-			equipment_inventory[yc].quant = FileReadQuad(savegame);
-		}
+        _equip_count = FileReadQuad(savegame);
+        if (FileReadQuad(savegame) != MAX_EQUIPMENT) ErrorHandler("Your MAX_EQUIPMENT is screwed");
+        for (yc = 0; yc <  MAX_EQUIPMENT; yc++)
+        {
+            equipment_inventory[yc].item_ref = FileReadQuad(savegame);
+            equipment_inventory[yc].quant = FileReadQuad(savegame);
+        }
 
-		_key_count = FileReadQuad(savegame);
-		if (FileReadQuad(savegame) != MAX_KEY_ITEMS) ErrorHandler("Your MAX_KEY_ITEMS is screwed");
-		for (yc = 0; yc <  MAX_KEY_ITEMS; yc++)
-		{
-			key_item_inventory[yc].item_ref = FileReadQuad(savegame);
-			key_item_inventory[yc].quant = FileReadQuad(savegame);
-		}
-	// Options Data
-		global_music_volume = FileReadQuad(savegame);
-		sfx_volume = FileReadQuad(savegame);
-		interface_volume = FileReadQuad(savegame);
-		global_noscroll = FileReadQuad(savegame);
-		global_menuluc = FileReadQuad(savegame);
-		_menu_on = FileReadQuad(savegame); // Ah well
-		xc = FileReadQuad(savegame); // Padding
-		if (FileReadQuad(savegame) != MENU_COLOUR_NUM) ErrorHandler("Your MENU_COLOUR_NUM is screwed");
-		for (yc = 0; yc <  MENU_COLOUR_NUM; yc++)
-		{
-			menu_colour[yc] = FileReadQuad(savegame);
-		}
-	// Flag Data
-		if (FileReadQuad(savegame) != MAX_FLAGS) ErrorHandler("Your MAX_FLAGS is screwed");
-		for (yc = 0; yc <  MAX_FLAGS; yc++)
-		{
-			flags[yc] = FileReadQuad(savegame);
-		}
-	// Map Data
-		xc = FileReadQuad(savegame);
-		mapname = FileReadString(savegame);
-		if (len(mapname) != xc) ErrorHandler("Incorrect size of map name found");
-		xcoord = FileReadQuad(savegame);
-		ycoord = FileReadQuad(savegame);
-		PreLoadUpkeep();
-		if( version_number == EncodeVersionNumber(0,0,1,0) )
-		{
-			doSavegameFooter( savegame, slot, xc, yc, "0,0,1,0" );
-		}
-		else if( version_number == EncodeVersionNumber(0,0,2,0) )
-		{
-			doV0_2_0_0SaveGame( savegame );
-			doSavegameFooter( savegame, slot, xc, yc, "0,0,2,0" );
-		}
-		else if( version_number == EncodeVersionNumber(0,0,3,0) )
-		{
-			doV0_2_0_0SaveGame( savegame );
-			doV0_3_0_0SaveGame( savegame );
-			doSavegameFooter( savegame, slot, xc, yc, "0,0,3,0" );
-		}
-		else if( version_number == EncodeVersionNumber(0,0,4,0) )
-		{
-			doV0_2_0_0SaveGame( savegame );
-			doV0_3_0_0SaveGame( savegame );			
-			doV0_4_0_0SaveGame( savegame );
-			doSavegameFooter( savegame, slot, xc, yc, "0,0,4,0" );						
-		}		
-		else
-		{
-			FileClose(savegame);
-			ErrorHandler("Errors have occurred reading this save format (bad version number), load aborted");
-			log( "Error, version was: '"+str(version_number)+"'" );
-			exit("");
-		}
-		// And we're done! Now it's time to equip all the gear from where it was 
-		// temporarily stored.
-		for (yc = 0; yc <  MAX_CAST; yc++)
-		{
-			for (xc = 0; xc <  MAX_EQUIP_SLOTS; xc++)
-			{
-				//log("Char " + str(yc) + " Slot " + str(xc) + ": " + str(arTemp[(yc*MAX_EQUIP_SLOTS)+xc]) + " " + str((yc*MAX_EQUIP_SLOTS)+xc));
-				if (arTemp[(yc*MAX_EQUIP_SLOTS)+xc] >= 0)
-				{					
-					_applyEquipment(yc, arTemp[(yc*MAX_EQUIP_SLOTS)+xc], xc);
-				}
-			}
-			/// restore status and element modifiers.
-			ResetAllyEquipmentModifiers(yc);							
-		}		
-		// Go to the appropriate map.
-		V1_MapSwitch(mapname, xcoord / 16, ycoord / 16, TBLACK);
+        _key_count = FileReadQuad(savegame);
+        if (FileReadQuad(savegame) != MAX_KEY_ITEMS) ErrorHandler("Your MAX_KEY_ITEMS is screwed");
+        for (yc = 0; yc <  MAX_KEY_ITEMS; yc++)
+        {
+            key_item_inventory[yc].item_ref = FileReadQuad(savegame);
+            key_item_inventory[yc].quant = FileReadQuad(savegame);
+        }
+    // Options Data
+        global_music_volume = FileReadQuad(savegame);
+        sfx_volume = FileReadQuad(savegame);
+        interface_volume = FileReadQuad(savegame);
+        global_noscroll = FileReadQuad(savegame);
+        global_menuluc = FileReadQuad(savegame);
+        _menu_on = FileReadQuad(savegame); // Ah well
+        xc = FileReadQuad(savegame); // Padding
+        if (FileReadQuad(savegame) != MENU_COLOUR_NUM) ErrorHandler("Your MENU_COLOUR_NUM is screwed");
+        for (yc = 0; yc <  MENU_COLOUR_NUM; yc++)
+        {
+            menu_colour[yc] = FileReadQuad(savegame);
+        }
+    // Flag Data
+        if (FileReadQuad(savegame) != MAX_FLAGS) ErrorHandler("Your MAX_FLAGS is screwed");
+        for (yc = 0; yc <  MAX_FLAGS; yc++)
+        {
+            flags[yc] = FileReadQuad(savegame);
+        }
+    // Map Data
+        xc = FileReadQuad(savegame);
+        mapname = FileReadString(savegame);
+        if (len(mapname) != xc) ErrorHandler("Incorrect size of map name found");
+        xcoord = FileReadQuad(savegame);
+        ycoord = FileReadQuad(savegame);
+        PreLoadUpkeep();
+        if( version_number == EncodeVersionNumber(0,0,1,0) )
+        {
+            doSavegameFooter( savegame, slot, xc, yc, "0,0,1,0" );
+        }
+        else if( version_number == EncodeVersionNumber(0,0,2,0) )
+        {
+            doV0_2_0_0SaveGame( savegame );
+            doSavegameFooter( savegame, slot, xc, yc, "0,0,2,0" );
+        }
+        else if( version_number == EncodeVersionNumber(0,0,3,0) )
+        {
+            doV0_2_0_0SaveGame( savegame );
+            doV0_3_0_0SaveGame( savegame );
+            doSavegameFooter( savegame, slot, xc, yc, "0,0,3,0" );
+        }
+        else if( version_number == EncodeVersionNumber(0,0,4,0) )
+        {
+            doV0_2_0_0SaveGame( savegame );
+            doV0_3_0_0SaveGame( savegame );         
+            doV0_4_0_0SaveGame( savegame );
+            doSavegameFooter( savegame, slot, xc, yc, "0,0,4,0" );                      
+        }       
+        else
+        {
+            FileClose(savegame);
+            ErrorHandler("Errors have occurred reading this save format (bad version number), load aborted");
+            log( "Error, version was: '"+str(version_number)+"'" );
+            exit("");
+        }
+        // And we're done! Now it's time to equip all the gear from where it was 
+        // temporarily stored.
+        for (yc = 0; yc <  MAX_CAST; yc++)
+        {
+            for (xc = 0; xc <  MAX_EQUIP_SLOTS; xc++)
+            {
+                //log("Char " + str(yc) + " Slot " + str(xc) + ": " + str(arTemp[(yc*MAX_EQUIP_SLOTS)+xc]) + " " + str((yc*MAX_EQUIP_SLOTS)+xc));
+                if (arTemp[(yc*MAX_EQUIP_SLOTS)+xc] >= 0)
+                {                   
+                    _applyEquipment(yc, arTemp[(yc*MAX_EQUIP_SLOTS)+xc], xc);
+                }
+            }
+            /// restore status and element modifiers.
+            ResetAllyEquipmentModifiers(yc);                            
+        }       
+        // Go to the appropriate map.
+        V1_MapSwitch(mapname, xcoord / 16, ycoord / 16, TBLACK);
 }
 
 
 void doV0_3_0_0SaveGame( int savegame )
 {
-	int xc, yc;
-	
-	if( FileReadQuad(savegame) != MAX_CAST ) ErrorHandler("Your MAX_CAST is screwed (skill section)");
+    int xc, yc;
+    
+    if( FileReadQuad(savegame) != MAX_CAST ) ErrorHandler("Your MAX_CAST is screwed (skill section)");
 
-	//master_cast[MAX_CAST].skills[MAX_SKILLS]
-	//master_cast[MAX_CAST].skillcount
-	for (yc = 0; yc <  MAX_CAST; yc++)
-	{
-		master_cast[yc].skillcount = FileReadQuad(savegame);
-		
-		if( master_cast[yc].skillcount < 0 )
-			master_cast[yc].skillcount = 0;
-		
-		
-		if( master_cast[yc].skillcount < 0 )
-		{
-			master_cast[yc].skillcount = 0;
-		}
+    //master_cast[MAX_CAST].skills[MAX_SKILLS]
+    //master_cast[MAX_CAST].skillcount
+    for (yc = 0; yc <  MAX_CAST; yc++)
+    {
+        master_cast[yc].skillcount = FileReadQuad(savegame);
+        
+        if( master_cast[yc].skillcount < 0 )
+            master_cast[yc].skillcount = 0;
+        
+        
+        if( master_cast[yc].skillcount < 0 )
+        {
+            master_cast[yc].skillcount = 0;
+        }
 
-		for (xc = 0; xc < master_cast[yc].skillcount; xc++)
-		{
-			master_cast[yc].skills[xc] = FileReadQuad(savegame);
-		}
-	}
+        for (xc = 0; xc < master_cast[yc].skillcount; xc++)
+        {
+            master_cast[yc].skills[xc] = FileReadQuad(savegame);
+        }
+    }
 }
 
 void doV0_4_0_0SaveGame( int savegame )
 {
-	int xc;
-	for (xc=0; xc < MAX_CAST; xc++)
-	{
-		master_cast[xc].condition = FileReadString(savegame);
-	}	
+    int xc;
+    for (xc=0; xc < MAX_CAST; xc++)
+    {
+        master_cast[xc].condition = FileReadString(savegame);
+    }   
 }
 
 
 void doV0_2_0_0SaveGame( int savegame )
 {
-	int i, numkeys;
+    int i, numkeys;
 
-	// next 34 quads: 
-	// 0: CURRENT_KEYCOUNT of savefile (check this against present one, error if different)
-	// 1-32: the key vals, up to 32 different ones.  If you've modded for > 32 keys, a new format is in order, BITCH.
-	// 33: the _key_mode of the savefile.
-	numkeys = FileReadQuad(savegame); // read current keycount
-	if( numkeys != CURRENT_KEYCOUNT ) // Bad key data -- give up trying to load keyconf
-	{
-		for (i=0;i<34;i++) FileReadQuad(savegame); // skip past the rest of the key data
-		ErrorHandler("Incorrect custom keycount.  Setting mode to standard.");
-		ResetToDefaultKeymapping();
-	}
-	else // Read quads 1-33 containing the 32 key values
-	{
-		for(i=0; i<32; i++)
-		{
-			// If this is a key being used, store it
-			if (i<numkeys) _my_keys[i] = FileReadQuad(savegame);
-			// otherwise the value is padding, so just skip over it
-			else FileReadQuad(savegame);
-		}		
-		_keymode = FileReadQuad(savegame); // Read keymode (final of the 34 key quads)
-		ReinforceKeymapping();
-	}
+    // next 34 quads: 
+    // 0: CURRENT_KEYCOUNT of savefile (check this against present one, error if different)
+    // 1-32: the key vals, up to 32 different ones.  If you've modded for > 32 keys, a new format is in order, BITCH.
+    // 33: the _key_mode of the savefile.
+    numkeys = FileReadQuad(savegame); // read current keycount
+    if( numkeys != CURRENT_KEYCOUNT ) // Bad key data -- give up trying to load keyconf
+    {
+        for (i=0;i<34;i++) FileReadQuad(savegame); // skip past the rest of the key data
+        ErrorHandler("Incorrect custom keycount.  Setting mode to standard.");
+        ResetToDefaultKeymapping();
+    }
+    else // Read quads 1-33 containing the 32 key values
+    {
+        for(i=0; i<32; i++)
+        {
+            // If this is a key being used, store it
+            if (i<numkeys) _my_keys[i] = FileReadQuad(savegame);
+            // otherwise the value is padding, so just skip over it
+            else FileReadQuad(savegame);
+        }       
+        _keymode = FileReadQuad(savegame); // Read keymode (final of the 34 key quads)
+        ReinforceKeymapping();
+    }
 
-	/*for(i=0; i<34; i++)
-	{
-		arTemp[i] = FileReadQuad(savegame);
-	}
+    /*for(i=0; i<34; i++)
+    {
+        arTemp[i] = FileReadQuad(savegame);
+    }
 
-	if( arTemp[0] != CURRENT_KEYCOUNT )
-	{
-		ErrorHandler("Incorrect custom keycount.  Setting mode to STD.");
-		ResetToDefaultKeymapping();
-	}
-	else
-	{
-		if( arTemp[0] > 32 ) { arTemp[50] = 32; } else { arTemp[50] = CURRENT_KEYCOUNT; }
+    if( arTemp[0] != CURRENT_KEYCOUNT )
+    {
+        ErrorHandler("Incorrect custom keycount.  Setting mode to STD.");
+        ResetToDefaultKeymapping();
+    }
+    else
+    {
+        if( arTemp[0] > 32 ) { arTemp[50] = 32; } else { arTemp[50] = CURRENT_KEYCOUNT; }
 
-		for(i=0; i<arTemp[50]; i++)
-		{
-			_my_keys[i] = arTemp[i+1];
-		}
+        for(i=0; i<arTemp[50]; i++)
+        {
+            _my_keys[i] = arTemp[i+1];
+        }
 
-		_keymode = arTemp[33];
-		ReinforceKeymapping();
-	}*/	
-	
+        _keymode = arTemp[33];
+        ReinforceKeymapping();
+    }*/ 
+    
 }
 
 void doSavegameFooter( int savegame, int slot, int xc, int yc, string format )
 {
-	// Footer
-	if (FileCurrentPos(savegame) == FileReadQuad(savegame))
-	{
+    // Footer
+    if (FileCurrentPos(savegame) == FileReadQuad(savegame))
+    {
 
-		FileClose(savegame);
-		global_gametime = save_display[(slot - 1) % 5].gametime - systemtime;
-	}
-	else
-	{
-		FileClose(savegame);
-		ErrorHandler("Errors have occurred reading this save format ("+format+"), load aborted");
-		return;
-	}
+        FileClose(savegame);
+        global_gametime = save_display[(slot - 1) % 5].gametime - systemtime;
+    }
+    else
+    {
+        FileClose(savegame);
+        ErrorHandler("Errors have occurred reading this save format ("+format+"), load aborted");
+        return;
+    }
 }
 
 ///things to make loading smooth no matter what.
 void PreLoadUpkeep()
 {
-	//reset to the default mapping... if there's a custom mapping it'll be loaded.
-	ResetToDefaultKeymapping();
-	
-	ClearVCLayer();
-	cameratracking = 1;
-	_title_menu = 0;
+    //reset to the default mapping... if there's a custom mapping it'll be loaded.
+    ResetToDefaultKeymapping();
+    
+    ClearVCLayer();
+    cameratracking = 1;
+    _title_menu = 0;
 }
 
 // Loads the header of a save file for selection purposes
 void MenuLoadSaveDisplay(int slot)
 {
-	int xc, yc;
-	save_display[slot % 5].image = NewImage(32, 24);
-	int savegame = FileOpen("save/save"+ThreeDigit(slot + 1)+".sve", FILE_READ);
-	//Log("***Loading from: 'save/save"+ThreeDigit(slot + 1)+".sve'");
-	// Header Size
-		xc = FileReadQuad(savegame);
-	// Version Number
-		xc = FileReadQuad(savegame);
-		if (xc < (VERSION_4_BYTE << 24) + (VERSION_3_BYTE << 16) + (VERSION_2_BYTE << 8) + VERSION_1_BYTE)
-		{
-			ErrorHandler("Attempting to load old savegame format, errors may occur.");
-		}
-		Log("Quad version: "+str(xc));
-	// Version String
-		xc = FileReadQuad(savegame);
-		save_display[slot % 5].text = FileReadString(savegame);
-		if (len(save_display[slot % 5].text) != xc) ErrorHandler("Incorrect size of version string found");
-		if (strcmp(save_display[slot % 5].text , VERSION_STRING))
-		{
-			ErrorHandler("Reading version string: '"+save_display[slot % 5].text+"' does not match that of current: '"+VERSION_STRING+"'");
-		}
-		//Log("String version: "+save_display[slot % 5].text);
-	// Game Time Count
-		save_display[slot % 5].gametime = FileReadQuad(savegame);
-		//Log("Systime: "+str(xc));
-	// System Time
-		save_display[slot % 5].time = ReadSystemTime(savegame);
-	// Game Description
-		xc = FileReadQuad(savegame);
-		save_display[slot % 5].text = FileReadString(savegame);
-		if (len(save_display[slot % 5].text) != xc) ErrorHandler("Incorrect size of game description found");
-		//Log("Text: '"+save_display[slot % 5].text+"'");
-	// Mini Screenshot
-		for (yc = 0; yc <  24; yc++)
-		{
-			for (xc = 0; xc <  32; xc++)
-			{
-				 SetPixel(xc, yc, FileReadQuad(savegame), save_display[slot % 5].image);
-			}
-		}
-	FileClose(savegame);
-	//Log("***Done with: 'save/save"+ThreeDigit(slot + 1)+".sve'");
+    int xc, yc;
+    save_display[slot % 5].image = NewImage(32, 24);
+    int savegame = FileOpen("save/save"+ThreeDigit(slot + 1)+".sve", FILE_READ);
+    //Log("***Loading from: 'save/save"+ThreeDigit(slot + 1)+".sve'");
+    // Header Size
+        xc = FileReadQuad(savegame);
+    // Version Number
+        xc = FileReadQuad(savegame);
+        if (xc < (VERSION_4_BYTE << 24) + (VERSION_3_BYTE << 16) + (VERSION_2_BYTE << 8) + VERSION_1_BYTE)
+        {
+            ErrorHandler("Attempting to load old savegame format, errors may occur.");
+        }
+        Log("Quad version: "+str(xc));
+    // Version String
+        xc = FileReadQuad(savegame);
+        save_display[slot % 5].text = FileReadString(savegame);
+        if (len(save_display[slot % 5].text) != xc) ErrorHandler("Incorrect size of version string found");
+        if (strcmp(save_display[slot % 5].text , VERSION_STRING))
+        {
+            ErrorHandler("Reading version string: '"+save_display[slot % 5].text+"' does not match that of current: '"+VERSION_STRING+"'");
+        }
+        //Log("String version: "+save_display[slot % 5].text);
+    // Game Time Count
+        save_display[slot % 5].gametime = FileReadQuad(savegame);
+        //Log("Systime: "+str(xc));
+    // System Time
+        save_display[slot % 5].time = ReadSystemTime(savegame);
+    // Game Description
+        xc = FileReadQuad(savegame);
+        save_display[slot % 5].text = FileReadString(savegame);
+        if (len(save_display[slot % 5].text) != xc) ErrorHandler("Incorrect size of game description found");
+        //Log("Text: '"+save_display[slot % 5].text+"'");
+    // Mini Screenshot
+        for (yc = 0; yc <  24; yc++)
+        {
+            for (xc = 0; xc <  32; xc++)
+            {
+                 SetPixel(xc, yc, FileReadQuad(savegame), save_display[slot % 5].image);
+            }
+        }
+    FileClose(savegame);
+    //Log("***Done with: 'save/save"+ThreeDigit(slot + 1)+".sve'");
 }
 
 // Frees all currently loaded save display slots
 void MenuClearDisplay()
 {
-	int i;
-	for (i = 0; i < 5; i++)
-	{
-		if (len(save_display[i].text)) MenuFreeSaveDisplay(i);
-	}
+    int i;
+    for (i = 0; i < 5; i++)
+    {
+        if (len(save_display[i].text)) MenuFreeSaveDisplay(i);
+    }
 }
 
 // Frees the specified save display slot
 void MenuFreeSaveDisplay(int slot)
 {
-	FreeImage(save_display[slot % 5].image);
-	save_display[slot % 5].text = "";
+    FreeImage(save_display[slot % 5].image);
+    save_display[slot % 5].text = "";
 }
 
 // Frees all loaded save display slots, and loads all slots required
 void MenuRefreshSlots()
 {
-	int i;
-	MenuClearDisplay();
-	for (i = menu_start; i < menu_sub; i++)
-	{
-		MenuLoadSaveDisplay(i);
-		log("--Refresh slot: "+str(i));
-		if (menu_start + 4 <= i) i = menu_sub + 1;
-	}
+    int i;
+    MenuClearDisplay();
+    for (i = menu_start; i < menu_sub; i++)
+    {
+        MenuLoadSaveDisplay(i);
+        log("--Refresh slot: "+str(i));
+        if (menu_start + 4 <= i) i = menu_sub + 1;
+    }
 }
