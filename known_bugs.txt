@@ -1,11 +1,14 @@
 BATTLE SYSTEM
 
+* Directionals pressed at start of battle remain pressed in battle, messing with initial menu input
 * If you used an item on the last turn in battle, it thinks your new action is an item use as well
 * There's some weirdness with the battle groups -- some groups trigger errors on fight start, and some groups' enemies bleed into other groups.
 * Actions are resolving in the wrong order (something up with the queue, said Grue?)
-* Actions that are ineffective on dead targets (which currently means all of them) don't retarget if the original target dies before they happen.
+* Under some circumstances, actions whose original targets have died fail to retarget. It doesn't happen very often, but it still happens, oddly.
 * After your first fight, the party begins every fight doing the victory dance.
 * Wtf is up with that keys.vc error that happens once in a while? It seems to have nothing to do with keys.vc, at least -- I was getting something similar earlier when I was fucking up image handles, so maybe it's related to that.
+* Items (and spells?) that can't be used in battle can still be accessed in the battle menus, causing the game to get upset.
+* Something is way fucked in the drama clubber fight -- it always freezes on me after a short time. This is the only fight with a setup callfunc -- could that be related?
 
 NON-BATTLE-SYSTEM
 

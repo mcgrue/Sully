@@ -63,6 +63,9 @@ int mapswitchx, mapswitchy, mapswitche = TBLACK;
 /// the currently-playing music 
 string curmusic;
 
+/// the number of steps until the next battle
+int battle_steps;
+
 ///variables concerning the V1RPG_RenderFunc quake options.
 int vc_quake_on, vc_quake_x, vc_quake_y, q_original_x, q_original_y;
 
@@ -540,6 +543,7 @@ void V1RPG_LoadResources()
 void V1_MapSwitch(string mapn, int x, int y, int effect)
 {
     battles_enabled_here = 0;
+    battle_steps = calculateGracePeriod(0);
     v1_party_init = 0;
 
     mapswitche = effect;

@@ -225,19 +225,23 @@ int initBattleRenderer()
     }
 }
 
-int ____battleSteps = 30;
-
 int get_steps_to_next_battle() {
-    return ____battleSteps;
+    return battle_steps;
 }
 
 void doBattleStep() {
     
-    ____battleSteps--;
+    battle_steps--;
     
-    if( ____battleSteps <= 0 )
+    if( battle_steps <= 0 )
     {
         doBattle( "Overworld_A" );
-        ____battleSteps = 90 + Random(1,50);
+    	battle_steps = calculateGracePeriod(0);    
     }    
+}
+
+// Calculates the number of steps until the next battle, to be used after a battle has occurred or when a new map is loaded. 
+// Right now this always does the same thing but eventually we'll probably set it to be context-sensitive.
+int calculateGracePeriod(int on_overworld) {
+	Random(1,50);
 }

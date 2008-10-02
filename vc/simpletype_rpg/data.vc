@@ -111,7 +111,6 @@ string sprfile_dir      = "res/images/sprites/";
 #define STAT_ATK    12
 #define STAT_DEF    13
 
-
 /// a global array of ints and one of strings for use in functions,
 /// since you can't have local arrays in mapfunctions.
 /// Also useful scratch.  This data is by definition *not* saved... 
