@@ -227,7 +227,7 @@ void TargettingError( string error_msg )
 // If you alter the target_data struct, please alter the arguments accordingly.
 //
 // Errors if you've filled the master_targetting array to it's capacity.
-void _AddTarget( int _id, int _mode, string _text )
+void AddTarget( int _id, int _mode, string _text )
 {
     if( master_targetting_count >= MAX_TARGETS )
     {
@@ -243,11 +243,6 @@ void _AddTarget( int _id, int _mode, string _text )
     
     master_targetting_count++;
 }
-
-void AddTarget( int _id, int _mode, string _text ) {
-    AddUniqueTarget( _id, _mode, _text );
-}
-
 
 // When your targetting function adds a valid target, please do it through this function.
 // This function makes sure each target is unique.
@@ -274,7 +269,7 @@ void AddUniqueTarget( int _id, int _mode, string _text )
     }
     
     //if we got this far, it's safe to add this target.
-    _AddTarget( _id, _mode, _text );
+    AddTarget( _id, _mode, _text );
 }
 
 // If your targetting function cancels peacefully (like the user decided not to
@@ -479,7 +474,7 @@ void loadTargettingFromString( string s )
     {
         tmp = GetToken(s,":",i);
         
-        _AddTarget( 
+        AddTarget( 
             val(GetToken(tmp,",",0)) ,
             val(GetToken(tmp,",",1)) ,
             GetToken(tmp,",",2)
