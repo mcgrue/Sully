@@ -247,8 +247,14 @@ void mcg_destroy()
 
     for( i=0; i<mcgV_sprite_count; i++ )
     {
-        FreeSprite( mcgV_sprites[i], 1 );
+        mcgV_sprites[i] = -1;
     }
+    
+    for( i=0; i<MAX_SPRITES; i++ ) 
+    {
+        FreeSprite( i, 1, 1 );    
+    }
+
 
     for( i=0; i<MCGRENDER_MAXLAYERS; i++ )
     {
@@ -950,7 +956,6 @@ void mcg_process_sprites()
             /// 'done' sprites are out of the autoanimation loop and need to be brought back in by independant action. 
             if( !sprite_heap[spr].done )
             {
-        
                 /// if the current time is equal or greater than the sprite's time_for_next_op, it's time to execute the next op.
                 if( systemtime >= sprite_heap[spr].time_for_next_op )
                 {
@@ -967,7 +972,6 @@ void mcg_process_sprites()
                                 sprite_heap[spr].time_for_next_op = systemtime + GetSprOpValue(spr,sprite_heap[spr].current_strand,sprite_heap[spr].current_operation+1);
                                 sprite_heap[spr].current_operation++;
                             case SPROP_CALLFUNC:
-
                                 /// if the OpValue of an callfunc oper is true, it's callfunc is not optional.  Throw an error if the OpData isn't a valid callfunc.
                                 if( GetSprOpValue(spr,sprite_heap[spr].current_strand,sprite_heap[spr].current_operation+1) )
                                 {

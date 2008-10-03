@@ -184,19 +184,6 @@ _debug_tick_counter = 0;
         FreeImage( imBattleActorPointer );
     }
     
-    ///wipe out the previous enemy sprites...
-    for( i=0; i<bs_enemy_sprite_ref_count; i++ )
-    {
-        FreeSprite( bs_enemy_sprite_ref[i], 1 );
-    }
-    
-    ///wipe out the previous ally sprites
-    ///wipe out the previous enemy sprites...
-    for( i=0; i<previous_battle_allycount; i++ )
-    {
-        FreeSprite( bs_ally_sprite_ref[i], 1 );
-    }
-    
     /// wipe out the old enemy party associations.
     resetBattleEnemyList();
     
@@ -262,7 +249,7 @@ void BsPlacePartySprites()
             master_cast[party[i]].battle_sprite, SPRITETYPE_ALLY 
         );
         
-        setStartingBattleSpriteAnimations( party[i], bs_ally_sprite_ref[i] );    
+        setStartingBattleSpriteAnimations( party[i], bs_ally_sprite_ref[i] );
     }
     
     switch( PartySize() )
@@ -1889,13 +1876,17 @@ void CalculatePhatBattleBooty() {
 
 void setStartingBattleSpriteAnimations( int party_idx, int sprite_idx )
 {
+    string anim;
+
     if( isDead(party_idx) ) {
-        ChangeSpriteAnimation( sprite_idx, "DEATH" );
+        anim = "DEATH";
     } else if( isWeak(party_idx) ) {
-        ChangeSpriteAnimation( sprite_idx, "WEAK" );
+        anim = "WEAK";
     } else {
-        ChangeSpriteAnimation( sprite_idx, "IDLE" );
+        anim = "IDLE";
     }
+    
+    ChangeSpriteAnimation( sprite_idx, anim );
 }
 
 

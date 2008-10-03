@@ -72,7 +72,11 @@ int LoadSprite( string filename, int sprite_type )
     int ldsp_numlines;
     int ldsp_state = 0; // Tracks what the function is currently expecting on a line
     int ldsp_idx = _getFreeSpriteIndex(); // Find the first free sprite slot.
-    if (ldsp_idx < 0) { ErrorHandler("Error in " + filename + ": No room for more sprites."); return 0-1; } // Stop and pass an error if the sprite array is full.
+    
+    if( ldsp_idx < 0 ) { // Stop and pass an error if the sprite array is full.
+        ErrorHandler("Error in " + filename + ": No room for more sprites."); 
+        return -1; 
+    } 
 
     artemp[0] = FileOpen(filename, FILE_READ); // Try to open the file to confirm that it exists
     if (!artemp[0]) { ErrorLoadFile(filename); return 0; } // Throws error on fail and aborts
@@ -172,11 +176,14 @@ int LoadSprite( string filename, int sprite_type )
 ///
 /// @param spr_idx  the sprite_heap index to be freed
 /// @param free_animt   flag indicating if the sprite's anim_t is to be deallocated too.
-void FreeSprite( int spr_idx, int free_animt )
+void FreeSprite( int spr_idx, int free_animt, int override )
 {
-    if(spr_idx >= MAX_SPRITES || spr_idx < 0 ) ErrorHandler("Sprite index passed to FreeSprite (" + str(spr_idx) + ") is out of bounds.");
-//  else if (!sprite_heap[spr_idx].active) ErrorHandler("Sprite passed to FreeSprite (" + str(spr_idx) + ") is already free.");
-    else if( sprite_heap[spr_idx].active )
+    int i;
+    if(spr_idx >= MAX_SPRITES || spr_idx < 0 ) 
+    {
+        ErrorHandler("Sprite index passed to FreeSprite (" + str(spr_idx) + ") is out of bounds.");
+    }
+    else if( sprite_heap[spr_idx].active || override )
     {
         if( free_animt ) 
         {
@@ -184,6 +191,27 @@ void FreeSprite( int spr_idx, int free_animt )
         }
         
         sprite_heap[spr_idx].active = 0;
+        
+        
+        sprite_heap[spr_idx].sanim_t = -1;
+        sprite_heap[spr_idx].sprdef_file = "";
+        sprite_heap[spr_idx].image_file = "";
+        sprite_heap[spr_idx].anim_strand_count = -1;
+        
+        
+        for( i=0; i<MAX_STRANDS_PER_SPRITE; i++ ) {
+            sprite_heap[spr_idx].strands[i]         = ""; 
+            sprite_heap[spr_idx].strand_names[i]    = "";
+            sprite_heap[spr_idx].strand_length[i]   = -1;
+        }
+        
+        sprite_heap[spr_idx].current_strand     = -1;
+        sprite_heap[spr_idx].current_operation  = -1;
+        sprite_heap[spr_idx].time_for_next_op   = -1;
+        sprite_heap[spr_idx].sprite_type        = -1;
+        sprite_heap[spr_idx].done               = -1;
+        
+        sprite_heap[spr_idx].active             = 0;
     }
 }
 
@@ -530,20 +558,21 @@ int _checkMandatoryStrands(int _idx, int _type)
 {
     if  (_type == SPRITETYPE_ENEMY)
     {
-        if (getStrandIndex(_idx, "idle") < 0) return 0;
-        if (getStrandIndex(_idx, "weak") < 0) return 0;
+        if (getStrandIndex(_idx, "idle") < 0)   return 0;
+        if (getStrandIndex(_idx, "weak") < 0)   return 0;
         if (getStrandIndex(_idx, "attack") < 0) return 0;
-        if (getStrandIndex(_idx, "hit") < 0) return 0;
-        if (getStrandIndex(_idx, "death") < 0) return 0;
+        if (getStrandIndex(_idx, "hit") < 0)    return 0;
+        if (getStrandIndex(_idx, "death") < 0)  return 0;
     }   
     else if  (_type == SPRITETYPE_ALLY)
     {
-        if (getStrandIndex(_idx, "idle") < 0) return 0;
-        if (getStrandIndex(_idx, "weak") < 0) return 0;
+        if (getStrandIndex(_idx, "idle") < 0)   return 0;
+        if (getStrandIndex(_idx, "weak") < 0)   return 0;
         if (getStrandIndex(_idx, "attack") < 0) return 0;
-        if (getStrandIndex(_idx, "hit") < 0) return 0;
-        if (getStrandIndex(_idx, "death") < 0) return 0;
-    }   
+        if (getStrandIndex(_idx, "hit") < 0)    return 0;
+        if (getStrandIndex(_idx, "death") < 0)  return 0;
+    }
+    
     return 1;
 }
 
@@ -554,9 +583,18 @@ int getStrandIndex(int _idx, string _name)
     
     for (_gsi = 0; _gsi < sprite_heap[_idx].anim_strand_count; _gsi++)
     {
-        if (equ(sprite_heap[_idx].strand_names[_gsi], _name)) return _gsi;
+        if( equ(sprite_heap[_idx].strand_names[_gsi], _name) ) {
+            return _gsi;
+        }
     }
-    return 0-1;
+    
+Messagebox("describing fucking...");
+for( _gsi = 0; _gsi < sprite_heap[_idx].anim_strand_count; _gsi++ )
+{
+    Messagebox(str(_gsi)+": "+_name);
+}
+Messagebox("done fucking...");    
+    return -1;
 }
 
 
@@ -663,14 +701,14 @@ void sprite_endstrand_process( int idx )
     if( sprite_heap[idx].sprite_type != SPRITETYPE_UNSAFE )
     {
         if(  
-            getStrandIndex( idx, "death" ) == sprite_heap[idx].current_strand
+            getStrandIndex( idx, "DEATH" ) == sprite_heap[idx].current_strand
         )
         {
             sprite_heap[idx].done = 1;
         }
         else
         {
-            SpriteChangeStrand( idx, "idle" );
+            SpriteChangeStrand( idx, "IDLE" );
         }
     }
     else
@@ -687,13 +725,15 @@ void SpriteChangeStrand( int idx, string strand_key )
     
     i = getStrandIndex( idx, strand_key );
     
-Log( "SpriteChangeStrand( "+str(idx)+", '"+strand_key+"' ): "+str(i)  );
-    
     if( i >= 0 )
     {
         sprite_heap[idx].current_strand = i;
-        sprite_heap[idx].current_operation = -1;
+        sprite_heap[idx].current_operation = -1; //repeat
         sprite_heap[idx].time_for_next_op = 0;
         sprite_heap[idx].done = 0;
+    }
+    else
+    {
+        MessageBox( "SpriteChangeStrand fucked up somehow." );
     }
 }

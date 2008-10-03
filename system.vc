@@ -118,102 +118,6 @@ SetBattleEffectPauseTime( 80 );
 playerdiagonals = 1;
 playerstep = 16;
 
-//dump_skilltypes();
-
-//exit("");
-
-//DumpStructEnemies();
-    
-//  debugAllItems();
-//  exit("");
-    
-//dumpBattleGroups();
-
-/*
-int i;
-selectmap_clear(1);
-
-i = SM_newnode( 30,30, 10,10 );
-SM_setData( i, "SE","SE", 5 );
-
-i = SM_newnode( 20,10, 1,1 );
-SM_setData( i, "N","N",43 );
-
-i = SM_newnode( 10,20, 1,1 );
-SM_setData( i, "W","W",666 );
-
-i = SM_newnode( 20,20, 1,1 );
-SM_setData( i, "C","C",1 );
-
-i = SM_newnode( 30,20, 1,1 );
-SM_setData( i, "E", "E", 1337 );
-
-i = SM_newnode( 20,30, 1,1 );
-SM_setData( i, "S","S", 5 );
-
-set_selectmap_movefuncs( "MenuHappyBeep", "MenuAngryBuzz" );
-set_selectmap_actionfuncs( "MenuHappyBeep", "MenuAngryBuzz" );
-
-SM_autocalculate();
-dump_all_selectnodes();
-
-SetRepeaterModeMcFAIL(25);
-
-while( 1 )
-{
-    render();
-    do_selectmap();
-    showpage();
-}
-
-
-exit("");
-*/
-
-/*
-int tmp;
-tmp = LoadSprite( "cockatrice.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "cyclops.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "flytrap.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "hellhound.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "lizardogre.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "naga.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "orc.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "poltergeist.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "skeleton.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "slime.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "snowwolf.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "succubus.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "vampire.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "bunny.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "evil_bunny.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "momma_bunny.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "green_slime.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "red_slime.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "blue_slime.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-tmp = LoadSprite( "carot.spr", SPRITETYPE_ENEMY );
-FreeSprite( tmp, 1 );
-*/
-
     _prev_bm_idx = -1;  //set this up on load.  For battle menu cleanup.
     
     init_events();      //loads all of the events in the event datafile.
@@ -229,46 +133,26 @@ FreeSprite( tmp, 1 );
     //we load all the data first so we can do the introduction without pause.
 
     HookRetrace("V1RPG_RenderFunc");// this is the v1_rpg library's default
-                    // Hookretrace function, defined in "vc/v1_rpg/v1_rpg.vc"
-                    //
-                    // It allows for the handly-dandy vclayer variable
-                    // (softcode, not a system feature) to be used, providing
-                    // a universal temporary area to draw to the screen with.
-                    //
-                    // If this confuses you, don't worry about it for now.
+                                    // Hookretrace function, defined in "vc/v1_rpg/v1_rpg.vc"
+                                    //
+                                    // It allows for the handly-dandy vclayer variable
+                                    // (softcode, not a system feature) to be used, providing
+                                    // a universal temporary area to draw to the screen with.
+                                    //
+                                    // If this confuses you, don't worry about it for now.
 
     
 
     //This allows alt-f4 to exit verge.
     HookKey( SCAN_F4, "alt_f4" );
     
-    HookKey( SCAN_D, "darin_dump" );
-    HookKey( SCAN_X, "christmas" );
-    HookKey( SCAN_S, "bouncetest" );
+//    HookKey( SCAN_B, "dump_all_bm" );
     
-    HookKey( SCAN_G, "grantback_pendinguse_items_from_battle_actionqueue" );
-    
-    HookKey( SCAN_L, "magically_beef_up_allies" ); 
-    
-    HookKey( SCAN_F, "HackLogFinderThingForWonkyBM" );
-    
-    HookKey( SCAN_B, "dump_all_bm" );
-    
-    HookKey( SCAN_V, "healy_sparkles" );
-    HookKey( SCAN_P, "fill_party" );    
-        
-        
     HookKey( SCAN_F5, "f5_debug_set_activemode" );  
     HookKey( SCAN_F8, "f8_debug_set_stepmode_or_step" );
 //    HookKey( SCAN_F12, "f12_debug_mcgrender" );    
     HookKey( SCAN_F11, "dump_all_selectnodes" );
 
-        
-//DumpStructStatus();
-//Log( "==============================================================================" );
-//testStatusAbilities(); 
-//Log( "==============================================================================" );
-//nme_testStatusAbilities(); exit("");
 
 V3Console__Init();
 
@@ -276,10 +160,6 @@ V3Console__Init();
     DoIntro();
 }
 
-void darin_dump()
-{
-    debugCast(0);
-}
 
 void fill_party()
 {
@@ -300,26 +180,6 @@ void christmas()
         GiveItemI( i, Random(1,50) );
     }
 }
-
-/*
-void bouncetest()
-{
-    int p = Random(0,1);
-    int r = Random(1,100000);
-    int b;
-    
-    if( p == PARTY_ALLY )
-        b = SelectRandomAlly( 1 );
-    else
-        b = SelectRandomEnemy( 1 );
-        
-    string name = bat_getName(b, p);
-    name = left(name, 5);
-    
-    //NewBounceText( b, p, str(r), Random(-1,1) );
-    NewBounceText( b, p, name, Random(-1,1) );
-}
-*/
 
 void magically_beef_up_allies()
 {

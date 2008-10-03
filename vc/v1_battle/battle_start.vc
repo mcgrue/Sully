@@ -152,7 +152,6 @@ int initBattleRenderer()
 
     for( i=0; i<bs_enemy_sprite_ref_count; i++ )
     {
-    
         tmp = GetBattleGroupEnemy( i );
         
         if( tmp < 0 )
@@ -163,7 +162,6 @@ int initBattleRenderer()
             );      
         }
         
-//DumpEnemy( tmp );
         /// sets up the graphics for the enemy
         bs_enemy_sprite_ref[i] = LoadSprite( master_enemy[tmp].sprite, SPRITETYPE_ENEMY );
     
@@ -174,6 +172,8 @@ int initBattleRenderer()
         
         /// adds the enemy to the battle as far as the non-graphical aspects are concerned
         addEnemyToBattle( tmp, tmp_ref, IsBattleGroupEnemyLeader(i) );
+        
+        SpriteChangeStrand( bs_enemy_sprite_ref[i], "IDLE" );
     }
     
     if( !equ(BattleGroupSetupCallfunc(),"") )
