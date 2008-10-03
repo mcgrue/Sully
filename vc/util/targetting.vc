@@ -113,8 +113,6 @@ void DoTargetting( string callfunc )
 {
     ClearTargetting();
 
-    
-
     if( !FunctionExists(callfunc) )
     {
         ErrorHandler( "DoTargetting(): '"+callfunc+"()' is not a defined function. This is the fault of this game's programmer.  Please alert him of this oversight." );
@@ -158,8 +156,8 @@ int ValidTargetting()
 
 // Cleans up all targetting-related variables.
 // Automatically called at the top of DoTargetting();
-void ClearTargetting()
-{
+void ClearTargetting() {
+
     targetting_success = TARG_UNSET;
     
     cur_targ_sess_callfunc = "";
@@ -170,8 +168,8 @@ void ClearTargetting()
     //Remember to change this if you alter the target_data struct.
     for( i=0; i<MAX_TARGETS; i++ )
     {
-        master_targetting[i].id     = 0-1;
-        master_targetting[i].mode   = 0-1;
+        master_targetting[i].id     = -1;
+        master_targetting[i].mode   = -1;
         master_targetting[i].text   = "";
     }
     
@@ -181,6 +179,8 @@ void ClearTargetting()
     UnsetTargettingSkillMPDecr();
     UnsetTargettingSkillReflectable();
     UnsetTargettingSkillNullable();
+    
+    UnsetTargettingItemDecr();
 }
 
 /// sets the Effect Callfunction for this Targetting Group.  

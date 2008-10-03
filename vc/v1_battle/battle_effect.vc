@@ -66,7 +66,7 @@ Log( "DoBasicAttack()..." );
     
     PauseBattleMenu();
     
-    ExecuteLoveUniversal();
+    InitExecuteLove();
     
     SetTargettingEffectFunc( "BasicAttackFunc" );
     

@@ -1508,8 +1508,8 @@ void DrawBattleMenu( int m_idx, int targ_img )
     }
 }
 
-void DrawBattleMenuList( int m_idx, int targ_img )
-{
+void DrawBattleMenuList( int m_idx, int targ_img ) {
+
     if( !__bm_visible )
         return;
         

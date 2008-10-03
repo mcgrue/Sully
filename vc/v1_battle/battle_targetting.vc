@@ -566,16 +566,8 @@ void cancelBattleTargettingMode()
     MenuHappyBeep();
     BattleMenuTargettingOff();
     
-    /// if we were previously going to commit an item-use, cancel the fuck out of it.
-    UnsetTargettingItemDecr();
-    
-    /// if we were previously going to commit an skill with MP-use, cancel the fuck out of it.
-    UnsetTargettingSkillMPDecr();
-
-    /// same with reflecting and nulling
-    UnsetTargettingSkillReflectable();
-    UnsetTargettingSkillNullable();
-    
+    ClearTargetting();
+        
     UnpauseBattleMenu();
 }
 

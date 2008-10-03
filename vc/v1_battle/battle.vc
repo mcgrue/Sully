@@ -383,16 +383,16 @@ void DrawBattleHUD()
 int _DrawBattleMeters_maxwid = 34;
 
 
-
+int _dbc_tmp;
 int _DrawBattleMeters_calcPix( int max_, int cur_ ) {
     if(max_==cur_) {
         return _DrawBattleMeters_maxwid;
     } else if( cur_ == 0 ) {
         return 0;
     } else {
-        arTemp[0] = _DrawBattleMeters_maxwid*100000/max_;
-        arTemp[0] = cur_*arTemp[0];
-        return arTemp[0]/100000;
+        _dbc_tmp = _DrawBattleMeters_maxwid*100000/max_;
+        _dbc_tmp = cur_*_dbc_tmp;
+        return _dbc_tmp/100000;
     }
 }
 

@@ -20,7 +20,7 @@ int GetTargettedActionDelay()
 }
 
 
-void ExecuteLoveUniversal()
+void InitExecuteLove()
 {
     ClearTargetting();
     targetting_success = TARG_SUCCESS;
@@ -92,7 +92,7 @@ void ExecuteLoveItem( string _key )
     PauseBattleMenu();
     
     /// 3.5. setup the Targetting library...
-    ExecuteLoveUniversal();
+    InitExecuteLove();
     
     /// 3.5.5 setup the Item's effect function (it'd be nice if it did something when it's all said and done...)
     SetTargettingEffectFunc( GetItemEffectFunc(i) );
@@ -240,9 +240,6 @@ void ExecuteLoveSkill( string _key )
         return; 
     }
     
-    /// 2-a. Turn on the MP Use flaggy thingy.
-    SetTargettingSkillMPDecr( GetSkillMpCostI(i) );
-
     /// new step: make sure the skill has a valid target!
     //Exit( "BOOGA TACO FLOOP: how about we make sure the skill can have a valid target before turning off the menu?  If it doesn't, do a buzz and send a battle message along the lines of 'lol, no valid targets.'" );
 
@@ -253,7 +250,10 @@ void ExecuteLoveSkill( string _key )
     PauseBattleMenu();
 
     /// 3.5. setup the Targetting library...
-    ExecuteLoveUniversal();
+    InitExecuteLove();
+    
+    /// 3.5.4. Turn on the MP Use flaggy thingy.
+    SetTargettingSkillMPDecr( GetSkillMpCostI(i) );
 
     /// 3.5.5 setup the Skill's effect function (it'd be nice if it did something when it's all said and done...)
     SetTargettingEffectFunc( GetSkillEffectFunc(i) );
@@ -429,7 +429,7 @@ void CommitBattleMenuChoice()
 /// This function does nothing involving Tom DeLay.
 void DoSimpleSelfEffect( string _resolvefunc, int _delay )
 {
-    ExecuteLoveUniversal();
+    InitExecuteLove();
     
     if( _delay < 0 )
         _delay = BASE_DELAY;
