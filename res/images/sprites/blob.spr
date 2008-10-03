@@ -1,0 +1,9 @@
+// Blob enemy, drawn by resident.
+//name      wd  ht  per_row rows    padding
+slime.png   16  32  1   17  2
+anim idle F0W30F1W30
+anim weak F2W30F3W30
+anim attack F4W20F5W20F6W20F7W20F8W20F9W20F10W20F11W20F12W20F13W20F14W20
+anim hit F15
+anim death F16
+//
