@@ -631,6 +631,8 @@ void AttemptSingleLivingRetarget()
 {
     int user_idx, target_idx;
     
+    Log( "AttemptSingleLivingRetarget: '"+saveTargettingToString()+"'" );
+    
     if( GetTargettingCount() == 2 )
     {
         user_idx = GetTargIdxByText( "Attacker" );
@@ -639,7 +641,7 @@ void AttemptSingleLivingRetarget()
         if( SingleTargetRevalidator(GetTargID(target_idx), GetTargMode(target_idx)) )
         {
             master_targetting[target_idx].id = GetRetargetedBattleActorIndex();     
-        }       
+        }
     }
 }
 

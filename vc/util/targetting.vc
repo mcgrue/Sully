@@ -222,7 +222,7 @@ void TargettingError( string error_msg )
 // If you alter the target_data struct, please alter the arguments accordingly.
 //
 // Errors if you've filled the master_targetting array to it's capacity.
-void AddTarget( int _id, int _mode, string _text )
+void _AddTarget( int _id, int _mode, string _text )
 {
     if( master_targetting_count >= MAX_TARGETS )
     {
@@ -237,6 +237,10 @@ void AddTarget( int _id, int _mode, string _text )
     master_targetting[i].text   = _text;
     
     master_targetting_count++;
+}
+
+void AddTarget( int _id, int _mode, string _text ) {
+    AddUniqueTarget( _id, _mode, _text );
 }
 
 
@@ -265,7 +269,7 @@ void AddUniqueTarget( int _id, int _mode, string _text )
     }
     
     //if we got this far, it's safe to add this target.
-    AddTarget( _id, _mode, _text );
+    _AddTarget( _id, _mode, _text );
 }
 
 // If your targetting function cancels peacefully (like the user decided not to
@@ -471,7 +475,7 @@ void loadTargettingFromString( string s )
     {
         tmp = GetToken(s,":",i);
         
-        AddTarget( 
+        _AddTarget( 
             val(GetToken(tmp,",",0)) ,
             val(GetToken(tmp,",",1)) ,
             GetToken(tmp,",",2)
@@ -641,4 +645,3 @@ int GetTargIdxByTextAndOffs( string text, int offs )
     
     return -1;
 }
-
