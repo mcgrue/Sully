@@ -784,6 +784,7 @@ string getPageItem( int m_idx, int page_idx, int opt )
 }
 
 string getCurrentlySelectedPageItem() {
+
     return getPageItem( __current_menu_idx, master_battle_menus[__current_menu_idx].level_history[0], master_battle_menus[__current_menu_idx].cursor_history[0] );
 }
 
@@ -980,9 +981,9 @@ exit( "memory mode needs fixing." );
     }
     else
     {   
-        master_battle_menus[m_idx].cur_page = val(GetToken(master_battle_menus[m_idx].page_base, ",", 0));
+        master_battle_menus[m_idx].cur_page     = val(GetToken(master_battle_menus[m_idx].page_base, ",", 0));
         master_battle_menus[m_idx].cur_level    = 0;
-        master_battle_menus[m_idx].cursor   = 0;
+        master_battle_menus[m_idx].cursor       = 0;
                 
         master_battle_menus[m_idx].scratch_img[0] = SpawnPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
     }
@@ -1154,7 +1155,6 @@ void BM_MouseControl( int m_idx )
                         master_battle_menus[m_idx].level_history[master_battle_menus[m_idx].cur_level] = master_battle_menus[m_idx].cur_page;
 
                         master_battle_menus[m_idx].cur_page = getItemChildBM(m_idx, master_battle_menus[m_idx].cur_page, BM_MouseClickCursor());
-
                         if( IsListBM(m_idx, master_battle_menus[m_idx].cur_page) )
                         {
                             master_battle_menus[m_idx].cur_level++;
@@ -1189,17 +1189,8 @@ Log( "EXEC 1" );
             }
         } 
         else if( BM_MouseCancel() )
-        {
-            if( master_battle_menus[m_idx].cur_level > 0 )
-            {
-                FreeImage( master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] );
-
-                master_battle_menus[m_idx].cur_level--;
-
-                master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].level_history[master_battle_menus[m_idx].cur_level];
-
-                BattleMenuReturnALevel(m_idx);
-            }
+        {   
+            BM_TryCancel(m_idx);
 
             BM_MouseCancelUnpress();
         }
@@ -1313,56 +1304,11 @@ void BM_KeyControl( int m_idx )
 
         if( ButtonAccept(1) )
         {
-            if( MenuLineIsInactive(getPageItem(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor)) )
-            {
-                BattleMenuDeny();
-            }
-            else
-            {
-
-                if( hasChildBM(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor) )
-                {
-                    master_battle_menus[m_idx].level_history[master_battle_menus[m_idx].cur_level] = master_battle_menus[m_idx].cur_page;
-                    master_battle_menus[m_idx].cursor_history[master_battle_menus[m_idx].cur_level] = master_battle_menus[m_idx].cursor;
-
-                    //master_battle_menus[m_idx].last_page = master_battle_menus[m_idx].cur_page;
-                    //master_battle_menus[m_idx].last_cursor = master_battle_menus[m_idx].cursor;
-
-                    master_battle_menus[m_idx].cur_page = getItemChildBM(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor);
-
-                    if( IsListBM(m_idx, master_battle_menus[m_idx].cur_page) )
-                    {
-                        master_battle_menus[m_idx].cursor = 0;
-                        master_battle_menus[m_idx].cur_level++;
-
-                        InitializeListBM( m_idx, master_battle_menus[m_idx].cur_page );
-                        master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = SpawnListPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
-                        master_battle_menus[m_idx].mode_list = 1;
-                        
-                        BM_MouseScrollUnpress();
-
-                        //master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].last_page;
-
-                        BattleMenuEnterALevel(m_idx);
-                    }
-                    else
-                    {
-                        master_battle_menus[m_idx].cursor = 0;
-                        master_battle_menus[m_idx].cur_level++;
-                        master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = SpawnPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
-
-                        BattleMenuEnterALevel(m_idx);
-                    }
-                }
-                else
-                {
-Log( "EXEC 2" );
-                    __current_menu_idx = m_idx;
-                    ExecuteLove( getPageItem(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor) );
-                }
-            }
-
-            //master_battle_menus[m_idx].cursor
+        
+//Log( "PENIS" );
+//getCurrentlySelectedPageItem();
+//Log( "PENIS" );
+            BM_TryAccept(m_idx);
 
             Unpress(0);
         }
@@ -1371,18 +1317,7 @@ Log( "EXEC 2" );
         {
             if( master_battle_menus[m_idx].cur_level > 0 )
             {
-                FreeImage( master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] );
-                master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = 0;
-
-                 //= master_battle_menus[m_idx].cur_page;
-
-                master_battle_menus[m_idx].cur_level--;
-                //master_battle_menus[m_idx].cur_page   = master_battle_menus[m_idx].last_page;
-                master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].level_history[master_battle_menus[m_idx].cur_level];
-
-                master_battle_menus[m_idx].cursor   = master_battle_menus[m_idx].cursor_history[master_battle_menus[m_idx].cur_level];
-
-                BattleMenuReturnALevel(m_idx);
+                BM_TryCancel(m_idx);
             } 
             else
             {
@@ -1899,17 +1834,7 @@ Log( "EXEC 3"  );
         } 
         else if( BM_MouseCancel() )
         {
-            if( master_battle_menus[m_idx].cur_level > 0 )
-            {
-                FreeImage( master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] );
-                master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = 0;
-
-                master_battle_menus[m_idx].cur_level--;
-
-                master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].level_history [    master_battle_menus[m_idx].cur_level];
-
-                BattleMenuReturnALevel(m_idx);
-            }
+            BM_TryCancel(m_idx);
 
             BM_MouseCancelUnpress();
         }
@@ -2030,7 +1955,64 @@ string BM_GetCurrentItem( int m_idx )
     {
         return getPageItem(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor);
     }
+}
 
+void BM_TryAccept( int m_idx ) {
+
+    master_battle_menus[m_idx].level_history[master_battle_menus[m_idx].cur_level] = master_battle_menus[m_idx].cur_page;
+    master_battle_menus[m_idx].cursor_history[master_battle_menus[m_idx].cur_level] = master_battle_menus[m_idx].cursor;
+    
+    if( hasChildBM(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor) )
+    {
+        master_battle_menus[m_idx].cur_page = getItemChildBM(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor);
+
+        master_battle_menus[m_idx].cursor = 0;
+        master_battle_menus[m_idx].cur_level++;
+
+        if( IsListBM(m_idx, master_battle_menus[m_idx].cur_page) )
+        {
+            InitializeListBM( m_idx, master_battle_menus[m_idx].cur_page );
+            master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = SpawnListPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
+            master_battle_menus[m_idx].mode_list = 1;
+
+            BM_MouseScrollUnpress();
+
+            BattleMenuEnterALevel(m_idx);
+        }
+        else
+        {
+            master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = SpawnPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
+
+            BattleMenuEnterALevel(m_idx);
+        }
+    }
+    else
+    {
+Log( "EXEC 2" );
+        __current_menu_idx = m_idx;
+        ExecuteLove( getPageItem(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor) );
+    }
+}
+
+void BM_TryCancel( int m_idx ) {
+
+    ClearTargetting();
+
+    if( master_battle_menus[m_idx].cur_level > 0 ) {
+        FreeImage( master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] );
+        master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = 0;
+
+        master_battle_menus[m_idx].cur_level--;
+
+        master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].level_history [    master_battle_menus[m_idx].cur_level];
+        master_battle_menus[m_idx].cursor   = master_battle_menus[m_idx].cursor_history[    master_battle_menus[m_idx].cur_level];
+
+        master_battle_menus[m_idx].mode_list = 0;
+
+        BattleMenuReturnALevel(m_idx);
+    } else {
+        BMSetCancelFromBase(1);
+    }
 }
 
 void BM_KeyListControls( int m_idx )
@@ -2042,16 +2024,7 @@ void BM_KeyListControls( int m_idx )
     {
         if( ButtonCancel(1) )
         {
-            FreeImage( master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] );
-            master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = 0;
-
-            master_battle_menus[m_idx].cur_level--;
-
-            master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].level_history [    master_battle_menus[m_idx].cur_level];
-            master_battle_menus[m_idx].cursor   = master_battle_menus[m_idx].cursor_history[    master_battle_menus[m_idx].cur_level];
-            master_battle_menus[m_idx].mode_list    = 0;
-
-            BattleMenuReturnALevel(m_idx);
+            BM_TryCancel(m_idx);
 
             Unpress(0);
         } 
@@ -2063,7 +2036,6 @@ void BM_KeyListControls( int m_idx )
             }
             else
             {
-Log( "EXEC 4" );
                 __current_menu_idx = m_idx;
                 ExecuteLove( arTempStr[master_battle_menus[m_idx].cursor+_list_cursor_offs] );
             }
@@ -2369,7 +2341,7 @@ void BattleMenuReturnALevel( int m_idx )
     if( !_sfxBMMove )   _sfxBMMove = LoadSound("res\sfx\battle_menu\CHIRP.WAV");
     PlaySound( _sfxBMMove, __battlemenu_interface_volume );
     
-    master_battle_menus[m_idx].mode_list    = 0;
+    master_battle_menus[m_idx].mode_list = 0;
     
     if( _battlemenu_mouse_mode )
     {

@@ -120,21 +120,6 @@ playerstep = 16;
 
 //dump_skilltypes();
 
-Log( "BM count: " + str(GetSkillTypeDisablingStatusCount(GetSkillType("Black_Magic"))) );
-Log( "BM[0]: " + GetSkillTypeDisablingStatusByIdx(GetSkillType("Black_Magic"),0) );
-Log( "WM count: " + str(GetSkillTypeDisablingStatusCount(GetSkillType("White_Magic"))) );
-Log( "WM[0]: " + GetSkillTypeDisablingStatusByIdx(GetSkillType("White_Magic"),0) );
-Log( "Gad count: " + str(GetSkillTypeDisablingStatusCount(GetSkillType("Gadgetry"))) );
-Log( "Gad[0]: " + GetSkillTypeDisablingStatusByIdx(GetSkillType("Gadgetry"),0) );
-Log( "Jive count: " + str(GetSkillTypeDisablingStatusCount(GetSkillType("Jive"))) );
-Log( "Jive[0]: " + GetSkillTypeDisablingStatusByIdx(GetSkillType("Jive"),0) );
-
-Log( "Death_Magenta count:" + str(GetSkillDisablingStatusCount( GetSkill("Death_Magenta") )) );
-Log( "Death_Magenta[0]" + GetSkillDisablingStatusByIdx( GetSkill("Death_Magenta"), 0 ) );
-Log( "Smoove count: " + str(GetSkillDisablingStatusCount( GetSkill("Smoove") )) );
-Log( "Smoove[0]: " + GetSkillDisablingStatusByIdx( GetSkill("Smoove"), 0 ) );
-
-
 //exit("");
 
 //DumpStructEnemies();

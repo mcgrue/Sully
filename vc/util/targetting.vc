@@ -176,6 +176,11 @@ void ClearTargetting()
     }
     
     master_targetting_count = 0;    
+
+    // clear the special flags.    
+    UnsetTargettingSkillMPDecr();
+    UnsetTargettingSkillReflectable();
+    UnsetTargettingSkillNullable();
 }
 
 /// sets the Effect Callfunction for this Targetting Group.  
@@ -450,9 +455,8 @@ string saveTargettingToString()
             str( /*PARTY_NULL*/ -1 ) +"," +
             "NULLABLE"+":";
         
-        UnsetTargettingSkillReflectable();
+        UnsetTargettingSkillNullable();
     }
-    
     
     return s;
 }
