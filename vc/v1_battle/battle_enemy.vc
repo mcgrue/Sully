@@ -39,10 +39,10 @@ int addEnemyToBattle( int idx, int render_idx, int is_leader )
     battle_enemies[i].master_enemy_idx  = idx;
     battle_enemies[i].leader_flag       = is_leader;
     battle_enemies[i].render_idx        = render_idx;
-    battle_enemies[i].cur_hp        = master_enemy[idx].stats[STAT_MAX_HP];
-    battle_enemies[i].cur_mp        = master_enemy[idx].stats[STAT_MAX_MP];
+    battle_enemies[i].cur_hp            = master_enemy[idx].stats[STAT_MAX_HP];
+    battle_enemies[i].cur_mp            = master_enemy[idx].stats[STAT_MAX_MP];
     battle_enemies[i].stole_flag        = 0; // this is also used to calculate drops at fight end, by setting it to -1. So...don't set it to -1 otherwise!. 
-    battle_enemies[i].dead_flag     = 0;
+    battle_enemies[i].dead_flag         = 0;
     
     
     battle_enemies[i].current_status = master_enemy[battle_enemies[i].master_enemy_idx].auto;

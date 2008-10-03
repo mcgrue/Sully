@@ -80,16 +80,7 @@ int McGrender_active_layer;
 ///
 void InitMcgrender()
 {
-    int i;
-    for( i=0; i<MCGRENDER_MAXLAYERS; i++ )
-    {
-        McGrender_layers[i].count   = 0;
-        McGrender_layers[i].head_idx    = -1;
-        McGrender_layers[i].tail_idx    = -1;
-    }
-    
-    McGrender_layer_count   = 0;
-    McGrender_active_layer  = -1;
+    mcg_destroy();
 }
 
 /// sets the render target for the McGrender engine.
@@ -259,9 +250,19 @@ void mcg_destroy()
         FreeSprite( mcgV_sprites[i], 1 );
     }
 
-    McGrender_layer_count = 0;
-    mcgV_sprite_count = 0;
-    mcgV_heap_count = 0;
+    for( i=0; i<MCGRENDER_MAXLAYERS; i++ )
+    {
+        McGrender_layers[i].count       = 0;
+        McGrender_layers[i].head_idx    = -1;
+        McGrender_layers[i].tail_idx    = -1;
+    }
+    
+    McGrender_layer_count   = 0;
+    McGrender_active_layer  = -1;
+    
+    McGrender_layer_count   = 0;
+    mcgV_sprite_count       = 0;
+    mcgV_heap_count         = 0;
 }
 
 /// Calls the specified mcgV_heap entry's delete function, and erases it's image from memory.
