@@ -247,9 +247,7 @@ void BsPlacePartySprites()
     {
         bs_ally_sprite_ref[i] = LoadSprite( 
             master_cast[party[i]].battle_sprite, SPRITETYPE_ALLY 
-        );
-        
-        setStartingBattleSpriteAnimations( party[i], bs_ally_sprite_ref[i] );
+        );  
     }
     
     switch( PartySize() )
@@ -322,6 +320,11 @@ void BsPlacePartySprites()
             );
     }
 
+
+    for( i=0; i<PartySize(); i++ )
+    {
+        setStartingBattleSpriteAnimations( party[i], master_cast[party[i]].battle_ref );
+    }
 }
 
 

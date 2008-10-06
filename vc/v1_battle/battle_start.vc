@@ -223,6 +223,8 @@ int initBattleRenderer()
 
         ref_BattleQueue = mcg_add_complex( "render_battle_debug_window", -1 );
     }
+    
+    //SpriteChangeStrand( bs_enemy_sprite_ref[i], "IDLE" );
 }
 
 int get_steps_to_next_battle() {
