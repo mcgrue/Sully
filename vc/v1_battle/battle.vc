@@ -438,12 +438,12 @@ void BsSeedBattleQueue()
     {
         for( i=0; i<PartySize(); i++ )
         {
-            add_battle_queue_entry( Random(1,50), party[i], PARTY_ALLY, BACT_DELAY, "" );
+            add_battle_queue_delay_entry( Random(1,50),  party[i], PARTY_ALLY, "" );
         }
         
         for( i=0; i<battle_enemy_count; i++ )
         {
-            add_battle_queue_entry( Random(51,100), i, PARTY_ENEMY, BACT_DELAY, "" );
+            add_battle_queue_delay_entry( Random(51,100), i, PARTY_ENEMY, "" );
         }
     }
     
@@ -452,12 +452,12 @@ void BsSeedBattleQueue()
     {
         for( i=0; i<PartySize(); i++ )
         {
-            add_battle_queue_entry( Random(51,100), PARTY_ALLY, party[i], BACT_DELAY, "" );
+            add_battle_queue_delay_entry( Random(51,100), PARTY_ALLY, party[i], "" );
         }
         
         for( i=0; i<battle_enemy_count; i++ )
         {
-            add_battle_queue_entry( Random(1,50), i, PARTY_ENEMY, BACT_DELAY, "" );
+            add_battle_queue_delay_entry( Random(1,50), i, PARTY_ENEMY, "" );
         }   
     }
     
@@ -466,12 +466,12 @@ void BsSeedBattleQueue()
     {
         for( i=0; i<PartySize(); i++ )
         {
-            add_battle_queue_entry( Random(1,50), party[i], PARTY_ALLY, BACT_DELAY, "" );
+            add_battle_queue_delay_entry( Random(1,50), party[i], PARTY_ALLY, "" );
         }
         
         for( i=0; i<battle_enemy_count; i++ )
         {
-            add_battle_queue_entry( Random(1,50), i, PARTY_ENEMY, BACT_DELAY, "" );
+            add_battle_queue_delay_entry( Random(1,50), i, PARTY_ENEMY, "" );
         }       
     }
 }

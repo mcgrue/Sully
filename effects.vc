@@ -748,7 +748,7 @@ void herb_use_MENU()
     
     for(i=0; i<GetTargettingCount(); i++)
     {
-        HealHP( GetTargID(i), 15 );
+        HealHP( GetTargID(i), 30 );
     }   
 }
 
@@ -760,7 +760,7 @@ void medicine_use_MENU()
     
     for(i=0; i<GetTargettingCount(); i++)
     {
-        HealHP( GetTargID(i), 45 );
+        HealHP( GetTargID(i), 90 );
     }   
 }
 

@@ -1,22 +1,32 @@
 
 int __current_menu_idx;
 
-int __current_targ_batact_delay;
+int __current_targ_batact_chargetime;
+int __current_targ_batact_delaytime;
 
 /// set how long to shove this new action into the battle queue for!
-void SetTargettedActionDelay( int delay )
+void SetTargettedActionChargeTime( int charge )
 {
-    if( delay == 0 ) {
-        delay = 1;
+    if( charge <= 0 ) {
+        charge = 1;
     }
 
-    __current_targ_batact_delay = delay;
+    __current_targ_batact_chargetime = charge;
 }
 
 /// return how long to shove this new action into the battle queue for!
-int GetTargettedActionDelay()
+int GetTargettedActionChargeTime()
 {
-    return __current_targ_batact_delay;
+    return __current_targ_batact_chargetime;
+}
+
+
+void SetTargettedActionDelayTime( int delay ) {
+    __current_targ_batact_delaytime = delay;
+}
+
+int GetTargettedActionDelayTime() {
+    return __current_targ_batact_delaytime;
 }
 
 
@@ -98,8 +108,8 @@ void ExecuteLoveItem( string _key )
     SetTargettingEffectFunc( GetItemEffectFunc(i) );
     
     /// 3.6. set how long it'll take to do this action
-    SetTargettedActionDelay( GetSkillDelayTime(GetSkill("__Item")) );
-    
+    SetTargettedActionChargeTime( GetSkillChargeTime(GetSkill("__Item")) );
+    SetTargettedActionDelayTime( GetSkillDelayTime(GetSkill("__Item")) );
 
     /// 3.10 set the "decrement this item when used" device.
     SetTargettingItemDecr( i );
@@ -268,7 +278,8 @@ void ExecuteLoveSkill( string _key )
     
     /// 3.6. set how long it'll take to do this action
     /// (Skills have their own charge time... so fetch it! )
-    SetTargettedActionDelay( GetSkillChargeTime(i) );
+    SetTargettedActionChargeTime( GetSkillChargeTime(i) );
+    SetTargettedActionDelayTime( GetSkillDelayTime(i) );
 
     /// 4. Place the targetting callfunc into the battle renderstack container for 
     ///    the targetting callfunc.
@@ -348,19 +359,23 @@ void ExecuteLoveSpecial( string _key )
     }
     else if( equ(_key, "Defend") )
     {
-        DoSimpleSelfEffect( "SimpleDefendResolver", GetSkillDelayTime(GetSkill("__Defend")) );
+Messagebox( "Kykaawd" );
+        DoSimpleSelfEffect( "SimpleDefendResolver", GetSkillChargeTime(GetSkill("__Defend")), GetSkillDelayTime(GetSkill("__Defend")) );
     }
     else if( equ(_key, "Meditate") )
     {
-        DoSimpleSelfEffect( "SimpleMeditateResolver", GetSkillDelayTime(GetSkill("Meditate")) );
+Messagebox( "sdfsdfsghsdg" );
+        DoSimpleSelfEffect( "SimpleMeditateResolver", GetSkillChargeTime(GetSkill("Meditate")), GetSkillDelayTime(GetSkill("__Defend")) );
     }
     else if( equ(_key, "Parry") )
     {
-        DoSimpleSelfEffect( "SimpleParryResolver", GetSkillDelayTime(GetSkill("__Defend")) );
+Messagebox( "ewrwe24256" );
+        DoSimpleSelfEffect( "SimpleParryResolver", GetSkillChargeTime(GetSkill("__Defend")), GetSkillDelayTime(GetSkill("__Defend")) );
     }
     else if( equ(_key, "Run") )
     {
-        DoSimpleSelfEffect( "SimpleRunResolver", 30 );
+Messagebox( "lkjdfkg4233" );
+        DoSimpleSelfEffect( "SimpleRunResolver", GetSkillChargeTime(GetSkill("__Run")), GetSkillDelayTime(GetSkill("__Run"))  );
     }
     else
     {
@@ -408,11 +423,11 @@ void CommitBattleMenuChoice()
     TurnBattleMenuOff();
     BattleMenuTargettingOff();
 
-    add_battle_queue_entry( 
-        GetTargettedActionDelay(), 
+    add_battle_queue_charge_entry( 
+        GetTargettedActionChargeTime(), 
+        GetTargettedActionDelayTime(),
         battle_queue[0].batent_ref, 
         battle_queue[0].batent_party, 
-        BACT_CHARGE, 
         saveTargettingToString() 
     );
     
@@ -423,22 +438,13 @@ void CommitBattleMenuChoice()
 /// the targetting array to only the current battle actor,
 /// at the given delay, and commits it to the queue as a Charging action.
 ///
-/// if _delay is negative, it becomes the default delay.  If it's greater than the max
-/// delay, it becomes the max delay.
-///
-/// This function does nothing involving Tom DeLay.
-void DoSimpleSelfEffect( string _resolvefunc, int _delay )
+void DoSimpleSelfEffect( string _resolvefunc, int _charge, int _delay )
 {
     InitExecuteLove();
     
-    if( _delay < 0 )
-        _delay = BASE_DELAY;
-    else if( _delay > MAX_DELAY )
-        _delay = MAX_DELAY;
-    else if( _delay == 0 ) 
-        _delay = 1;
+    SetTargettedActionChargeTime( _charge );
+    SetTargettedActionDelayTime( _delay );
     
-    SetTargettedActionDelay( _delay );
     SetActiveBattleMenuTargetting( _resolvefunc );
     
     CommitBattleMenuChoice();

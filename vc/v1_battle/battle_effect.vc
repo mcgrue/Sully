@@ -70,7 +70,8 @@ Log( "DoBasicAttack()..." );
     
     SetTargettingEffectFunc( "BasicAttackFunc" );
     
-    SetTargettedActionDelay( GetSkillDelayTime(GetSkill("__Attack")) );
+    SetTargettedActionChargeTime( GetSkillChargeTime(GetSkill("__Attack")) );
+    SetTargettedActionDelayTime( GetSkillDelayTime(GetSkill("__Attack")) );
     
     SetActiveBattleMenuTargetting( "LIVE_OC_targ" );
     
@@ -89,7 +90,7 @@ Log( "DoBasicAttack()..." );
     
     /// 3.6. set how long it'll take to do this action
     /// (Skills have their own charge time... so fetch it! )
-    SetTargettedActionDelay( GetSkillChargeTime(i) );
+    SetTargettedActionChargeTime( GetSkillChargeTime(i) );
     
 
     /// 4. Place the targetting callfunc into the battle renderstack container for 

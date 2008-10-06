@@ -54,7 +54,7 @@ void doBattle( String battle_group_dat_area )
 
             else if( battle_queue[0].action == BACT_CHARGE )
             {
-                ResolveAction( battle_queue[0].batent_ref, battle_queue[0].batent_party, battle_queue[0].data );
+                ResolveAction( battle_queue[0].batent_ref, battle_queue[0].batent_party, battle_queue[0].data, battle_queue[0].post_time );
                 pop_battle_queue();
             }
 

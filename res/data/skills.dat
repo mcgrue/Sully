@@ -143,6 +143,7 @@ Charge          -               7       BATTLE  targ_self           temp_skill_f
 Taser           -               7       BATTLE  targ_single_nme     temp_skill_func         0   0       100     NONE        "An ordinary attack that deals magical electricity damage."
 Neutro          -               7       BATTLE  targ_self           temp_skill_func         0   0       75      NONE        "Reduce elemental damage to self."
 Turbo           -               7       BATTLE  targ_self           temp_skill_func         0   0       75      NONE        "Enhance own accuracy and evasion."
+//name         skill_group     icon    useflag target_func         effect_func             MP  Charge  Delay   Reflectflag "description"
 __Attack        -               7       BATTLE  targ_single_nme     temp_skill_func         0   0       100     NONE        "Strike an enemy with equipped weapon."
 __Defend        -               7       BATTLE  targ_self           temp_skill_func         0   0       75      NONE        "Reduce damage taken until next action."
 __Item          -               7       BATTLE  targ_single         temp_skill_func         0   0       100     NONE        "Use an item."

@@ -708,8 +708,8 @@ void DefaultEnemyAI()
     AddTarget( battle_queue[qidx].batent_ref, battle_queue[qidx].batent_party, "ATTACKER" );
     AddTarget( targ, PARTY_ALLY, "TARGET" );
     TargettingDone();
-    
-    add_battle_queue_entry( BASE_DELAY, battle_queue[qidx].batent_ref, battle_queue[qidx].batent_party, BACT_CHARGE, saveTargettingToString() );
+
+    add_battle_queue_charge_entry( BASE_DELAY, BASE_DELAY, battle_queue[qidx].batent_ref, battle_queue[qidx].batent_party, saveTargettingToString() );
 }
 
 

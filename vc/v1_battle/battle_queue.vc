@@ -35,6 +35,8 @@
 struct battle_queue_entry
 {
     int time;       /// the current time to go until this action fires.
+    int post_time;  /// the amount of time to add to the stack after it executes as a BACT_DELAY if it was a BACT_CHARGE
+    
     int batent_ref; /// the battle system index to the battle entity this action is assigned to.
     int action;     /// the type of action this entry represents.  In the sully system, either 
                     /// BACT_DELAY or BACT_CHARGE
@@ -69,18 +71,21 @@ void switch_battle_queue_slots( int idx_a, int idx_b )
     int tmp_idx = MAX_BATTLE_QUEUE_ENTRIES;
     
     battle_queue[tmp_idx].time          = battle_queue[idx_a].time;
+    battle_queue[tmp_idx].post_time     = battle_queue[idx_a].post_time;
     battle_queue[tmp_idx].batent_ref    = battle_queue[idx_a].batent_ref;
     battle_queue[tmp_idx].action        = battle_queue[idx_a].action;
     battle_queue[tmp_idx].data          = battle_queue[idx_a].data;
     battle_queue[tmp_idx].batent_party  = battle_queue[idx_a].batent_party;
     
     battle_queue[idx_a].time            = battle_queue[idx_b].time;
+    battle_queue[idx_a].post_time       = battle_queue[idx_b].post_time;
     battle_queue[idx_a].batent_ref      = battle_queue[idx_b].batent_ref;
     battle_queue[idx_a].action          = battle_queue[idx_b].action;
     battle_queue[idx_a].data            = battle_queue[idx_b].data;
     battle_queue[idx_a].batent_party    = battle_queue[idx_b].batent_party;
     
     battle_queue[idx_b].time            = battle_queue[tmp_idx].time;
+    battle_queue[idx_b].post_time       = battle_queue[tmp_idx].post_time;
     battle_queue[idx_b].batent_ref      = battle_queue[tmp_idx].batent_ref;
     battle_queue[idx_b].action          = battle_queue[tmp_idx].action;
     battle_queue[idx_b].data            = battle_queue[tmp_idx].data;   
@@ -174,6 +179,7 @@ void dump_battle_queue()
     
         Log( "["+str(i)+"] "+
             str(battle_queue[i].time)+" "+
+            str(battle_queue[i].post_time)+" "+
             str(battle_queue[i].batent_ref)+"   "+
             str(battle_queue[i].batent_party)+" "+
             aliveOrDead+"   "+
@@ -193,16 +199,30 @@ void dump_battle_queue()
 /// errors and breaks if batent_ref < 0
 /// if in strict mode (defined with BATTLE_QUEUE_STRICT), will error if trying to add a batent_ref
 ///   that is already in the stack.
-void add_battle_queue_entry( int time, int batent_ref, int batent_party, int action, string data )
+/// 
+/// pre_time is the "charge" until the event fires.
+/// post_time is the time, if any, that will be added until the next action.
+void add_battle_queue_charge_entry( int charge_time, int delay_time, int batent_ref, int batent_party, string data )
 {
-    if( time > MAX_BATTLE_DELAY )
+    _add_battle_queue_entry( charge_time, delay_time, batent_ref, batent_party, BACT_CHARGE, data );
+}
+
+void add_battle_queue_delay_entry( int delay_time, int batent_ref, int batent_party, string data )
+{
+    _add_battle_queue_entry( delay_time, 0, batent_ref, batent_party, BACT_DELAY, data );
+}
+
+
+void _add_battle_queue_entry( int pre_time, int post_time, int batent_ref, int batent_party, int action, string data )
+{
+    if( pre_time > MAX_BATTLE_DELAY )
     {
-        time = MAX_BATTLE_DELAY;
+        pre_time = MAX_BATTLE_DELAY;
     }
     
     if( batent_ref < 0 )
     {
-        ErrorHandler( "add_battle_queue_entry(): batent_ref was an invalid value (cannot be negative)" );
+        ErrorHandler( "_add_battle_queue_entry(): batent_ref was an invalid value (cannot be negative)" );
         return; 
     }
     
@@ -213,16 +233,17 @@ void add_battle_queue_entry( int time, int batent_ref, int batent_party, int act
         {
             if( battle_queue[i].batent_ref == batent_ref && battle_queue[i].batent_party == batent_party )
             {
-                ErrorHandler( "add_battle_queue_entry(): batent_ref was already in the stack, while we were in strict mode." );
+                ErrorHandler( "_add_battle_queue_entry(): batent_ref was already in the stack, while we were in strict mode." );
                 return; 
             }
         }
     }
     
-    battle_queue[battle_queue_count].time       = time;
+    battle_queue[battle_queue_count].time           = pre_time;
+    battle_queue[battle_queue_count].post_time      = post_time; 
     battle_queue[battle_queue_count].batent_ref     = batent_ref;
-    battle_queue[battle_queue_count].action     = action;
-    battle_queue[battle_queue_count].data       = data;
+    battle_queue[battle_queue_count].action         = action;
+    battle_queue[battle_queue_count].data           = data;
     battle_queue[battle_queue_count].batent_party   = batent_party;
     
     battle_queue_count++;
@@ -514,7 +535,7 @@ int battle_queue_zero_count()
 
 /// Resolves an action after it's fully charged on the battle queue.
 ///
-void ResolveAction( int actor_idx, int actor_party, string action_data )
+void ResolveAction( int actor_idx, int actor_party, string action_data, int delay_time )
 {
     int itemUser, mpCostReq, mpCost;
 
@@ -564,8 +585,8 @@ void ResolveAction( int actor_idx, int actor_party, string action_data )
         else 
         {
             //Should use this for the skill name instead of BASE_DELAY --> GetSkillDelayTime(GetSkill("Parry"))
-        
-            add_battle_queue_entry( BASE_DELAY, actor_idx, actor_party, BACT_DELAY, "" );
+            
+            add_battle_queue_delay_entry( delay_time, actor_idx, actor_party, "" );
             return;
         }
     }
@@ -606,13 +627,14 @@ from inventory when it's first selected to be used.
     /// Now that the action has executed, let's put this fellah back on the battle queue, 
     /// with a delay-action.  When next he gets to the top of the battle queue, he'll get to 
     /// choose a whole new action, and so the cycle continues.  It's the CIRRRRCLE OF DEEEEATH!
-    add_battle_queue_entry( BASE_DELAY, actor_idx, actor_party, BACT_DELAY, "" );
+    add_battle_queue_delay_entry( delay_time, actor_idx, actor_party, "" );
 }
-
 
 int add_guard_action( int b_idx, int b_party, int delay, int guard_power )
 {
-    add_battle_queue_entry( delay, b_idx, b_party, BACT_GUARD, str(guard_power) );
+    MessageBox( "add_guard_action: unfortunatly, no human alive knows how BACT_GUARD works.  It's tragic." );
+
+    _add_battle_queue_entry( delay, delay, b_idx, b_party, BACT_GUARD, str(guard_power) );
 }
 
 int get_best_guard( int b_idx, int b_party )
