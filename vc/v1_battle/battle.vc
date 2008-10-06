@@ -1530,6 +1530,8 @@ void SetActiveBattleMenuTargetting( string s )
         set_selectmap_actionfuncs( "MenuHappyBeep", "MenuHappyBeep" );
     }
     
+    Unpress( 0 );
+    
     SM_autocalculate();
 
     //dump_all_selectnodes();
@@ -1539,21 +1541,16 @@ void SetActiveBattleMenuTargetting( string s )
 
 void BattleMenuTargettingOff()
 {
-//Log( ">>>>>>>>>>>>>>>> BattleMenuTargettingOff!" );
-
     __bm_targmode_on = 0;
     __bm_targmode_callfunc = "";
 }
 
 void HandleBattleMenuTargetting()
 {
-//Log( "HandleBattleMenuTargetting..." );
     if( __bm_targmode_on )
     {
-//Log( "HandleBattleMenuTargetting calls '"+__bm_targmode_callfunc+"'!" );
         CallFunction(__bm_targmode_callfunc);
     }
-//Log( "...HandleBattleMenuTargetting" );
 }
 
 void HandleBattleMenuActorIndicator()
@@ -1601,25 +1598,20 @@ int AreBattleEffectsRendering() {
     /// is a custom battle effect going on?
     if( IsBattleEffectOn() )
     {
-//**// Log( "Render?  IsBattleEffectOn 1" );
         return 1;
     }
     else
-//**// Log( "Render?  IsBattleEffectOn 0" );
     
     /// Are slashies, bouncy numbers, or any other GATTACA thing going on?
     if( isGATTACArunning() )
     {
-//**// Log( "Render?  isGATTACArunning 1" );
         return 1;
     }
     else
-//**// Log( "Render?  isGATTACArunning 0" );
 
     // if we're done with everything else, wait a little while...   
     if( !__after_effect_cigarette ) 
     {   
-//**// Log( "Render?  cigg 0" );
         return 0;
     }
     
@@ -1628,16 +1620,13 @@ int AreBattleEffectsRendering() {
     /// in the battle.  If not, continue waiting.
     else
     {
-//**// Log( "Render?  cigg 1..." );
         if( __after_effect_targtime <= systemtime )
         {
-//**// Log( "Render?  done smoking..." );
             __after_effect_cigarette = 0;
             return 0;
         }
         else
         {
-//**// Log( "Render?  still smoking..." );
             return 1;
         }
     }
@@ -1645,7 +1634,6 @@ int AreBattleEffectsRendering() {
 
 
 /// Check for player deaths, party deaths.  Make necessary changes.
-///
 ///
 void EndOfBattleAction()
 {
@@ -1921,6 +1909,18 @@ void render_battle_debug_window()
         PrintString( 10,y,debug_screen,fontBattleWhite, "step mode (press F8 to advance a tick, F5 to go to active mode)" );
         y += FontHeight(fontBattleWhite) + 1;   
     }
+    
+    y += FontHeight(fontBattleWhite) + 1;   
+    y += FontHeight(fontBattleWhite) + 1;   
+    
+    PrintString( 10,y,debug_screen,fontBattleWhite, "up: " + str(up) );
+    y += FontHeight(fontBattleWhite) + 1;   
+    PrintString( 10,y,debug_screen,fontBattleWhite, "down: " + str(down) );
+    y += FontHeight(fontBattleWhite) + 1;   
+    PrintString( 10,y,debug_screen,fontBattleWhite, "left: " + str(left) );
+    y += FontHeight(fontBattleWhite) + 1;   
+    PrintString( 10,y,debug_screen,fontBattleWhite, "right: " + str(right) );
+    y += FontHeight(fontBattleWhite) + 1;   
     
 }
 

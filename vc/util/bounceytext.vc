@@ -6,19 +6,19 @@
 //
 
 
-#define NUM_BOUNCY 20       //number of frames in a bounce
+#define NUM_BOUNCY 15           //number of frames in a bounce
 
 #define NUM_BOUNCYDIGITS 100    //if you get errors about to many
-                //digits on screen at once, increase this
-                //decrease for a (very)minor speed gain
+                                //digits on screen at once, increase this
+                                //decrease for a (very)minor speed gain
                 
-#define NUM_BOUNCYMAXLEN 10 //how many digits can be in a string?
+#define NUM_BOUNCYMAXLEN 10     //how many digits can be in a string?
 #define NUM_BOUNCYSTRINGS 10    //how many bouncy strings are there?
 
 #define BOUNCEYTICK_MULTI 1000  //the multiplier for the timecodes.
 
 #define BOUNCYSTRINGDELAY 50    //how many 100ths of a second should the bouncystring 
-                //stick around before terminating?
+                                //stick around before terminating?
 
 #define BOUNCETEXT_WHITE    0
 #define BOUNCETEXT_RED      1
@@ -107,22 +107,18 @@ void InitBouncy()
     nBouncy[1] = 6;
     nBouncy[2] = 9;
     nBouncy[3] = 12;
-    nBouncy[4] = 14;
-    nBouncy[5] = 15;
-    nBouncy[6] = 16;
-    nBouncy[7] = 15;
-    nBouncy[8] = 15;
-    nBouncy[9] = 14;
-    nBouncy[10] = 14;
-    nBouncy[11] = 12;
-    nBouncy[12] = 9;
-    nBouncy[13] = 6;
-    nBouncy[14] = 3;
-    nBouncy[15] = 1;
-    nBouncy[16] = 2;
-    nBouncy[17] = 3;
-    nBouncy[18] = 2;
-    nBouncy[19] = 1;
+    nBouncy[4] = 15;
+    nBouncy[5] = 16;
+    nBouncy[6] = 15;
+    nBouncy[7] = 14;
+    nBouncy[8] = 12;
+    nBouncy[9] = 9;
+    nBouncy[10] = 6;
+    nBouncy[11] = 3;
+    nBouncy[12] = 1;
+    nBouncy[13] = 2;
+    nBouncy[14] = 1;
+    //NUM_BOUNCY
 
     for( i=0; i<NUM_BOUNCYDIGITS; i++ )
     {

@@ -219,7 +219,7 @@ int initBattleRenderer()
 
     if( mode_battle_debug )
     {
-        h_window_debug = WindowCreate( 10, 10, 640, 200, "Battle debug info" ); 
+        h_window_debug = WindowCreate( 10, 10, 640, 480, "Battle debug info" ); 
 
         ref_BattleQueue = mcg_add_complex( "render_battle_debug_window", -1 );
     }
