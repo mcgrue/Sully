@@ -232,14 +232,17 @@ int get_steps_to_next_battle() {
 }
 
 void doBattleStep() {
+
+    if (battle_avoidance > 0) battle_avoidance--;
+    else {
+        battle_steps--;
     
-    battle_steps--;
-    
-    if( battle_steps <= 0 )
-    {
-        doBattle( "Overworld_A" );
-        battle_steps = calculateGracePeriod(0);    
-    }    
+        if( battle_steps <= 0 )
+        {
+            doBattle( "Overworld_A" );
+            battle_steps = calculateGracePeriod(0);    
+        }    
+    }
 }
 
 // Calculates the number of steps until the next battle, to be used after a battle has occurred or when a new map is loaded. 

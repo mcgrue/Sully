@@ -454,20 +454,24 @@ void RemovePlayer(string name)
     entity.script[ent]      = "";
 }
 
-// Turns partyfollowing off.
+int cutscene = 0; // are we in a cutscene? (no random encounters when true)
+
+// Turns partyfollowing and random encounters off.
 void CutsceneOn()
 {
     int i;
+    cutscene = 1;
     for (i=1; i<PartySize(); i++)
         EntityStalk(master_cast[party[i]].entity, 0-1);
 }
 
 
-//turns partyfollowing on.  
+//turns partyfollowing and random encounters on.  
 //Works best if everyone's stacked on the same tile at the time.
 void CutsceneOff()
 {
     int i;
+    cutscene = 0;
     for (i=1; i<PartySize(); i++)
         EntityStalk(master_cast[party[i]].entity, master_cast[party[i-1]].entity);
 }

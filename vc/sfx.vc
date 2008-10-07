@@ -25,6 +25,10 @@ int sfx_fall    = LoadSound("res/sfx/fall02.wav");
 int sfx_wom     = LoadSound("res/sfx/wom.wav");
 int sfx_tetris  = LoadSound("res/sfx/tetris.wav");
 int sfx_swoosh  = LoadSound("res/sfx/warp02.wav");
+int sfx_drink   = LoadSound( "res/sfx/items/drink.wav" );
+int sfx_drip    = LoadSound( "res/sfx/items/drip.wav" );
+int sfx_eat     = LoadSound( "res/sfx/items/eat.wav" );
+int sfx_holy    = LoadSound( "res/sfx/items/sun.wav" );
 
 
 /**************************** functions ****************************/
@@ -32,6 +36,23 @@ int sfx_swoosh  = LoadSound("res/sfx/warp02.wav");
 //
 // In-game sound effects.
 // all play at the global sfx_volume volume.
+
+void SoundDrink() {
+    PlaySound( sfx_drink, sfx_volume );
+}
+
+void SoundDrip() {
+    PlaySound( sfx_drip, sfx_volume );
+}
+
+void SoundEat() {
+    PlaySound( sfx_eat, sfx_volume );
+}
+
+void SoundHoly() {
+    PlaySound( sfx_holy, sfx_volume );
+}
+
 
 void SoundChaChing() {
     PlaySound( sfx_bling, sfx_volume );

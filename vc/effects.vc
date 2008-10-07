@@ -200,32 +200,6 @@ void HandleBattleQueueSpecialEffectExpiry( int q_idx )
 
 
 ////////////////////////////////
-//  Effect-specific sound effects!
-////////////////////////////////
-int sfx_drink   = LoadSound( "res/sfx/items/drink.wav" );
-int sfx_drip    = LoadSound( "res/sfx/items/drip.wav" );
-int sfx_eat     = LoadSound( "res/sfx/items/eat.wav" );
-int sfx_holy    = LoadSound( "res/sfx/items/sun.wav" );
-
-void SoundDrink() {
-    PlaySound( sfx_drink, sfx_volume );
-}
-
-void SoundDrip() {
-    PlaySound( sfx_drip, sfx_volume );
-}
-
-void SoundEat() {
-    PlaySound( sfx_eat, sfx_volume );
-}
-
-void SoundHoly() {
-    PlaySound( sfx_holy, sfx_volume );
-}
-
-
-
-////////////////////////////////
 //  Custom targetting functions
 ////////////////////////////////
 
@@ -650,6 +624,13 @@ void skill_wm_shield() {
     TurnBattleEffectOn( "healy_sparkles" );
 }
 
+void skill_wm_invis() {
+
+    if( !IsInBattle() ) {
+        battle_avoidance = 100;
+        SoundTwinkle();
+    }
+}
 
 int __healy_sfx = -1;
 int __healy_time = -1;

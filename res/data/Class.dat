@@ -12,7 +12,7 @@
 //
 // Entries go as follows:
 //
-// class_name	"class_description"
+// class_name   "class_description"
 // skill_type, skill_type, skill_type, skill_type
 //
 // skill_group must reference entries by name in skilltypes.dat  
@@ -23,39 +23,39 @@
 // If a class has no skills, please put the NO_SKILLS token on the entry's second line.
 //
 
-Knight		"A guy who hits things.  Usually with swords."
+Knight      "A guy who hits things.  Usually with swords."
 Swordsmanship, White_Magic
 
 
-Wizard		"A girly-man in a dress who plays with fire."
+Wizard      "A girly-man in a dress who plays with fire."
 Black_Magic
 
 
-Priest		"A healy-type job."
+Priest      "A healy-type job."
 White_Magic
 
 
-Funkmaster	"Master of all things groovy, baby."
-Jive, Fuschia_Magic, Black_Magic
+Funkmaster  "Master of all things groovy, baby."
+Jive, Fuchsia_Magic, Black_Magic
 
 
-Engineer	"Wenches with Wrenches!  (Also dudes with tools.)"
+Engineer    "Wenches with Wrenches!  (Also dudes with tools.)"
 Gadgetry
 
 
-Spearguy	"No clue what Galfrey is, really.  Dragoon?  Centurion?"
+Spearguy    "No clue what Galfrey is, really.  Dragoon?  Centurion?"
 Shake_Spear
 
 
-Cleric		"Heals you up and calls upon the spirits to hurt the baddies!"
+Cleric      "Heals you up and calls upon the spirits to hurt the baddies!"
 White_Magic, Summon
 
 
-Thief		"Takes your stuff and looks good doing it."
+Thief       "Takes your stuff and looks good doing it."
 Trickery, Fortune, Black_Magic
 
 
-Avatar		"A powerful being shrouded in mystery."
+Avatar      "A powerful being shrouded in mystery."
 White_Magic, Black_Magic
 
 END_OF_FILE

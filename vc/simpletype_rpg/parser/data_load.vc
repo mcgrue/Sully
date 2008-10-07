@@ -378,7 +378,7 @@ int LoadStructCast()
 // Returns the number of entries loaded, or 0 on a fatal error
 // A valid data entry (minus comment):
 // Funkmaster   "Master of all things groovy, baby."
-// Jive, Fuschia_Magic
+// Jive, Fuchsia_Magic
 int LoadStructClass()
 {
     global_linenum = 1; // Starting at line 1 of file
@@ -882,7 +882,7 @@ int LoadStructSkills()
 // Loads data from Skilltypes.dat into the master_skilltypes structure
 // Returns the number of entries loaded, or 0 on a fatal error
 // A valid data entry (minus comment):
-// Fuschia_Magic    3   "The magic of interior decorating!"
+// Fuchsia_Magic    3   "The magic of interior decorating!"
 int LoadStructSkillTypes()
 {
     global_linenum = 1; // Starting at line 1 of file

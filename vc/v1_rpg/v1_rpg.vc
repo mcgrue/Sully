@@ -65,6 +65,8 @@ string curmusic;
 
 /// the number of steps until the next battle
 int battle_steps;
+/// the number of steps of battle-avoidance skill left over
+int battle_avoidance = 0;
 
 ///variables concerning the V1RPG_RenderFunc quake options.
 int vc_quake_on, vc_quake_x, vc_quake_y, q_original_x, q_original_y;

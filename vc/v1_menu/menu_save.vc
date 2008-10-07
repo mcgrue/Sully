@@ -1,6 +1,6 @@
 // menu_save.vc for Sully www.verge-rpg.com
 // Zip 05/09/2004
-// Last update 06/07/2005 (by Gayo)
+// Last update 08/06/2008 (by Gayo)
 
 //        ---------------
 //       Save Menu
@@ -9,9 +9,9 @@
 /// Version number in 127.255.255.255 format, byte 4 ->1
 #define VERSION_4_BYTE 0
 #define VERSION_3_BYTE 0
-#define VERSION_2_BYTE 4
+#define VERSION_2_BYTE 5
 #define VERSION_1_BYTE 0
-#define VERSION_STRING "(0.0.4.0) - Sully savefile format rc1"
+#define VERSION_STRING "(0.0.5.0) - Sully savefile format rc1"
 
 /// 0.0.4.0 Added the CTR stat and the condition string. (Gayo)
 /// 0.0.3.0 Added (something, undocumented)
@@ -413,6 +413,10 @@ void MenuSaveGame(int slot)
         {
             FileWriteString(savegame, master_cast[xc].condition);
         }
+
+///// BEGIN 0.0.5.0 
+
+        FileWriteQuad(savegame, battle_avoidance);
         
 ///// END OF SAVE FILE  
     // Footer
@@ -560,6 +564,14 @@ void MenuLoadGame(int slot)
             doV0_4_0_0SaveGame( savegame );
             doSavegameFooter( savegame, slot, xc, yc, "0,0,4,0" );                      
         }       
+        else if( version_number == EncodeVersionNumber(0,0,5,0) )
+        {
+            doV0_2_0_0SaveGame( savegame );
+            doV0_3_0_0SaveGame( savegame );         
+            doV0_4_0_0SaveGame( savegame );
+            doV0_5_0_0SaveGame( savegame );
+            doSavegameFooter( savegame, slot, xc, yc, "0,0,5,0" );
+        }       
         else
         {
             FileClose(savegame);
@@ -584,44 +596,6 @@ void MenuLoadGame(int slot)
         }       
         // Go to the appropriate map.
         V1_MapSwitch(mapname, xcoord / 16, ycoord / 16, TBLACK);
-}
-
-
-void doV0_3_0_0SaveGame( int savegame )
-{
-    int xc, yc;
-    
-    if( FileReadQuad(savegame) != MAX_CAST ) ErrorHandler("Your MAX_CAST is screwed (skill section)");
-
-    //master_cast[MAX_CAST].skills[MAX_SKILLS]
-    //master_cast[MAX_CAST].skillcount
-    for (yc = 0; yc <  MAX_CAST; yc++)
-    {
-        master_cast[yc].skillcount = FileReadQuad(savegame);
-        
-        if( master_cast[yc].skillcount < 0 )
-            master_cast[yc].skillcount = 0;
-        
-        
-        if( master_cast[yc].skillcount < 0 )
-        {
-            master_cast[yc].skillcount = 0;
-        }
-
-        for (xc = 0; xc < master_cast[yc].skillcount; xc++)
-        {
-            master_cast[yc].skills[xc] = FileReadQuad(savegame);
-        }
-    }
-}
-
-void doV0_4_0_0SaveGame( int savegame )
-{
-    int xc;
-    for (xc=0; xc < MAX_CAST; xc++)
-    {
-        master_cast[xc].condition = FileReadString(savegame);
-    }   
 }
 
 
@@ -677,6 +651,50 @@ void doV0_2_0_0SaveGame( int savegame )
     }*/ 
     
 }
+
+
+void doV0_3_0_0SaveGame( int savegame )
+{
+    int xc, yc;
+    
+    if( FileReadQuad(savegame) != MAX_CAST ) ErrorHandler("Your MAX_CAST is screwed (skill section)");
+
+    //master_cast[MAX_CAST].skills[MAX_SKILLS]
+    //master_cast[MAX_CAST].skillcount
+    for (yc = 0; yc <  MAX_CAST; yc++)
+    {
+        master_cast[yc].skillcount = FileReadQuad(savegame);
+        
+        if( master_cast[yc].skillcount < 0 )
+            master_cast[yc].skillcount = 0;
+        
+        
+        if( master_cast[yc].skillcount < 0 )
+        {
+            master_cast[yc].skillcount = 0;
+        }
+
+        for (xc = 0; xc < master_cast[yc].skillcount; xc++)
+        {
+            master_cast[yc].skills[xc] = FileReadQuad(savegame);
+        }
+    }
+}
+
+void doV0_4_0_0SaveGame( int savegame )
+{
+    int xc;
+    for (xc=0; xc < MAX_CAST; xc++)
+    {
+        master_cast[xc].condition = FileReadString(savegame);
+    }   
+}
+
+void doV0_5_0_0SaveGame( int savegame )
+{
+    battle_avoidance = FileReadQuad(savegame);
+}
+
 
 void doSavegameFooter( int savegame, int slot, int xc, int yc, string format )
 {

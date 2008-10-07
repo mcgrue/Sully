@@ -71,7 +71,7 @@ int battles_enabled_here = 0;
 
 void onStep() {
     if( !getZone(entity.x[playerent],entity.y[playerent]) ) {
-        if( battles_enabled_here ) {
+        if( battles_enabled_here && !cutscene) {
             doBattleStep();
         }
     }
