@@ -59,6 +59,7 @@ int LoadAnimation(string filename, int sizex, int sizey)
     anims[index].numframes = ImageHeight(anims[index].image) / sizey;
     anims[index].bufimage = NewImage(sizex, sizey);
     anims[index].bufferedframe = 65535;
+
     return index;
 }
 
@@ -95,6 +96,7 @@ Log( "FreeAnimation( "+str(index)+" )" );
     anims[index].active = 0;
     anims[index].bufimage = 0;
     anims[index].bufferedframe = 65535;
+
 }
 
 /// Blits the specified frame of the specified animation to (x,y) of Dest.
@@ -147,7 +149,7 @@ void TBlitFrame(int x, int y, int anim, int frame, int dest)
     int frametop;
 
     if (!anims[anim].active)
-        Exit("TBlitFrame() - Requested animation is empty!!");
+        Exit("TBlitFrame() - Requested animation ("+str(anim)+") is empty!!");
 
     if (frame > anims[anim].numframes)
         return;

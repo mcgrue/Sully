@@ -72,16 +72,12 @@ void HealMP( int cast_idx, int amount ) {
     }
     
     curval = GetRawCurMP(cast_idx);
-Log( "Heal MP start: " + str(curval) );
 
     curval += amount; // curval is currently final value    
-Log( "Heal MP middle: " + str(curval) );
     
     if( curval > GetMaxMP(cast_idx) ) curval = GetMaxMP(cast_idx);
     else if( curval < 0 ) curval = 0;
     SetCurMP(cast_idx, curval);
-    
-Log( "Heal MP end: " + str(curval) );
 }
 
 // Takes a cast index and an amount to decrease the MP by.

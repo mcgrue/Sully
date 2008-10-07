@@ -33,6 +33,18 @@ struct sprite
 #define MAX_SPRITES 200
 sprite sprite_heap[MAX_SPRITES];
 
+int _init_sprites = __init_sprites();
+
+int __init_sprites() {
+
+    int i;
+    
+    for( i=0; i<MAX_SPRITES; i++ ) {
+        _initSprite( i );
+    }
+}
+
+
 
 #define SPRITETYPE_UNSAFE   0   /// This type of sprite has no required animation strands.
 #define SPRITETYPE_ENEMY    1   /// This type of sprite has a small number of required animation strands (defined elsewhere).
@@ -190,29 +202,34 @@ void FreeSprite( int spr_idx, int free_animt, int override )
             FreeAnimation( sprite_heap[spr_idx].sanim_t );
         }
         
-        sprite_heap[spr_idx].active = 0;
-        
-        
-        sprite_heap[spr_idx].sanim_t = -1;
-        sprite_heap[spr_idx].sprdef_file = "";
-        sprite_heap[spr_idx].image_file = "";
-        sprite_heap[spr_idx].anim_strand_count = -1;
-        
-        
-        for( i=0; i<MAX_STRANDS_PER_SPRITE; i++ ) {
-            sprite_heap[spr_idx].strands[i]         = ""; 
-            sprite_heap[spr_idx].strand_names[i]    = "";
-            sprite_heap[spr_idx].strand_length[i]   = -1;
-        }
-        
-        sprite_heap[spr_idx].current_strand     = -1;
-        sprite_heap[spr_idx].current_operation  = -1;
-        sprite_heap[spr_idx].time_for_next_op   = -1;
-        sprite_heap[spr_idx].sprite_type        = -1;
-        sprite_heap[spr_idx].done               = -1;
-        
-        sprite_heap[spr_idx].active             = 0;
+        _initSprite(spr_idx);
     }
+}
+
+void _initSprite( int spr_idx ) {
+    
+    int i;
+    
+    sprite_heap[spr_idx].active                 = 0;
+
+    sprite_heap[spr_idx].sanim_t                = -1;
+    sprite_heap[spr_idx].sprdef_file            = "";
+    sprite_heap[spr_idx].image_file             = "";
+    sprite_heap[spr_idx].anim_strand_count      = -1;
+
+    for( i=0; i<MAX_STRANDS_PER_SPRITE; i++ ) {
+        sprite_heap[spr_idx].strands[i]         = ""; 
+        sprite_heap[spr_idx].strand_names[i]    = "";
+        sprite_heap[spr_idx].strand_length[i]   = -1;
+    }
+
+    sprite_heap[spr_idx].current_strand     = -1;
+    sprite_heap[spr_idx].current_operation  = -1;
+    sprite_heap[spr_idx].time_for_next_op   = -1;
+    sprite_heap[spr_idx].sprite_type        = -1;
+    sprite_heap[spr_idx].done               = -1;
+
+    sprite_heap[spr_idx].active             = 0;
 }
 
 
