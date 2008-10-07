@@ -148,8 +148,6 @@ int speechprt;
 
 void init_textbox_speech_portraits() {
     speechprt = LoadAnimation("res\images\speech\speech.pcx", 32, 32);
-
-    MessageBox( "speechprt: " + str(speechprt) );
 }
 
 //the x/y coordinates of the topleft corner of the speech portrait
