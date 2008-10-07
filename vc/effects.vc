@@ -601,12 +601,12 @@ MessageBox( "Please implement for the menu." );
         return;
     }
 
+    target_idx = GetTargIdxByText( "Target" );
+
     if( !bat_is_dead( GetTargID(target_idx), GetTargMode(target_idx) ) ) {
         TurnBattleEffectOn( "skill_fizzle" );
         return;
     }
-
-    target_idx = GetTargIdxByText( "Target" );
 
     amt = bat_max_hp( GetTargID(target_idx), GetTargMode(target_idx) );
     amt = amt / 4; // dividing by 4 is 25%
@@ -618,7 +618,7 @@ MessageBox( "Please implement for the menu." );
         amt
     );
 
-    TurnBattleEffectOn( "healy_sparkles" );
+    TurnBattleEffectOn( "holy_light" );
 
 }
 
@@ -697,6 +697,52 @@ void healy_sparkles()
         }
     }
 }
+
+
+void holy_light()
+{
+    int i;
+
+    if( __healy_sfx < 0 ) 
+    {
+        __healy_sfx = LoadSound( "res\sfx\sun.wav" );
+        __anim_healy = LoadAnimation( "res\battle\effects\revive.pcx", 24, 48);
+        
+        PlaySound( __healy_sfx, sfx_volume );
+        
+        __healy_starttime = systemtime;
+        __healy_time = __healy_starttime + 249;
+    }
+    
+    if( systemtime >= __healy_time )
+    {
+        FreeAnimation( __anim_healy );
+        FreeSound( __healy_sfx );
+        
+        __healy_time = -1;
+        __anim_healy = -1;
+        __healy_sfx = -1;
+        __healy_starttime = -1;
+        
+        TurnBattleEffectOff( 1 );
+    }
+    else
+    {
+        for( i=0; i<GetGatticanCount(); i++ )
+        {
+            BlitFrameAt( 
+                GetGatticanCX(i), 
+                GetGatticanCY(i), 
+                __anim_healy, 
+                (systemtime - __healy_starttime) / 14, 
+                screen 
+            );
+        }
+    }
+}
+
+
+
 
 void skill_fizzle() {
     MessageBox( "Well, do some kind of fizzle sound and disappointed frame if a spell fizzles." );
