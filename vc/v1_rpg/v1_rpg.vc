@@ -503,6 +503,8 @@ void V1RPG_LoadResources()
 
     EnableVariableWidth(v1rpg_LargeFont);
     EnableVariableWidth(v1rpg_SmallFont);
+
+    init_textbox_speech_portraits();
 }
 
 
