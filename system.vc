@@ -10,7 +10,7 @@
 
 // This is a file that holds Targetting and effect functions 
 // that items.dat and skills.dat would ask for,
-#include "effects.vc"
+#include "vc/effects.vc"
 
 // notice that there is no "v3splash.vc" in the base directory of this game.
 // This is because "v3splash.vc", and all the files it needs, are stored 
