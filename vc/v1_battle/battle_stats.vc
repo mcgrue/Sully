@@ -138,8 +138,10 @@ void bat_toggle_deadflag( int bidx, int pidx, int is_dead )
             nme_setAlive( bidx );
         }
     }
-    
-    ErrorHandler( "bat_toggle_deadflag() invalid party index '"+str(pidx)+"'");
+    else
+    {
+        ErrorHandler( "bat_toggle_deadflag() invalid party index '"+str(pidx)+"'");
+    }
 }
 
 

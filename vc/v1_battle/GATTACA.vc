@@ -15,6 +15,7 @@ void EmptyGATTACA()
 #define BS_CHANGE_MISS      3
 #define BS_CHANGE_CRIT_HP   4
 #define BS_CHANGE_NONE      5
+#define BS_ARBITRARY_STRING 6
 
 struct bs_change {
     int type;   /// as defined above in the BS_CHANGE_ flavors.
@@ -128,6 +129,17 @@ void __wipeGATTACAPhysMagiFlags()
 {
     __addGattaca_is_phys = 0;
     __addGattaca_is_magi = 0;
+}
+
+string __ARBITRARY_STRING;
+int __ARBITRARY_STRING_COLOR;
+
+void AddGATTACA_ArbitraryString( int actor_idx, int party_idx, string message, int gattaca_color ) 
+{
+    AddGATTACA( actor_idx, party_idx, BS_ARBITRARY_STRING, 0 );
+    
+    __ARBITRARY_STRING = message;
+    __ARBITRARY_STRING_COLOR = gattaca_color;
 }
 
 
@@ -483,11 +495,16 @@ Log( "Amount: " + str(amount) );
                     BOUNCETEXT_WHITE,
                     level
                 );
+                
+        case BS_ARBITRARY_STRING:
+                NewBounceText( 
+                    b_idx, 
+                    p_idx, 
+                    __ARBITRARY_STRING, 
+                    __ARBITRARY_STRING_COLOR,
+                    level
+                );
     }
-
-
-    
-
 }
 
 /// either adds a change-entry to the GATTACA change heap, 

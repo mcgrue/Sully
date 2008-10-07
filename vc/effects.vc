@@ -588,12 +588,25 @@ MessageBox( "Please implement for the menu." );
     AddGATTACA( 
         GetTargID(target_idx), 
         GetTargMode(target_idx),
-        BS_CHANGE_HP, 
-        amt
+        BS_CHANGE_NONE, 
+        -1
+    );
+
+    NewBounceText( 
+        GetTargID(target_idx),
+        GetTargMode(target_idx),
+        str(amt), 
+        BOUNCETEXT_GREEN,
+        1
+    );
+
+    bat_revive( 
+        GetTargID(target_idx),
+        GetTargMode(target_idx),
+        amt 
     );
 
     TurnBattleEffectOn( "holy_light" );
-
 }
 
 void skill_wm_shield() {
@@ -612,16 +625,19 @@ void skill_wm_shield() {
     bat_addStatus( GetTargID(target_idx), GetTargMode(target_idx), "Protect" );
 
     MessageBox( "So, there's totally no implemented duration-handling for status yet.  Enjoy your infini-shield." );
-
-    NewBounceText( 
+    
+    AddGATTACA_ArbitraryString( 
         GetTargID(target_idx), 
         GetTargMode(target_idx),
         "Protect", 
-        BOUNCETEXT_WHITE,
-        1
+        BOUNCETEXT_WHITE
     );
 
-    TurnBattleEffectOn( "healy_sparkles" );
+
+    __fx__offs_x = -24;
+    __fx__offs_y = -4;
+    //standard_effect_oncomplete = "protecty_shield_oncomplete";
+    TurnBattleEffectOn( "protecty_shield" );
 }
 
 void skill_wm_invis() {
@@ -632,96 +648,34 @@ void skill_wm_invis() {
     }
 }
 
-int __healy_sfx = -1;
-int __healy_time = -1;
-int __healy_starttime = -1;
-int __anim_healy = -1;
+
+
+
+
+#include "vc/standard_effect.vc"
 
 void healy_sparkles()
 {
-    int i;
-
-    if( __healy_sfx < 0 ) 
-    {
-        __healy_sfx = LoadSound( "res\sfx\MAGIC.WAV" );
-        __anim_healy = LoadAnimation( "res\battle\effects\sparkle-green.pcx", 32, 32);
-        
-        PlaySound( __healy_sfx, sfx_volume );
-        
-        __healy_starttime = systemtime;
-        __healy_time = __healy_starttime + 103;
-    }
-    
-    if( systemtime >= __healy_time )
-    {
-        FreeAnimation( __anim_healy );
-        FreeSound( __healy_sfx );
-        
-        __healy_time = -1;
-        __anim_healy = -1;
-        __healy_sfx = -1;
-        __healy_starttime = -1;
-        
-        TurnBattleEffectOff( 1 );
-    }
-    else
-    {
-        for( i=0; i<GetGatticanCount(); i++ )
-        {
-            BlitFrameAt( 
-                GetGatticanCX(i), 
-                GetGatticanCY(i), 
-                __anim_healy, 
-                (systemtime - __healy_starttime) / 8, 
-                screen 
-            );
-        }
-    }
+    standard_effect(
+        "res\sfx\MAGIC.WAV", 103,
+        "res\battle\effects\sparkle-green.pcx", 32, 32
+    );
 }
-
 
 void holy_light()
 {
-    int i;
-
-    if( __healy_sfx < 0 ) 
-    {
-        __healy_sfx = LoadSound( "res\sfx\sun.wav" );
-        __anim_healy = LoadAnimation( "res\battle\effects\revive.pcx", 24, 48);
-        
-        PlaySound( __healy_sfx, sfx_volume );
-        
-        __healy_starttime = systemtime;
-        __healy_time = __healy_starttime + 249;
-    }
-    
-    if( systemtime >= __healy_time )
-    {
-        FreeAnimation( __anim_healy );
-        FreeSound( __healy_sfx );
-        
-        __healy_time = -1;
-        __anim_healy = -1;
-        __healy_sfx = -1;
-        __healy_starttime = -1;
-        
-        TurnBattleEffectOff( 1 );
-    }
-    else
-    {
-        for( i=0; i<GetGatticanCount(); i++ )
-        {
-            BlitFrameAt( 
-                GetGatticanCX(i), 
-                GetGatticanCY(i), 
-                __anim_healy, 
-                (systemtime - __healy_starttime) / 14, 
-                screen 
-            );
-        }
-    }
+    standard_effect(
+        "res\sfx\sun.wav", 249,
+        "res\battle\effects\revive.pcx", 24, 48
+    );
 }
 
+void protecty_shield() {
+    standard_effect(
+        "res\sfx\charge.wav", 64,
+        "res\battle\effects\shield.pcx", 16, 32
+    );
+}
 
 
 
