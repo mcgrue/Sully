@@ -66,7 +66,7 @@ Barrier         White_Magic     7       BATTLE  targ_single         temp_skill_f
 Reflect         White_Magic     7       BATTLE  targ_single         temp_skill_func         12  50      75      BOTH        "Reflect magic used on the target."
 Seal            White_Magic     7       BATTLE  targ_party_nme      temp_skill_func         4   25      75      BOTH        "Good chance to seal all enemies' special skills."
 Slow            White_Magic     7       BATTLE  targ_single_nme     temp_skill_func         8   25      75      BOTH        "Reduce a single enemy's reaction time."
-Invisibility    White_Magic     7       MENU    targ_none           skill_wm_invis          25  0       0       NONE        "Conceal the party from roaming monsters."
+Invisibility    White_Magic     7       MENU    -                   skill_wm_invis          25  0       0       NONE        "Conceal the party from roaming monsters."
 Neon_Justice    White_Magic     7       BATTLE  targ_party_nme      temp_skill_func         32  100     75      BOTH        "The light of judgment sears all enemies."
 Punish          White_Magic     7       BATTLE  targ_single_nme     temp_skill_func         5   50      75      BOTH        "Burn an enemy with holy light."
 Quicken_All     White_Magic     7       BATTLE  targ_party          temp_skill_func         18  75      75      BOTH        "Improve a all allies' reaction time."
@@ -181,6 +181,6 @@ Soul_Bleed      Shake_Spear     7       BATTLE  targ_single_nme     temp_skill_f
 Snuff_Spirit    Shake_Spear     7       BATTLE  targ_single_nme     temp_skill_func         0   25      100     NONE        "Crush an enemy that has few MP remaining."
 Immunize        Gadgetry        7       BATTLE  targ_single         temp_skill_func         5   0       100     NONE        "Protect an ally from ailments."
 Chaos_Orb       Gadgetry        7       BATTLE  omg_wtf_bbq         temp_skill_func         7   50      75      NONE        "I shot an arrow into the air..."
-
+Go_Away         White_Magic     7       MENU    -                   skill_wm_invis          0   0       0       NONE        "NO ONE UNDERSTANDS ME"
 
 END_OF_FILE

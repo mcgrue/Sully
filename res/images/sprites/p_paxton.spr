@@ -1,20 +1,14 @@
 // Paxton's battle character, drawn by the Adequate Gayo
-//name		wd	ht	per_row	rows	padding
-bpaxton.png	32	32	9	11	1
-anim idle	F0W15F1W15B
-anim weak	F2W15F3W15B
-anim attack	F54 W5 F55 W5 F56 W5 F57 W15
-anim hit	F52 W22 F53 W23
-anim death	F4
+//name      wd  ht  per_row rows    padding
+bpaxton.png 32  32  9   11  1
+anim idle   F0W15F1W15B
+anim weak   F2W15F3W15B
+anim attack F54 W5 F55 W5 F56 W5 F57 W15
+anim hit    F52 W22 F53 W23
+anim death  F4
 
-anim evade	F50 W10 F51 W25
-anim poisoned	F5W15F6W15B
-anim muted	F7W15F8W15B
-anim asleep	F9W15F10W15B
-anim paralyzed	F11 W8 F12 W8 F13 W8 F14 W8 B
-anim shouty	F15 W15 F16 W15 B
-anim charmed	F17 W15 F18 W15 B
-anim stoned	F19
-anim use_item	F92 W8 F93 W20 F94 W10 F95 W10
-anim dance	F97 W22 F96 W22 B
-anim charging	F40 W15 F41 W15 B
+anim use_item   F92 W8 F93 W20 F94 W10 F95 W10
+anim dance  F97 W22 F96 W22 B
+anim charging   F40 W15 F41 W15 B
+anim casting    F90 W20 F91 W20
+

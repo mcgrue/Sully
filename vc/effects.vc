@@ -207,7 +207,7 @@ void HandleBattleQueueSpecialEffectExpiry( int q_idx )
 // Uses the vc/util/targetting.vc helper functions
 void HP_OC_targ_menu()
 {
-    int cast_idx = 0-2;
+    int cast_idx = -2;
 
     while( cast_idx < -1 )
     {
@@ -232,7 +232,7 @@ void HP_OC_targ_menu()
             }
             else
             {
-                cast_idx = 0-2; //set this to 
+                cast_idx = -2; 
                 MenuAngryBuzz();
                 MenuPartyBoxRestorePosition();
             }
@@ -317,13 +317,13 @@ void LIVE_OC_targ_menu()
 {
 log( "LIVE_OC" );
     
-    int cast_idx = 0-2;
+    int cast_idx = -2;
     
-    while( cast_idx < (0-1) )
+    while( cast_idx < -1 )
     {
         cast_idx = MenuPartyBox();
         
-        if( cast_idx == (0-1) ) //we've been cancelled!
+        if( cast_idx == -1 ) //we've been cancelled!
         {
             CancelTargetting();
             MenuHappyBeep();
@@ -339,7 +339,7 @@ log( "LIVE_OC" );
             }
             else
             {
-                cast_idx = 0-2; //set this to 
+                cast_idx = -2; //set this to 
                 MenuAngryBuzz();
                 MenuPartyBoxRestorePosition();
             }
@@ -590,6 +590,7 @@ MessageBox( "Please implement for the menu." );
 
     amt = bat_max_hp( GetTargID(target_idx), GetTargMode(target_idx) );
     amt = amt / 4; // dividing by 4 is 25%
+    if (amt <= 0) amt = 1; // well, it's possible.
 
     AddGATTACA( 
         GetTargID(target_idx), 
@@ -647,10 +648,12 @@ void skill_wm_shield() {
 }
 
 void skill_wm_invis() {
-
-    if( !IsInBattle() ) {
+    if(!IsInBattle() ) {
         battle_avoidance = 100;
         SoundTwinkle();
+    }
+    else {
+        MessageBox("You're not supposed to use this in battle! Oh god, now look what you did!");
     }
 }
 
