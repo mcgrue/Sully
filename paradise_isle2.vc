@@ -244,13 +244,17 @@ void Undersea()
     
 }
 
+/*
+    VCCustomFilter( RGB(0,0,0), RGB(64,64,128) );
+    VCScreenFilterLucent( 60 );
+*/
 
 //the part of the Bumsville-inn flashback that takes place on Paradise Isle!
 void do_flashback()
 {
     StopMusic();
     MenuOff();
-    SetWeather(WEATHER_NIGHT);
+    //SetWeather(WEATHER_NIGHT);
     sfx_waves=LoadSound("res/sfx/water03.wav");
     wavetimer = systemtime+680;
     HookTimer("island_flashback_timer");
