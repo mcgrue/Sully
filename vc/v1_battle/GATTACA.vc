@@ -359,7 +359,7 @@ int isGATTACArunning()
         EndOfBattleAction();
         
         __after_effect_targtime = systemtime + GetBattleEffectPauseTime();
-        __after_effect_cigarette = 1;
+        __after_effect_cigarette = 1;        
     }
 //**//  else
 //**// Log( "isGATTACArunning NO B!" );
@@ -367,6 +367,20 @@ int isGATTACArunning()
         
     return 0;
 }
+
+
+string __GATTACA_onComplete;
+void SetGATTACA_onComplete( string callfunc ) {
+    __GATTACA_onComplete = callfunc;
+}
+
+int hasGATTACA_onComplete() {
+    return !equ(__GATTACA_onComplete,"");
+}
+
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

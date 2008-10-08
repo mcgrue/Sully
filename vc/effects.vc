@@ -520,6 +520,12 @@ Log( "herb_use end" );
 }
 
 
+/// 2x attacks!
+///
+void skill_swd_sworddance() {
+
+}
+
 /// Let's heal 1.5*Magic Power +/- 10%.
 ///
 void skill_wm_heal()

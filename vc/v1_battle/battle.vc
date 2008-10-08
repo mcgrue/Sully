@@ -162,66 +162,6 @@ int IsTheBattleOver() {
     return ____battle_over_maaaan;
 }
 
-/// stuff to cleanup before starting a new battle.
-void cleanupPreviousBattle()
-{
-    int i;
-
-_debug_tick_counter = 0;
-
-    /// clean out the mcgrender engine.  Hope you saved anything you needed in there 
-    /// from before!
-    mcg_destroy();
-
-    /// clean out the previous battle background to make way for the new one.
-    if( ImageValid(imBattleBG) )
-    {
-        FreeImage( imBattleBG );
-    }
-    
-    if( ImageValid(imBattleActorPointer) )
-    {
-        FreeImage( imBattleActorPointer );
-    }
-    
-    /// wipe out the old enemy party associations.
-    resetBattleEnemyList();
-    
-    /// wipe out the old battle queue.
-    clear_battle_queue();
-    
-    /// turns the battle menu off.  Duh.
-    TurnBattleMenuOff();
-    
-    /// initialize the battle inventory.
-    GenerateBattleMenuInventory( 1 );
-    
-    /// make sure the engine knows that there isn't a graphical 
-    /// battle effect resolving.  The '0' in there means to not trigger 
-    /// the GATTACA library.
-    TurnBattleEffectOff( 0 );
-    
-    /// Make sure GATTACA is clear.  GATTACA is a little library that resolves 
-    /// the actual healing/hurting of MP/HP, triggers bouncy numbers, animates 
-    /// weapon slashies, and all that stuff that generally  happens at the end 
-    /// of a battle action.
-    EmptyGATTACA();
-    
-    ///turn the slashy library off!
-    TurnSlashyOff();
-        
-    /// zero out the battle effect delay variable.
-    __after_effect_targtime = 0;
-    
-    /// zero out the rewards switch.
-    __initRewards = 0;
-
-    /// battle can't be over if it's just startin'.  Woo!    
-    ____battle_over_maaaan = 0;
-    
-    Unpress(0);
-}
-
 
 /// puts the party in their place.  
 /// Just one of many things that could be recoded nicer.
@@ -628,8 +568,8 @@ int getBaseToHit()
 /// * any surviving hit defenders make a check for counterattack.
 ///
 /// NOTE: currently uses the arTemp array to store the results of the to-hit and damage calcs (-1 is a miss, >=0 is a hit)
-void BasicAttackFunc()
-{
+void _BasicAttackFunc() 
+{    
     int i;
     int attacker_idx = -1;
     int attacker_party;
@@ -641,27 +581,11 @@ void BasicAttackFunc()
         ErrorHandler( "BasicAttackFunc(): there were too few targets in the targetting array, needed at least an attacker and a defender" );
         return;
     }
-    
-    for( i=0; i<GetTargettingCount(); i++ )
-    {
-        if( equ(GetTargText(i), "Attacker") )
-        {
-            if( attacker_idx < 0 )
-            {
-                attacker_idx = GetTargID(i);
-                attacker_party = GetTargMode(i);
-Log( "BasicAttackFunc" );               
-                ChangeSpriteAnimation( bat_getRenderRef(GetTargID(i), GetTargMode(i)), "ATTACK" );
-            }
-            else
-            {
-                ErrorHandler( "BasicAttackFunc(): there were too many attackers in the targetting array, needed one and only one." );
-                return;         
-            }
-        
-        }
-    }
-    
+       
+    i = GetTargIdxByText( "Attacker" );
+    attacker_idx    = GetTargID(i);
+    attacker_party  = GetTargMode(i);
+
     /// this battle effect retargets if the former target was dead (and there was only one victim)
     AttemptSingleLivingRetarget();
     
@@ -690,11 +614,7 @@ Log( "CALLING BasicDamageCalc( MISS )..." );
                 change_type = BS_CHANGE_MISS;
             }
             else
-            {
-            
-//SetSpriteHit( bat_getRenderRef(GetTargID(i), GetTargMode(i)) );
-//ChangeSpriteAnimation( bat_getRenderRef(GetTargID(i), GetTargMode(i)), "HIT" );
-            
+            {           
                 if( arTemp[i] == ATTACK_HIT ) //
                 {
 //Log( "CALLING BasicDamageCalc( normal )..." );
@@ -762,7 +682,6 @@ LOG( "ChangeSpriteAnimation ///else, set the attacker to attack-animation!" );
                 arTemp[i+GetTargettingCount()], 
             );
             
-            
             // This is temporary and just sets a hardcoded slashy in.
             
             if( change_type != BS_CHANGE_MISS )
@@ -774,14 +693,42 @@ LOG( "ChangeSpriteAnimation ///else, set the attacker to attack-animation!" );
             }
         }
     }
+}
+
+int __current_strikecount = 0;
+
+void BasicAttackFunc()
+{
+    int i, stk, attacker_idx, attacker_party;
     
-    /// Basic Attack Func doesn't have any non-GATTACA animations or anything, 
-    /// so let's just trigger GATTACA now!
+    i = GetTargIdxByText( "Attacker" );
+
+    attacker_idx    = GetTargID(i);
+    attacker_party  = GetTargMode(i);   
+    stk = bat_stk( attacker_idx, attacker_party );
+    
+    if( stk <= 0 ) {
+        ErrorHandler("BasicAttackFunc: STK for '"+bat_getName(attacker_idx, attacker_party)+"' was "+str(stk));
+    }
+    
+    /// let's do an attack right now and then inc the strike count!
+    if( __current_strikecount < stk ) {
+        _BasicAttackFunc();
+        __current_strikecount++;
+    }
+
+    /// if we need more strikes, let's make sure GATTACA passes back here afterwards.
+    if( __current_strikecount < stk ) {
+        SetGATTACA_onComplete("BasicAttackFunc");
+    } else {
+        SetGATTACA_onComplete("");
+        __current_strikecount = 0;
+    }
     
     /// turn the primary battle effect off and trigger GATTACA
+    /// Basic Attack Func doesn't have any non-GATTACA animations or anything, 
+    /// so let's just trigger GATTACA now!
     TurnBattleEffectOff( 1 );
-//AreBattleEffectsRendering();
-//Exit("LAWL");
 }
 
 

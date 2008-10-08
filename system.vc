@@ -146,6 +146,8 @@ playerstep = 16;
     //This allows alt-f4 to exit verge.
     HookKey( SCAN_F4, "alt_f4" );
     
+    HookKey( SCAN_F1, "peanis" );
+    
 //    HookKey( SCAN_B, "dump_all_bm" );
     
     HookKey( SCAN_F5, "f5_debug_set_activemode" );  
@@ -160,6 +162,14 @@ V3Console__Init();
     DoIntro();
 }
 
+
+void peanis() {
+    MessageBox( "peanis!" );
+    
+    int i = IsCharacter("Darin");
+    
+    SetRawStat( i, STAT_STK, 2 );
+}
 
 void fill_party()
 {

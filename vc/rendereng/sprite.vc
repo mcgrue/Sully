@@ -605,15 +605,14 @@ int getStrandIndex(int _idx, string _name)
         }
     }
     
-Messagebox("describing fucking...");
+Messagebox("couldn't find an animation for '"+_name+"' in sprite "+str(_idx)+"'s stuff." );
 for( _gsi = 0; _gsi < sprite_heap[_idx].anim_strand_count; _gsi++ )
 {
     Messagebox(str(_gsi)+": "+_name);
 }
-Messagebox("done fucking...");    
+Messagebox("done dumping...");    
     return -1;
 }
-
 
 
 

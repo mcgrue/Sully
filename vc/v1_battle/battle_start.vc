@@ -1,4 +1,67 @@
 
+/// stuff to cleanup before starting a new battle.
+void cleanupPreviousBattle()
+{
+    int i;
+
+_debug_tick_counter = 0;
+
+    /// clean out the mcgrender engine.  Hope you saved anything you needed in there 
+    /// from before!
+    mcg_destroy();
+
+    /// clean out the previous battle background to make way for the new one.
+    if( ImageValid(imBattleBG) )
+    {
+        FreeImage( imBattleBG );
+    }
+    
+    if( ImageValid(imBattleActorPointer) )
+    {
+        FreeImage( imBattleActorPointer );
+    }
+    
+    /// wipe out the old enemy party associations.
+    resetBattleEnemyList();
+    
+    /// wipe out the old battle queue.
+    clear_battle_queue();
+    
+    /// turns the battle menu off.  Duh.
+    TurnBattleMenuOff();
+    
+    /// initialize the battle inventory.
+    GenerateBattleMenuInventory( 1 );
+    
+    /// make sure the engine knows that there isn't a graphical 
+    /// battle effect resolving.  The '0' in there means to not trigger 
+    /// the GATTACA library.
+    TurnBattleEffectOff( 0 );
+    
+    /// Make sure GATTACA is clear.  GATTACA is a little library that resolves 
+    /// the actual healing/hurting of MP/HP, triggers bouncy numbers, animates 
+    /// weapon slashies, and all that stuff that generally  happens at the end 
+    /// of a battle action.
+    EmptyGATTACA();
+    
+    ///turn the slashy library off!
+    TurnSlashyOff();
+        
+    /// zero out the battle effect delay variable.
+    __after_effect_targtime = 0;
+    
+    /// zero out the rewards switch.
+    __initRewards = 0;
+
+    /// battle can't be over if it's just startin'.  Woo!    
+    ____battle_over_maaaan = 0;
+    
+    SetGATTACA_onComplete( "" );
+    __current_strikecount = 0;
+    
+    Unpress(0);
+}
+
 void doBattle( String battle_group_dat_area )
 {
     InitBattleSetup( battle_group_dat_area );
@@ -35,12 +98,19 @@ void doBattle( String battle_group_dat_area )
 
         if( !battle_queue_zero_count() )
         {
-
             /// we must wait until the pretty battle effects from the previous
             /// action are done before trying to resolve the next action!
             if( !AreBattleEffectsRendering() )
             {
-                advance_battle_queue_to_next_action();
+                if( hasGATTACA_onComplete() ) {
+
+                    arTempStr[0] = __GATTACA_onComplete;
+                    SetGATTACA_onComplete("");
+                    MandatoryCallFunction( arTempStr[0] );
+                    
+                } else {
+                    advance_battle_queue_to_next_action();
+                }
             }
         }
         else
@@ -54,7 +124,12 @@ void doBattle( String battle_group_dat_area )
 
             else if( battle_queue[0].action == BACT_CHARGE )
             {
-                ResolveAction( battle_queue[0].batent_ref, battle_queue[0].batent_party, battle_queue[0].data, battle_queue[0].post_time );
+                ResolveAction( 
+                    battle_queue[0].batent_ref, 
+                    battle_queue[0].batent_party, 
+                    battle_queue[0].data, 
+                    battle_queue[0].post_time 
+                );
                 pop_battle_queue();
             }
 

@@ -92,6 +92,15 @@ void switch_battle_queue_slots( int idx_a, int idx_b )
     battle_queue[idx_b].batent_party    = battle_queue[tmp_idx].batent_party;   
 }
 
+void clean_battle_queue_slot(int i) {
+    battle_queue[i].time          = -1;
+    battle_queue[i].post_time     = -1;
+    battle_queue[i].batent_ref    = -1;
+    battle_queue[i].action        = -1;
+    battle_queue[i].data          = "";
+    battle_queue[i].batent_party  = -1;
+}
+
 /// sorts the battle queue by their time values.  
 /// Tied times are clustered but not specially distinguished in any way.
 ///
@@ -256,6 +265,11 @@ void _add_battle_queue_entry( int pre_time, int post_time, int batent_ref, int b
 /// resets the battle queue to emptiness.
 void clear_battle_queue()
 {
+    int i;
+    for( i=0; i<battle_queue_count; i++ ) {
+        clean_battle_queue_slot(i);
+    }
+
     battle_queue_count = 0;
 }
 
