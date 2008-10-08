@@ -585,6 +585,11 @@ void _BasicAttackFunc()
     i = GetTargIdxByText( "Attacker" );
     attacker_idx    = GetTargID(i);
     attacker_party  = GetTargMode(i);
+    
+    /// dead men kill no slimes.
+    if( bat_is_dead(attacker_idx,attacker_party) ) {    
+        return;
+    }
 
     /// this battle effect retargets if the former target was dead (and there was only one victim)
     AttemptSingleLivingRetarget();
@@ -1815,10 +1820,10 @@ void CalculatePhatBattleBooty() {
 void setStartingBattleSpriteAnimations( int party_idx, int sprite_idx )
 {
     string anim;
-
+    
     if( isDead(party_idx) ) {
         anim = "DEATH";
-    } else if( isWeak(party_idx) ) {
+    } else if(bat_is_weak(party_idx,PARTY_ALLY)) {
         anim = "WEAK";
     } else {
         anim = "IDLE";

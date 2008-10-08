@@ -212,6 +212,21 @@ int bat_is_dead( int bidx, int pidx )
     return 1;
 }
 
+int bat_is_weak( int bidx, int pidx )
+{
+    if( pidx == PARTY_ALLY || pidx == PARTY_ENEMY ) {
+
+        return 
+            isWeak( 
+                bat_cur_hp( bidx, pidx ), 
+                bat_max_hp( bidx, pidx )
+            );
+    }
+        
+    ErrorHandler( "bat_is_weak() invalid party index '"+str(pidx)+"'");
+    return -1;
+}
+
 
 int bat_cur_hp( int bidx, int pidx ) { 
     if( pidx == PARTY_ALLY )
@@ -451,6 +466,21 @@ int bat_getRenderRef( int bidx, int pidx ) {
     
     ErrorHandler( "bat_getRenderRef() invalid party index '"+str(pidx)+"'");
     return -1;
+}
+
+void bat_updateBattleSpriteAnimations( int bidx, int pidx )
+{
+    string anim;
+
+    if( bat_is_dead(bidx,pidx) ) {
+        anim = "DEATH";
+    } else if(bat_is_weak(bidx,pidx)) {
+        anim = "WEAK";
+    } else {
+        anim = "IDLE";
+    }
+    
+    ChangeSpriteAnimation( bat_getRenderRef(bidx,pidx), anim );
 }
 
 

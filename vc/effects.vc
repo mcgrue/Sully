@@ -521,9 +521,59 @@ Log( "herb_use end" );
 
 
 /// 2x attacks!
-///
 void skill_swd_sworddance() {
 
+/*
+    int attacker_idx = GetTargIdxByText( "Attacker" );
+
+
+    AddGATTACA( 
+        GetTargID(attacker_idx), 
+        GetTargMode(attacker_idx), 
+        BS_CHANGE_NONE, 
+        0 
+    );
+
+    //set_standard_effect_onComplete( "_skill_sworddance_AttackFunc", 1 );
+*/
+    TurnBattleEffectOn( "_skill_sworddance_AttackFunc" ); 
+}
+
+
+void _skill_sworddance_AttackFunc()
+{
+    int i, stk, attacker_idx, attacker_party;
+    
+    i = GetTargIdxByText( "Attacker" );
+
+    attacker_idx    = GetTargID(i);
+    attacker_party  = GetTargMode(i);   
+    stk = bat_stk( attacker_idx, attacker_party );
+    
+    stk = stk*2; //set stk to twice the normal strike.
+    
+    if( stk <= 0 ) {
+        ErrorHandler("BasicAttackFunc: STK for '"+bat_getName(attacker_idx, attacker_party)+"' was "+str(stk));
+    }
+    
+    /// let's do an attack right now and then inc the strike count!
+    if( __current_strikecount < stk ) {
+        _BasicAttackFunc();
+        __current_strikecount++;
+    }
+
+    /// if we need more strikes, let's make sure GATTACA passes back here afterwards.
+    if( __current_strikecount < stk ) {
+        SetGATTACA_onComplete("_skill_sworddance_AttackFunc");
+    } else {
+        SetGATTACA_onComplete("");
+        __current_strikecount = 0;
+    }
+    
+    /// turn the primary battle effect off and trigger GATTACA
+    /// Basic Attack Func doesn't have any non-GATTACA animations or anything, 
+    /// so let's just trigger GATTACA now!
+    TurnBattleEffectOff( 1 );
 }
 
 /// Let's heal 1.5*Magic Power +/- 10%.
@@ -592,19 +642,11 @@ MessageBox( "Please implement for the menu." );
     amt = amt / 4; // dividing by 4 is 25%
     if (amt <= 0) amt = 1; // well, it's possible.
 
-    AddGATTACA( 
+    AddGATTACA_ArbitraryString( 
         GetTargID(target_idx), 
         GetTargMode(target_idx),
-        BS_CHANGE_NONE, 
-        -1
-    );
-
-    NewBounceText( 
-        GetTargID(target_idx),
-        GetTargMode(target_idx),
         str(amt), 
-        BOUNCETEXT_GREEN,
-        1
+        BOUNCETEXT_GREEN
     );
 
     bat_revive( 
@@ -614,7 +656,19 @@ MessageBox( "Please implement for the menu." );
     );
 
     TurnBattleEffectOn( "holy_light" );
+    
+    set_standard_effect_onComplete( "update_animations_post_effect", 0 );
 }
+
+void update_animations_post_effect() {
+
+    int target_idx = GetTargIdxByText( "Target" );
+
+    bat_updateBattleSpriteAnimations( GetTargID(target_idx), GetTargMode(target_idx) );
+    
+    TurnBattleEffectOff(1);
+}
+
 
 void skill_wm_shield() {
 
@@ -640,7 +694,6 @@ void skill_wm_shield() {
         BOUNCETEXT_WHITE
     );
 
-
     __fx__offs_x = -24;
     __fx__offs_y = -4;
     //standard_effect_oncomplete = "protecty_shield_oncomplete";
@@ -663,6 +716,14 @@ void skill_wm_invis() {
 
 #include "vc/standard_effect.vc"
 
+void bomby_blast()
+{
+    standard_effect(
+        "res\sfx\BOMB.WAV", 50,
+        "res\battle\effects\burst.png", 32, 32
+    );
+}
+
 void healy_sparkles()
 {
     standard_effect(
@@ -674,7 +735,7 @@ void healy_sparkles()
 void holy_light()
 {
     standard_effect(
-        "res\sfx\sun.wav", 249,
+        "res\sfx\sun.wav", 180,
         "res\battle\effects\revive.pcx", 24, 48
     );
 }

@@ -175,11 +175,10 @@ int isDead( int idx )
 
 /// Currently, "weak" is <=20% of Max HP 
 ///
-int isWeak( int idx ) 
+int isWeak( int cur, int _max ) 
 {
-    int cur, limit;
-    cur = getCurHP(idx);
-    limit = getMaxHP(idx)/5;
+    int limit;
+    limit = _max/5;
 
     if( cur > 0 && cur <= limit )
     {

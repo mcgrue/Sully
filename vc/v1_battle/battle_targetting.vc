@@ -625,8 +625,10 @@ void AttemptSingleLivingRetarget()
     
     Log( "AttemptSingleLivingRetarget: '"+saveTargettingToString()+"'" );
     
-    if( GetTargettingCount() == 2 )
-    {
+    if( 
+        GetTargByTextCount( "Attacker" ) == 1 &&
+        GetTargByTextCount( "Target" ) == 1
+    ) {
         user_idx = GetTargIdxByText( "Attacker" );
         target_idx = GetTargIdxByText( "Target" );
         

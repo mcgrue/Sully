@@ -12,6 +12,7 @@ int __fx__offs_x = 0;
 int __fx__offs_y = 0;
 
 string standard_effect_oncomplete;
+int clear_gattaca_before_standard_effect_oncomplete;
 
 void _cleanup_standard_effect() {
 
@@ -30,12 +31,26 @@ void _cleanup_standard_effect() {
     __fx__offs_y = 0;
 
     if( !equ(standard_effect_oncomplete,"") ) {
-        TurnBattleEffectOn( standard_effect_oncomplete );
+
+        if( clear_gattaca_before_standard_effect_oncomplete ) {
+            EmptyGATTACA();
+        }
         
+        TurnBattleEffectOn( standard_effect_oncomplete );
+
         standard_effect_oncomplete = "";
+        clear_gattaca_before_standard_effect_oncomplete = 0;        
     } else {
         TurnBattleEffectOff( 1 );
     }
+}
+
+
+
+void set_standard_effect_onComplete( string callfunc, int clearGattacaBefore ) 
+{ 
+    standard_effect_oncomplete = callfunc;
+    clear_gattaca_before_standard_effect_oncomplete = 0;
 }
 
 void _init_standard_effect(
