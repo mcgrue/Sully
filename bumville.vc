@@ -212,20 +212,20 @@ void Ent0()
 
     if( flags[F_BUM_NIGHT] && flags[F_BUM_NIGHT] != 3 ) //this starts the chain of nighttime events! :D
     {
-        TextBox(0,      "Aren't you up past your bedtime, junior?",
+        TextBox(0,  "Aren't you up past your bedtime, junior?",
                     "Say, why are you looking so sad?", "");
 
 
         TextBox(T_DARIN,    "Huh...? Oh... it's nothing.","","");
 
 
-        TextBox(0,      "Aww... who are you kidding?",
+        TextBox(0,  "Aww... who are you kidding?",
                     "Come on, kid. You look like your puppy",
                     "just got killed!");
 
         TextBox(T_DARIN,    "Well... a friend of mine is in danger and",
-                    "I have to rescue her.",
-                    "I'm very worried.");
+                            "I have to rescue her.",
+                            "I'm very worried.");
 
         TextBox(0,      "Ah! I see. Well, I see bravery in them",
                     "thar eyes, sonny. ",
@@ -843,8 +843,8 @@ void Innkeeper()
     entity.x[playerent] = 52*16;
     entity.y[playerent] = 197*16; //warp darin to (52,197)
 
-    VCCustomFilter( RGB(0,0,0), RGB(0,0,128) );
-    VCScreenFilterLucent( 20 );
+    VCCustomFilter( RGB(0,0,0), RGB(64,64,128) );
+    VCScreenFilterLucent( 60 );
 
 
     // Dexter's the only party member that can be with you
