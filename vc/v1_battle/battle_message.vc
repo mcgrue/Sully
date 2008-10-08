@@ -33,7 +33,7 @@ int messages_queued;
 void DrawBattleMessageBox() {
     SetTargetBox(battlemessagebox);
     if( BattleMessageExists() ) { 
-        DrawBox(battlemessage_loc, BMSG_TOP_Y, screen);        
+        DrawBox(battlemessage_loc, BMSG_TOP_Y-5, screen);        
         if (battlemessage_deathtime != BMSG_INDEFINITE_DURATION 
             && systemtime >= battlemessage_deathtime) {
             SkipBattleMessage(); // time's up; move to the next message in the queue, if any
