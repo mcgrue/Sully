@@ -37,7 +37,7 @@ Log( "1" );
 
     V1_StartMusic( "res/music/DOS3L.S3M" );
 
-    Banner("McDarin Family Cottage",300);
+    Banner("McDaring Family Cottage",300);
 }
 
 void southexit()
@@ -899,7 +899,7 @@ void stuffed_bunny()
 
 void front_sign()
 {
-    TextBox( T_DARIN, "Welcome to the McDarin Family Farm!","","" );
+    TextBox( T_DARIN, "Welcome to the McDaring Family Farm!","","" );
 }
 
 void back_sign()
