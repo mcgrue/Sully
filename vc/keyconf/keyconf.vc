@@ -263,9 +263,7 @@ void _UpdateCustJoyMcFAIL()
         
     for(i=0; i<CURRENT_KEYCOUNT; i++)
     {
-Log("_my_keys["+str(i)+"]: "+str(_my_keys[i]));
-    
-        //_my_keys_cur[i] = joy.button[_my_keys[i]];
+        _my_keys_cur[i] = joy.button[_my_keys[i]];
     }
 }
 
@@ -349,8 +347,9 @@ int ButtonMenu( int unp )
 /// unpresses the button if it was pressed and unp was true.
 int ButtonAux( int unp )
 {
-    if( (_my_keys_cur[KEY_Y]&_my_keys_unpress[KEY_Y]) && unp )
+    if( (_my_keys_cur[KEY_Y] && _my_keys_unpress[KEY_Y]) && unp )
     {
+
         _SetUnpressKey(KEY_Y);
         return 1;
     }

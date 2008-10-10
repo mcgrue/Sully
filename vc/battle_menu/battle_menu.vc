@@ -1269,10 +1269,6 @@ void BM_KeyControl( int m_idx )
 
         if( ButtonAccept(1) )
         {
-        
-//Log( "PENIS" );
-//getCurrentlySelectedPageItem();
-//Log( "PENIS" );
             BM_TryAccept(m_idx);
 
             Unpress(0);
@@ -2364,7 +2360,7 @@ void CheckHelpMode( int m_idx )
         }
         else
         {
-            if( ButtonAux(0) || ButtonMenu(0) )
+            if( ButtonAux(0) || ButtonMenu(0) || ButtonSelect(0) || ButtonStart(0) )
             {
                 __menuHelpMode = 1;
                 __menuHelpText = GetMenuHelpModeText( m_idx );
