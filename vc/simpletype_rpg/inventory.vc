@@ -583,7 +583,7 @@ string GenerateBattleMenuInventory( int usable_only )
         return __battle_inventory;
     
     for(i=0; i<_supply_count; i++) {
-        if( CheckItemUseflagI(i,USE_BATTLE) || !usable_only )
+        if( CheckItemUseflagI(supply_inventory[i].item_ref,USE_BATTLE) || !usable_only )
         {
             if( cnt )
             {
@@ -596,7 +596,7 @@ string GenerateBattleMenuInventory( int usable_only )
     }
 
     for(i=0; i<_equip_count; i++) {
-        if( CheckItemUseflagI(i,USE_BATTLE) || !usable_only )
+        if( CheckItemUseflagI(equipment_inventory[i].item_ref,USE_BATTLE) || !usable_only )
         {
             if( cnt )
             {
@@ -609,7 +609,7 @@ string GenerateBattleMenuInventory( int usable_only )
     }
     
     for(i=0; i<_key_count; i++) {
-        if( CheckItemUseflagI(i,USE_BATTLE) || !usable_only )
+        if( CheckItemUseflagI(key_item_inventory[i].item_ref,USE_BATTLE) || !usable_only )
         {
             if( cnt )
             {
