@@ -1345,17 +1345,9 @@ int _bm_idx, _prev_bm_idx;
 /// call this when starting up a battle menu for the first time for an action.
 void TurnBattleMenuOn( int cast_idx )
 {       
-//Log( "TurnBattleMenuOn("+str(cast_idx)+")..." );
-
     if( _prev_bm_idx >= 0 )
     {
-//Log( " cleaning previous BM index "+str(_prev_bm_idx)+")" );
-
         CleanBattleMenu( _prev_bm_idx );
-    }
-    else
-    {
-//Log( " no cleaning necessary." );
     }
 
     _bm_idx = cast_idx;
@@ -1367,25 +1359,13 @@ void TurnBattleMenuOn( int cast_idx )
     SetBattleMenu( menu_cast, BM_MakeCastMenu(menu_cast, 1) );
     SetBMCursor( menu_cast, _defaultCursorBM );
 
-    //SetBattleMenuPos( menu_cast, mcg_getX(ref_BattleHUD) - ImageWidth(master_battle_menus[menu_cast].scratch_img[0]), 10 );
     SetBattleMenuPos( menu_cast, 10,10 );
 
-    // Uhh... should we be parsing the battle menu every time???
-
-//Log( "Parsing BM Base!" );
     BM_Parse_Base( menu_cast );
-//Log( " no cleaning necessary." );
-
-//Log( "Dumping the BM for " + master_cast[menu_cast].name );
-//dump_bm( menu_cast ); //removing this causes great sorrow in the battle system
 
     Unpress(0);
 
-//Log( "Starting BM..." );
     StartBattleMenu( menu_cast );
-    
-//Log( "...TurnBattleMenuOn() done." );
-//Exit("");
 }
 
 /// call this when going into targetting mode for a 
@@ -1853,6 +1833,8 @@ void setStartingBattleSpriteAnimations( int party_idx, int sprite_idx )
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+int __debug_screen_y;
+
 void render_battle_debug_window()
 {
     int debug_screen, y;
@@ -1893,8 +1875,21 @@ void render_battle_debug_window()
     PrintString( 10,y,debug_screen,fontBattleWhite, "right: " + str(right) );
     y += FontHeight(fontBattleWhite) + 1;   
     
+    __debug_screen_y = y;
 }
 
+void PrintBattleDebug( string s ) {
+    
+    PrintString( 
+        10, 
+        __debug_screen_y, 
+        WindowGetImage(h_window_debug), 
+        fontBattleWhite, 
+        s 
+    );
+    
+    __debug_screen_y += FontHeight(fontBattleWhite) + 1;   
+}
 
 int DrawBattleQueueText( int my_screen )
 {

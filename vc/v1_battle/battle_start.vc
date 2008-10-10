@@ -59,6 +59,9 @@ _debug_tick_counter = 0;
     SetGATTACA_onComplete( "" );
     __current_strikecount = 0;
     
+    /// reset the battle menu
+    _prev_bm_idx = -1;
+    
     Unpress(0);
 }
 

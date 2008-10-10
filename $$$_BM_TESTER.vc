@@ -120,7 +120,7 @@ void SetupDefaultBM( int i )
     master_battle_menus[i].y_spacer     = 1;
 //Log("9");
     master_battle_menus[i].mode_modulus     = 1;
-    master_battle_menus[i].mode_monobase    = 1;
+    master_battle_menus[i].mode_monobase    = 0;
 //Log("10");
     SetScrollBarColors( RGB(128,128,128), RGB(192,192,192) );
 //Log("11");

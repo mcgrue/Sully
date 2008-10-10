@@ -546,10 +546,6 @@ glob_next   = nextline;
         }
         else if( !strcmp("", trim(nextline)) ) // if there is no nextline...
         {
-/*      
-            data    = data + trim( thisline );
-            sub     = sub + "-1";
-*/          
             __bm_ln_helper = ln;
             __bm_lvl_helper = level;
             
@@ -645,22 +641,9 @@ glob_next   = nextline;
         }
         else if( thislevel == nextlevel ) //add it to the list, continue on.
         {
-//log(bm_g(level)+"this==next");
             data    = data + trim( thisline ) +",";
             sub     = sub + "-1,";
         }       
-
-/*      
-log(bm_g(level)+"ln++");
-log(g(level)+" data: '"+data+"'");
-log(bm_g(level)+"  sub: '"+sub+"'");
-log(bm_g(level)+"");
-log(bm_g(level)+"NEXT ITERATION!");
-log(bm_g(level)+"");
-
-
-log( "BOTTOM OF LOOP: ln " + str(ln+1) + " incrementing..." );      
-*/
         
         ln++;
     }
@@ -671,29 +654,15 @@ void BM_Parse_Base(int idx)
 {
     int i;
 
-/*    
-Log( "BM_Parse_Base("+str(idx)+").  Contents follow:" );
-Log("---");
-Log( master_battle_menus[idx].src );
-Log("---");
-Log("...done.");
-
-Log( "BM_Parse_Base, Starting page base." );
-Log( "page_base: '" + master_battle_menus[idx].page_base + "'" );
-*/
     /// First, clear out the page_base.
     master_battle_menus[idx].page_base = "";
 
     for( i=0; i<TokenCount(master_battle_menus[idx].src, "~"); i++ )
     {
         master_battle_menus[idx].page_base = master_battle_menus[idx].page_base + str(BM_Parse(idx, GetToken(master_battle_menus[idx].src, "~",i), 0,0)) + ",";
-        
-//Log( "page_base after pass ["+str(i)+"]: '" + master_battle_menus[idx].page_base + "'" );
     }
 
-//Log( "page_base (final): '" + master_battle_menus[idx].page_base + "'" );
     master_battle_menus[idx].page_base_count = TokenCount(master_battle_menus[idx].src, "~");
-//Log( "page_base_count: " + str(master_battle_menus[idx].page_base_count) );
 }
 
 /// sets a battle menu at the specified index with the specified source, and sets it as unparsed.
@@ -705,17 +674,8 @@ void SetBattleMenu( int m_idx, string src )
         ErrorHandler( "SetBattleMenu(): bad index ("+str(m_idx)+" of "+str(MAX_BATTLE_MENUS)+")" );
         return;
     }
-    
-//Log( "SetBattleMenu( "+str(m_idx)+", src ) PASSED IN: " );
-//Log( src );
 
     master_battle_menus[m_idx].src = src;
-
-//Log( "=====" );
-//Log( "Got set as: " );
-//Log( "=====" );
-//Log( master_battle_menus[m_idx].src );
-//Log( "=====" );
 
     master_battle_menus[m_idx].parsed = 0;
     
@@ -936,6 +896,10 @@ void InitMonobaseBattleMenu( int m_idx )
 /// Frees the scratch images from the previous occupant of this master_battle_menus[] slot
 void CleanBattleMenu( int m_idx )
 {
+    if( master_cast[menu_cast].battle_menu_dirty ) {
+    
+    }
+
     int i;
     
     for( i=0; i<MAX_BATTLE_MENU_LEVELS; i++ )
@@ -950,6 +914,7 @@ void CleanBattleMenu( int m_idx )
     master_battle_menus[m_idx].parsed = 0;
     
     master_battle_menus[m_idx].page_count = 0;
+    
     master_battle_menus[m_idx].page_base_count = 0;
     
     master_battle_menus[m_idx].mode_list = 0;
@@ -963,7 +928,7 @@ void StartBattleMenu( int m_idx )
     
     __bm_visible = 1;
     
-    CleanBattleMenu(m_idx);
+//CleanBattleMenu(m_idx);
     
     if( master_battle_menus[m_idx].mode_monobase && !master_battle_menus[m_idx].mode_monobase_x )
     {
@@ -1234,8 +1199,8 @@ void BM_KeyControl( int m_idx )
     {
         //if we're on the ground floor...
         if( master_battle_menus[m_idx].cur_level == 0 )
-        {
-            if(  master_battle_menus[m_idx].page_base_count > 1 )
+        {        
+            if( master_battle_menus[m_idx].page_base_count > 1 )
             {
                 if( ButtonLeftTop(1) )
                 {
