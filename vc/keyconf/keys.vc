@@ -131,11 +131,11 @@ void init_keyconfig()
     addSimpleKey( 53, 25+99,55, "?" );
     
 
-    addWeirdKey( 54, 135,55, 30,11, "Right Shift" );
+    addWeirdKey(  54, 135,55, 30,11, "Right Shift" );
     addSimpleKey( 55, 231,22, "PAD *" );
-    addWeirdKey( 56, 29,66, 16,11, "Alt" );
+    addWeirdKey(  56, 29,66, 16,11, "Alt" );
     addSecondKey( 56, 120, 66, 16, 11 );
-    addWeirdKey( 57, 45,66, 75,11, "Space" );
+    addWeirdKey(  57, 45,66, 75,11, "Space" );
     
 
     addWeirdKey( 58, 0,44,22,11, "Caps Lock" );
@@ -169,14 +169,14 @@ void init_keyconfig()
     addSimpleKey( 77, 193,66, "RIGHT" );
     addSecondKey( 77, 231,44,11,11  );
     
-    addWeirdKey( 78, 242,33,11,22, "PAD +" );
+    addWeirdKey(  78, 242,33,11,22, "PAD +" );
     addSimpleKey( 79, 209,55, "PAD 1" );
 
     addSimpleKey( 80, 182,66, "DOWN" );
     addSecondKey( 80, 220,55,11,11  );
     
     addSimpleKey( 81, 231,55, "PAD 3" );
-    addWeirdKey( 82, 209,66,22,11, "PAD 0" );
+    addWeirdKey(  82, 209,66,22,11, "PAD 0" );
 
     addSimpleKey( 83, 231,66, "PAD ." );
     
@@ -410,6 +410,8 @@ int _initJoyConf( string bg_render_func, int xoff, int yoff )
         ShowPage();
     }
     
+    ResetToDefaultKeymapping();
+    
     return 1;
 }
 
@@ -501,6 +503,12 @@ void DrawJoystick( int xoff, int yoff, int keynum )
 ///
 void ResetToDefaultKeymapping()
 {
+    int i;
+
+    for( i=0; i<CURRENT_KEYCOUNT; i++ ) {
+        _my_keys[i] = 0;
+    }
+
     _keymode = 0;
     
     SetButtonJB(1, 0);
