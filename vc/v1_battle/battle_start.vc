@@ -283,6 +283,7 @@ int initBattleRenderer()
     ref_battletarg = mcg_add_complex( "HandleBattleMenuTargetting", -1 );
 
     ref_actorindicator = mcg_add_complex( "HandleBattleMenuActorIndicator", -1 );
+    ref_levelup = LoadImage( "res/battle/levelup.png" );
 
     //mcg_add_complex( "__TEST_bouncy", -1 );
     

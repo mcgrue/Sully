@@ -111,6 +111,8 @@ int ref_effects;
 
 /// the image layer reference for the "this PC is presently acting" thing.
 int ref_actorindicator;
+/// the image layer reference for the "Level Up!" overlay.
+int ref_levelup;
 
 int bs_layerBG, bs_layerFG, bs_layerInterface;
 
@@ -144,6 +146,7 @@ void endOfBattle()
     
     DestroyBattleMessage();
     TurnBattleEffectOff(0);
+    FreeImage(ref_levelup);
        
     if( mode_battle_debug )
     {
@@ -1770,16 +1773,18 @@ void CalculatePhatBattleBooty() {
     output = output + str(reward) + " " + moneyname + "."; 
     QueueBattleMessage(output, TRUE, FALSE, TRUE, BMSG_TYPICAL_DURATION);
     
-    // Level up animation goes here
-
-    // Declare any new skills gained on level-up. (Doesn't announce skill names, because I'm lazy.)
+    int someone_levelled = 0;
+    // Announce level ups and declare any new skills gained on level-up. (Doesn't announce skill names, because I'm lazy.)
     for (i = 0; i < PartySize(); i++) { 
-        if (_oldLevel[i] < getLevel(party[i])) {            
+        if (_oldLevel[i] < getLevel(party[i])) {          
+            someone_levelled = 1;
+            doLevelUpIndicator(i);
             n = _skillsLearned(party[i], _oldLevel[i], getLevel(party[i]));
             if (n == 1) QueueBattleMessage( bat_getName(i,PARTY_ALLY) + " learned a new skill.", TRUE, FALSE, TRUE, BMSG_TYPICAL_DURATION);
             else if (n > 1) QueueBattleMessage( bat_getName(i,PARTY_ALLY) + " learned " + str(n) + " new skills.", TRUE, FALSE, TRUE, BMSG_TYPICAL_DURATION);
         }       
     } 
+    if (someone_levelled) SoundMagic1(); // tada!
 
     // Now for the item drops, In this loop, reward holds the index of the item being considered.
     // It's initialized to -1 and we go through until we find an enemy that dropped something, then
@@ -1815,7 +1820,18 @@ void CalculatePhatBattleBooty() {
     __initRewards = 1;  
 }
 
+// Draws a "level up!" message over the party member in question.
+void doLevelUpIndicator(int party_idx) {
+    int char_ref = bat_getRenderRef(party_idx,PARTY_ALLY);
+    int startx = mcg_getX(char_ref) + (mcg_width(char_ref)/2) - (ImageWidth(ref_levelup)/2);
+    int starty = mcg_getY(char_ref) + mcg_height(char_ref) - ImageHeight(ref_levelup);
+    
+    mcg_setOnStopMoving( mcg_add_image( startx, starty, startx, starty - 24, 100, ref_levelup) , "makeLevelUpIndicatorDisappear");
+}
 
+void makeLevelUpIndicatorDisappear() {
+    mcg_turn_invisible(getCurrentMcGIdx());
+}
 
 void setStartingBattleSpriteAnimations( int party_idx, int sprite_idx )
 {
