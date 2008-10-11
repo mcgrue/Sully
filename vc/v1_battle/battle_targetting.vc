@@ -1,7 +1,7 @@
 #define SELECT_RIGHTMOST_ENEMY  0
-#define SELECT_LIVE_ALLY    1
-#define SELECT_DEAD_ALLY    2
-#define SELECT_ALLY     3
+#define SELECT_LIVE_ALLY        1
+#define SELECT_DEAD_ALLY        2
+#define SELECT_ALLY             3
 
 
 /// This file contains the battle targetting functions for items, skills, and whatnot to use to acquire targets in Sully.
@@ -25,6 +25,20 @@ Log( "_targetting_are_we_good_still? "+str(selectmap_count) );
     
     MenuHappyBeep();
     return 1;
+}
+
+void SELF_targ() {
+//    _bt_ss_flags(2,0);
+//    _bt_setup_selectmap();
+    
+    _bt_ss_flags(2,0);
+    _bt_setup_selectmap();
+    
+    if( !_targetting_are_we_good_still() ) {
+        return;
+    } 
+    
+    SetActiveBattleMenuTargetting( "Targ_Select1_AcceptOrCancel" );
 }
 
 /// target one live battle entity (ally or enemy)
@@ -242,6 +256,7 @@ void _bt_ss_flags( int liveFlag, int partyFlag )
 void _bt_setup_selectmap()
 {
     int i, idx, commit, tmp;
+    tmp = -1;
 
     selectmap_clear(0);
     
@@ -271,6 +286,14 @@ void _bt_setup_selectmap()
                         idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ALLY) );
                         commit = 1;
                     }
+                case 2: // self only (current actor only)
+                    
+                    if( i == battle_queue[0].batent_ref ) {
+                    
+                        idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ALLY) );
+                        
+                        commit = 1;
+                    }
             }
 
             if( commit )
@@ -288,7 +311,7 @@ void _bt_setup_selectmap()
 
             switch( _bt_liveflag )
             {
-                case -1: //dead allies only
+                case -1: //dead enemies only
                     if( bat_cur_hp(i, PARTY_ENEMY) <= 0 )
                     {
                         idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ENEMY) );
@@ -300,7 +323,7 @@ void _bt_setup_selectmap()
                     idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ENEMY) );
                     commit = 1;
 
-                case 1: //living allies only
+                case 1: //living enemies only
                     if( bat_cur_hp(i, PARTY_ENEMY) > 0 )
                     {
                         idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ENEMY) );

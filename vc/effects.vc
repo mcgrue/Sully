@@ -520,6 +520,26 @@ Log( "herb_use end" );
 }
 
 
+void skill_std_meditate() {
+
+    int target_idx;
+    int amt;
+
+    target_idx = GetTargIdxByText( "Target" );
+
+    amt += Random(2, 10);
+
+    AddGATTACA( 
+        GetTargID(target_idx), 
+        GetTargMode(target_idx),
+        BS_CHANGE_MP, 
+        amt
+    );
+
+    TurnBattleEffectOn( "magic_sparkles" );
+}
+
+
 /// 2x attacks!
 void skill_swd_sworddance() {
 
@@ -760,6 +780,14 @@ void healy_sparkles()
     standard_effect(
         "res\sfx\MAGIC.WAV", 103,
         "res\battle\effects\sparkle-green.pcx", 32, 32
+    );
+}
+
+void magic_sparkles()
+{
+    standard_effect(
+        "res\sfx\CIGAM.WAV", 103,
+        "res\battle\effects\sparkle-blue.pcx", 32, 32
     );
 }
 

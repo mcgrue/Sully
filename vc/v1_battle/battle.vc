@@ -398,7 +398,7 @@ void BsSeedBattleQueue()
     {
         for( i=0; i<PartySize(); i++ )
         {
-            add_battle_queue_delay_entry( Random(51,100), PARTY_ALLY, party[i], "" );
+            add_battle_queue_delay_entry( Random(51,100), party[i], PARTY_ALLY, "" );
         }
         
         for( i=0; i<battle_enemy_count; i++ )
@@ -1898,16 +1898,40 @@ int DrawBattleQueueText( int my_screen )
     string aod;
     
     for( i=0; i<(battle_queue_count+1); i++ )
-    {   
-        if( BattleQueueActorIsActive(i) )
-            aod = "live ";
-        else
-            aod = "dead ";
+    {
+        if( i<battle_queue_count ) {
+            if( BattleQueueActorIsActive(i) ) {
+                aod = "live t";
+            } else {
+                aod = "dead t";
+            }
+        } else {
+            aod = "TEMP t";
+        }
     
         if( battle_queue[i].batent_party == PARTY_ALLY )
-            PrintString( 1,y, my_screen, fontBattleWhite, aod+str(battle_queue[i].time)+","+master_cast[battle_queue[i].batent_ref].name+","+str(battle_queue[i].action)+","+battle_queue[i].data );
+            PrintString( 
+                1,y, 
+                my_screen, 
+                fontBattleWhite, 
+                
+                aod+str(battle_queue[i].time)+","+
+                master_cast[battle_queue[i].batent_ref].name+","+
+                str(battle_queue[i].action)+","+
+                
+                battle_queue[i].data 
+            );
         else
-            PrintString( 1,y, my_screen, fontBattleWhite, aod+str(battle_queue[i].time)+","+master_enemy[battle_enemies[battle_queue[i].batent_ref].master_enemy_idx].name+","+str(battle_queue[i].action)+","+battle_queue[i].data );
+            PrintString( 
+                1,y, 
+                my_screen, 
+                fontBattleWhite, 
+                
+                aod+str(battle_queue[i].time)+","+
+                master_enemy[battle_enemies[battle_queue[i].batent_ref].master_enemy_idx].name+
+                ","+str(battle_queue[i].action)+
+                ","+battle_queue[i].data 
+            );
         
         y += FontHeight(fontBattleWhite) + 1;
     }

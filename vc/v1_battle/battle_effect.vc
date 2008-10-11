@@ -44,8 +44,8 @@ void SimpleDefendResolver() {
     add_guard_action( battle_queue[0].batent_ref, PARTY_ALLY, GetSkillDelayTime(GetSkill("__Defend")), STANDARD_DEFEND_POWER );
 }
 
-void SimpleMeditateResolver() {}
 void SimpleParryResolver() {}
+
 void SimpleRunResolver() {}
 
 void DoBasicAttack() 

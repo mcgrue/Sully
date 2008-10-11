@@ -34,7 +34,7 @@ void InitExecuteLove()
 {
     ClearTargetting();
     targetting_success = TARG_SUCCESS;
-    AddTarget( battle_queue[0].batent_ref, PARTY_ALLY, "Attacker" );
+    AddTarget( battle_queue[0].batent_ref, PARTY_ALLY, "AtTaCkEr" );
 }
 
 
@@ -364,8 +364,7 @@ Messagebox( "Kykaawd" );
     }
     else if( equ(_key, "Meditate") )
     {
-Messagebox( "sdfsdfsghsdg" );
-        DoSimpleSelfEffect( "SimpleMeditateResolver", GetSkillChargeTime(GetSkill("Meditate")), GetSkillDelayTime(GetSkill("__Defend")) );
+        ExecuteLoveSkill( "__Meditate" );
     }
     else if( equ(_key, "Parry") )
     {
