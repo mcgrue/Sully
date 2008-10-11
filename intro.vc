@@ -384,15 +384,17 @@ void newgame() {
     GrantSkill( "Darin", "Guard" );
     GrantSkill( "Darin", "Sword_Dance" );
 
-//GrantSkill( "Darin", "Heal" );
-//GrantSkill( "Darin", "Shield" );
-//GrantSkill( "Darin", "Revive" );
+GrantSkill( "Darin", "Heal" );
+GrantSkill( "Darin", "Shield" );
+GrantSkill( "Darin", "Might" );
+GrantSkill( "Darin", "Revive" );
 GrantSkill( "Darin", "Go_Away" );
 
     GrantSkill( "Crystal", "Slap" );
     GrantSkill( "Crystal", "Assist" );
     GrantSkill( "Crystal", "Heal" );
     GrantSkill( "Crystal", "Shield" );
+    GrantSkill( "Crystal", "Might" );
     GrantSkill( "Crystal", "Revive" );
 
 

@@ -685,7 +685,7 @@ void skill_wm_shield() {
 
     bat_addStatus( GetTargID(target_idx), GetTargMode(target_idx), "Protect" );
 
-    MessageBox( "So, there's totally no implemented duration-handling for status yet.  Enjoy your infini-shield." );
+    MessageBox( "So, there's totally no implemented duration-handling for status yet." );
     
     AddGATTACA_ArbitraryString( 
         GetTargID(target_idx), 
@@ -698,6 +698,37 @@ void skill_wm_shield() {
     __fx__offs_y = -4;
     //standard_effect_oncomplete = "protecty_shield_oncomplete";
     TurnBattleEffectOn( "protecty_shield" );
+}
+
+void skill_wm_might() {
+
+    if( !IsInBattle() ) {
+        return;        
+    }
+
+    int target_idx = GetTargIdxByText( "Target" );
+    int targ_mcg_ref = bat_getRenderRef(GetTargID(target_idx),GetTargMode(target_idx));
+    
+    if( bat_is_dead( GetTargID(target_idx), GetTargMode(target_idx) ) ) {
+        TurnBattleEffectOn( "skill_fizzle" );
+        return;
+    }
+
+    bat_addStatus( GetTargID(target_idx), GetTargMode(target_idx), "Might" );
+
+    MessageBox( "So, there's totally no implemented duration-handling for status yet." );
+    
+    AddGATTACA_ArbitraryString( 
+        GetTargID(target_idx), 
+        GetTargMode(target_idx),
+        "Might", 
+        BOUNCETEXT_WHITE
+    );
+
+    __fx__offs_x = (mcg_width(targ_mcg_ref)/2) - 16; // align to horizontal middle
+    __fx__offs_y = mcg_height(targ_mcg_ref) - 40; // align to bottom
+    
+    TurnBattleEffectOn( "red_light_swirl" );
 }
 
 void skill_wm_invis() {
@@ -735,7 +766,7 @@ void healy_sparkles()
 void holy_light()
 {
     standard_effect(
-        "res\sfx\sun.wav", 180,
+        "res\sfx\sun.wav", 120,
         "res\battle\effects\revive.pcx", 24, 48
     );
 }
@@ -747,7 +778,12 @@ void protecty_shield() {
     );
 }
 
-
+void red_light_swirl() {
+    standard_effect(
+        "res\sfx\charge.wav", 85,
+        "res\battle\effects\boost.png", 32, 40
+    );
+}
 
 void skill_fizzle() {
     MessageBox( "Well, do some kind of fizzle sound and disappointed frame if a spell fizzles." );
@@ -768,16 +804,6 @@ void brew_use()
         brew_use_MENU();
     }
 }
-
-
-
-
-
-
-
-
-
-
 
 //heal 15 MP
 void starlight_use_MENU()
