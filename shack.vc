@@ -519,7 +519,7 @@ void disco_lever() /* 13 */
         
         flags[F_LOVE_FUNKSWITCH]=1;
         HookRetrace( "funkOrama" ); //RageCage's FUNKORAMA
-        Unpress(0);
+        UnPress(UNPRESS_ALL);
         return;
     }
     
@@ -528,7 +528,7 @@ void disco_lever() /* 13 */
         SoundSwitch();
         AlterBTile(80,4,550,2);
         flags[F_LOVE_FUNKSWITCH]=0;
-        Unpress(0);
+        UnPress(UNPRESS_ALL);
         HookRetrace( "V1RPG_RenderFunc" );
     }
 }

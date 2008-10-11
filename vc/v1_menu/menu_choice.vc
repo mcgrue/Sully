@@ -26,7 +26,7 @@ string MenuInputBox( string s )
     int mini_hold = menu_idx;
     menu_idx = 1000000; // To make a grue happy
     
-    Unpress(0);
+    UnPress(UNPRESS_ALL);
 
     key[SCAN_ENTER] = 0;
     

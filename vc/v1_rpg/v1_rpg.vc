@@ -725,7 +725,7 @@ void Banner( string msg, int duration )
         ShowPage();
     }
 
-    Unpress(0);
+    UnPress(UNPRESS_ALL);
     
     if(menu_mode)   MenuOn();
 }

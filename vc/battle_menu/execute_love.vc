@@ -50,7 +50,11 @@ void ExecuteLove( string _key )
     }
     else if( IsSkill(_key) )
     {
-        ExecuteLoveSkill( _key );
+        if( IsInBattle() ) {
+            ExecuteLoveBattleSkill( _key );
+        } else {
+            ExecuteLoveMenuSkill( _key );
+        }
     } 
     else
     {
@@ -205,7 +209,55 @@ void grantback_pendinguse_items_from_battle_actionqueue()
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
-void ExecuteLoveSkill( string _key )
+void ExecuteLoveMenuSkill( string _key ) {
+    int i, user_idx;
+
+    user_idx = menu_cast;
+
+    i = GetSkill( _key );
+
+    if( i < 0 )
+    {
+        ErrorHandler( "ExecuteLoveSkill: '"+_key+"' is not a valid skill." );
+        return;
+    }
+    
+    /// 1. Make sure this item is usable in battle. 
+    if( !CheckSkillUseflagI(i,USE_MENU) )
+    {
+        ErrorHandler( "ExecuteLoveSkill: '"+_key+"' is not usable in peacetime." );
+        return; 
+    }
+
+    String fake = GetSkillTargFunc(i) + "___MENU_STYLE";
+
+    /// 1a. Make sure the targetting callfunc exists! (onoes!)
+    if( !FunctionExists(fake) )
+    {
+        ErrorHandler( "ExecuteLoveSkill: '"+_key+"'s targetting function ("+fake+") does not exist!" );
+        DumpSkill( i );
+        return;     
+    }
+    
+    /// 1b. Does this skill, for some unknowable reason, have a negative MP cost?
+    if( GetSkillMpCostI(i) < 0 )
+    {
+        ErrorHandler( "ExecuteLoveSkill: '"+_key+"'s mp_cost was negative. ("+str(GetSkillMpCostI(i))+")" );
+        return;         
+    }
+    
+    
+    /// 1c. does this user, for some equally unknowble reason, not have the MP to use this skill?
+    /// (we never should've gotten this far if that were the case.)
+    if( GetSkillMpCostI(i) > bat_cur_mp(user_idx, PARTY_ALLY) )
+    {
+        ErrorHandler( "ExecuteLoveSkill: '"+_key+"'s mp_cost ("+str(GetSkillMpCostI(i))+") was higher than the party member's current mp ("+str(bat_cur_mp(user_idx, PARTY_ALLY))+"). That should never happen by this point, really." );
+        return; 
+    }
+
+}
+
+void ExecuteLoveBattleSkill( string _key )
 {
     int i, user_idx;
     
@@ -364,7 +416,7 @@ Messagebox( "Kykaawd" );
     }
     else if( equ(_key, "Meditate") )
     {
-        ExecuteLoveSkill( "__Meditate" );
+        ExecuteLoveBattleSkill( "__Meditate" );
     }
     else if( equ(_key, "Parry") )
     {
@@ -378,7 +430,11 @@ Messagebox( "lkjdfkg4233" );
     }
     else
     {
-        ErrorHandler( "Execute_Love.vc::ExecuteLoveSpecial(): '"+_key+"' is an unknown special battle action." );
+        if( equ(left(_key,1),">") ) {
+            MenuAngryBuzz();
+        } else {
+            ErrorHandler( "Execute_Love.vc::ExecuteLoveSpecial(): '"+_key+"' is an unknown special battle action." );
+        }    
     }
 }
 

@@ -62,7 +62,7 @@ _debug_tick_counter = 0;
     /// reset the battle menu
     _prev_bm_idx = -1;
     
-    Unpress(0);
+    UnPress(UNPRESS_ALL);
 }
 
 void doBattle( String battle_group_dat_area )

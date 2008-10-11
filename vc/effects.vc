@@ -455,7 +455,7 @@ void gswitch_use()
     }
     
     SoundSwitch();
-    Unpress( 0 );
+    UnPress(UNPRESS_ALL);
     
     Flags[F_GSWITCH]++;
 }
@@ -752,11 +752,12 @@ void skill_wm_might() {
 }
 
 void skill_wm_invis() {
+    
     if(!IsInBattle() ) {
+        
         battle_avoidance = 100;
         SoundTwinkle();
-    }
-    else {
+    } else {
         MessageBox("You're not supposed to use this in battle! Oh god, now look what you did!");
     }
 }

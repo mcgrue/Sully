@@ -696,16 +696,16 @@ void Computer()
                 else if( answer == 1 )
                 {
                     Banner( "Enter your verge-rpg.com username:", 300 );
-                    Unpress(0);
+                    UnPress(UNPRESS_ALL);
                     Wait(2);
                     user = MenuInputBox("");
-                    Unpress(0);
+                    UnPress(UNPRESS_ALL);
 
                     Banner( "Enter your verge-rpg.com password:", 300 );
-                    Unpress(0);
+                    UnPress(UNPRESS_ALL);
                     Wait(2);
                     pass = MenuInputBox("");
-                    Unpress(0);
+                    UnPress(UNPRESS_ALL);
                     
                     answer = Prompt( 0, "Username: '"+user+"'", "Password: '"+pass+"'","...Is this correct?", "Yes|No" );
                     
@@ -719,7 +719,7 @@ void Computer()
                         
                             Banner( "Enter your msg:", 300 );
                             VCPutIMG( "res/system/input_key.pcx",10,10 );
-                            Unpress(0);
+                            UnPress(UNPRESS_ALL);
                             Wait(2);
                             msg = MenuInputBox("");
                             ClearVCLayer();

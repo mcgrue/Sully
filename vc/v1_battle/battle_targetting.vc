@@ -23,7 +23,7 @@ Log( "_targetting_are_we_good_still? "+str(selectmap_count) );
         return 0;
     } 
     
-    MenuHappyBeep();
+    MenuHappyBeep();    
     return 1;
 }
 
@@ -541,7 +541,7 @@ void Targ_Select1_AcceptOrCancel()
     if( ButtonAccept(1) )
     {
 //Log("ACCEPT");
-        Unpress( 0 );
+        UnPress(UNPRESS_ALL);
         
         CallFunction( selectmap_accept_callfunc );
         
@@ -559,7 +559,7 @@ void Targ_Select1_AcceptOrCancel()
     if( ButtonCancel(1) )
     {
 //Log("CANCEL");
-        Unpress( 0 );
+        UnPress(UNPRESS_ALL);
         
         CallFunction( selectmap_cancel_callfunc );
         BattleMenuTargettingOff();

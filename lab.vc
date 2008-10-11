@@ -325,7 +325,7 @@ void switch_b()
     AlterBTile(23,11,c,2);
 
     SoundSwitch();
-    Unpress( 0 );
+    UnPress(9);
 }
 
 /// Switch
@@ -906,7 +906,7 @@ void switch_g() /* 28 */
     
     AlterBTile(18,28,c,2);
     SoundSwitch();
-    Unpress( 0 );
+    UnPress(9);
 }
 
 ///switch
@@ -947,7 +947,7 @@ void switch_k() /* 32 */
             warp(20,46,TNONE);
         } 
 
-        Unpress( 0 );
+        UnPress(9);
         flags[F_LAB_SWITCH_K]=1;
         return;
     }
@@ -966,7 +966,7 @@ void switch_k() /* 32 */
         }  
 
 
-        Unpress( 0 );
+        UnPress(9);
         flags[F_LAB_SWITCH_K]=0;
     }
 }
@@ -1033,7 +1033,7 @@ void Master3VertSwitch( int var_0, int var_1, int var_2, int var_3, int var_4 ) 
 
     AlterBTile(var_3,var_4,c,2);
     SoundSwitch();
-    UnPress( 0 );
+    UnPress(9);
 }
 
 /// The Master Horizontal-switch function for Lab.Map.
@@ -1071,7 +1071,7 @@ void Master3HorzSwitch( int var_0, int var_1, int var_2, int var_3, int var_4 ) 
 
     AlterBTile(var_3,var_4,c,2);
     SoundSwitch();
-    Unpress( 0 );
+    UnPress(9);
 }
 
 
@@ -1247,7 +1247,7 @@ void reset_switch() /* 44 */
     
     SoundSwitch();
     AlterBTile( 6,28, 284, 2 );
-    Unpress( 0 );
+    UnPress(9);
 }
 
 void escape_lever_a() /* 45 */

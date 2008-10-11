@@ -801,7 +801,7 @@ void b1_torch() // 32 //
         AlterBTile(8,103,379,0);
         AlterBTile(8,104,379,0);
         
-        UnPress(0);
+        UnPress(9);
         
         flags[F_HECK_B1_TORCH] = 1;
     }
@@ -1776,14 +1776,14 @@ void Master_Torch( int flag, int x1, int x2, int zone ) // 65 //                
         AlterFTile(x2,51,a,0);
         SetZone(x2,51,c);
         flags[flag]=1;
-        Unpress(0);
+        UnPress(UNPRESS_ALL);
     }
     else 
     {
         AlterBTile(x1,43,389,2);
         AlterFTile(x2,51,b,0);
         SetZone(x2,51,d);
-        Unpress(0);
+        UnPress(UNPRESS_ALL);
         flags[flag]=0;
     }
  

@@ -72,7 +72,7 @@ void FindItem( string itemname, int quantity )
         ShowPage();
     }
 
-    Unpress(0);
+    UnPress(UNPRESS_ALL);
     
     FreeImage( icon );
     
@@ -119,7 +119,7 @@ void DramaticUseItem( string itemname, int quantity )
         ShowPage();
     }
 
-    Unpress(0);
+    UnPress(UNPRESS_ALL);
     
     FreeImage( icon );
     
@@ -141,7 +141,7 @@ void Heal_Well()
     Banner( "Recovered full HP and MP!", 300 );
     
 
-    UnPress(0); //all
+    UnPress(UNPRESS_ALL); //all
 }
 
 

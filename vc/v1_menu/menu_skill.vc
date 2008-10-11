@@ -42,8 +42,10 @@ void MenuControlSkill()
     {
         if (MenuConfirm())
         {
+            
             ___menu_skill_at_base = 0;
             SetBMCursor( menu_cast, _defaultCursorBM );
+            return;
         }
         if (MenuCancel())
         {

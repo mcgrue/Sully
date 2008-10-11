@@ -185,7 +185,7 @@ void engine() /* 20 */
         Banner("Poured the water",500);
         
         flags[F_FLASH_WATER] = 2; //we're done with the water!
-        Unpress(0);
+        UnPress(UNPRESS_ALL);
     }
     
     if( !flags[F_FLASH_GEAR] )
@@ -201,7 +201,7 @@ void engine() /* 20 */
         SoundDoubleClick();
         Banner("Installed Gear",500);
         flags[F_FLASH_GEAR] = 2;
-        Unpress(0);
+        UnPress(UNPRESS_ALL);
     }
     
     if( !flags[F_FLASH_TWIG] )
@@ -217,7 +217,7 @@ void engine() /* 20 */
         SoundCrash();
         Banner("Added the twigs",500);
         flags[F_FLASH_TWIG]=2;
-        Unpress(0);
+        UnPress(UNPRESS_ALL);
     }
     
     if( !flags[F_FLASH_TOEJAM] )
@@ -233,7 +233,7 @@ void engine() /* 20 */
         SoundDoubleClick();
         Banner("Placed lubricant",500);
         flags[F_FLASH_TOEJAM] = 2;
-        Unpress(0);
+        UnPress(UNPRESS_ALL);
     }
     
     if( !flags[F_FLASH_SOLAR] )

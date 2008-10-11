@@ -642,7 +642,7 @@ int MenuPartyBox()
     int x_in = xpos+TextWidth(f, "00");
     int y_in = ypos+FontHeight(f);
     
-    Unpress(0);
+    UnPress(UNPRESS_ALL);
 
     while(!MenuConfirm())
     {
@@ -676,7 +676,7 @@ int MenuPartyBox()
     
     menu_idx = mini_hold;
     
-    Unpress(0);
+    UnPress(UNPRESS_ALL);
 
     return party[selected];
 }

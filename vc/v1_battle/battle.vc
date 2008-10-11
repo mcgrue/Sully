@@ -1363,7 +1363,7 @@ void TurnBattleMenuOn( int cast_idx )
 
     BM_Parse_Base( menu_cast );
 
-    Unpress(0);
+    UnPress(UNPRESS_ALL);
 
     StartBattleMenu( menu_cast );
 }
@@ -1468,13 +1468,13 @@ void SetActiveBattleMenuTargetting( string s )
         set_selectmap_actionfuncs( "MenuHappyBeep", "MenuHappyBeep" );
     }
     
-    Unpress( 0 );
+    UnPress(UNPRESS_ALL);
     
     SM_autocalculate();
 
     //dump_all_selectnodes();
     
-    Unpress( 0 );
+    UnPress(UNPRESS_ALL);
 }
 
 void BattleMenuTargettingOff()

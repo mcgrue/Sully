@@ -7,6 +7,9 @@
 
 /************************** entity.face constants ****************************/
 
+#define UNPRESS_ALL     9
+
+
 // The valid values of Entity.Face[]
 //
 // These should really be predefined.
