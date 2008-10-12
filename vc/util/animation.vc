@@ -71,9 +71,7 @@ int LoadAnimation(string filename, int sizex, int sizey)
 /// @author vecna
 void FreeAnimation( int index )
 {
-
-Log( "FreeAnimation( "+str(index)+" )" );
-    if( !anims[index].active )
+    if( index < 0 || !anims[index].active )
     {
         Log("FreeAnimation() - Requested index is not in use!!!");
         return; 

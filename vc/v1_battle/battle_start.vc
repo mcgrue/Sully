@@ -6,6 +6,9 @@ void cleanupPreviousBattle()
 
 _debug_tick_counter = 0;
 
+    /// wipe the battle menus!
+    CleanupAllBattleMenus();
+
     /// clean out the mcgrender engine.  Hope you saved anything you needed in there 
     /// from before!
     mcg_destroy();

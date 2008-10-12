@@ -1,4 +1,4 @@
-#define MAX_BATTLE_MENUS    10
+#define MAX_BATTLE_MENUS        10
 #define MAX_BATTLE_MENU_PAGES   50
 #define MAX_BATTLE_MENU_LEVELS  5
 //#define MAX_BATTLE_MENU_PAGES 5
@@ -897,7 +897,7 @@ void InitMonobaseBattleMenu( int m_idx )
 void CleanBattleMenu( int m_idx )
 {
     if( master_cast[menu_cast].battle_menu_dirty ) {
-    
+        MessageBox("master_cast["+getName(menu_cast)+"].battle_menu_dirty! in CleanBattleMenu().  Dear god.");
     }
 
     int i;
@@ -954,6 +954,15 @@ exit( "memory mode needs fixing." );
     }
     
     BattleMenuMenuOpen();
+}
+
+void CleanupAllBattleMenus() {
+    
+    int i;
+    
+    for( i=0; i<MAX_BATTLE_MENUS; i++ ) {
+        CleanBattleMenu(i);
+    }
 }
 
 

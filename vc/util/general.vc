@@ -335,8 +335,6 @@ int FindToken(string sf_string, string si_string, string toks)
 /// Calls callfunc if it exists, else errorhandler is called complaining that callfunc doesn't exist.
 void MandatoryCallFunction( string callfunc )
 {
-
-Log( "MandatoryCallFunction( '"+callfunc+"' )" );
     if( FunctionExists(callfunc) )
     {
         CallFunction( callfunc );
@@ -345,7 +343,6 @@ Log( "MandatoryCallFunction( '"+callfunc+"' )" );
     {
         ErrorHandler( "MandatoryCallFunction(), function '"+callfunc+"()' did not exist." );
     }
-
 }
 
 // Sets all obstruction tiles on the rectangle between tiles (x1p,y1p) and (x2p,y2p) to specified tile.

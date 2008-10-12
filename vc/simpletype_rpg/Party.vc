@@ -530,6 +530,10 @@ void SpawnParty( int x, int y ) {
     }
 }
 
+string getName( int party_idx ) {
+    return master_cast[party[party_idx]].name;
+}
+
 
 // Like SpawnParty, but uses alternate overworld chrs.
 
