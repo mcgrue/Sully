@@ -259,9 +259,13 @@ void MenuMcgrenderInitialization() {
         _im_menuMotionStint = NewImage(1,1);
     }
     
-    //_ref_menuMotionStint = mcg_add_image( 0,0, 0,0, 100, imBattleBG ); 
-    //___menupos_x
-    //___menupos_y
+    _ref_menuMotionStint = 
+        mcg_add_image( 
+            ImageWidth(screen),0, 
+            0,0, 
+            100, 
+            _im_menuMotionStint 
+        );
     
     mcg_add_complex( "MenuBackGroundDraw", -1 );
     mcg_add_complex( "MenuCurrentDrawFunction", -1 );
@@ -353,6 +357,9 @@ void MenuInitSkillMenus()
 // This function does the rendering stuff you want to happen before the custom render each cycle.
 void MenuBackGroundDraw()
 {
+    ___menupos_x = mcg_getX(_ref_menuMotionStint);
+    ___menupos_y = mcg_getY(_ref_menuMotionStint);
+
     Render();
 }
 
@@ -671,9 +678,35 @@ int ColourDivider(int colour, int division)
 // Draws a box. This needs moar options
 void MenuDrawBackground(int x1, int y1, int x2, int y2, int active)
 {
+    x1+=___menupos_x;
+    x2+=___menupos_x;
+    
+    y1+=___menupos_y;
+    y2+=___menupos_y;
+    
+    int _x1 = x1 + 4;
+    int _y1 = y1 + 4;
+
+    int _x2 = x2 - 5;
+    int _y2 = y2 - 5;
+
+    _x1 = min(max(0,_x1),ImageWidth(screen));
+    _x2 = min(max(0,_x2),ImageWidth(screen));
+    
+    _y1 = min(max(0,_y1),ImageHeight(screen));
+    _y2 = min(max(0,_y2),ImageHeight(screen));
+    
     SetLucent(global_menuluc * 10);
     SetCustomColorFilter(ColourDivider(menu_colour[2 + active], 4), menu_colour[2 + active]);
-    active = ImageShell(x1 + 4, y1 + 4, x2 - 5 - x1, y2 - 5 - y1, screen);
+    
+    active = ImageShell(
+        _x1, 
+        _y1, 
+        _x2 - _x1, 
+        _y2 - _y1, 
+        screen
+    );
+    
     ColorFilter(CF_CUSTOM, active);
     FreeImage(active);
     SetLucent(0);
@@ -725,11 +758,11 @@ void MenuBlitRight(int active, int selected)
 
 
     MenuDrawBackground(
-        ___menupos_x+MENU_B_X1, 
-        ___menupos_y+MENU_B_Y1, 
+        MENU_B_X1, 
+        MENU_B_Y1, 
         
-        ___menupos_x+MENU_B_X2, 
-        ___menupos_y+MENU_B_Y2, 
+        MENU_B_X2, 
+        MENU_B_Y2, 
         
         active
     );
@@ -751,11 +784,11 @@ void MenuBlitRight(int active, int selected)
 void MenuBlitBottom()
 {
     MenuDrawBackground(
-        ___menupos_x+MENU_C_X1, 
-        ___menupos_y+MENU_C_Y1, 
+        MENU_C_X1, 
+        MENU_C_Y1, 
         
-        ___menupos_x+MENU_C_X2, 
-        ___menupos_y+MENU_C_Y2, 
+        MENU_C_X2, 
+        MENU_C_Y2, 
         
         0
     );
@@ -777,11 +810,11 @@ void MenuBlitCenter(int active)
 {
     int i, frame;
     MenuDrawBackground(
-        ___menupos_x+MENU_A_X1, 
-        ___menupos_y+MENU_A_Y1, 
+        MENU_A_X1, 
+        MENU_A_Y1, 
         
-        ___menupos_x+MENU_A_X2, 
-        ___menupos_y+MENU_A_Y2, 
+        MENU_A_X2, 
+        MENU_A_Y2, 
         
         active
     );
