@@ -274,7 +274,7 @@ void BsPlacePartySprites()
 int RenderBattle()
 {
     mcg_process_sprites();  //autocycle any sprites on the heap.
-    mcgrender();        //render the heap.
+    mcgrender();            //render the heap.
 }
 
 int ActiveBattleAllyIdx;

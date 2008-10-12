@@ -80,7 +80,7 @@ int global_noscroll = 1;
 int global_menuluc = 0;
 int global_gametime;
 int _menu_on = 1;   // Grue = tit. Loveable, but tit -Zip
-            // I HATE YOU SO VERY MUCH! -Grue
+                    // I HATE YOU SO VERY MUCH! -Grue
 int _menu_is_on;
 
 //
@@ -242,6 +242,47 @@ void MenuRoot()
     menu_start = 0;
 }
 
+
+int _im_menuMotionStint = -1; 
+int _ref_menuMotionStint;
+
+int _ref_menuLayer;
+int _ref_aboveMenuLayer;
+
+void MenuMcgrenderInitialization() {
+    _ref_menuLayer      = McgSpawnLayer(); 
+    _ref_aboveMenuLayer = McgSpawnLayer(); 
+
+    McgSetActiveLayer( _ref_menuLayer );
+    
+    if( !ImageValid(_im_menuMotionStint) ) {
+        _im_menuMotionStint = NewImage(1,1);
+    }
+    
+    //_ref_menuMotionStint = mcg_add_image( 0,0, 0,0, 100, imBattleBG ); 
+    //___menupos_x
+    //___menupos_y
+    
+    mcg_add_complex( "MenuBackGroundDraw", -1 );
+    mcg_add_complex( "MenuCurrentDrawFunction", -1 );
+    mcg_add_complex( "MenuCurrentControlFunction", -1 );
+}
+
+
+
+void MenuCurrentDrawFunction() {
+    CallFunction( master_menus[menu_idx].draw_func );
+}
+
+void MenuCurrentControlFunction() {
+    CallFunction( master_menus[menu_idx].control_func );
+}
+
+void RenderMenu() {
+    mcg_process_sprites();  //autocycle any sprites on the heap.
+    mcgrender();            //render the heap.
+}
+
 // Enter the menu system and control
 void MenuEntry()
 {
@@ -252,6 +293,8 @@ void MenuEntry()
         
         MenuInitSkillMenus();
         
+        MenuMcgrenderInitialization();
+        
         _menu_is_on = 1;
         menu_done = 0;
         menu_option = 0;
@@ -260,19 +303,22 @@ void MenuEntry()
 
         MenuHappyBeep(); //hey, you've entered a menu!  Chirp happily about it!
 
-        while( !menu_done )
-        {
-            MenuBackGroundDraw(); //draw universal things
-            CallFunction( master_menus[menu_idx].draw_func );
 
+        while( !menu_done )
+        {                       
+            Render();
+            RenderMenu();
             ShowPage();
-            CallFunction( master_menus[menu_idx].control_func );
         }
+
 
         _menu_is_on = 0;
         HookButton( 3, "MenuEntry" );
+        mcg_destroy();
     }
 }
+
+
 
 
 
@@ -666,29 +712,58 @@ void MenuDrawBackground(int x1, int y1, int x2, int y2, int active)
     }
 }
 
+/// rendering offset, so we can make the menus move in/out.
+///
+int ___menupos_x = 0;
+int ___menupos_y = 0;
+
+
 // Draws the main menu list on the right side of the screen
 void MenuBlitRight(int active, int selected)
 {
-    MenuDrawBackground(MENU_B_X1, MENU_B_Y1, MENU_B_X2, MENU_B_Y2, active);
-    PrintString(248, selected * 20 + 25, screen, menu_font[0], ">");
-    PrintString(255, 25, screen, menu_font[0], "ITEM");
-    PrintString(255, 45, screen, menu_font[0], "SKILL");
-    PrintString(255, 65, screen, menu_font[0], "EQUIP");
-    PrintString(255, 85, screen, menu_font[0], "STATUS");
-    PrintString(255, 105, screen, menu_font[0], "OPTION");
-    PrintString(255, 125, screen, menu_font[1 - can_save], "SAVE");
-    PrintString(255, 145, screen, menu_font[0], "LOAD");
+    
+
+
+    MenuDrawBackground(
+        ___menupos_x+MENU_B_X1, 
+        ___menupos_y+MENU_B_Y1, 
+        
+        ___menupos_x+MENU_B_X2, 
+        ___menupos_y+MENU_B_Y2, 
+        
+        active
+    );
+        
+    
+    
+    PrintString(___menupos_x+248, selected * 20 + ___menupos_y+ 25, screen, menu_font[0], ">");
+    PrintString(___menupos_x+255, ___menupos_y+25, screen, menu_font[0], "ITEM");
+    PrintString(___menupos_x+255, ___menupos_y+45, screen, menu_font[0], "SKILL");
+    PrintString(___menupos_x+255, ___menupos_y+65, screen, menu_font[0], "EQUIP");
+    PrintString(___menupos_x+255, ___menupos_y+85, screen, menu_font[0], "STATUS");
+    PrintString(___menupos_x+255, ___menupos_y+105, screen, menu_font[0], "OPTION");
+    PrintString(___menupos_x+255, ___menupos_y+125, screen, menu_font[1 - can_save], "SAVE");
+    PrintString(___menupos_x+255, ___menupos_y+145, screen, menu_font[0], "LOAD");
     MenuBlitBottom();
 }
 
 // Generic gold/timer thang
 void MenuBlitBottom()
 {
-    MenuDrawBackground(MENU_C_X1, MENU_C_Y1, MENU_C_X2, MENU_C_Y2, 0);
-    PrintString(245, 185, screen, menu_font[0], moneyname + ":");
-    PrintRight(305, 195, screen, menu_font[0], str(money));
-    PrintString(245, 205, screen, menu_font[0], "Time:");
-    PrintRight(305, 215, screen, menu_font[0], GetTimeString(global_gametime + systemtime));
+    MenuDrawBackground(
+        ___menupos_x+MENU_C_X1, 
+        ___menupos_y+MENU_C_Y1, 
+        
+        ___menupos_x+MENU_C_X2, 
+        ___menupos_y+MENU_C_Y2, 
+        
+        0
+    );
+    
+    PrintString(___menupos_x+245, ___menupos_y+185, screen, menu_font[0], moneyname + ":");
+    PrintRight(___menupos_x+305, ___menupos_y+195, screen, menu_font[0], str(money));
+    PrintString(___menupos_x+245, ___menupos_y+205, screen, menu_font[0], "Time:");
+    PrintRight(___menupos_x+305, ___menupos_y+215, screen, menu_font[0], GetTimeString(global_gametime + systemtime));
 }
 
 // Return time in (H)H:MM:SS format
@@ -701,15 +776,33 @@ string GetTimeString(int time)
 void MenuBlitCenter(int active)
 {
     int i, frame;
-    MenuDrawBackground(MENU_A_X1, MENU_A_Y1, MENU_A_X2, MENU_A_Y2, active);
+    MenuDrawBackground(
+        ___menupos_x+MENU_A_X1, 
+        ___menupos_y+MENU_A_Y1, 
+        
+        ___menupos_x+MENU_A_X2, 
+        ___menupos_y+MENU_A_Y2, 
+        
+        active
+    );
+    
     for (i = 0; i < PartySize(); i++)
     {
         if(i == menu_cast) frame = GetFrameWalk();
         else frame = 0;
         MenuBlitCast(i, i, frame);
         // MenuBlitCast doesn't show Max HP/MP due to shens, so they need to be blitted here.
-        MenuPrintStat(MENU_CAST_X, MENU_CAST_Y + (i * 42), STAT_MAX_HP, menu_font[0], GetMaxHP(party[i]));      
-        MenuPrintStat(MENU_CAST_X, MENU_CAST_Y + (i * 42), STAT_MAX_MP, menu_font[0], GetMaxMP(party[i]));
+        MenuPrintStat(
+            ___menupos_x+MENU_CAST_X, 
+            ___menupos_y+MENU_CAST_Y + (i * 42), 
+            STAT_MAX_HP, menu_font[0], GetMaxHP(party[i])
+        );
+        
+        MenuPrintStat(
+            ___menupos_x+MENU_CAST_X, 
+            ___menupos_y+MENU_CAST_Y + (i * 42), 
+            STAT_MAX_MP, menu_font[0], GetMaxMP(party[i])
+        );
     }
 }
 
@@ -729,8 +822,12 @@ int GetFrameSad()
 
 void MenuBlitCast(int member, int location, int frame)
 {
-    MenuBlitCastFull(MENU_CAST_X, MENU_CAST_Y + (location * 42), member, frame);
-
+    MenuBlitCastFull(
+        ___menupos_x+MENU_CAST_X, 
+        ___menupos_y+MENU_CAST_Y + (location * 42), 
+        member, 
+        frame
+    );
 }
 
 // This was a stupid function that was removed by Gayo. It no longer exists, but it
@@ -758,46 +855,6 @@ void MenuBlitCastFull(int x, int y, int member, int frame)
 //        -----------------------------------
 // Should probably move to another file
 
-/*
-// Zip: My lovely text wrapper... not speed optimised
-string WrapText(int wt_font, string wt_s, int wt_linelen)
-{
-    int wt_i;
-    string wt_tpara = "";
-    string wt_tline = "";
-    string wt_output = "";
-    int wt_breaks = TokenCount(wt_s, "|");
-    while (len(wt_s))
-    {
-        wt_tpara = GetToken(wt_s, "|", 0);
-        wt_s = right(wt_s, len(wt_s) - len(wt_tpara) - 1);
-        if (TextWidth(wt_font, wt_tpara) < wt_linelen)
-        {
-            wt_output = wt_output + wt_tpara + "|";
-        }
-        else
-        {
-            while (len(wt_tpara))
-            {
-                wt_tline = wt_tline + GetToken(wt_tpara, " ", 0);
-                wt_tpara = right(wt_tpara, len(wt_tpara) - len(GetToken(wt_tpara, " ", 0)) - 1);
-                if (TextWidth(wt_font, wt_tline + GetToken(wt_tpara, " ", 0) + " ") > wt_linelen)
-                {
-                    wt_output = wt_output + wt_tline + "|";
-                    wt_tline = "";
-                }
-                else wt_tline = wt_tline + " ";
-            }
-            if (len(wt_tline))
-            {
-                wt_output = wt_output + left(wt_tline, len(wt_tline) - 1) + "|";
-                wt_tline = "";
-            }
-        }
-    }
-    return left(wt_output, len(wt_output) - 1);
-}
-*/
 
 // Returns number in three digit format. Hyper useful
 string ThreeDigit(int number)

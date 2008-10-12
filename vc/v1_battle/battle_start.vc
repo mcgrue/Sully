@@ -186,7 +186,7 @@ void doBattle( String battle_group_dat_area )
 
 String __music_before_battle;
 
-int initBattleRenderer()
+void initBattleRenderer()
 {
     int i, tmp, x, y, tmp_ref;
 
