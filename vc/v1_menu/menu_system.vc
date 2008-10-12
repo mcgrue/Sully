@@ -261,9 +261,9 @@ void MenuMcgrenderInitialization() {
     
     _ref_menuMotionStint = 
         mcg_add_image( 
-            ImageWidth(screen),0, 
+            -ImageWidth(screen),0, 
             0,0, 
-            100, 
+            33, 
             _im_menuMotionStint 
         );
     
@@ -307,15 +307,29 @@ void MenuEntry()
 
         MenuHappyBeep(); //hey, you've entered a menu!  Chirp happily about it!
 
-
+        /// the main render loop for the menu.
         while( !menu_done )
         {                       
             Render();
             RenderMenu();
             ShowPage();
         }
-
-
+        
+        /// and then move it on out.
+        mcg_newmove( 
+            _ref_menuMotionStint, 
+            ImageWidth(screen),0, 
+            33 
+        );        
+        while( mcg_isMoving(_ref_menuMotionStint) )  
+        {
+            Render();
+            RenderMenu();
+            ShowPage();
+        }
+        
+        
+        /// And then clean up the menu, because we're done drawing it!
         _menu_is_on = 0;
         HookButton( 3, "MenuEntry" );
         mcg_destroy();
