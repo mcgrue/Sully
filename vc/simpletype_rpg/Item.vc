@@ -241,7 +241,6 @@ void UseItemI( int idx )
         {
             TakeItemI( idx, 1 );
         }
-        
     }
     
     //there.  We used it.  And now we feel strangely empty.

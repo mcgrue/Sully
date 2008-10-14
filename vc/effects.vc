@@ -211,7 +211,6 @@ void HP_OC_targ_menu()
 
     while( cast_idx < -1 )
     {
-
         cast_idx = MenuPartyBox();
 
         if( cast_idx == -1 ) //we've been cancelled!
@@ -314,9 +313,7 @@ void DEAD_OC_targ_menu()
 // This asks for a single party member, and requires that their (cur_hp > 0)
 // Uses the vc/util/targetting.vc helper functions
 void LIVE_OC_targ_menu()
-{
-log( "LIVE_OC" );
-    
+{   
     int cast_idx = -2;
     
     while( cast_idx < -1 )
@@ -603,39 +600,30 @@ void skill_wm_heal()
     int user_idx, target_idx;
     int amt, tmp;
 
-    if( !IsInBattle() )
+    user_idx = GetTargIdxByText( "Attacker" );
+    target_idx = GetTargIdxByText( "Target" );
+
+    /// this battle effect retargets if the former target was dead.
+    AttemptSingleLivingRetarget();
+
+    amt = bat_mag( GetTargID(user_idx), GetTargMode(user_idx) ) * 3;
+    amt = amt / 2;
+
+    tmp = amt/10;
+    amt += Random(0-tmp, 0+tmp);
+    if( amt < 0 )
     {
-MessageBox( "Please implement for the menu." );
+        amt = 1;
     }
-    else
-    {
-        user_idx = GetTargIdxByText( "Attacker" );
-        target_idx = GetTargIdxByText( "Target" );
-        
-        /// this battle effect retargets if the former target was dead.
-        AttemptSingleLivingRetarget();
-        
-        amt = bat_mag( GetTargID(user_idx), GetTargMode(user_idx) ) * 3;
-        amt = amt / 2;
-        
-        tmp = amt/10;
-        amt += Random(0-tmp, 0+tmp);
-        if( amt < 0 )
-        {
-            amt = 1;
-        }
-        
-        AddGATTACA( 
-            GetTargID(target_idx), 
-            GetTargMode(target_idx),
-            BS_CHANGE_HP, 
-            amt
-        );
-        
-        TurnBattleEffectOn( "healy_sparkles" );
-        
-Log( "skill_wm_heal end" );
-    }
+
+    AddGATTACA( 
+        GetTargID(target_idx), 
+        GetTargMode(target_idx),
+        BS_CHANGE_HP, 
+        amt
+    );
+
+    TurnBattleEffectOn( "healy_sparkles" );
 }
 
 
@@ -847,6 +835,11 @@ void starlight_use_MENU()
 }
 
 
+void skill_wm_heal_MENU() {
+    MessageBox( "Gayo, I gave you a working skill menu.  Now implement skill_wm_heal_MENU" );
+}
+
+
 void herb_use_MENU()
 {
     int i;
@@ -857,6 +850,9 @@ void herb_use_MENU()
         HealHP( GetTargID(i), 30 );
     }   
 }
+
+
+
 
 void medicine_use_MENU()
 {
@@ -884,4 +880,142 @@ void brew_use_MENU()
             HealHP( GetTargID(i), 1 );
         }
     }   
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////// The party box for in-menu party selection
+///////
+
+int _inMenuPartyBox = 0;
+
+// Draws a graphical box that lets you select someone presently in the party.
+// returns their master_cast index.
+int MenuPartyBox()
+{
+    _inMenuPartyBox = 1;
+
+    int i, selected, frame;
+    int mini_hold = menu_idx;
+    menu_idx = 10000; // To make a grue happy
+    
+    int bordersize = 5;
+    int f = 0; //make this alterable.
+        
+    int x1 = TextWidth(f, "_HP");
+    int x2 = x1 + TextWidth(f, "X");
+    int x3 = x2 + TextWidth(f, "000");
+    int x4 = x3 + TextWidth(f, "/");
+    int x5 = x4 + TextWidth(f, "000");
+    
+    int y_spacer = 1; //make this alterable.
+    int y1 = y_spacer;
+    int y2 = y1+ FontHeight(f)+y_spacer;
+    int y3 = y2+ FontHeight(f)+y_spacer; 
+    int y4 = y3+ FontHeight(f)+y_spacer;
+    
+    int temp;
+    
+    if( _MPB_restore )
+    {
+        _MPB_restore = 0;
+        selected = _MPB_store;
+    }
+
+    for( i=0; i<PartySize(); i++ )
+    {
+        _MPB_panes[i] = NewImage(x5,y4);
+        
+        RectFill(0,0, x5,y4, transcolor, _MPB_panes[i]);
+        
+        PrintString(x1, y1, _MPB_panes[i], f, master_cast[party[i]].name);
+        PrintString(x3, y2, _MPB_panes[i], f, "/");
+        PrintString(x3, y3, _MPB_panes[i], f, "/");
+        
+        PrintRight(x1, y2, _MPB_panes[i], f, "HP");
+        PrintRight(x1, y3, _MPB_panes[i], f, "MP");
+        
+        PrintRight(x3, y2, _MPB_panes[i], f, str(GetCurHP(i)));
+        PrintRight(x5, y2, _MPB_panes[i], f, str(GetRealMaxHP(i)));
+        
+        PrintRight(x3, y3, _MPB_panes[i], f, str(GetCurMP(i)));
+        PrintRight(x5, y3, _MPB_panes[i], f, str(GetRealMaxMP(i)));
+    }
+    
+    int high = PartySize() * (y4+FontHeight(f)) + (bordersize*2);
+    int wid = ( x5+TextWidth(f, "000") ) + (bordersize*2);
+    int xpos = (ImageWidth(screen) / 2) - (wid / 2) - bordersize;
+    int ypos = (ImageHeight(screen) / 2) - (high / 2) - bordersize;
+    
+    int x_in = xpos+TextWidth(f, "00");
+    int y_in = ypos+FontHeight(f);
+    
+    UnPress(UNPRESS_ALL);
+
+    int cancelled = 0;
+    int done = 0;
+
+    while( !done )
+    {
+        MenuBackGroundDraw(); // Draw universal things
+        
+        if (IsInMenu()) CallFunction(master_menus[mini_hold].draw_func);
+
+        V1_Box(xpos, ypos, wid, high);
+
+        for(i = 0; i < PartySize(); i++)
+        {
+            TBlit( x_in, y_in + (i*(y4+FontHeight(f))), _MPB_panes[i], screen );
+
+            if (i == selected) {
+                PrintString( x_in, y_in+(i*(y4+FontHeight(f))), screen, f, "_>" );
+            }
+        }
+        
+        ShowPage();
+        selected = MenuControlArrows(selected, PartySize());
+        
+        if( MenuConfirm() ) {
+            done = 1;
+        }
+        
+        if( MenuCancel() ) {
+            cancelled = 1;
+            done = 1;
+        }
+    }
+    
+    //free the temporary images...
+    for( i=0; i<PartySize(); i++ )
+    {
+        FreeImage(_MPB_panes[i]);
+    }
+    
+    _MPB_store = selected;
+    
+    menu_idx = mini_hold;
+    
+    UnPress(UNPRESS_ALL);
+    
+    _inMenuPartyBox = 0;
+
+    if( cancelled ) {
+        return -1;
+    } else {
+    
+    }
+
+    return party[selected];
 }

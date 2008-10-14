@@ -717,11 +717,10 @@ void Banner( string msg, int duration )
     MenuOff();
 
     timer = 0;
-    while ( timer<duration && !b1 )
+    while ( timer<duration && !ButtonAccept(1) )
     {
         Render();
-        CenterMessageBox( v1rpg_SmallFont, msg );
-        
+        CenterMessageBox( v1rpg_SmallFont, msg );   
         ShowPage();
     }
 

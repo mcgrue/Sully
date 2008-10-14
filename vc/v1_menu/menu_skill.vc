@@ -155,3 +155,37 @@ string AuxiliaryHelpText( string s )
     else
         return "undef: '"+s+"'";
 }
+
+void MenuInitSkillMenuForPartyMember( int i ) {
+    
+    CleanBattleMenu( i );
+    
+    master_cast[party[i]].battle_menu_idx = i;
+    master_cast[party[i]].battle_menu_dirty = 0;
+
+    SetBattleMenu( i, BM_MakeCastMenu(party[i], 0) );
+    SetBMCursor( i, _defaultCursorBM );
+
+    SetBattleMenuPos( i, 26, 86 );
+
+    BM_Parse_Base( i );
+    
+    master_battle_menus[i].page_base_count = 0;
+
+    StartBattleMenu( i );
+}
+
+
+/// This initializes the skill menus for all of the current party members.
+/// A wrapper of an interface to the Battle Menu Library.
+void MenuInitSkillMenus()
+{
+    int i;
+    
+    for( i=0; i<curpartysize; i++ )
+    {
+        MenuInitSkillMenuForPartyMember(i);
+    }
+    
+    ___menu_skill_at_base = 1;
+}

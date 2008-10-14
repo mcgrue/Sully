@@ -45,7 +45,12 @@ void ExecuteLove( string _key )
     Log( "Current Level: " + str(master_battle_menus[__current_menu_idx].cur_level) );
     
     if( equ(getCurrentlySelectedPageItem(), "Items") ) {
-        ExecuteLoveItem( _key );
+        
+        if( IsInBattle() ) {
+            ExecuteLoveBattleItem( _key );
+        } else {
+            ExecuteLoveMenuItem( _key+"_menu" );
+        }
         return;
     }
     else if( IsSkill(_key) )
@@ -53,20 +58,40 @@ void ExecuteLove( string _key )
         if( IsInBattle() ) {
             ExecuteLoveBattleSkill( _key );
         } else {
+            MenuSkill_Start();
             ExecuteLoveMenuSkill( _key );
+            MenuSkill_End();
         }
     } 
     else
     {
         ExecuteLoveSpecial( _key );
-    }
+    }   
 }
 
+void MenuSkill_Start() {
+    Log( "MenuSkill_Start" );
+}
+
+
+void MenuSkill_End() {
+    MenuInitSkillMenuForPartyMember(menu_cast);
+}
+
+
+
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
-void ExecuteLoveItem( string _key )
+
+void ExecuteLoveMenuItem( string _key ) {
+    
+    MessageBox( "ExecuteLoveMenuItem: will this ever happen?" );
+    TargettingCallFunction(_key);
+}
+
+void ExecuteLoveBattleItem( string _key )
 {
     int i;
 
@@ -202,9 +227,6 @@ void grantback_pendinguse_items_from_battle_actionqueue()
 
 
 
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -229,7 +251,7 @@ void ExecuteLoveMenuSkill( string _key ) {
         return; 
     }
 
-    String fake = GetSkillTargFunc(i) + "___MENU_STYLE";
+    String fake = GetSkillTargFunc(i) + "_MENU";
 
     /// 1a. Make sure the targetting callfunc exists! (onoes!)
     if( !FunctionExists(fake) )
@@ -254,7 +276,28 @@ void ExecuteLoveMenuSkill( string _key ) {
         ErrorHandler( "ExecuteLoveSkill: '"+_key+"'s mp_cost ("+str(GetSkillMpCostI(i))+") was higher than the party member's current mp ("+str(bat_cur_mp(user_idx, PARTY_ALLY))+"). That should never happen by this point, really." );
         return; 
     }
+    
+    PauseBattleMenu();
+    
+    //if the target_func variable is not blank, it has targetting!  Check it and call it!
+    if( !equ(GetSkillTargFunc(i), "") ) 
+    {
+        DoTargetting( GetSkillTargFunc(i) );
 
+        if( ValidTargetting() )
+        {
+            MandatoryCallFunction( GetSkillEffectFunc(i)+"_menu" );
+            TakeMP( user_idx, GetSkillMpCostI(i) );
+        }
+    }
+    else //if there's no targetting, 
+    {
+        CallFunction(GetSkillEffectFunc(i)+"_menu");
+        
+        TakeMP( user_idx, GetSkillMpCostI(i) );
+    }
+    
+    UnpauseBattleMenu();
 }
 
 void ExecuteLoveBattleSkill( string _key )

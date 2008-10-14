@@ -59,7 +59,7 @@ void FindItem( string itemname, int quantity )
     wid = TextWidth( v1rpg_SmallFont, msgstr );
     
     timer = 0;
-    while( timer<300 && !b1 )
+    while( timer<300 && !ButtonAccept(1) )
     {
         Render();
     
@@ -106,7 +106,7 @@ void DramaticUseItem( string itemname, int quantity )
     wid = TextWidth( v1rpg_SmallFont, msgstr );
     
     timer = 0;
-    while( timer<300 && !b1 )
+    while( timer<300 && !ButtonAccept(1) )
     {
         Render();
     
@@ -181,7 +181,7 @@ void Inn() {
     MenuHappyBeep();
     
     //cue a dialog box saying that HP/MP recovered!
-    while ( !b1 ) 
+    while ( !ButtonAccept(1) ) 
     {
         Render();
         RectFill(0, 0, ImageWidth(screen), ImageHeight(screen), 0, screen);

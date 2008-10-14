@@ -265,7 +265,7 @@ void MenuMcgrenderInitialization() {
         mcg_add_image( 
             __menu_target_x1, __menu_target_y1,
             0,0, 
-            33, 
+            20, 
             _im_menuMotionStint 
         );
     
@@ -292,12 +292,20 @@ void RenderMenu() {
 // Enter the menu system and control
 void MenuEntry()
 {
+    int i;
+    
     if( MenuCanBeOn() )
     {
-
-        Unpress(3);
+        ButtonMenu(1);
+        Unpress(9);
         
         MenuInitSkillMenus();
+        
+        /// hacky, but everything about the skill menu is.
+        /// this makes it so you cannot access the Defend/Run/b-side of the battle menu.
+        for( i=0; i<partysize() ; i++ ) {
+            master_battle_menus[i].page_base_count = 1;
+        }
         
         MenuMcgrenderInitialization();
         
@@ -311,7 +319,7 @@ void MenuEntry()
 
         /// the main render loop for the menu.
         while( !menu_done )
-        {                       
+        {
             Render();
             RenderMenu();
             ShowPage();
@@ -321,8 +329,9 @@ void MenuEntry()
         mcg_newmove( 
             _ref_menuMotionStint, 
             __menu_target_x2, __menu_target_y2,
-            33 
+            20 
         );
+        
         while( mcg_isMoving(_ref_menuMotionStint) )  
         {
             Render();
@@ -382,30 +391,6 @@ void MenuSetupRandomSlide() {
     }
 }
 
-
-/// This initializes the skill menus for all of the current party members.
-/// A wrapper of an interface to the Battle Menu Library.
-void MenuInitSkillMenus()
-{
-    int i;
-    
-    for( i=0; i<curpartysize; i++ )
-    {
-        master_cast[party[i]].battle_menu_idx = i;
-        master_cast[party[i]].battle_menu_dirty = 0;
-
-        SetBattleMenu( i, BM_MakeCastMenu(party[i], 0) );
-        SetBMCursor( i, _blankCursorBM );
-
-        SetBattleMenuPos( i, 26, 86 );
-
-        BM_Parse_Base( i );
-        
-        StartBattleMenu( i );
-    }
-    
-    ___menu_skill_at_base = 1;
-}
 
 //        -----------------------------------
 //       Generic Menu Functions
@@ -563,30 +548,18 @@ int GetMenuChoiceAnswer() {
 // If the confirm button is pressed
 int MenuConfirm()
 {
-    if (b1)
-    {
-        Unpress(b1);
-        return 1;
-    }
-    return 0;
+    return ButtonAccept(1);
 }
 
 // If the cancel button is pressed
 int MenuCancel()
 {
-    if (b2)
-    {
-        Unpress(2);
-        return 0-1;
+    if( ButtonCancel(1) ) {
+        return -1;
     }
-    if (b3)
-    {
-        Unpress(3);
-        return 0-1;
-    }
+
     return 0;
 }
-
 
 //global vars for the sound callfuncs set by Menu1ArrowSetSounds() and called by MenuControlArrows()
 string _m1ASnd;
@@ -744,8 +717,8 @@ void MenuDrawBackground(int x1, int y1, int x2, int y2, int active)
     int _x1 = x1 + 4;
     int _y1 = y1 + 4;
 
-    int _x2 = x2 - 5;
-    int _y2 = y2 - 5;
+    int _x2 = x2 - 4;
+    int _y2 = y2 - 4;
 
     _x1 = min(max(0,_x1),ImageWidth(screen));
     _x2 = min(max(0,_x2),ImageWidth(screen));

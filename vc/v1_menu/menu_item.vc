@@ -48,8 +48,6 @@ void MenuControlItem()
                 //MenuHappyBeep();
                 UseItemI( supply_inventory[menu_item].item_ref );
                 menu_idx = MenuGet("Item");
-//              menu_cast = 0;
-//              menu_idx = MenuGet("Cast");
 
                 //if we're past the end of the list due to using the last amount of the last entry,
                 //decrement the entry pointer.
@@ -66,8 +64,6 @@ void MenuControlItem()
                 MenuHappyBeep();
                 UseItemI( equipment_inventory[menu_item].item_ref );
                 menu_idx = MenuGet("Item");
-//              menu_cast = 0;
-//              menu_idx = MenuGet("Cast");
             }
             else MenuAngryBuzz();
         }
@@ -80,8 +76,6 @@ void MenuControlItem()
                 UseItemI( key_item_inventory[menu_item].item_ref );
                 
                 menu_idx = MenuGet("Item");
-//              menu_cast = 0;
-//              menu_idx = MenuGet("Cast");
             }
             else MenuAngryBuzz();
         }
@@ -101,10 +95,11 @@ void MenuDrawItem()
     MenuBlitRight(0, menu_option);
     MenuDrawBackground(MENU_A_X1, MENU_A_Y1, MENU_A_X2, MENU_A_Y2, MenuIsActive("Item"));
     PrintRight(220, 15, screen, menu_font[0], "Item");
-    //Line(105, 35, 135, 35, menu_colour[2], screen);
+    
     PrintCenter(50, 40, screen, menu_font[0], "Supply");
     PrintCenter(120, 40, screen, menu_font[0], "Equip");
     PrintCenter(190, 40, screen, menu_font[0], "Key");
+    
     Rect(24 + (menu_sub * 70), 36, 76 + (menu_sub * 70), 53, menu_colour[2], screen);
     if (count == 0)
     {
@@ -129,7 +124,6 @@ void MenuDrawItem()
                 FreeImage(use);
                 if (menu_start + 10 <= i) i = _supply_count + 1;
             }
-            //PrintString(25, 214, screen, menu_font[0], master_items[supply_inventory[menu_item].item_ref].desc);
         }
         if (menu_sub == 1)
         {
@@ -146,7 +140,6 @@ void MenuDrawItem()
                 FreeImage(use);
                 if (menu_start + 10 <= i) i = _equip_count + 1;
             }
-            //PrintString(25, 214, screen, menu_font[0], master_items[equipment_inventory[menu_item].item_ref].desc);
         }
         if (menu_sub == 2)
         {
@@ -163,7 +156,6 @@ void MenuDrawItem()
                 FreeImage(use);
                 if (menu_start + 10 <= i) i = _key_count + 1;
             }
-            //PrintString(25, 214, screen, menu_font[0], master_items[key_item_inventory[menu_item].item_ref].desc);
         }
     }
 }

@@ -123,13 +123,21 @@ void DoTargetting( string callfunc )
     cur_targ_sess_callfunc = callfunc;
 
     //call your private targetting function.
-    CallFunction(callfunc);
+    TargettingCallFunction(callfunc);
 
     //if your function never changed the targetting_success variable from the UNSET state, let's yell out an error.
     if( targetting_success == TARG_UNSET )
     {
         ErrorHandler( "DoTargetting(): The targetting state was never set for this targetting session.  This is the fault of whomever made the '"+cur_targ_sess_callfunc+"()' function." );
     }   
+}
+
+void TargettingCallFunction( string callfunc ) {
+    if( IsInBattle() ) {
+        MandatoryCallFunction(callfunc);
+    } else {
+        MandatoryCallFunction(callfunc+"_menu");
+    }
 }
 
 
