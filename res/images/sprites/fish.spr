@@ -1,0 +1,11 @@
+// A fish, drawn by Gayo
+//name      wd  ht  per_row rows    padding
+fish.gif    32  16  6       3       1
+anim idle F0 W15 F1 W15 F0 W15 F2 W15 B 
+anim weak F3 W20 F4 W20 F3 W20 F4 W20 B 
+anim attack F7 W7 F8 W5 F9 W7 F10 W5 F11 W7 F12 W8 F13 W5
+anim hit F7 W45 B
+anim death F14 W50 F15 W50 B
+
+
+

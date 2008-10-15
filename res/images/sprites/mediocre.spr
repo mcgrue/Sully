@@ -1,0 +1,11 @@
+// The fearsome Mediocre Jelly, drawn by the inestimable Hyptosis.
+//name          wd  ht  per_row rows    padding
+mediocre.png    50  50  6       2       0
+anim idle F0W30F1W25B 
+anim weak F0W60F1W50B // same thing, but slower
+anim attack F6W5F7W5F8W5F9W5F10W5F11W15F10W5F8W5
+anim hit F2W10F3W25F2W10
+anim death F4
+
+
+
