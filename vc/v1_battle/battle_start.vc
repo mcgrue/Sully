@@ -71,7 +71,7 @@ void doBattle( String battle_group_dat_area )
 {
     //int prebattle_screencap = NewImage(ImageWidth(screen),ImageHeight(screen));
     InitBattleSetup( battle_group_dat_area );
-    //InitBattleRenderer();
+    InitBattleRenderer();
     
 
     int done = 0;

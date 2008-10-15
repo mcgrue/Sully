@@ -7,7 +7,6 @@
 //  Call InitEnemyGroups() before calling any of the other stuff.
 // -------------------------------------------------------------------------------------------------------
 
-
 string EnemyGroup_Areas;
 string EnemyGroup_Master;
 string EnemyGroup_CurrentBattle_Master;
@@ -53,25 +52,18 @@ void InitEnemyGroups() {
     // Lots of variables
     int eg_numln = tokenCount(eg_filedump,chr(10));
     int eg_curln_idx = 0;
-    int eg_curln_len = 0;
-    int eg_curch_idx = 0;
     int eg_search_idx = 0;
     int eg_search_maxidx = 0;
-    int eg_group_maxidx = 0;
-    int eg_curchance = -1;
+    int eg_groups_seen = 0;
     int eg_totalchance;
+    int eg_curtok;
     string eg_curln;
-    string eg_curch;
+    string eg_curfield;
     string eg_curarea;
-    string eg_pieceA;
-    string eg_pieceB;
-    string eg_pieceC;
-    string eg_pieceD;
     string eg_curgroup;
-    string eg_curfunc;
     string eg_tempareastring;
     int eg_flag_special = 0;
-    int eg_flag_add = 0;
+    int eg_flag_add = -1;
     
     if( !num_enemies )
     {
@@ -85,161 +77,71 @@ void InitEnemyGroups() {
     for(eg_curln_idx = 0; eg_curln_idx < eg_numln; eg_curln_idx++) {
         // Get the current line.
         eg_curln = getToken(eg_filedump,chr(10),eg_curln_idx);
+        eg_curfield = getToken(eg_curln, ___strip_whitespace_tokens, 0); 
         
-        // Handling for if the line is the end of a group definition
-        if(!strcmp(left(eg_curln,5),"=END=")) {
-            EnemyGroup_Master = EnemyGroup_Master + eg_curfunc + "," + left(eg_curgroup,len(eg_curgroup)-1) + ";";
-            eg_curgroup = "";
-            eg_curfunc = "-";
-            eg_curchance = -1;
-        } 
-        // Handling for if the line is the beginning of a group definition
-        else if(!strcmp(left(eg_curln,4),"Area") || !strcmp(left(eg_curln,7),"Special")) {
-            if(!strcmp(left(eg_curln,4),"Area")) {
-                eg_curch_idx = 4;
-            } else {
-                eg_curch_idx = 7;
-                eg_flag_special = 1;
+        if (equ(left(eg_curfield,2),"//") || equ(left(eg_curfield,1),"#") || equ(eg_curfield,"")) { } // comment
+        else if (equ(getToken(eg_curfield,"=-",0),"END")) { // end of a group definition
+            EnemyGroup_Master = EnemyGroup_Master + ";";            
+            eg_flag_add = -1; // sentinel to check if enemies get added to an undefined group
+            eg_groups_seen++;            
+        }
+        else if (equ(eg_curfield, "Area") || equ(eg_curfield, "Special")) { // beginning of a group definition 
+            if (eg_flag_add >= 0) ErrorHandler("InitEnemyGroups(): New area definition begun without ending previous area at line " + str(eg_curln_idx) + " of the battle group definition file.");
+            eg_flag_special = equ(eg_curfield, "Special");
+            eg_curfield = getToken(eg_curln, ___strip_whitespace_tokens + "/;:", 1); // set to region key
+            eg_curgroup = eg_curfield + "/";
+            if (!eg_flag_special) {
+                eg_curfield = getToken(eg_curln, ___strip_whitespace_tokens + "/;:", 2); // set to encounter chance
+                if (equ(eg_curfield,"-") || equ(eg_curfield,"")) eg_curgroup = eg_curgroup + "1/";
+                else eg_curgroup = eg_curgroup + str(SafeVal(eg_curfield)) + "/";
             }
-            eg_curln_len = len(eg_curln);
+            else { eg_curgroup = eg_curgroup + "1/"; } 
+            eg_curfield = getToken(eg_curln, ___strip_whitespace_tokens + "/;:", 3); // set to optional callfunc            
+            if (equ(eg_curfield,"-") || equ(eg_curfield,"")) eg_curfield = "-";
+            eg_curgroup = eg_curgroup + eg_curfield;
+            EnemyGroup_Master = EnemyGroup_Master + eg_curfield; // Each EG_Master entry begins with the optional callfunc
             
-            // Break the line into pieces. Doing it this way instead of using GetToken()
-            // means that I can use spaces and tabs, rather than just one of them as the 
-            // token splitter.
-            // [Except VERGE allows you to tokenize with respect to both at once. -Gayo]
-            eg_curch = mid(eg_curln,eg_curch_idx,1);            
-            while((!strcmp(eg_curch," ") || !strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
-                eg_curch_idx++;
-                eg_curch = mid(eg_curln,eg_curch_idx,1);
-            }
-            if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
-            while((strcmp(eg_curch," ") && strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
-                eg_pieceA = eg_pieceA + eg_curch;
-                eg_curch_idx++;
-                eg_curch = mid(eg_curln,eg_curch_idx,1);
-            }
-            if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
-            while((!strcmp(eg_curch," ") || !strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
-                eg_curch_idx++;
-                eg_curch = mid(eg_curln,eg_curch_idx,1);
-            }
-            if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
-            while((strcmp(eg_curch," ") && strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
-                eg_pieceB = eg_pieceB + eg_curch;
-                eg_curch_idx++;
-                eg_curch = mid(eg_curln,eg_curch_idx,1);
-            }
-            if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
-            while((!strcmp(eg_curch," ") || !strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
-                eg_curch_idx++;
-                eg_curch = mid(eg_curln,eg_curch_idx,1);
-            }
-            if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
-            while((strcmp(eg_curch," ") && strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
-                eg_pieceC = eg_pieceC + eg_curch;
-                eg_curch_idx++;
-                eg_curch = mid(eg_curln,eg_curch_idx,1);
-            }
+            // eg_curgroup now contains the header information, verified and separated by /.
+            // Now we need to put this group's data together with any other groups of the same key in 
+            // EnemyGroup_Areas, If it's a special group or there were no other groups of the same key
+            // thus far, we make a new key entry in EnemyGroup_Arrays.
             
-            if(!eg_flag_special) {
-                eg_tempareastring = "";
-                eg_flag_add = 1;
-                eg_search_maxidx = tokenCount(EnemyGroup_Areas,";");
-                eg_curfunc = eg_pieceC;
-                if(!strcmp(eg_pieceB,"-")) {
-                    eg_curchance = 1;
-                } else {
-                    eg_curchance = val(eg_pieceB);
-                }
-                for(eg_search_idx = 0; eg_search_idx < eg_search_maxidx; eg_search_idx++) {
+            if (eg_flag_special) { // if special, assume that the key is unique
+                // If you were going to confirm the uniqueness of Special fight keys, 
+                // this would be a good place to do it.
+                eg_flag_add = 0;
+                EnemyGroup_Areas = EnemyGroup_Areas + getToken(eg_curgroup,"/",0) + "/1/" + str(eg_groups_seen) + ":1;";
+                eg_search_maxidx++;
+            }
+            else {
+                eg_flag_add = 1; 
+                eg_tempareastring = ""; // We'll rebuild EnemyGroup_Areas in this temporary variable
+                for(eg_search_idx = 0; eg_search_idx < eg_search_maxidx; eg_search_idx++) { // for each group key
                     eg_curarea = getToken(EnemyGroup_Areas,";",eg_search_idx);
-                    if(!strcmp(getToken(eg_curarea,"/",0),eg_pieceA)) {
-                        eg_flag_add = 0;
-                        eg_totalchance = val(getToken(eg_curarea,"/",1));
-                        eg_totalchance = eg_totalchance + eg_curchance;
-                        eg_curarea = eg_pieceA + "/" + str(eg_totalchance) + "/" + getToken(eg_curarea,"/",2) + "," + str(eg_group_maxidx) + ":" + str(eg_curchance);
+                    if (eg_flag_add) {
+                        if(equ(getToken(eg_curarea,"/",0),getToken(eg_curgroup,"/",0))) { // Is this the same key as that of the group being added?
+                            eg_flag_add = 0; // we needn't append a new key, as it's already in there
+                            eg_totalchance = val(getToken(eg_curarea,"/",1)) + val(getToken(eg_curgroup,"/",1));
+                            eg_curarea = getToken(eg_curgroup,"/",0) + "/" + str(eg_totalchance) + "/" + getToken(eg_curarea,"/",2) + "," + str(eg_groups_seen) + ":" + getToken(eg_curgroup,"/",1);
+                        }
                     }
                     eg_tempareastring = eg_tempareastring + eg_curarea + ";";
                 }
-                if(eg_flag_add) {
-                    EnemyGroup_Areas = EnemyGroup_Areas + eg_pieceA + "/" + eg_pieceB + "/" + str(eg_group_maxidx) + ":" + str(eg_curchance) + ";";
-                } else {
-                    EnemyGroup_Areas = eg_tempareastring;
+                if (eg_flag_add) { // This group's key isn't listed yet, so append it to the end.
+                    EnemyGroup_Areas = EnemyGroup_Areas + getToken(eg_curgroup,"/",0) + "/" + getToken(eg_curgroup,"/",1) + "/" + str(eg_groups_seen) + ":" + getToken(eg_curgroup,"/",1) + ";";
+                    eg_search_maxidx++;
                 }
-                eg_group_maxidx++;
-            } else {
-                EnemyGroup_Areas = EnemyGroup_Areas + eg_pieceA + "/1/" + str(eg_group_maxidx) + ":1;";
-                eg_curfunc = eg_pieceC;
-                eg_curchance = 1;
-                eg_group_maxidx++;
-            }           
-            eg_flag_special = 0;
-            eg_PieceA = "";
-            eg_PieceB = "";
-            eg_PieceC = "";
-            eg_PieceD = "";
-        } 
-        // Handling for any other line that isn't a comment or blank.
-        // (ie. a monster line)
-        else if(strcmp(mid(eg_curln,0,1),"#") && len(eg_curln) > 0) {
-            if(eg_curchance == -1) {
-                ErrorHandler("Load Error: Enemy line without area at line " + str(eg_curln_idx) + "."); 
+                else EnemyGroup_Areas = eg_tempareastring;
             }
-            
-            eg_curch_idx = 0;
-            eg_curln_len = len(eg_curln);
-            
-            eg_curch = mid(eg_curln,eg_curch_idx,1);
-            while((strcmp(eg_curch," ") && strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
-                eg_pieceA = eg_pieceA + eg_curch;
-                eg_curch_idx++;
-                eg_curch = mid(eg_curln,eg_curch_idx,1);
-            }
-            if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
-            while((!strcmp(eg_curch," ") || !strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
-                eg_curch_idx++;
-                eg_curch = mid(eg_curln,eg_curch_idx,1);
-            }
-            if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
-            while((strcmp(eg_curch," ") && strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
-                eg_pieceB = eg_pieceB + eg_curch;
-                eg_curch_idx++;
-                eg_curch = mid(eg_curln,eg_curch_idx,1);
-            }
-            if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
-            while((!strcmp(eg_curch," ") || !strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
-                eg_curch_idx++;
-                eg_curch = mid(eg_curln,eg_curch_idx,1);
-            }
-            if(eg_curch_idx >= eg_curln_len) { ErrorHandler("Load Error: Bad line in battle group definition file at line " + str(eg_curln_idx) + " - not enough tokens."); }
-            while((strcmp(eg_curch," ") && strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
-                eg_pieceC = eg_pieceC + eg_curch;
-                eg_curch_idx++;
-                eg_curch = mid(eg_curln,eg_curch_idx,1);
-            }
-            while((!strcmp(eg_curch," ") || !strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
-                eg_curch_idx++;
-                eg_curch = mid(eg_curln,eg_curch_idx,1);
-            }           
-            while((strcmp(eg_curch," ") && strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
-                eg_pieceD = eg_pieceD + eg_curch;
-                eg_curch_idx++;
-                eg_curch = mid(eg_curln,eg_curch_idx,1);
-            }
-
-            eg_pieceA = str(getEnemy(eg_pieceA));
-            
-            if(!strcmp(eg_pieceD,"Leader")) {
-                eg_pieceA = eg_pieceA + "!";
-            }
-        
-            eg_curgroup = eg_curgroup + eg_pieceA + "/" + eg_pieceB + "/" + eg_pieceC + ",";
-            eg_PieceA = "";
-            eg_PieceB = "";
-            eg_PieceC = "";
-            eg_PieceD = "";
         }
-    }
+        else { // The line has content, and isn't a group beginning or end. Thus, we'll assume it's an enemy definition line.
+            if(eg_flag_add == -1) ErrorHandler("InitEnemyGroups(): Enemy line without an area header at line " + str(eg_curln_idx) + " of the battle group definition file.");
+            EnemyGroup_Master = EnemyGroup_Master + "," + str(getEnemy(eg_curfield)); // Right now, eg_curfield holds the name of the enemy to be added
+            if (!equ(getToken(eg_curln, ___strip_whitespace_tokens + "/;:", 4),"")) EnemyGroup_Master = EnemyGroup_Master + "!"; // This enemy is a Leader.
+            EnemyGroup_Master = EnemyGroup_Master + "/" + str(SafeVal(getToken(eg_curln, ___strip_whitespace_tokens + "/;:", 1))) + "/" + str(SafeVal(getToken(eg_curln, ___strip_whitespace_tokens + "/;:", 2))); // add enemy coordinates to list
+        }
+
+    } // end for loop; done reading data file
 }
 
 
@@ -253,10 +155,7 @@ string InitBattleSetup( string ibs_key ) {
         ErrorHandler("Runtime Error: InitBattleSetup() called without InitEnemyGroups().");
         return "";
     }
-        
-    log(EnemyGroup_Areas);
-    exit("");
-   
+           
     int ibs_numareas = tokenCount(EnemyGroup_Areas,";");
     int ibs_totalchance;
     int ibs_rollchance;

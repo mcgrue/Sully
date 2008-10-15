@@ -11,7 +11,8 @@
 # =END=
 #
 # TYPE is either "Area" or "Special".  The parser should error on an invalid token. 
-#   If TYPE is "Special", then KEY must be unique, and CHANCE defaults to '1', regardless of what is given.
+#   If TYPE is "Special", then KEY must be unique (though this is currently not checked), 
+#   and CHANCE is set to '1', regardless of what is given.
 #
 # ENEMY_NAME must be a valid enemy from the master_enemy[] array.  IsEnemy() and GetEnemy() from enemy.vc 
 #   will help (assuming that the enemy datafile was parsed before this one).
@@ -69,9 +70,9 @@ Evil_Bunny  150 150
 Evil_Bunny  110 90 
 =END=
 
-Area    Overworld_A 30  -
+   Area    Overworld_A 30  -
 Bunny       110 110
-Bunny       150 110
+ Bunny       150 110
 Bunny       150 150
 Evil_Carot  50  100 Leader
 =END=
