@@ -106,6 +106,7 @@ void InitEnemyGroups() {
             // Break the line into pieces. Doing it this way instead of using GetToken()
             // means that I can use spaces and tabs, rather than just one of them as the 
             // token splitter.
+            // [Except VERGE allows you to tokenize with respect to both at once. -Gayo]
             eg_curch = mid(eg_curln,eg_curch_idx,1);            
             while((!strcmp(eg_curch," ") || !strcmp(eg_curch,chr(9))) && eg_curch_idx < eg_curln_len) {
                 eg_curch_idx++;
@@ -246,12 +247,16 @@ void InitEnemyGroups() {
 //   winning "battle group" entry in a global variable, for the rest of these functions to internally use.
 // if the key is for a special battle, set the global variable to it's lone index, no need to "roll dice".
 // if an invalid key is given, error.
-void InitBattleSetup( string ibs_key ) {
+// returns the name of the special function called for the chosen group, if any.
+string InitBattleSetup( string ibs_key ) {
     if(!strcmp(EnemyGroup_Master,"") || !strcmp(EnemyGroup_Areas,"")) {
         ErrorHandler("Runtime Error: InitBattleSetup() called without InitEnemyGroups().");
-        return;
+        return "";
     }
-    
+        
+    log(EnemyGroup_Areas);
+    exit("");
+   
     int ibs_numareas = tokenCount(EnemyGroup_Areas,";");
     int ibs_totalchance;
     int ibs_rollchance;
@@ -262,6 +267,7 @@ void InitBattleSetup( string ibs_key ) {
     string ibs_curarea; 
     string ibs_curentry;
     string ibs_possgroups;
+    string ibs_callfunc;
     
     EnemyGroup_CurrentBattle_Master = "";
         
@@ -277,7 +283,7 @@ void InitBattleSetup( string ibs_key ) {
                 ibs_curchance = val(getToken(ibs_curentry,":",1));
                 if(ibs_rollchance <= ibs_curchance) {
                     EnemyGroup_CurrentBattle_Master = getToken(EnemyGroup_Master,";",ibs_curgroup_idx);
-                    return;
+                    return "";
                 }
                 ibs_rollchance -= ibs_curchance;
             }
@@ -286,7 +292,7 @@ void InitBattleSetup( string ibs_key ) {
     
     ErrorHandler("Runtime Error: Unrecognized area key passed to InitBattleSetup().");
     
-    return;
+    return "";
 }
 
 // returns the number of enemies in the Battle Group set by InitBattleSetup()

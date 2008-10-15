@@ -56,7 +56,7 @@
 #
 
 
-Area    Overworld_A 300 -
+Area    Overworld_A 300 IntroTest
 Bunny       50  110
 Bunny       95  180
 Bunny       150 110
@@ -89,7 +89,7 @@ Dark_Tuna  17  34
 Dark_Tuna  88  88
 =END=
 
-Area    Overworld_A 30  dramatic_music
+Area    Overworld_A 30  -
 Drama_Clubber   10  100
 Drama_Clubber   50  100
 Drama_Clubber   150 100

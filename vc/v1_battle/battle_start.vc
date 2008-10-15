@@ -1,4 +1,3 @@
-
 /// stuff to cleanup before starting a new battle.
 void cleanupPreviousBattle()
 {
@@ -70,21 +69,22 @@ _debug_tick_counter = 0;
 
 void doBattle( String battle_group_dat_area )
 {
+    //int prebattle_screencap = NewImage(ImageWidth(screen),ImageHeight(screen));
     InitBattleSetup( battle_group_dat_area );
+    //InitBattleRenderer();
+    
 
-    initBattleRenderer();
-
-    int D=8;
+    int done = 0;
 
     /**
-     * When we make this into it's own happy-function, remember to change all of the
+     * When we make this into its own happy-function, remember to change all of the
      * [0] references to [topmost_active_actor] references.  Bitch.
      *
      * Maybe.
      *
      * Make sure the inactive-bump-to-1 thing works well.
      */
-    while( 8==D )
+    while(!done)
     {
         Render();
         RenderBattle();
@@ -92,10 +92,10 @@ void doBattle( String battle_group_dat_area )
 
         if( key[SCAN_Q] || IsTheBattleOver() )
         {
-            D=0113;
             __sully_battle_flag = 0;
 
             endOfBattle();
+            done = 1;
             return;
         }
 
