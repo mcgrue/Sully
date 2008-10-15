@@ -1,3 +1,5 @@
+#define DEFAULT_BATTLE_STARTUP_CALLFUNC "OrdinaryBattleIntro"
+
 /// stuff to cleanup before starting a new battle.
 void cleanupPreviousBattle()
 {
@@ -67,15 +69,32 @@ _debug_tick_counter = 0;
     UnPress(UNPRESS_ALL);
 }
 
+int prebattle_screencap; // used in battle transitions
+
 void doBattle( String battle_group_dat_area )
 {
     //int prebattle_screencap = NewImage(ImageWidth(screen),ImageHeight(screen));
     InitBattleSetup( battle_group_dat_area );
     InitBattleRenderer();
-    
+    if( !equ(BattleGroupSetupCallfunc(),"") )
+    {
+        if( BATTLE_GROUP_CALLFUNC_STRICT )
+        {
+            if( !FunctionExists(BattleGroupSetupCallfunc()) )
+            {
+                ErrorHandler (
+                    "v1_battle::battle.vc() In Battle Group Callfunc Strict "+
+                    "mode, function '"+BattleGroupSetupCallfunc()+"' was "+
+                    "requested but did not exist."
+                );
+            }
+            
+        }        
+        CallFunction( BattleGroupSetupCallfunc() );
+    }
+    else CallFunction(DEFAULT_BATTLE_STARTUP_CALLFUNC);
 
     int done = 0;
-
     /**
      * When we make this into its own happy-function, remember to change all of the
      * [0] references to [topmost_active_actor] references.  Bitch.
@@ -256,24 +275,7 @@ void initBattleRenderer()
         
         SpriteChangeStrand( bs_enemy_sprite_ref[i], "IDLE" );
     }
-    
-    if( !equ(BattleGroupSetupCallfunc(),"") )
-    {
-        if( BATTLE_GROUP_CALLFUNC_STRICT )
-        {
-            if( !FunctionExists(BattleGroupSetupCallfunc()) )
-            {
-                ErrorHandler (
-                    "v1_battle::battle.vc() In Battle Group Callfunc Strict "+
-                    "mode, function '"+BattleGroupSetupCallfunc()+"' was "+
-                    "requested but did not exist."
-                );
-            }
-        }
         
-        CallFunction( BattleGroupSetupCallfunc() );
-    }
-    
     BsPlacePartySprites();
         
     McgSetActiveLayer( bs_layerInterface );
@@ -295,9 +297,7 @@ void initBattleRenderer()
     
     BsSeedBattleQueue();
     
-    __music_before_battle = V1_CurrentMusicName();
-    
-    V1_StartMusic( "res/music/X01C.IT" );
+    __music_before_battle = V1_CurrentMusicName();        
 
     if( mode_battle_debug )
     {
@@ -331,4 +331,16 @@ void doBattleStep() {
 // Right now this always does the same thing but eventually we'll probably set it to be context-sensitive.
 int calculateGracePeriod(int on_overworld) {
     Random(1,50);
+}
+
+
+// ---------------------------------------------------------
+// ---------------------------------------------------------
+//             BATTLE INTRODUCTION CALLFUNCTIONS
+// ---------------------------------------------------------
+// ---------------------------------------------------------
+
+
+void OrdinaryBattleIntro() {
+    V1_StartMusic( "res/music/X01C.IT" );   
 }

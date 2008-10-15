@@ -47,7 +47,6 @@ void InitEnemyGroups() {
 
     EnemyGroup_Areas = "";
     EnemyGroup_Master = "";
-    EnemyGroup_CurrentBattle_Master = "";
     
     // Lots of variables
     int eg_numln = tokenCount(eg_filedump,chr(10));
@@ -150,10 +149,10 @@ void InitEnemyGroups() {
 // if the key is for a special battle, set the global variable to it's lone index, no need to "roll dice".
 // if an invalid key is given, error.
 // returns the name of the special function called for the chosen group, if any.
-string InitBattleSetup( string ibs_key ) {
-    if(!strcmp(EnemyGroup_Master,"") || !strcmp(EnemyGroup_Areas,"")) {
+void InitBattleSetup( string ibs_key ) {
+    if(equ(EnemyGroup_Master,"") || equ(EnemyGroup_Areas,"")) {
         ErrorHandler("Runtime Error: InitBattleSetup() called without InitEnemyGroups().");
-        return "";
+        return;
     }
            
     int ibs_numareas = tokenCount(EnemyGroup_Areas,";");
@@ -172,7 +171,7 @@ string InitBattleSetup( string ibs_key ) {
         
     for(ibs_curarea_idx = 0; ibs_curarea_idx < ibs_numareas; ibs_curarea_idx++) {
         ibs_curarea = getToken(EnemyGroup_Areas,";",ibs_curarea_idx);
-        if(!strcmp(getToken(ibs_curarea,"/",0),ibs_key)) {
+        if(equ(getToken(ibs_curarea,"/",0),ibs_key)) {
             ibs_totalchance = val(getToken(ibs_curarea,"/",1));
             ibs_rollchance = random(1,ibs_totalchance);
             ibs_possgroups = getToken(ibs_curarea,"/",2);
@@ -182,21 +181,22 @@ string InitBattleSetup( string ibs_key ) {
                 ibs_curchance = val(getToken(ibs_curentry,":",1));
                 if(ibs_rollchance <= ibs_curchance) {
                     EnemyGroup_CurrentBattle_Master = getToken(EnemyGroup_Master,";",ibs_curgroup_idx);
-                    return "";
+                    return;
                 }
                 ibs_rollchance -= ibs_curchance;
             }
+            ErrorHandler("Runtime Error: InitBattleSetup() somehow failed to roll up any of the possible " + ibs_key + " encounters. Weird!");    
+            return;
         }
     }
     
-    ErrorHandler("Runtime Error: Unrecognized area key passed to InitBattleSetup().");
-    
-    return "";
+    ErrorHandler("Runtime Error: Unrecognized area key passed to InitBattleSetup().");    
+    return;
 }
 
 // returns the number of enemies in the Battle Group set by InitBattleSetup()
 int GetBattleGroupCount() {
-    if(!strcmp(EnemyGroup_CurrentBattle_Master,"")) {
+    if(equ(EnemyGroup_CurrentBattle_Master,"")) {
         ErrorHandler("Runtime Error: GetBattleGroupCount() called without InitBattleSetup().");
         return -1;
     }
@@ -205,7 +205,7 @@ int GetBattleGroupCount() {
 
 // returns the master_enemy[] index for the Nth enemy in the Battle Group set by InitBattleSetup() 
 int GetBattleGroupEnemy( int n ) {
-    if(!strcmp(EnemyGroup_CurrentBattle_Master,"")) {
+    if(equ(EnemyGroup_CurrentBattle_Master,"")) {
         ErrorHandler("Runtime Error: GetBattleGroupEnemy() called without InitBattleSetup().");
         return -1;
     }
@@ -217,7 +217,7 @@ int GetBattleGroupEnemy( int n ) {
     string eg_enemy = getToken(EnemyGroup_CurrentBattle_Master,",",n+1);
     string eg_idx = getToken(eg_enemy,"/",0);
 
-    if(!strcmp(left(eg_idx,1),"!")) {
+    if(equ(left(eg_idx,1),"!")) {
         return val(right(eg_idx,len(eg_idx)-2));
     } else {
         return val(eg_idx);
@@ -226,7 +226,7 @@ int GetBattleGroupEnemy( int n ) {
 
 // returns the x coordinate for the Nth enemy in the Battle Group set by InitBattleSetup() 
 int GetBattleGroupEnemyX( int n ) {
-    if(!strcmp(EnemyGroup_CurrentBattle_Master,"")) {
+    if(equ(EnemyGroup_CurrentBattle_Master,"")) {
         ErrorHandler("Runtime Error: GetBattleGroupEnemyX() called without InitBattleSetup().");
         return -1;
     }
@@ -242,7 +242,7 @@ int GetBattleGroupEnemyX( int n ) {
 
 // returns the y coordinate for the Nth enemy in the Battle Group set by InitBattleSetup() 
 int GetBattleGroupEnemyY( int n ) {
-    if(!strcmp(EnemyGroup_CurrentBattle_Master,"")) {
+    if(equ(EnemyGroup_CurrentBattle_Master,"")) {
         ErrorHandler("Runtime Error: GetBattleGroupEnemyY() called without InitBattleSetup().");
         return -1;
     }
@@ -259,7 +259,7 @@ int GetBattleGroupEnemyY( int n ) {
 // returns true if the 'Leader' flag was set for Nth enemy in the Battle Group set by InitBattleSetup().  Otherwise False.  
 // Note, a battle group does not need a leader, and may have multiple leaders.
 int IsBattleGroupEnemyLeader( int n ) {
-    if(!strcmp(EnemyGroup_CurrentBattle_Master,"")) {
+    if(equ(EnemyGroup_CurrentBattle_Master,"")) {
         ErrorHandler("Runtime Error: IsBattleGroupEnemyLeader() called without InitBattleSetup().");
         return -1;
     }
@@ -270,7 +270,7 @@ int IsBattleGroupEnemyLeader( int n ) {
     
     string eg_enemy = getToken(EnemyGroup_CurrentBattle_Master,",",n+1);
     string eg_idx = getToken(eg_enemy,"/",0);
-    if(!strcmp(left(eg_idx,1),"!")) {
+    if(equ(left(eg_idx,1),"!")) {
         return 1;
     } else {
         return 0;
@@ -279,15 +279,13 @@ int IsBattleGroupEnemyLeader( int n ) {
 
 //returns the given string for a battle group's optional setup callfunc (just returns "" if there is none)
 string BattleGroupSetupCallfunc() {
-    if(!strcmp(EnemyGroup_CurrentBattle_Master,"")) {
+    if(equ(EnemyGroup_CurrentBattle_Master,"")) {
         ErrorHandler("Runtime Error: BattleGroupSetupCallFunc() called without InitBattleSetup().");
-        return "error";
-    }
-    if(!strcmp(getToken(EnemyGroup_CurrentBattle_Master,",",0),"-")) {
         return "";
-    } else {
-        return getToken(EnemyGroup_CurrentBattle_Master,",",0);
     }
+    string bgs_callfunc = getToken(EnemyGroup_CurrentBattle_Master,",",0);
+    if(equ(bgs_callfunc,"-")) return "";
+    else return bgs_callfunc;    
 }
 
 /// dumps a readout of the parsed file.
