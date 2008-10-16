@@ -1,6 +1,6 @@
-#define MCGRENDER_MAX       127
-#define MCG_TEMP        127
-#define MCGRENDER_STACKSIZE     128
+#define MCGRENDER_MAX       500
+#define MCG_TEMP        127 // what does this do?
+#define MCGRENDER_STACKSIZE     501
 
 #define MCGRENDER_MAXLAYERS 10
 
@@ -114,7 +114,7 @@ int mcg_getY( int heap_idx )
 }
 
 
-/// Spawns a new layer for the McGrender engine, and returns that layer's indice.
+/// Spawns a new layer for the McGrender engine, and returns that layer's index.
 ///
 int McgSpawnLayer()
 {
@@ -301,7 +301,6 @@ void mcg_delete( int idx )
         }
         else    //we were the tail.
         {
-
             _McImgSetNextLink( mcgV_heap[idx].prev_idx, -1 );
         }
     }
