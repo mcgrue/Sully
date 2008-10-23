@@ -189,8 +189,23 @@ void McgLayerAddImg( int img_heap_idx )
 
         McGrender_layers[McGrender_active_layer].count++;
     }
+}
 
+void mcg_delete_layer( int i ) {
+    if( i<0 || i> McGrender_layer_count )
+    {
+        exit( "mcg_delete_layer(): specified layer ("+str(i)+") is invalid.  There are presently ("+str(McGrender_layer_count)+") valid layers." );
+    }
+    
+    int idx = McGrender_layers[i].head_idx;
 
+    // This layer...            
+    while( idx >= 0 ) { // while the layer still has content (i.e., the head is not -1)        
+        mcg_delete(idx); // This layer is an eyesore.
+        idx = McGrender_layers[i].head_idx;
+    }
+    // This line is never reached.
+    mcgTurnLayerOff(i); // Disappear!
 }
 
 /// sets idx's previous link to prev.
@@ -306,7 +321,12 @@ void mcg_delete( int idx )
     }
     else // we were the head, make the next one the layer's head instead.
     {
-        _McImgSetNextLink( mcgV_heap[idx].next_idx, -1 );
+        _McImgSetPrevLink( mcgV_heap[idx].next_idx, -1 );
+    }
+    
+    /// if the head is still us at this point, the layer is dead.
+    if( McGrender_layers[mcgV_heap[idx].layer_idx].head_idx == idx ) {
+        McGrender_layers[mcgV_heap[idx].layer_idx].head_idx = -1;
     }
 
     mcgV_heap[idx].prev_idx = -1;

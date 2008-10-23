@@ -383,16 +383,8 @@ int transition_layer_death_time = -1;
 void TransitionLayerDeathCountdown() {  
     int idx;
     if (systemtime >= transition_layer_death_time && transition_layer_death_time >= 0) {         
-        // This layer... 
-        idx = McGrender_layers[transition_layer].head_idx;
-        // This layer...            
-        while (idx >= 0) { // while the layer still has content (i.e., the head is not -1)        
-            MessageBox(str(idx));
-            mcg_delete(idx); // This layer is an eyesore.
-            idx = McGrender_layers[transition_layer].head_idx;             
-        }
-        // This line is never reached.
-        mcgTurnLayerOff(transition_layer); // Disappear!
+        // This layer...         
+        mcg_delete_layer(transition_layer);
         
         for (idx=0;idx<transition_layer;idx++) mcgTurnLayerOn(idx); // Bring back the real battle layers
         transition_layer = -1;
