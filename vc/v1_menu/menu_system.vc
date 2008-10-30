@@ -418,7 +418,7 @@ void MenuMinibox(string text, string draw_func)
         MenuBackGroundDraw(); //draw universal things
         CallFunction(draw_func);
 
-        MenuDrawBackground(((ImageWidth(screen)-wid)/2)-border, 110, ((ImageWidth(screen)-wid)/2)+wid+border, 130, 1); // CatchMe
+        _MenuDrawBackground(((ImageWidth(screen)-wid)/2)-border, 110, ((ImageWidth(screen)-wid)/2)+wid+border, 130, 1); // CatchMe
         PrintCenter(160, 120 - (menu_fonth / 2) + 1, screen, menu_font[0], " "+text+" ");
 
         ShowPage();
@@ -442,7 +442,7 @@ int MenuMiniChoicebox(string text, string choices, string draw_func)
         MenuBackGroundDraw(); //draw universal things
         CallFunction(draw_func);
 
-        MenuDrawBackground(((ImageWidth(screen)-wid)/2)-border, 110, ((ImageWidth(screen)-wid)/2)+wid+border, 130, 1); // CatchMe
+        _MenuDrawBackground(((ImageWidth(screen)-wid)/2)-border, 110, ((ImageWidth(screen)-wid)/2)+wid+border, 130, 1); // CatchMe
         PrintCenter(160, 120 - (menu_fonth / 2) + 1, screen, menu_font[0], " "+text+" ");
 
         MenuSimplePrompt( choices );
@@ -515,7 +515,7 @@ int MenuSimplePrompt(string choices)
     Menu1ArrowSetSounds( "MenuHappyBeep" );
     _menu_simple_choice = MenuControlArrows(_menu_simple_choice, count);
 
-    MenuDrawBackground(prompt_x1, prompt_y1-TEXTBOX_Y_BUFF, prompt_x1+prompt_wid, prompt_high+prompt_y1-TEXTBOX_Y_BUFF, 1);
+    _MenuDrawBackground(prompt_x1, prompt_y1-TEXTBOX_Y_BUFF, prompt_x1+prompt_wid, prompt_high+prompt_y1-TEXTBOX_Y_BUFF, 1);
 
     //set the clipping rectangle so we cannot draw outside the promptbox's area!
     SetClip(    prompt_x1+PROMPT_PADDING, prompt_y1+PROMPT_PADDING,
@@ -705,14 +705,25 @@ int ColourDivider(int colour, int division)
     return Rgb(GetR(colour) / division, GetG(colour) / division, GetB(colour) / division);
 }
 
-// Draws a box. This needs moar options
+/// for drawing the menu panels.
+/// @todo rename to MainMenu_DrawBackground
 void MenuDrawBackground(int x1, int y1, int x2, int y2, int active)
+{    
+    _MenuDrawBackground(
+        x1+___menupos_x, 
+        y1+___menupos_y, 
+        x2+___menupos_x, 
+        y2+___menupos_y, 
+        active
+    );
+}
+
+/// The actual box-drawing with option-menu-color transparency is here.
+/// Main Menu functions should use MenuDrawBackground().  This is the raw function 
+/// that that uses.
+void _MenuDrawBackground(int x1, int y1, int x2, int y2, int active)
 {
-    x1+=___menupos_x;
-    x2+=___menupos_x;
-    
-    y1+=___menupos_y;
-    y2+=___menupos_y;
+
     
     int _x1 = x1 + 4;
     int _y1 = y1 + 4;
@@ -784,9 +795,6 @@ int ___menupos_y = 0;
 // Draws the main menu list on the right side of the screen
 void MenuBlitRight(int active, int selected)
 {
-    
-
-
     MenuDrawBackground(
         MENU_B_X1, 
         MENU_B_Y1, 
@@ -796,8 +804,6 @@ void MenuBlitRight(int active, int selected)
         
         active
     );
-        
-    
     
     PrintString(___menupos_x+248, selected * 20 + ___menupos_y+ 25, screen, menu_font[0], ">");
     PrintString(___menupos_x+255, ___menupos_y+25, screen, menu_font[0], "ITEM");

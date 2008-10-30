@@ -285,7 +285,7 @@ void DrawBattleHUD()
     x = 132;
     y = 1;
     
-    MenuDrawBackground( x,y, 318,69, 1 );
+    _MenuDrawBackground( x,y, 318,69, 1 );
     
     x += 8;
     y += 7;

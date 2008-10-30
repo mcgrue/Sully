@@ -500,17 +500,17 @@ void MenuDrawShopMain()
     
     if (menu_option == 0)
     {
-        MenuDrawBackground(90, 10, 310, 130, 0);
+        _MenuDrawBackground(90, 10, 310, 130, 0);
         MenuBlitShopBuy();
     }
     if (menu_option == 1)
     {
-        MenuDrawBackground(90, 10, 310, 230, 0);
+        _MenuDrawBackground(90, 10, 310, 230, 0);
         MenuBlitShopSellSupply();
     }
     if (menu_option == 2)
     {
-        MenuDrawBackground(90, 10, 310, 230, 0);
+        _MenuDrawBackground(90, 10, 310, 230, 0);
         MenuBlitShopSellEquip();
     }
 }
@@ -520,7 +520,7 @@ void MenuDrawShopBuy()
     int summat = 0;
     if (menu_idx == 1) summat = 1;
     MenuBlitShopLeft(0, menu_option);
-    MenuDrawBackground(90, 10, 310, 130, summat);
+    _MenuDrawBackground(90, 10, 310, 130, summat);
     MenuBlitShopBuy();
     
 }
@@ -530,7 +530,7 @@ void MenuDrawShopSellSupply()
     int summat = 0;
     if (menu_idx == 2) summat = 1;
     MenuBlitShopLeft(0, menu_option);
-    MenuDrawBackground(90, 10, 310, 230, summat);
+    _MenuDrawBackground(90, 10, 310, 230, summat);
     MenuBlitShopSellSupply();
     
 }
@@ -540,7 +540,7 @@ void MenuDrawShopSellEquip()
     int summat = 0;
     if (menu_idx == 3) summat = 1;
     MenuBlitShopLeft(0, menu_option);
-    MenuDrawBackground(90, 10, 310, 230, summat);
+    _MenuDrawBackground(90, 10, 310, 230, summat);
     MenuBlitShopSellEquip();
     
 }
@@ -650,7 +650,7 @@ void MenuBlitShopBuy()
     //if (i == equ_count) PrintString(55, 133 + ((menu_fonth + 2) * (i - menu_start)), screen, menu_font[0], "(none)"); // if near end
 
 
-    MenuDrawBackground(90, 140, 310, 230, 0);
+    _MenuDrawBackground(90, 140, 310, 230, 0);
     
     MenuBlitParty(105, 146, menu_cast, val(GetToken(save_display[0].text, "|", menu_item)));
     
@@ -765,7 +765,7 @@ void MenuBlitShopLeft(int active, int selected)
         
     _omg_shop_left_prev = selected;
     
-    MenuDrawBackground(10, 70, 80, 230, active);
+    _MenuDrawBackground(10, 70, 80, 230, active);
     
     if( selected != 3 )
         PrintString(16, selected * 30 + 85, screen, menu_font[0], ">");
@@ -808,7 +808,7 @@ void MenuBlitShopLeft(int active, int selected)
 
 void MenuBlitShopTop()
 {
-    MenuDrawBackground(10, 10, 80, 60, 0);
+    _MenuDrawBackground(10, 10, 80, 60, 0);
     PrintRight(70, 20, screen, menu_font[0], "A Shop");
     PrintString(20, 35, screen, menu_font[0], moneyname + ":");
     PrintRight(70, 45, screen, menu_font[0], str(money));
@@ -847,7 +847,7 @@ int MenuSellingbox(int item_idx, int max_quant, string draw_func)
         MenuBackGroundDraw(); //draw universal things
         CallFunction(draw_func);
         
-        MenuDrawBackground( x1,y1, x2,y2, 1);
+        _MenuDrawBackground( x1,y1, x2,y2, 1);
         
         quant = MenuControlArrows(quant, max_quant);
         

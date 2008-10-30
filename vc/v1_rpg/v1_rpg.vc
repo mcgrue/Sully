@@ -683,7 +683,7 @@ Log( " curmap.rstring after render: '" + curmap.rstring + "'" );
 /// @see MenuDrawBackground()
 void V1_Box(int x, int y, int w, int h)
 {
-    MenuDrawBackground(x, y, x+w, y+h, 1);
+    _MenuDrawBackground(x, y, x+w, y+h, 1);
 }
 
 

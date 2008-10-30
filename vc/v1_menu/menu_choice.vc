@@ -262,7 +262,7 @@ int MenuChoiceBox(string question, string choices)
         MenuBackGroundDraw(); // Draw universal things
 
         menu_item = MenuControlArrows(menu_item, count);
-        MenuDrawBackground(5, 185, 315, 235, 1);
+        _MenuDrawBackground(5, 185, 315, 235, 1);
         PrintString(12, 192, screen, v1rpg_LargeFont, question);
         for(i = 0; i < count; i++)
         {
@@ -286,7 +286,7 @@ int MenuChoiceBoxVar(string question, string choices)
         MenuBackGroundDraw(); // Draw universal things
 
         menu_item = MenuControlArrows(menu_item, count);
-        MenuDrawBackground(5, 215 - (14 * count), 315, 235, 1);
+        _MenuDrawBackground(5, 215 - (14 * count), 315, 235, 1);
         PrintString(12, 220 - (14 * count), screen, v1rpg_LargeFont, question);
         for(i = 0; i < count; i++)
         {
@@ -311,7 +311,7 @@ int MenuChoiceBoxWin(string question, string choices)
         menu_item = MenuControlArrows(menu_item, count);
         if (menu_start + 1 < menu_item) menu_start = menu_item - 1;
         else if (menu_start > menu_item) menu_start = menu_item;
-        MenuDrawBackground(5, 185, 315, 235, 1);
+        _MenuDrawBackground(5, 185, 315, 235, 1);
         MenuDrawSubWindow(10, 200, 310, 230, menu_item, 14, count, menu_start, 4);
         PrintString(12, 190, screen, v1rpg_LargeFont, question);
         for(i = menu_start; i < count; i++)
