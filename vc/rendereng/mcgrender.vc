@@ -82,6 +82,14 @@ int McGrender_active_layer;
 void InitMcgrender()
 {
     mcg_destroy_everything();
+    
+    /// the dicts can stay after being born
+    if( !_mcg_dict_init ) {
+        _mcg_init_dicts();
+        _mcg_dict_init = 1;
+    }
+
+    _fps_timecount = 0;
 }
 
 /// sets the render target for the McGrender engine.
@@ -346,7 +354,31 @@ void mcg_destroy_everything()
     McGrender_layer_count   = 0;
     mcgV_sprite_count       = 0;
     mcgV_heap_count         = 0;
+    
+    __mcgrender_ticks = 0;
+    
+    if( _mcg_dict_init ) {
+        _Mcgrender_EmptyDicts();
+    }
 }
+
+void _Mcgrender_EmptyDicts() {
+    if( !_mcg_dict_init ) return;
+    
+    int i, n;
+    string _key, callfunc;
+        
+    /// the scheduledTick_start dict has time-based keys.
+    string csv_keys = DictListKeys(dict_scheduledTick_start, ",");
+    n = TokenCount(csv_keys, ",");
+    for(i=0; i<n; i++) {
+        _key = GetToken(csv_keys,",",i);  
+            
+        DictRemove(dict_scheduledTick_start, _key);
+    }
+    _do_scheduled_tick_start_is_dirty = 0;
+}
+
 
 /// Calls the specified mcgV_heap entry's delete function, and erases it's image from memory.
 ///
@@ -795,12 +827,18 @@ int getCurrentMcGIdx()
 
 int __mcg_cur_node;
 
+int __mcgrender_ticks = 0;
+
 void mcgrender()
 {
     int i;
+    __mcgrender_ticks++;
+    mcgrender_start_tick();
 
     for( i=0; i<McGrender_layer_count; i++ )
     {
+        mcgrender_start_layer(i);
+    
         if( McGrender_layers[i].count && McGrender_layers[i].on )
         {
             __mcg_cur_node = McGrender_layers[i].head_idx;
@@ -819,10 +857,118 @@ void mcgrender()
                 __mcg_cur_node = mcgV_heap[__mcg_cur_node].next_idx;
             }
         }
+        
+        mcgrender_end_layer(i);
     }
+    
+    mcgrender_end_tick();
+}
+
+int mcgrender_get_current_tick() {
+    return __mcgrender_ticks;
 }
 
 
+/////////////////////////////
+/// MCG DICTS
+/////////////////////////////
+int _mcg_dict_init;
+
+void _mcg_init_dicts() {
+    dict_scheduledTick_start = DictNew();
+}
+
+
+///////////dict_scheduledTick_start
+int _do_scheduled_tick_start_is_dirty = 0;
+int dict_scheduledTick_start = 0;
+
+void mcgrender_call_in_n_ticks( string callfunc, int n_ticks )
+{
+    if( n_ticks <= 0 ) {
+        FATAL_ERROR( "mcgrender_call_in_n_ticks: cannot be called with a value <= 0, got: " + str(n_ticks)+".  (was going to callfunc '"+callfunc+"')" );
+    }
+    
+    string _key = str(__mcgrender_ticks+n_ticks);
+    string _tmp;
+    
+    if( !DictContains(dict_scheduledTick_start, _key) ) {
+
+        DictSetString(dict_scheduledTick_start, _key, callfunc);
+    } else {
+
+        _tmp = DictGetString(dict_scheduledTick_start, _key);
+    
+        DictSetString(
+            dict_scheduledTick_start, 
+            _key, 
+            _tmp+","+callfunc
+        );        
+    }
+    
+    _do_scheduled_tick_start_is_dirty = 1;
+}
+
+void __do_mcgrender_call_in_n_ticks() {
+    
+    if( !DictContains(dict_scheduledTick_start, str(__mcgrender_ticks)) ) return;
+
+    string callfunc;
+
+    string csv_keys = DictGetString(dict_scheduledTick_start, str(__mcgrender_ticks));
+    int i;
+    int n = TokenCount(csv_keys, ",");
+    for(i=0; i<n; i++) {
+        callfunc = GetToken(csv_keys,",",i);
+        
+        MandatoryCallfunction( callfunc );
+    }
+    
+    DictRemove(dict_scheduledTick_start, str(__mcgrender_ticks));
+}
+
+/////////////////////////////
+/// MCG DICTS - END
+/////////////////////////////
+
+int _second_starttime;
+int _tick_starttime;
+int _fps_timecount;
+int _fps_count = 0;
+
+void mcgrender_start_tick() {
+    _tick_starttime = systemtime;
+    if( _second_starttime < 0 ) {
+        _second_starttime = _tick_starttime; 
+    }
+
+    if( _do_scheduled_tick_start_is_dirty ) {
+        __do_mcgrender_call_in_n_ticks();
+    }
+}
+
+int _display_fps = 0;
+
+void mcgrender_end_tick() {
+
+    if( (systemtime - _second_starttime) > 100 ) {
+        
+        _display_fps = _fps_count; 
+        _fps_count = 0;
+        _second_starttime = -1;
+        
+    } else {
+        _fps_count++;
+    }
+}
+
+void mcgrender_start_layer( int i ) {
+
+}
+
+void mcgrender_end_layer( int i ) {
+
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // DEBUGGING STUFF

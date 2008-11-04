@@ -202,7 +202,7 @@ void doBattle( String battle_group_dat_area )
                     TurnBattleMenuOn( battle_queue[0].batent_ref );
                 }
 
-                //MessageBox( "Ally turn: "+bat_getName( battle_queue[0].batent_ref, battle_queue[0].batent_party )+"!!!" );
+     //MessageBox( "Ally turn: "+bat_getName( battle_queue[0].batent_ref, battle_queue[0].batent_party )+"!!!" );
                 //pop_battle_queue();
             }
             else if( battle_queue[0].batent_party == PARTY_NULL )
@@ -307,6 +307,8 @@ void initBattleRenderer()
     ref_actorindicator = mcg_add_complex( "HandleBattleMenuActorIndicator", -1 );
     imlevelup = LoadImage( "res/battle/levelup.png" );
 
+    ref_fps = mcg_add_complex( "DrawFPS", -1 );
+
     //mcg_add_complex( "__TEST_bouncy", -1 );
 
     BsSeedBattleQueue();
@@ -321,6 +323,16 @@ void initBattleRenderer()
     }
     
     //SpriteChangeStrand( bs_enemy_sprite_ref[i], "IDLE" );
+}
+
+int ref_fps;
+void DrawFPS() {
+    PrintString(
+        2,238-FontHeight(v1rpg_LargeFont),
+        screen,
+        v1rpg_LargeFont
+        "FPS: " + str(_display_fps)
+    );
 }
 
 int get_steps_to_next_battle() {
@@ -363,6 +375,7 @@ void OrdinaryBattleIntro() {
 }
 
 void BattleTransition_ScreenShatter(string bat_music) {
+    
     int i;
     if (!equ(bat_music,"")) V1_StartMusic(bat_music);   
     SetLucent(50);
@@ -372,7 +385,6 @@ void BattleTransition_ScreenShatter(string bat_music) {
     RenderBattle();
     Blit(0,0,screen,battle_screencap); // copy screen image to screencap
     
-
     transition_layer = mcgSpawnLayer();    
     McgSetActiveLayer(transition_layer);
     for (i=0;i<transition_layer;i++) mcgTurnLayerOff(i);
@@ -380,8 +392,7 @@ void BattleTransition_ScreenShatter(string bat_music) {
     transition_layer_death_time = systemtime + 150;
     mcg_add_complex("TransitionLayerDeathCountdown",battle_screencap);
     mcg_add_image(0,0,0,0,0,battle_screencap);
-    mcg_add_image(0,0,100,100,100,prebattle_screencap);
-    
+    mcg_add_image(0,0,320,240,100,prebattle_screencap);   
 }
 
 int transition_layer_death_time = -1; 
@@ -393,12 +404,18 @@ void TransitionLayerDeathCountdown() {
     int idx;
     if (systemtime >= transition_layer_death_time && transition_layer_death_time >= 0) {         
         // This layer...         
-        mcg_delete_layer(transition_layer);
         
         for (idx=0;idx<transition_layer;idx++) mcgTurnLayerOn(idx); // Bring back the real battle layers
-        transition_layer = -1;
+        
+        mcgrender_call_in_n_ticks( "deathklok", 1 );
+        
         transition_layer_death_time = -1;
+        
         // other battle resumption stuff goes here.        
     }
 }
 
+void deathklok() {
+    mcg_delete_layer(transition_layer);
+    transition_layer = -1;
+}

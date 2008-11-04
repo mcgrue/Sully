@@ -347,7 +347,6 @@ void MenuEntry()
     }
 }
 
-
 int __menu_target_x1, __menu_target_x2, __menu_target_y1, __menu_target_y2;
 
 void MenuSetupRandomSlide() {
