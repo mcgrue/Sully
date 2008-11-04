@@ -16,7 +16,7 @@ void TurnBattleEffectOn( String callfunc )
         FATAL_ERROR( "TurnBattleEffectOn( '"+callfunc+"' ): That function didn't exist, jerk." );
     }
 
-Log( "TurnBattleEffectOn!" );
+Log( "TurnBattleEffectOn! ("+callfunc+")" );
     __battle_effect_callfunc = callfunc;
 
     __battle_effect_resolving = 1;

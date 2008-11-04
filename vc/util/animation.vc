@@ -147,7 +147,7 @@ void TBlitFrame(int x, int y, int anim, int frame, int dest)
     int frametop;
 
     if (!anims[anim].active)
-        Exit("TBlitFrame() - Requested animation ("+str(anim)+") is empty!!");
+        FATAL_ERROR("TBlitFrame() - Requested animation ("+str(anim)+") is empty!!");
 
     if (frame > anims[anim].numframes)
         return;
@@ -158,6 +158,17 @@ void TBlitFrame(int x, int y, int anim, int frame, int dest)
     if (frame == anims[anim].bufferedframe)
     {
         TBlit(x, y, anims[anim].bufimage, dest);
+        return;
+    }
+    
+    if( !ImageValid(anims[anim].bufimage) ) {
+        WARNING_ERROR("TBlitFrame() - Requested animation ("+str(anim)+")'s bufimage reference ("+str(anims[anim].bufimage)+") is invalid!");
+        return;
+    }
+    
+    
+    if( !ImageValid(anims[anim].image) ) {
+        WARNING_ERROR("TBlitFrame() - Requested animation ("+str(anim)+")'s image reference ("+str(anims[anim].image)+") is invalid!");
         return;
     }
             

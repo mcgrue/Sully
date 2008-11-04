@@ -1,5 +1,5 @@
-#define MCGRENDER_MAX       500
-#define MCG_TEMP        127 // what does this do?
+#define MCGRENDER_MAX           500
+#define MCG_TEMP                127 // what does this do?
 #define MCGRENDER_STACKSIZE     501
 
 #define MCGRENDER_MAXLAYERS 10
@@ -81,7 +81,7 @@ int McGrender_active_layer;
 ///
 void InitMcgrender()
 {
-    mcg_destroy();
+    mcg_destroy_everything();
 }
 
 /// sets the render target for the McGrender engine.
@@ -128,6 +128,10 @@ int McgGetActiveLayer() {
 int McgGetLayersImageCount( int layer_idx ) {
     int i = 0;
     
+    if(layer_idx<0||layer_idx>=MCGRENDER_MAXLAYERS) {
+        Exit( "McgGetLayersImageCount: layer ("+str(layer_idx)+") is invalid.  Range is [0"+str(MCGRENDER_MAXLAYERS)+")" );
+    }
+    
     __mcg_cur_node = McGrender_layers[layer_idx].head_idx;
     while( __mcg_cur_node >= 0 )
     {
@@ -155,12 +159,20 @@ int McgSpawnLayer()
     return i;
 }
 
-void McgTurnLayerOff( int i ) {
-    McGrender_layers[i].on = 0;
+void McgTurnLayerOff( int layer_idx ) {
+    if(layer_idx<0||layer_idx>=MCGRENDER_MAXLAYERS) {
+        Exit( "McgTurnLayerOff: layer ("+str(layer_idx)+") is invalid.  Range is [0"+str(MCGRENDER_MAXLAYERS)+")" );
+    }
+
+    McGrender_layers[layer_idx].on = 0;
 }
 
-void McgTurnLayerOn( int i ) {
-    McGrender_layers[i].on = 1;
+void McgTurnLayerOn( int layer_idx ) {
+    if(layer_idx<0||layer_idx>=MCGRENDER_MAXLAYERS) {
+        Exit( "McgTurnLayerOn: layer ("+str(layer_idx)+") is invalid.  Range is [0"+str(MCGRENDER_MAXLAYERS)+")" );
+    }
+
+    McGrender_layers[layer_idx].on = 1;
 }
 
 void McgSetActiveLayer( int i )
@@ -177,6 +189,14 @@ void __McgLayerAddImg( int img_heap_idx )
 {
     int old_tail;
 
+    if( McGrender_active_layer < 0 || McGrender_layer_count >= MCGRENDER_MAXLAYERS ) {
+        exit( "__McgLayerAddImg(): invalid active layer ("+str(McGrender_active_layer)+"), valid range[0,"+str(MCGRENDER_MAXLAYERS)+")" );
+    }
+    
+    if( img_heap_idx < 0 || img_heap_idx >= MCGRENDER_STACKSIZE ) {
+        exit( "__McgLayerAddImg(): img_heap_idx had an out of bounds value.  Was ("+str(img_heap_idx)+"), needed [0,"+str(MCGRENDER_STACKSIZE)+")" );
+    }
+     
     if( McGrender_active_layer < 0 || McGrender_active_layer >= MCGRENDER_MAXLAYERS )
     {
         exit( "__McgLayerAddImg(): supposedly active layer ("+str(McGrender_active_layer)+") is invalid.  There are presently ("+str(McGrender_layer_count)+") valid layers." );
@@ -186,7 +206,7 @@ void __McgLayerAddImg( int img_heap_idx )
     {
         if( McGrender_layers[McGrender_active_layer].count )
         {
-            exit( "__McgLayerAddImg(): there was no head, yet there was a count of ("+str(McGrender_layers[McGrender_layer_count].count)+").  Something foul is afoot! (active layer ("+str(McGrender_active_layer)+"))" );
+            exit( "__McgLayerAddImg(): there was no head, yet there was a count of ("+str(McGrender_layers[McGrender_active_layer].count)+").  Something foul is afoot! (active layer ("+str(McGrender_active_layer)+"))" );
         }
         else
         {
@@ -219,6 +239,10 @@ void mcg_delete_layer( int i ) {
     if( i<0 || i> McGrender_layer_count )
     {
         exit( "mcg_delete_layer(): specified layer ("+str(i)+") is invalid.  There are presently ("+str(McGrender_layer_count)+") valid layers." );
+    }
+    
+    if( i == McGrender_active_layer ) {
+        McGrender_active_layer = -1;
     }
     
     int idx = McGrender_layers[i].head_idx;
@@ -286,7 +310,7 @@ int mcg_count_valid_imgs()
 }
 
 /// destroys everything on this mcgrender
-void mcg_destroy()
+void mcg_destroy_everything()
 {
     int i;
 
@@ -330,6 +354,10 @@ void mcg_destroy()
 /// Delete with caution! :)
 void mcg_delete( int idx )
 {
+    if( idx <0 || idx >=MCGRENDER_STACKSIZE  ) {
+        FATAL_ERROR( "mcg_delete: tried to delete an invalid index ("+str(idx)+") from the mcgrender heap [0,"+str(MCGRENDER_STACKSIZE)+")." );
+    }
+
     int i;
     CallFunction( mcgV_heap[idx].callfunc_delete );
 
@@ -351,10 +379,14 @@ void mcg_delete( int idx )
     {
         _McImgSetPrevLink( mcgV_heap[idx].next_idx, -1 );
     }
-    
-    /// if the head is still us at this point, the layer is dead.
-    if( McGrender_layers[mcgV_heap[idx].layer_idx].head_idx == idx ) {
-        McGrender_layers[mcgV_heap[idx].layer_idx].head_idx = -1;
+        
+    if( mcgV_heap[idx].layer_idx >= 0 && mcgV_heap[idx].layer_idx < MCGRENDER_MAXLAYERS ) {
+        /// if the head is still us at this point, the layer is dead.
+        if( McGrender_layers[mcgV_heap[idx].layer_idx].head_idx == idx ) {
+            McGrender_layers[mcgV_heap[idx].layer_idx].head_idx = -1;
+        }    
+    } else {
+        WARNING_ERROR( "mcg_delete tried to delete a mcgrender heap item("+str(idx)+") with an invalid layer indice ("+str(mcgV_heap[idx].layer_idx)+").  This really shouldn't happen." );
     }
 
     mcgV_heap[idx].prev_idx = -1;
@@ -616,6 +648,10 @@ int mcg_get_y( int idx ) { return mcgV_heap[idx].y / MC_MULTIPLIER; }
 int mcg_ticks;
 void mcg_draw( int idx )
 {
+    if( !ImageValid(mcgV_heap[idx].image) ) {
+        FATAL_ERROR( "mcg_draw(), mcgV_heap["+str(idx)+"].image is ("+str(mcgV_heap[idx].image)+"), which reports as invalid." );
+    }
+
     //it's not moving...
     if( !mcgV_heap[idx].is_moving )
     {
@@ -923,7 +959,6 @@ int mcg_findclick( int x, int y )
     {
         if( McGrender_layers[i].count )
         {
-
             cur_node = McGrender_layers[i].tail_idx;
 
             while( cur_node >= 0 )

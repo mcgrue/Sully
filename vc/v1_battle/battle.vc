@@ -111,8 +111,11 @@ int ref_effects;
 
 /// the image layer reference for the "this PC is presently acting" thing.
 int ref_actorindicator;
+
 /// the image layer reference for the "Level Up!" overlay.
-int ref_levelup;
+int ref_levelUp[MAX_PARTY_SIZE];
+int ref_levelUp_count = 0;
+int imLevelup;
 
 int bs_layerBG, bs_layerFG, bs_layerInterface;
 
@@ -146,7 +149,6 @@ void endOfBattle()
     
     DestroyBattleMessage();
     TurnBattleEffectOff(0);
-    FreeImage(ref_levelup);
        
     if( mode_battle_debug )
     {
@@ -1666,6 +1668,8 @@ void PlayBattleVictory()
             }
         }
     }
+    
+    Log( "PlayBattleVictory: end." );
 }
 
 
@@ -1802,11 +1806,15 @@ void CalculatePhatBattleBooty() {
 
 // Draws a "level up!" message over the party member in question.
 void doLevelUpIndicator(int party_idx) {
+
     int char_ref = bat_getRenderRef(party_idx,PARTY_ALLY);
-    int startx = mcg_getX(char_ref) + (mcg_width(char_ref)/2) - (ImageWidth(ref_levelup)/2);
-    int starty = mcg_getY(char_ref) + mcg_height(char_ref) - ImageHeight(ref_levelup);
+    int startx = mcg_getX(char_ref) + (mcg_width(char_ref)/2) - (ImageWidth(imLevelup)/2);
+    int starty = mcg_getY(char_ref) + mcg_height(char_ref) - ImageHeight(imLevelup);
     
-    mcg_setOnStopMoving( mcg_add_image( startx, starty, startx, starty - 24, 100, ref_levelup) , "makeLevelUpIndicatorDisappear");
+    McgSetActiveLayer( bs_layerInterface );    
+    ref_levelUp[ref_levelUp_count] = mcg_add_image( startx, starty, startx, starty - 24, 100, imLevelup);
+    mcg_setOnStopMoving(ref_levelUp[ref_levelUp_count], "makeLevelUpIndicatorDisappear");
+    ref_levelUp_count++;
 }
 
 void makeLevelUpIndicatorDisappear() {

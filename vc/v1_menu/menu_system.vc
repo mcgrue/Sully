@@ -342,7 +342,7 @@ void MenuEntry()
         /// And then clean up the menu, because we're done drawing it!
         _menu_is_on = 0;
         CleanupAllBattleMenus();
-        mcg_destroy();
+        mcg_destroy_everything();
         HookButton( 3, "MenuEntry" );
     }
 }

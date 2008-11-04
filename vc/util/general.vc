@@ -255,6 +255,9 @@ void FATAL_ERROR( string s )
     Exit( "FATAL_ERROR: '"+s+"'" );
 }
 
+void WARNING_ERROR( String s ) {
+    Log( "WARNING: '"+s+"'" );
+}
 
 
 

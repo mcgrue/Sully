@@ -12,7 +12,7 @@ _debug_tick_counter = 0;
 
     /// clean out the mcgrender engine.  Hope you saved anything you needed in there 
     /// from before!
-    mcg_destroy();
+    mcg_destroy_everything();
 
     /// clean out the previous battle background to make way for the new one.
     if( ImageValid(imBattleBG) )
@@ -23,6 +23,12 @@ _debug_tick_counter = 0;
     if( ImageValid(imBattleActorPointer) )
     {
         FreeImage( imBattleActorPointer );
+    }
+    
+    ref_levelUp_count = 0;
+    if( ImageValid(imLevelup) )
+    {
+        FreeImage(imLevelup);
     }
     
     /// wipe out the old enemy party associations.
@@ -79,6 +85,7 @@ void doBattle( String battle_group_dat_area )
     Blit(0,0,screen,prebattle_screencap); // copy screen image to screencap
     InitBattleSetup( battle_group_dat_area );
     InitBattleRenderer();
+
     if( !equ(BattleGroupSetupCallfunc(),"") )
     {
         if( BATTLE_GROUP_CALLFUNC_STRICT )
@@ -91,11 +98,13 @@ void doBattle( String battle_group_dat_area )
                     "requested but did not exist."
                 );
             }
-            
-        }        
+        }
+
         CallFunction( BattleGroupSetupCallfunc() );
     }
-    else CallFunction(DEFAULT_BATTLE_STARTUP_CALLFUNC);
+    else {
+        CallFunction(DEFAULT_BATTLE_STARTUP_CALLFUNC);
+    }
 
     int done = 0;
     /**
@@ -296,13 +305,13 @@ void initBattleRenderer()
     ref_battletarg = mcg_add_complex( "HandleBattleMenuTargetting", -1 );
 
     ref_actorindicator = mcg_add_complex( "HandleBattleMenuActorIndicator", -1 );
-    ref_levelup = LoadImage( "res/battle/levelup.png" );
+    imlevelup = LoadImage( "res/battle/levelup.png" );
 
     //mcg_add_complex( "__TEST_bouncy", -1 );
-    
+
     BsSeedBattleQueue();
-    
-    __music_before_battle = V1_CurrentMusicName();        
+
+    __music_before_battle = V1_CurrentMusicName();
 
     if( mode_battle_debug )
     {
