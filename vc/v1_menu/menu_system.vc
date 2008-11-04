@@ -259,7 +259,7 @@ void MenuMcgrenderInitialization() {
         _im_menuMotionStint = NewImage(1,1);
     }
     
-    MenuSetupRandomSlide(); // I do random awesome stuff when giddy and tired.  
+    MenuSetupRandomSlide(screen); // I do random awesome stuff when giddy and tired.  
     
     _ref_menuMotionStint = 
         mcg_add_image( 
@@ -349,43 +349,44 @@ void MenuEntry()
 
 int __menu_target_x1, __menu_target_x2, __menu_target_y1, __menu_target_y2;
 
-void MenuSetupRandomSlide() {
+
+void MenuSetupRandomSlide( int img ) {
 
     switch(Random(0,3)) {
         case 0: // from left
-            __menu_target_x1 = -ImageWidth(screen);
+            __menu_target_x1 = -ImageWidth(img);
             __menu_target_y1 = 0;
             
         case 1: // from right
-            __menu_target_x1 = ImageWidth(screen);
+            __menu_target_x1 = ImageWidth(img);
             __menu_target_y1 = 0;
             
         case 2: // from down
             __menu_target_x1 = 0;
-            __menu_target_y1 = -ImageHeight(screen);
+            __menu_target_y1 = -ImageHeight(img);
             
         case 3: // from up
             __menu_target_x1 = 0;
-            __menu_target_y1 = ImageHeight(screen);
+            __menu_target_y1 = ImageHeight(img);
             
     }
     
     switch(Random(0,3)) {
         case 0: // to left
-            __menu_target_x2 = -ImageWidth(screen);
+            __menu_target_x2 = -ImageWidth(img);
             __menu_target_y2 = 0;
             
         case 1: // to right
-            __menu_target_x2 = ImageWidth(screen);
+            __menu_target_x2 = ImageWidth(img);
             __menu_target_y2 = 0;
             
         case 2: // to down
             __menu_target_x2 = 0;
-            __menu_target_y2 = -ImageHeight(screen);
+            __menu_target_y2 = -ImageHeight(img);
             
         case 3: // to up
             __menu_target_x2 = 0;
-            __menu_target_y2 = ImageHeight(screen);
+            __menu_target_y2 = ImageHeight(img);
             
     }
 }

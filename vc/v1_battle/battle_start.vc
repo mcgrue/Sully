@@ -216,8 +216,6 @@ void doBattle( String battle_group_dat_area )
             }
         }
     }
-    FreeImage(prebattle_screencap); 
-    FreeImage(battle_screencap); 
 }
 
 String __music_before_battle;
@@ -374,9 +372,36 @@ void OrdinaryBattleIntro() {
     BattleTransition_ScreenShatter("res/music/X01C.IT");
 }
 
+int __badman_x, __badman_y;
+void BadmanRandomSlide() {
+
+    switch(Random(0,3)) {
+        case 0: // from left
+            __badman_x = -16;
+            __badman_y = -16;
+            
+        case 1: // from right
+            __badman_x = 320;
+            __badman_y = 240;
+            
+        case 2: // from down
+            __badman_x = -16;
+            __badman_y = 240;
+            
+        case 3: // from up
+            __badman_x = 320;
+            __badman_y = -16;
+    }
+}
+
+
+int imBadman[21][16];
+int refBadman[21][16];
+
 void BattleTransition_ScreenShatter(string bat_music) {
     
     int i;
+    int x, y, _x, _y;
     if (!equ(bat_music,"")) V1_StartMusic(bat_music);   
     SetLucent(50);
     ColorFilter(CF_GREY,prebattle_screencap);
@@ -384,15 +409,34 @@ void BattleTransition_ScreenShatter(string bat_music) {
     Render(); // Render, but don't reveal -- no peeking at the battle screen just yet!
     RenderBattle();
     Blit(0,0,screen,battle_screencap); // copy screen image to screencap
-    
+
     transition_layer = mcgSpawnLayer();    
     McgSetActiveLayer(transition_layer);
+
+    mcg_add_complex("TransitionLayerDeathCountdown",-1);
+    mcg_add_image(0,0,0,0,0,battle_screencap);
+
     for (i=0;i<transition_layer;i++) mcgTurnLayerOff(i);
     
-    transition_layer_death_time = systemtime + 150;
-    mcg_add_complex("TransitionLayerDeathCountdown",battle_screencap);
-    mcg_add_image(0,0,0,0,0,battle_screencap);
-    mcg_add_image(0,0,320,240,100,prebattle_screencap);   
+    for( x=0; x<320; x+=16 ) {
+        for( y=0; y<240; y+=16 ) {
+        
+            _x = x/16;
+            _y = y/16;
+            imBadman[_x][_y] = ImageShell(x, y, 16, 16, prebattle_screencap);
+            
+            BadmanRandomSlide();
+                    
+            refBadman[_x][_y] = mcg_add_image(
+                x,y,
+                __badman_x,__badman_y,
+                Random(25, 100),
+                imBadman[_x][_y]
+            );
+        }    
+    }
+
+    transition_layer_death_time = systemtime + 105;
 }
 
 int transition_layer_death_time = -1; 
@@ -418,4 +462,12 @@ void TransitionLayerDeathCountdown() {
 void deathklok() {
     mcg_delete_layer(transition_layer);
     transition_layer = -1;
+    
+    if( ImageValid(prebattle_screencap) ) {
+        FreeImage( prebattle_screencap ); 
+    }
+    
+    if( ImageValid(battle_screencap) ) {
+        FreeImage( battle_screencap );
+    }
 }
