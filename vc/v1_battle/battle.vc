@@ -1918,6 +1918,7 @@ int DrawBattleQueueText( int my_screen )
         }
     
         if( battle_queue[i].batent_party == PARTY_ALLY )
+        {
             PrintString( 
                 1,y, 
                 my_screen, 
@@ -1929,17 +1930,29 @@ int DrawBattleQueueText( int my_screen )
                 
                 battle_queue[i].data 
             );
-        else
+        } else if( battle_queue[i].batent_party == PARTY_ENEMY ) {
             PrintString( 
                 1,y, 
                 my_screen, 
                 fontBattleWhite, 
                 
                 aod+str(battle_queue[i].time)+","+
-                master_enemy[battle_enemies[battle_queue[i].batent_ref].master_enemy_idx].name+
+                bat_getName(battle_queue[i].batent_ref, PARTY_ENEMY)+
                 ","+str(battle_queue[i].action)+
                 ","+battle_queue[i].data 
             );
+        } else {
+            PrintString( 
+                1,y, 
+                my_screen, 
+                fontBattleWhite, 
+                
+                aod+str(battle_queue[i].time)+","+
+                " [???] "+
+                ","+str(battle_queue[i].action)+
+                ","+battle_queue[i].data 
+            );
+        }
         
         y += FontHeight(fontBattleWhite) + 1;
     }
