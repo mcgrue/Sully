@@ -420,18 +420,14 @@ void BattleTransition_ScreenShatter(string bat_music) {
     
     for( x=0; x<320; x+=16 ) {
         for( y=0; y<240; y+=16 ) {
-        
-            _x = x/16;
-            _y = y/16;
-            imBadman[_x][_y] = ImageShell(x, y, 16, 16, prebattle_screencap);
             
             BadmanRandomSlide();
                     
-            refBadman[_x][_y] = mcg_add_image(
+            mcg_add_image(
                 x,y,
                 __badman_x,__badman_y,
                 Random(25, 100),
-                imBadman[_x][_y]
+                ImageShell(x, y, 16, 16, prebattle_screencap)
             );
         }    
     }
