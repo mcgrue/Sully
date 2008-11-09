@@ -1961,4 +1961,3 @@ int DrawBattleQueueText( int my_screen )
     
     return y;
 }
-
