@@ -18,22 +18,27 @@ int TEXTBOX_Y_BUFF = 2;
 
 
 //the drawing area of the textbox's background
-int TEXTBOX_BORDER_X1 = 1;
-int TEXTBOX_BORDER_Y1 = 189;
-int TEXTBOX_BORDER_WIDTH    = 317;
+int TEXTBOX_BORDER_X1 = 1+8;
+int TEXTBOX_BORDER_Y1 = 189-8;
+int TEXTBOX_BORDER_WIDTH    = 317-16;
 int TEXTBOX_BORDER_HIGH     = 50;
 
 //the drawing-area of the textbox 
 //(the boundry you want the text to actually sit in)
 
-int TEXTBOX_TEXTAREA_X      = 6;
-int TEXTBOX_TEXTAREA_Y      = 194;
-int TEXTBOX_TEXTAREA_WIDTH  = 307;
+int TEXTBOX_TEXTAREA_X      = 6+8;
+int TEXTBOX_TEXTAREA_Y      = 194-8;
+int TEXTBOX_TEXTAREA_WIDTH  = 307-16;
 int TEXTBOX_TEXTAREA_HIGH   = 40;
 
 //the coordinates of the bobbing arrow for TextBoxM()
 int TEXTMORE_X  =   300;
-int TEXTMORE_Y  =   232;
+int TEXTMORE_Y  =   (240 - 16);
+
+
+//the x/y coordinates of the topleft corner of the speech portrait
+#define SPEECH_X        1+8
+#define SPEECH_Y        189-33-8
 
 
 
@@ -150,9 +155,6 @@ void init_textbox_speech_portraits() {
     speechprt = LoadAnimation("res\images\speech\speech.pcx", 32, 32);
 }
 
-//the x/y coordinates of the topleft corner of the speech portrait
-#define SPEECH_X        1
-#define SPEECH_Y        189-33  
 
 // textbox speech portrait defines. 
 // these are just indexes on the image loaded into 
