@@ -1,0 +1,11 @@
+// Sancho, the Sad Octopus
+//name      wd  ht  per_row rows    padding
+sancho.png  48  48  8       5       1  
+anim idle   F0 W10 F1 W10 F2 W10 F3 W10 F4 W10 F5 W10 F4 W10 F3 W10 F2 W10 F1 W10 B
+anim weak   F36 W10 F37 W15 F39 W15 F38 W10 B
+anim attack F0 W5 F32 W5 F33 W5 F34 W5 F35 W3 F34 W3 F35 W3 F34 W3 F35 W3 F34 W3 F35 W3 F34 W3 F33 W5 F32 W5
+anim hit    F7 W13 F15 W7 F23 W25
+anim death  F0 F5 F16 F5 F17 W5 F18 W5 F19 W5 F20 W5 F21 W10 F22
+anim charging   F24 W4 F25 W4 F26 W4 F27 W4 F28 W4 F29 W4 F30 W4 F31 W4 B
+anim casting    F8 W5 F9 W3 F10 W5 F11 W10 F12 W7 F13 W5 F14 W5 F8 W5    F0 W5 F1 W3 F2 W5 F3 W10 F4 W7 F5 W5 F6 W5
+
