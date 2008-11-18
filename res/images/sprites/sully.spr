@@ -1,0 +1,11 @@
+// The clam himself!
+//name      wd  ht  per_row rows    padding
+sancho.png  24  32  9       4       1  
+anim idle   F0 W120 F1 W10 F0 W15 F1 W10 F0 W180 F1 W10 F0 W15 F1 W10 B
+anim weak   F1 W20 F27 W10 F28 W10 B
+anim attack F9 W4 F10 W4 F11 W4 F12 W5 F13 W10 F14 W4 F15 W5 F16 W15 F17 W5
+anim hit    F29 W45
+anim death  F1 W5 F30 W4 F31 W4 F32 W4 F33 W4 F34 W4 F35
+anim charging   F2 W4 F3 W3 F4 W3 F5 W3 F6 W4 F7 W3 F4 W3 F8 W3 B
+anim casting    F4 W5 F18 W5 F19 W5 F20 W5 F21 W5 F22 W10 F23 W5 F24 W5 F25 W5 F26 W5 F4 W5
+
