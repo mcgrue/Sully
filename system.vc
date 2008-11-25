@@ -105,14 +105,6 @@ void AutoExec()
     V1RPG_LoadResources();  //loads resources for the v1rpg library.
     SSAC_LoadResources();   //loads resources for the Sully: Simple and Clean library
 
-if( num_enemies != 12 ) {
-    Exit( "Sully expects there to be 12 enemies initialized by now.  Got: " + str(num_enemies) );
-}
-
-if( !equ("Mother_Bunny",master_enemy[num_enemies-1].name) ) {
-    Exit( "Sully expects the last initialized enemy's name to be 'mother_bunny'.  Got: '"+master_enemy[num_enemies-1].name+"'" );
-}
-
     SMENU_LoadResources();  //loads resources for the Simple Menu library
     initSpeechPortsInData(); //OMG HAX!
 

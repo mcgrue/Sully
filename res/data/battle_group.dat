@@ -111,8 +111,9 @@ Red_Slime   85  160 Leader
 Slime       150 160 
 =END=
 
-#Special    Undersea_Boss   -   bs_special_setup_underseaboss
-#Bert   10  10
-#Sully  10  30
-#Sancho 10  50  
-#=END=
+//Special    Mascot_Fight   -   
+Area Overworld_A 10000 -
+Bert_Stingray          150 125
+Sully_the_Clam         90  95
+Sancho_the_Sad_Octopus 80  150  
+=END=

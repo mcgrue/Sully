@@ -31,7 +31,7 @@ East_Tower_Key  21  -       -               -               0       "Key to East
 Spire_Key       21  -       -               -               0       "Key to Central Spire."
 
 Bacon           33  Both    A_HP_OC_targ    medicine_use    100     "There's only one thing that smells like bacon, and it's this.|Restores 90 HP."
-Miracle_Brew    34  Both    DEAD_OC_targ    brew_use        250     "Revives a defeated ally."
+Miracle_Brew    34  Both    DEAD_OC_targ    brew_use        250     "Revives a defeated ally with a few HP."
 
 Sacred_Carrot   40  -       -               -               0       "Item of Absolute Power!"
 Atlas_Scroll    42  Menu    -               worldmap_use    0       "Shows position on map."

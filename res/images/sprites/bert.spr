@@ -1,6 +1,6 @@
-// Bert the Stingray
+// Bert Stingray
 //name      wd  ht  per_row rows    padding
-sancho.png  32  24  8       6       1  
+bert.png    32  24  8       6       1  
 anim idle   F0 W15 F1 W15 F2 W15 F3 W15 F4 W15 F5 W15 F6 W15 F7 W15 B
 anim weak   F44 W40 F45 W15 F46 W25 F47 W40 F46 W15 F45 W25 B
 anim attack F9 W4 F10 W4 F11 W8 F12 W5 F13 W15 F10 W6

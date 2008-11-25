@@ -268,34 +268,30 @@ void to_green_cliff()
     V1_MapSwitch("underwater_1.map", 35,22, TNONE);
 }
 
-///Bert the talking Stingray!
 void bert()
 {
     
     
-    if( !flags[F_SEA_BERT] ) 
+    if( flags[F_SEA_BERT] <= 0 ) // initial meeting
     {
-        TextBox(T_MANTA,    "Hi there! My name is Bert Stingray",
-                            "and I'm here to tell you about the",
-                            "battle system!");
+        TextBox(T_MANTA,    "Hi there! My name is Bert Stingray, and",
+                            "I'm here to tell you about the battle",
+                            "system!");
+                
+        TextBox(T_DARIN, "Oh yeah, I heard that they finally", "implemented it!", "I can't wait!");
         
-        TextBox(T_DARIN, "!!!", "", "");
-        TextBox(T_DARIN, "There's a battle system now?!", "", "");
-        
-        TextBox(T_MANTA, "Nope!  And I'm here to tell you that!","","");
-        
+        TextBoxM(T_MANTA, "Actually, that's what I'm here to","tell you.","");        
+        TextBoxM(T_MANTA, "The battle system is basically","finished, but they found some","pretty bad bugs at the last");
+        TextBox(T_MANTA, "minute, so it's been disabled for","the time being.","");
         TextBox(T_DARIN, "You know, I can only be teased so much", "before it stops being fun.", "");
+        TextBox(T_MANTA, "We'll see about that!","","");
         
         flags[F_SEA_BERT] = 1; //trip this conversation flag.
     }
-    else
+    else if (flags[F_SEA_BERT] <= 0) // before surprise battle, but after talking to Bert.
     {
-        flags[F_SEA_BERT]++;
-        
-        TextBox(T_MANTA,    "Still no fighty.","","");
-        TextBox(T_MANTA,    "Man, you've asked "+str(flags[F_SEA_BERT])+" times.",
-                            "Asking me more won't change this.", "");
-    }
-    
+        TextBox(T_DARIN, "You know, I can only be teased so much", "before it stops being fun.", "");
+        TextBox(T_MANTA, "We'll see about that!","","");
+    }    
     
 }
