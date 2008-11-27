@@ -760,7 +760,7 @@ void bomby_blast()
 {
     standard_effect(
         "res\sfx\BOMB.WAV", 50,
-        "res\battle\effects\burst.png", 32, 32
+        "res\images\battle\effects\burst.png", 32, 32
     );
 }
 
@@ -768,7 +768,7 @@ void healy_sparkles()
 {
     standard_effect(
         "res\sfx\MAGIC.WAV", 103,
-        "res\battle\effects\sparkle-green.pcx", 32, 32
+        "res\images\battle\effects\sparkle-green.pcx", 32, 32
     );
 }
 
@@ -776,7 +776,7 @@ void magic_sparkles()
 {
     standard_effect(
         "res\sfx\CIGAM.WAV", 103,
-        "res\battle\effects\sparkle-blue.pcx", 32, 32
+        "res\images\battle\effects\sparkle-blue.pcx", 32, 32
     );
 }
 
@@ -784,21 +784,21 @@ void holy_light()
 {
     standard_effect(
         "res\sfx\sun.wav", 120,
-        "res\battle\effects\revive.pcx", 24, 48
+        "res\images\battle\effects\revive.pcx", 24, 48
     );
 }
 
 void protecty_shield() {
     standard_effect(
         "res\sfx\charge.wav", 64,
-        "res\battle\effects\shield.pcx", 16, 32
+        "res\images\battle\effects\shield.pcx", 16, 32
     );
 }
 
 void red_light_swirl() {
     standard_effect(
         "res\sfx\charge.wav", 85,
-        "res\battle\effects\boost.png", 32, 40
+        "res\images\battle\effects\boost.png", 32, 40
     );
 }
 
