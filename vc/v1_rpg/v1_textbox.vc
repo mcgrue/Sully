@@ -499,6 +499,8 @@ void TextBoxDirect(int sp, int m, string s)
     }
     
     _in_textbox = 0;
+    
+    UnPress(UNPRESS_ALL);
 }
 
 
