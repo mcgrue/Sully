@@ -351,9 +351,9 @@ void NewBounceText( int b_idx, int p_idx, string text, int color, int level )
     {
         InitBouncy();   //yo, make a like a ball, and bounce!
 
-        batnum_white    = LoadFont("res\images\battle\numberfont_white.png");
-        batnum_red  = LoadFont("res\images\battle\numberfont_red.png");
-        batnum_green    = LoadFont("res\images\battle\numberfont_green.png");
+        batnum_white    = LoadFont("res\images\battle\fonts\numberfont_white.png");
+        batnum_red  = LoadFont("res\images\battle\fonts\numberfont_red.png");
+        batnum_green    = LoadFont("res\images\battle\fonts\numberfont_green.png");
         
         EnableVariableWidth(batnum_white);
         EnableVariableWidth(batnum_red);
