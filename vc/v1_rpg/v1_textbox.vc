@@ -441,7 +441,7 @@ void TextBoxDirect(int sp, int m, string s)
         time_last = systemtime;
     }
     
-    while (line_num < TEXTBOX_LINES)
+    while( line_num < TEXTBOX_LINES )
     {
         MenuBackGroundDraw(); // Draw universal things
         
@@ -460,7 +460,11 @@ void TextBoxDirect(int sp, int m, string s)
         
         SetClip(0, 0, ImageWidth(screen), ImageHeight(screen), screen);
         
-        if (MenuConfirm()) { line_num++; time_last = systemtime; }
+        if( ButtonAccept(1) ) { 
+            line_num++; 
+            time_last = systemtime; 
+        }
+        
         else if ((systemtime - time_last) / 2 >= len(GetToken(s, "|", line_num)))
         {
             if (line_num < (TEXTBOX_LINES-1)) { line_num++; time_last = systemtime; }
@@ -472,7 +476,8 @@ void TextBoxDirect(int sp, int m, string s)
         
         ShowPage(); 
     }
-    if (m == 1)
+    
+    if( m == 1 )
     {
         time_last = systemtime;
         while ((systemtime - time_last) < 30)
@@ -572,7 +577,7 @@ int PromptDirect(int sp, string question, string choices)
     
     TextBoxDirect(sp, 2, question);
 
-    while(!MenuConfirm())
+    while(!ButtonAccept(1))
     {
         MenuBackGroundDraw(); // Draw universal things
 

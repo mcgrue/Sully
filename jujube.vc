@@ -650,6 +650,8 @@ void VictoryDance() {
             flags[F_MNT_EVIL_SIGN] = systemtime;
         }
     }
+    
+    V1RPG_RenderFunc();
 }
 
 
@@ -675,7 +677,7 @@ void RoadBlock() {
         
         TextBoxM( T_DARIN,   
                   "Aw, nuts!",
-                  "A flimsy sign obstructing the way forward!","");
+                  "A flimsy sign obstructing the way","forward!");
         
         entity.specframe[darin] = 28;
         wait(50);
@@ -760,18 +762,18 @@ void RoadBlock() {
         entity.specframe[darin] = 28;
         wait(50);
         entity.specframe[darin] = 0; //set darin back to normal-mode.
-        
+
         TextBox( T_DARIN,    
                  "You know, we probably could've just",
                  "moved it.","");
-                            
+                 
         HookRetrace("V1RPG_RenderFunc");    //restore the default HookRetrace...
         entity.specframe[dexter] = 0;       //set dexter normal-mode
                             
         TextBox( T_DEXTER,   
-                 "What's the point of spending years learning",
-                 "the arcane secrets of our universe if",
-                 "you're not going to abuse them?" );
+                 "What's the point of spending years",
+                 "learning the arcane secrets of our",
+                 "universe if you're not going to abuse'm?" );
         
         //clean up the temp-variables
         FreeAnimation( sparklies ); 
