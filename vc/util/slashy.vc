@@ -38,8 +38,8 @@ int cur_slashes_count;
 
 void InitSlashy()
 {
-    LoadSlashy( "res\images\battle\slash_monster1.png",32 );
-    LoadSlashy( "res\images\battle\slash_sword1.png",32 );
+    LoadSlashy( "res\images\battle\slashies\slash_monster1.png",32 );
+    LoadSlashy( "res\images\battle\slashies\slash_sword1.png",32 );
 }
 
 /// Loads a slashy animation into memory.  No errorchecking at present.
