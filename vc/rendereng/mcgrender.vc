@@ -333,11 +333,12 @@ void mcg_destroy_everything()
     {
         mcgV_sprites[i] = -1;
     }
-
-    for( i=0; i<MAX_SPRITES; i++ )
+    
+    for( i=0; i<_cur_max_sprites; i++ )
     {
         FreeSprite( i, 1, 1 );
     }
+    _cur_max_sprites = 0;
 
 
     for( i=0; i<MCGRENDER_MAXLAYERS; i++ )

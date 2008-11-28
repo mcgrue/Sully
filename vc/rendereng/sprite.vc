@@ -195,7 +195,7 @@ void FreeSprite( int spr_idx, int free_animt, int override )
     {
         ErrorHandler("Sprite index passed to FreeSprite (" + str(spr_idx) + ") is out of bounds.");
     }
-    else if( sprite_heap[spr_idx].active || override )
+    else if( sprite_heap[spr_idx].active )
     {
         if( free_animt ) 
         {
@@ -203,6 +203,13 @@ void FreeSprite( int spr_idx, int free_animt, int override )
         }
         
         _initSprite(spr_idx);
+    }
+    else if( override ) {
+    
+        if( free_animt && spr_idx <= _cur_max_sprites ) 
+        {
+            FreeAnimation( sprite_heap[spr_idx].sanim_t );
+        }
     }
 }
 
@@ -239,14 +246,25 @@ void _initSprite( int spr_idx ) {
 
 #define NUM_SPRITE_DATA_TOKS 6
 
+int _cur_max_sprites = 0;
+
 // Runs through the sprite array in order until it finds one that's available (ie, that has 
 // active = 0), then returns that index. Returns 0-1 if no slots are free.
 int _getFreeSpriteIndex() {
     int _getcount;
     for (_getcount = 0; _getcount < MAX_SPRITES; _getcount++)
     {
-        if (!sprite_heap[_getcount].active) return _getcount;
+        if (!sprite_heap[_getcount].active) {
+            
+            if( _cur_max_sprites < _getcount ) {
+                _cur_max_sprites = _getcount;
+            }
+            
+            return _getcount;
+        }
     }
+    
+    _cur_max_sprites = 0;
     return 0-1;
 }
 
