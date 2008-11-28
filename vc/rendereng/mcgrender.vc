@@ -325,7 +325,17 @@ void mcg_destroy_everything()
     for( i=0; i<MCGRENDER_STACKSIZE; i++ )
     {
         //CallFunction( mcgV_heap[i].delete_callfunc );
-        mcg_delete( i );
+        
+        if( i <= mcgV_heap_count ) {
+            mcg_delete( i );
+        } else {
+            /// initial state for the heap is -1, not 0.
+            mcgV_heap[i].prev_idx = -1;
+            mcgV_heap[i].next_idx = -1;
+            mcgV_heap[i].layer_idx = -1;
+            mcgV_heap[i].image = -1;
+        }
+        
         mcgV_heap[i].is_visible = 0;
     }
 
@@ -639,7 +649,7 @@ int mcg_add_complex( string callfunc, int image )
     }
 
     mcgV_heap[mcgV_heap_count].image        = image;
-    mcgV_heap[mcgV_heap_count].last_time        = systemtime;
+    mcgV_heap[mcgV_heap_count].last_time    = systemtime;
     mcgV_heap[mcgV_heap_count].callfunc     = callfunc;
 
     mcgV_heap[mcgV_heap_count].is_moving        = 1;
