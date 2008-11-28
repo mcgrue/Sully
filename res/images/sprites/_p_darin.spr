@@ -1,0 +1,14 @@
+// Darin's battle character, drawn by the Amazing Hahn
+//name        wd  ht  per_row rows    padding
+_b_darin.gif  32  32  9   11  1
+anim idle     F0W15F1W15B
+anim weak     F2W15F3W15B
+anim attack   F54 W5 F55 W5 F56 W5 F57 W15
+anim hit      F52 W22 F53 W23
+anim death    F4
+
+anim use_item   F92 W8 F93 W20 F94 W10 F95 W10
+anim dance      F97 W22 F96 W22 B
+anim charging   F40 W15 F41 W15 B
+anim casting    F90 W20 F91 W20
+

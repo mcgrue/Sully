@@ -375,6 +375,14 @@ void newgame() {
     ForceEquip( "Dexter", "Hood", SLOT_ACC1 );
     ForceEquip( "Dexter", "Cloak",  SLOT_BODY );
 
+GrantSkill( "Dexter", "Flame" );
+GrantSkill( "Dexter", "Ice" );
+GrantSkill( "Dexter", "Bolt" );
+
+GrantSkill( "Lance", "Sleep" );
+GrantSkill( "Lance", "Trouble" );
+GrantSkill( "Lance", "Backlash" );
+
     ForceEquip("Galfrey","Spear",SLOT_RHAND);
     ForceEquip("Galfrey","Gold_Helmet",SLOT_ACC1);
     ForceEquip("Galfrey","Plate_Mail",SLOT_BODY);
@@ -397,6 +405,9 @@ GrantSkill( "Darin", "Go_Away" );
     GrantSkill( "Crystal", "Might" );
     GrantSkill( "Crystal", "Revive" );
 
+
+JoinParty("Dexter"); 
+JoinParty("Lance"); 
 
     //we need to have a party member to start off with, or else the partyhandling 
     // system cries.  Let's make it Darin! :D

@@ -172,10 +172,10 @@ int IsTheBattleOver() {
 /// Just one of many things that could be recoded nicer.
 void BsPlacePartySprites()
 {
-    int pos1 = 50;
-    int pos2 = 87;
-    int pos3 = 124;
-    int pos4 = 161;
+    int pos1 = 50+32;
+    int pos2 = 87+24;
+    int pos3 = 124+16;
+    int pos4 = 161+8;
     int pos5 = 198;
     
     int base_x = 256;
@@ -190,6 +190,9 @@ void BsPlacePartySprites()
 
     for( i=0; i<PartySize(); i++ )
     {
+
+MessageBox( str(i) + ":" + bat_getName(i,PARTY_ALLY) + ", battle_sprite: '"+master_cast[party[i]].battle_sprite+"'" );    
+    
         bs_ally_sprite_ref[i] = LoadSprite( 
             master_cast[party[i]].battle_sprite, SPRITETYPE_ALLY 
         );  
@@ -201,6 +204,7 @@ void BsPlacePartySprites()
             x = base_x + Random( min_x, max_x );
             ref = mcg_add_sprite( x,pos3,   x,pos3, 0, bs_ally_sprite_ref[0] );
             master_cast[party[0]].battle_ref = ref;
+        
         case 2:
             x = base_x + Random( min_x, max_x );
             ref = mcg_add_sprite( x,pos2,   x,pos2, 0, bs_ally_sprite_ref[0] );
@@ -209,6 +213,7 @@ void BsPlacePartySprites()
             x = base_x + Random( min_x, max_x );
             ref = mcg_add_sprite( x,pos4,   x,pos4, 0, bs_ally_sprite_ref[1] );
             master_cast[party[1]].battle_ref = ref;
+        
         case 3:
             x = base_x + Random( min_x, max_x );
             ref = mcg_add_sprite( x,pos3,   x,pos3, 0, bs_ally_sprite_ref[0] );
@@ -221,6 +226,7 @@ void BsPlacePartySprites()
             x = base_x + Random( min_x, max_x );
             ref = mcg_add_sprite( x,pos5,   x,pos5, 0, bs_ally_sprite_ref[2] );
             master_cast[party[2]].battle_ref = ref;
+        
         case 4:
             x = base_x + Random( min_x, max_x );
             ref = mcg_add_sprite( x,pos2,   x,pos2, 0, bs_ally_sprite_ref[0] );
@@ -237,6 +243,7 @@ void BsPlacePartySprites()
             x = base_x + Random( min_x, max_x );
             ref = mcg_add_sprite( x,pos3,   x,pos3, 0, bs_ally_sprite_ref[3] );
             master_cast[party[3]].battle_ref = ref;
+            
         case 5:
             x = base_x + Random( min_x, max_x );
             ref = mcg_add_sprite( x,pos3,   x,pos3, 0, bs_ally_sprite_ref[0] );

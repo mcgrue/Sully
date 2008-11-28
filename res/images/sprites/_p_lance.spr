@@ -1,0 +1,15 @@
+// Lance's battle character, drawn by Gayo
+//name        wd  ht  per_row rows    padding
+_b_lance.gif  32  32  9       4       1
+
+anim idle     F0 W30 F1 W8 F2 W3 0F1 W8 B
+anim weak     F4 W30 F5 W5 F6 W10 B
+anim attack   F9 W5 F10 W15 F11 W5 F12 W10
+anim hit      F7 W22 F8 W23
+anim death    F13
+
+anim use_item   F22 W10 F23 W10 F22 W10 F24 W5 F25 W15 
+anim dance      F20 W22 F21 W22 B
+anim charging   F14 W15 F15 W10 F16 W15 F15 W10 B
+anim casting    F18 W15 F19 W25
+
