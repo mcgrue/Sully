@@ -35,7 +35,7 @@ void resetBattleEnemyList()
 /// Takes a master_enemy[] index and adds that enemy to the current battle
 int addEnemyToBattle( int idx, int render_idx, int is_leader )
 {
-    int i = battle_enemy_count;
+    int i = enemyPartySize();
     battle_enemies[i].master_enemy_idx  = idx;
     battle_enemies[i].leader_flag       = is_leader;
     battle_enemies[i].render_idx        = render_idx;
@@ -49,33 +49,18 @@ int addEnemyToBattle( int idx, int render_idx, int is_leader )
 
 //nme_dump( i );
 
-    battle_enemy_count++;
-}
-
-int enemyIsIncapacitated( int idx )
-{
-    if( battle_enemies[idx].cur_hp <= 0 )
-        return 1;
-
-    return 0;
-}
-
-int enemyPartyLives()
-{
-    int i;
-    for( i=0; i<battle_enemy_count; i++ )
-    {
-        if( !enemyIsIncapacitated(i) )
-            return 1;
-    }
-
-    return 0;
+    setEnemyPartySize(i+1);
 }
 
 /// returns the number of enemies in the enemy party.
 int enemyPartySize()
 {
     return battle_enemy_count;
+}
+
+int setEnemyPartySize( int i )
+{
+    battle_enemy_count = i;
 }
 
 
@@ -385,7 +370,7 @@ int nme_addStatus( int bidx, string cond )
 {
     int sidx;
 
-    if( bidx < 0 || bidx >= battle_enemy_count )
+    if( bidx < 0 || bidx >= enemyPartySize() )
     {
         ErrorHandler( "nme_addStatus(): "+str(bidx)+" is not a valid battle enemy index." );
         return -1;
@@ -418,7 +403,7 @@ int nme_addStatus( int bidx, string cond )
 /// @returns 1 if something was successfully removed, 0 if there was no matching condition to remove, -1 on error.
 int nme_removeStatus( int bidx, string cond )
 {
-    if( bidx < 0 || bidx >= battle_enemy_count )
+    if( bidx < 0 || bidx >= enemyPartySize() )
     {
         ErrorHandler( "nme_removeStatus(): "+str(bidx)+" is not a valid battle enemy index." );
         return -1;
@@ -462,7 +447,7 @@ int nme_removeStatus( int bidx, string cond )
 /// @returns the number of instances found and removed, -1 on error.
 int nme_removeAllStatus( int bidx, string cond )
 {
-    if( bidx < 0 || bidx >= battle_enemy_count )
+    if( bidx < 0 || bidx >= enemyPartySize() )
     {
         ErrorHandler( "nme_removeAllStatus(): "+str(bidx)+" is not a valid battle enemy index." );
         return -1;
@@ -552,8 +537,8 @@ void nme_testStatusAbilities()
 {
     int i;
 
-    if( !battle_enemy_count )
-        battle_enemy_count = 1;
+    if( !enemyPartySize() )
+        setEnemyPartySize(1);
 
     battle_enemies[0].master_enemy_idx = 0;
     //master_enemy[0].immune = "POISON,";

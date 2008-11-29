@@ -35,11 +35,11 @@ void _cleanup_standard_effect() {
         if( clear_gattaca_before_standard_effect_oncomplete ) {
             EmptyGATTACA();
         }
-        
+
         TurnBattleEffectOn( standard_effect_oncomplete );
 
         standard_effect_oncomplete = "";
-        clear_gattaca_before_standard_effect_oncomplete = 0;        
+        clear_gattaca_before_standard_effect_oncomplete = 0;
     } else {
         TurnBattleEffectOff( 1 );
     }
@@ -47,8 +47,8 @@ void _cleanup_standard_effect() {
 
 
 
-void set_standard_effect_onComplete( string callfunc, int clearGattacaBefore ) 
-{ 
+void set_standard_effect_onComplete( string callfunc, int clearGattacaBefore )
+{
     standard_effect_oncomplete = callfunc;
     clear_gattaca_before_standard_effect_oncomplete = 0;
 }
@@ -56,15 +56,15 @@ void set_standard_effect_onComplete( string callfunc, int clearGattacaBefore )
 void _init_standard_effect(
     string sound_path,
     int sound_length,
-    string animation_path, 
-    int frame_x, 
+    string animation_path,
+    int frame_x,
     int frame_y
 ) {
     __fx__played_sound = LoadSound( sound_path );
     __fx__anim_ref = LoadAnimation( animation_path, frame_x, frame_y );
 
     PlaySound( __fx__played_sound, sfx_volume );
-    
+
     __fx__sound_length = sound_length;
 
     __fx__starttime = systemtime;
@@ -75,16 +75,16 @@ void _init_standard_effect(
 
 void _draw_standard_effect() {
 
-    Log( "_draw_standard_effect(), GetGatticanCount() = "+str(GetGatticanCount())+"    "+str((systemtime - __fx__starttime) / __fx__framechunk) );
+//Log( "_draw_standard_effect(), GetGatticanCount() = "+str(GetGatticanCount())+"    "+str((systemtime - __fx__starttime) / __fx__framechunk) );
 
     for( __fx__i=0; __fx__i<GetGatticanCount(); __fx__i++ )
     {
-        BlitFrameAt( 
-            GetGatticanCX(__fx__i)+__fx__offs_x, 
-            GetGatticanCY(__fx__i)+__fx__offs_y, 
-            __fx__anim_ref, 
-            (systemtime - __fx__starttime) / __fx__framechunk, 
-            screen 
+        BlitFrameAt(
+            GetGatticanCX(__fx__i)+__fx__offs_x,
+            GetGatticanCY(__fx__i)+__fx__offs_y,
+            __fx__anim_ref,
+            (systemtime - __fx__starttime) / __fx__framechunk,
+            screen
         );
     }
 }
@@ -96,11 +96,11 @@ void standard_effect(
     int frame_x,
     int frame_y
 ) {
-    if( __fx__played_sound < 0 ) 
+    if( __fx__played_sound < 0 )
     {
         _init_standard_effect( sound_path, sound_length, animation_path, frame_x, frame_y );
     }
-    
+
     if( systemtime >= __fx__endtime )
     {
        _cleanup_standard_effect();

@@ -109,14 +109,6 @@ void clean_battle_queue_slot(int i) {
 /// @see arTemp
 void sort_battle_queue()
 {
-
-//Log( "*********************************" );
-//Log( "**** sort_battle_queue START ****" );
-
-//dump_battle_queue();
-
-//Log( "*********************************" );
-
     int cur_low = MAX_BATTLE_DELAY + 1;
     int cur_idx;
 
@@ -127,40 +119,20 @@ void sort_battle_queue()
         cur_low = battle_queue[i].time;
         cur_idx = i;
 
-//Log( "pass "+str(i)+" start - cur_low: " + str(cur_low) );
-//Log( "pass "+str(i)+" start - cur_idx: " + str(cur_idx) );
-
         for( j=i; j<battle_queue_count; j++ )
         {
-//Log( "pass "+str(i)+"."+str(j)+" - cur_low: " + str(cur_low) );
-//Log( "pass "+str(i)+"."+str(j)+" - cur_idx: " + str(cur_idx) );
             if( battle_queue[j].time < cur_low )
             {
-
-//Log( "pass "+str(i)+"."+str(j)+" Switching to lower!" );
-
                 cur_low = battle_queue[j].time;
                 cur_idx = j;
-
-//Log( "pass "+str(i)+"."+str(j)+" - cur_low: " + str(cur_low) );
-//Log( "pass "+str(i)+"."+str(j)+" - cur_idx: " + str(cur_idx) );
             }
         }
 
         if( cur_idx != i )
         {
-//Log( "pass "+str(i)+" end - swiching ("+str(cur_idx)+","+str(i)+")! " );
-
             switch_battle_queue_slots( cur_idx, i );
         }
     }
-
-//Log( "*********************************" );
-
-//dump_battle_queue();
-
-//Log( "**** sort_battle_queue END ****" );
-//Log( "*******************************" );
 }
 
 /// debugging function, dumps the current battle queue's contents to the log.
@@ -365,13 +337,9 @@ void advance_battle_queue_by_time( int time, int reverseMode )
 
 int BattleQueueActorIsActive( int i )
 {
-    if( battle_queue[i].batent_party == PARTY_ALLY )
+    if( battle_queue[i].batent_party == PARTY_ALLY || battle_queue[i].batent_party == PARTY_ENEMY )
     {
-        return !AllyIsIncapacitated( battle_queue[i].batent_ref );
-    }
-    else if( battle_queue[i].batent_party == PARTY_ENEMY )
-    {
-        return !EnemyIsIncapacitated( battle_queue[i].batent_ref );
+        return !bat_is_incapacitated(battle_queue[i].batent_ref, PARTY_ALLY);
     }
     else if( battle_queue[i].batent_party == PARTY_NULL ) //status effects, etc.
     {

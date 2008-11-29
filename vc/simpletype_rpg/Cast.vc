@@ -313,8 +313,10 @@ string add_unique_modifier( string old, string add )
 /// happens at the end of every battle
 ///
 /// @param cidx the master_cast[] index of the person to reset.
-void WipeAllyBattleModifiers( int cidx )
+void WipeAllyBattleModifiers( int party_index )
 {
+    int cidx = getCastIndexFromPartyIndex(party_index, "WipeAllyBattleModifiers");
+
     int i;
 
     master_cast[cidx].o_immune   = "";
@@ -843,16 +845,6 @@ int GetCast( string name )
     }
 
     return 0-1;
-}
-
-/// returns true if an ally is considered incapacitated for 'party death' reasons.
-///
-int AllyIsIncapacitated( int cast_idx )
-{
-    if( GetCurHP(cast_idx) <= 0 )
-        return 1;
-
-    return 0;
 }
 
 // Returns the ATK bonus given to unarmed characters (STR/4).

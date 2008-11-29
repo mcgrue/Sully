@@ -143,8 +143,9 @@ void endOfBattle()
     int i;
     for( i=0; i<PartySize(); i++ )
     {
-        trigger_on_end( party[i] );
-        WipeAllyBattleModifiers( party[i] );
+        trigger_on_end( i );
+
+        WipeAllyBattleModifiers( i );
     }
 
     DestroyBattleMessage();
@@ -342,10 +343,10 @@ void BsSeedBattleQueue()
     {
         for( i=0; i<PartySize(); i++ )
         {
-            add_battle_queue_delay_entry( Random(1,50),  party[i], PARTY_ALLY, "" );
+            add_battle_queue_delay_entry( Random(1,50),  i, PARTY_ALLY, "" );
         }
 
-        for( i=0; i<battle_enemy_count; i++ )
+        for( i=0; i<enemyPartySize(); i++ )
         {
             add_battle_queue_delay_entry( Random(51,100), i, PARTY_ENEMY, "" );
         }
@@ -356,10 +357,10 @@ void BsSeedBattleQueue()
     {
         for( i=0; i<PartySize(); i++ )
         {
-            add_battle_queue_delay_entry( Random(51,100), party[i], PARTY_ALLY, "" );
+            add_battle_queue_delay_entry( Random(51,100), i, PARTY_ALLY, "" );
         }
 
-        for( i=0; i<battle_enemy_count; i++ )
+        for( i=0; i<enemyPartySize(); i++ )
         {
             add_battle_queue_delay_entry( Random(1,50), i, PARTY_ENEMY, "" );
         }
@@ -370,65 +371,15 @@ void BsSeedBattleQueue()
     {
         for( i=0; i<PartySize(); i++ )
         {
-            add_battle_queue_delay_entry( Random(1,50), party[i], PARTY_ALLY, "" );
+            add_battle_queue_delay_entry( Random(1,50), i, PARTY_ALLY, "" );
         }
 
-        for( i=0; i<battle_enemy_count; i++ )
+        for( i=0; i<enemyPartySize(); i++ )
         {
             add_battle_queue_delay_entry( Random(1,50), i, PARTY_ENEMY, "" );
         }
     }
 }
-
-
-/*
-int __TEST_stamp;
-int __TEST_myfont = LoadFont("fred.png");
-int __TEST_initd;
-
-void __TEST_bouncy()
-{
-    int randx, randy;
-    int i;
-
-
-    if( !__TEST_initd )
-    {
-        InitBouncy();   //yo, make a like a ball, and bounce!
-
-        __TEST_stamp = timer;
-        __TEST_myfont = LoadFont("fred.png");
-        EnableVariableWidth(__TEST_myfont);
-
-        __TEST_initd = 1;
-    }
-
-    if( timer-__TEST_stamp > 125 )
-    {
-        randx = Random(0,320-32);
-        randy = Random(30,200-8);
-
-        i = Random( 1,10 );
-
-        if( i == 1 )
-        {
-            CreateBouncyString( "miss!", randx, randy, __TEST_myfont, 650, 800, Random(0,1) );
-        }
-        else if( i == 2 )
-        {
-            CreateBouncyString( "<overkill>", randx, randy, __TEST_myfont, 650, 800, Random(0,1) );
-        }
-        else
-        {
-            CreateBouncyString( str(Random(1,9999)), randx, randy,__TEST_myfont, 650, 800, Random(0,1) );
-        }
-
-        __TEST_stamp = timer;
-    }
-
-    DoBouncy(); //this should be hooked to retrace, but that would require a map
-}
-*/
 
 /// returns the master_cast idx of a random party member.  chooses from only the living if living_only is true.
 /// errors if nobody was living.
@@ -436,7 +387,7 @@ int SelectRandomAlly( int living_only )
 {
     int i, j;
 
-    if( !allyPartyLives() && living_only )
+    if( !bat_party_lives(PARTY_ALLY) && living_only )
     {
         ErrorHandler( "SelectRandomAlly(): Wanted to select a random living ally, but none were alive." );
     }
@@ -446,15 +397,15 @@ int SelectRandomAlly( int living_only )
     {
         if( living_only )
         {
-            if( !AllyIsIncapacitated(party[i]) )
+            if( !bat_is_incapacitated(i,PARTY_ALLY) )
             {
-                arTemp[j] = party[i];
+                arTemp[j] = i;
                 j++;
             }
         }
         else
         {
-            arTemp[j] = party[i];
+            arTemp[j] = i;
             j++;
         }
     }
@@ -468,7 +419,7 @@ int SelectRandomEnemy( int living_only )
 {
     int i, j;
 
-    if( !enemyPartyLives() && living_only )
+    if( !bat_party_lives(PARTY_ENEMY) && living_only )
     {
         ErrorHandler( "SelectRandomEnemy(): Wanted to select a random living enemy, but none were alive." );
     }
@@ -478,7 +429,7 @@ int SelectRandomEnemy( int living_only )
     {
         if( living_only )
         {
-            if( !EnemyIsIncapacitated(i) )
+            if( !bat_is_incapacitated(i,PARTY_ENEMY) )
             {
                 arTemp[j] = i;
                 j++;
@@ -1519,7 +1470,7 @@ void EndOfBattleAction()
             SetSpriteUnpause( battle_enemies[i].render_idx );
         }
 
-        if( enemyIsIncapacitated(i) )
+        if( bat_is_incapacitated(i,PARTY_ENEMY) )
         {
             if( !nme_getDeadFlag(i) )
             {
@@ -1544,7 +1495,7 @@ void EndOfBattleAction()
             SetSpriteUnpause(ref);
         }
 
-        if( allyIsIncapacitated(i) )
+        if( bat_is_incapacitated(i, PARTY_ALLY) )
         {
             if( !wasDead(party[i]) )
             {
@@ -1560,11 +1511,11 @@ void EndOfBattleAction()
         }
     }
 
-    if( !allyPartyLives() )
+    if( !bat_party_lives(PARTY_ALLY) )
     {
         PlayBattleGameOver();
     }
-    else if( !enemyPartyLives() )
+    else if( !bat_party_lives(PARTY_ENEMY) )
     {
         PlayBattleVictory();
     }
@@ -1595,7 +1546,7 @@ void PlayBattleVictory()
 
     for( i=0; i<PartySize(); i++ )
     {
-        if( !allyIsIncapacitated(i) )
+        if( !bat_is_incapacitated(i, PARTY_ALLY) )
         {
             ref = bat_getRenderRef( i, PARTY_ALLY );
 

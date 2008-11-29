@@ -232,6 +232,38 @@ int bat_was_dead( int bidx, int pidx )
     return -1;
 }
 
+/// returns true if an battle actor is considered incapacitated for 'party death' reasons.
+int bat_is_incapacitated( int bidx, int pidx ) {
+
+    // add later 'stone' and other similar death-like ailments.
+
+    return bat_is_dead( bidx, pidx );
+}
+
+int bat_party_lives( int pidx ) {
+    int i, cnt;
+
+    if( pidx == PARTY_ALLY ) {
+        cnt = PartySize();
+    } else if( pidx == PARTY_ENEMY ) {
+        cnt = EnemyPartySize();
+    } else {
+        ErrorHandler( "bat_party_lives() called with invalid party index ("+str(pidx)+")." );
+    }
+
+    if( cnt <= 0 ) {
+        ErrorHandler( "bat_party_lives() called with valid party index ("+str(pidx)+"), but that party reported an invalid size ("+str(cnt)+")." );
+    }
+
+    for( i=0; i<cnt; i++ ) {
+        if( !bat_is_incapacitated(i,pidx) ) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 int bat_is_dead( int bidx, int pidx )
 {
     if( bat_cur_hp(bidx, pidx) > 0 )

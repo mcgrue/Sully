@@ -6,15 +6,15 @@
 // modified by McGrue
 ////////////////////////////////////////////
 
-/// The maximum members in a party.  
-/// You may alter this, but do not expect menus built on expectations 
+/// The maximum members in a party.
+/// You may alter this, but do not expect menus built on expectations
 /// of 5 to work properly.
 #define MAX_PARTY_SIZE 5
 
 /// an array of master_cast[] indexes for the party.
 ///
 ///eg:  party[3] is equal to the 4th party member's master_cast[] idx.
-///     so, for example, if you wanted to access that character's name based 
+///     so, for example, if you wanted to access that character's name based
 ///     on their party position, you would do:
 ///
 ///     master_cast[ party[4] ].name;
@@ -30,20 +30,20 @@ int money;
 string moneyname = "Clams";
 
 
-/// The current party size.  
+/// The current party size.
 /// This is altered by AddPlayer, RemovePlayer, and any function that calls them.
 /// please do not alter it by hand unless you Know What You Are Doing (tm).
-int curpartysize;   
+int curpartysize;
 
 
-/// The current party leader entity.  
+/// The current party leader entity.
 /// This is set by SpawnParty, and contains the entitys[] index of the party's leader.
 /// please do not alter it by hand unless you Know What You Are Doing (tm).
 int playerent;
 
-// This initializes a character to a particular level, setting his stats to the proper 
+// This initializes a character to a particular level, setting his stats to the proper
 // amount for that level. This destroys all current stat information held in the character,
-// so do it BEFORE equipping gear. In general you should only do this once, either at the 
+// so do it BEFORE equipping gear. In general you should only do this once, either at the
 // very beginning of the game or when the character first joins.
 // Maybe this function should also strip a character of his skills and gear? Something to
 // consider adding later.
@@ -61,12 +61,12 @@ void InitializeCharacter(string charname, int lev)
 }
 
 
-// This initializes a character to a particular level, setting his stats to the proper 
+// This initializes a character to a particular level, setting his stats to the proper
 // amount for that level. This destroys all current stat information held in the character,
-// so do it BEFORE equipping gear. In general you should only do this once, either at the 
+// so do it BEFORE equipping gear. In general you should only do this once, either at the
 // very beginning of the game or just before the character first joins.
 // Maybe this function should also strip a character of his skills and gear? Something to
-// consider adding later. 
+// consider adding later.
 //
 // Errors on invalid cast_idx or level.
 void InitializeCharacterI(int cast_idx, int lev)
@@ -75,25 +75,25 @@ void InitializeCharacterI(int cast_idx, int lev)
     if( cast_idx < 0 || cast_idx >= MAX_CAST ) {
         ErrorHandler( "InitializeCharacter(): "+str(cast_idx)+" is not a valid cast index." );
         return;
-    }   
+    }
     if( lev < 1 || lev > MAX_LEVELS ) {
         ErrorHandler( "InitializeCharacter(): "+str(cast_idx)+" is not a valid cast index." );
         return;
-    }   
-    // Initialize stats to level 1 values   
-    for (i = 0; i < MAX_GROWABLE_STATS; i++) { 
-        SetRawStat(cast_idx, i, master_cast[cast_idx].stat_growth[0][i]); 
-    }   
+    }
+    // Initialize stats to level 1 values
+    for (i = 0; i < MAX_GROWABLE_STATS; i++) {
+        SetRawStat(cast_idx, i, master_cast[cast_idx].stat_growth[0][i]);
+    }
     SetXP(cast_idx, GetXPRequired(cast_idx,lev)); // character is given exactly enough XP for this level
     for (i=1; i < lev; i++)
-    {       
+    {
         _doLevelUp(cast_idx);
     }
 }
 
 /// returns the current size of the party.
 ///
-/// It's just a protective sheild around curpartysize for those of you 
+/// It's just a protective sheild around curpartysize for those of you
 /// who do not trust yourself with read/write vars. ;)
 int PartySize() {
     return curpartysize;
@@ -104,7 +104,7 @@ int PartySize() {
 void PartyRest()
 {
     int i;
-    
+
     for( i=0; i<PartySize(); i++ )
     {
         trigger_on_rest( party[i] );
@@ -112,29 +112,29 @@ void PartyRest()
 }
 
 
-/// Takes a string name of a Cast member.  
+/// Takes a string name of a Cast member.
 /// @param a valid party member name
 /// @return master_cast idx if it's a valid cast name.  -1 if not.
 int IsCharacter( string name ) {
     int i;
-    
+
     for( i=0; i<MAX_CAST; i++ ) {
         if( equ(master_cast[i].name, name) ) {
             return i;
         }
     }
-    
+
     return 0-1;
 }
 
 // Takes a cast index within the legal range. Returns true if the index
 // corresponds to an actual character and false if the index points to an
-// empty slot in the array or if there was an error. It guesses which is 
-// which by checking what the character's name is. If the name is listed 
-// as the empty string "" then it's assumed that the spot is empty. This 
-// isn't a totally safe assumption,but right now the datafile parser doesn't 
-// allow you to name a character that, so it seems like an acceptable kludge. 
-// If you're paranoid, half the reason this function exists is so that you 
+// empty slot in the array or if there was an error. It guesses which is
+// which by checking what the character's name is. If the name is listed
+// as the empty string "" then it's assumed that the spot is empty. This
+// isn't a totally safe assumption,but right now the datafile parser doesn't
+// allow you to name a character that, so it seems like an acceptable kludge.
+// If you're paranoid, half the reason this function exists is so that you
 // can change the method of determination.
 // Returns an error on an out-of-bounds index.
 int IsCharacterIndex(int cast_idx)
@@ -142,7 +142,7 @@ int IsCharacterIndex(int cast_idx)
     if (cast_idx < 0 || cast_idx >= MAX_CAST)
     {
         ErrorHandler( "IsCharacterIndex(): '"+str(cast_idx)+"' is not a valid cast index." );
-        return 0;       
+        return 0;
     }
     // If name is an empty string, assume not a real character and return false
     if (!strcmp(master_cast[cast_idx].name,"")) return 0;
@@ -158,14 +158,14 @@ int IsCharacterIndex(int cast_idx)
 /// @param a valid master_cast[] name of the PC to join the party.
 void JoinParty(string name) {
     int i;
-    
+
     i = IsCharacter( name );
-    
+
     if( i<0 ) {
         ErrorHandler( "JoinParty(): '"+name+"' is not a valid cast member." );
         return;
-    } 
-    JoinPartyI(i);  
+    }
+    JoinPartyI(i);
 }
 
 /// adds a member of master_cast to the party by their cast index.
@@ -180,12 +180,12 @@ void JoinPartyI(int cast_idx) {
         ErrorHandler( "JoinPartyI(): "+master_cast[cast_idx].name+" is already in the party." );
         return;
     }
-    
+
     if( cast_idx < 0 || cast_idx >= MAX_CAST ) {
         ErrorHandler( "JoinPartyI(): "+str(cast_idx)+" is an invalid cast index." );
         return;
     }
-    
+
     if ( PartySize() >= MAX_PARTY_SIZE ) {
         ErrorHandler( "JoinPartyI(): The party is already at maximum capacity." );
         return;
@@ -203,14 +203,14 @@ void JoinPartyI(int cast_idx) {
 /// @param level the level for this PC to join at.
 void JoinPartyAtLevel( string name, int level ) {
     int i;
-    
+
     i = IsCharacter( name );
-    
+
     if( i<0 ) {
         ErrorHandler( "JoinPartyAtLevel(): '"+name+"' is not a valid cast member." );
         return;
-    } 
-    JoinPartyAtLevelI( i, level );  
+    }
+    JoinPartyAtLevelI( i, level );
 }
 
 /// takes a master_cast index and a level.
@@ -219,41 +219,41 @@ void JoinPartyAtLevel( string name, int level ) {
 /// Otherwise, adds or removes levels as necessary.
 /// This function DOES heal the character, unlike the other join function.
 ///
-/// errors on a bad index, if the character is already in the party, 
+/// errors on a bad index, if the character is already in the party,
 /// on a bad level, or if the party is already at max size.
 /// @param cast_idx The master_cast[] index of the PC to join the party.
 /// @param level The level for the party member to join at.
-void JoinPartyAtLevelI( int cast_idx, int level ) { 
-    int i, xpdif, curlev; 
+void JoinPartyAtLevelI( int cast_idx, int level ) {
+    int i, xpdif, curlev;
     if ( CharInPartyI(cast_idx) ) {
         ErrorHandler( "JoinPartyAtLevelI(): "+master_cast[cast_idx].name+" is already in the party." );
         return;
     }
-    
+
     if( cast_idx < 0 || cast_idx >= MAX_CAST ) {
         ErrorHandler( "JoinPartyAtLevelI(): "+str(cast_idx)+" is an invalid cast index." );
         return;
     }
-    
+
     if ( PartySize() >= MAX_PARTY_SIZE ) {
         ErrorHandler( "JoinPartyAtLevelI(): The party is already at maximum capacity." );
         return;
     }
-    
+
 
     // Level sanity check
     if( level <= 0 || level > MAX_LEVELS ) {
         ErrorHandler( "JoinPartyAtLevelI(): "+str(level)+" is not a valid level." );
         return;
     }
-    
+
     curlev = GetLevel(cast_idx);
-    
+
     if (curlev < level)
-    {       
+    {
         xpdif = GetXP(cast_idx) - GetXPRequired(cast_idx, curlev); // xpdif is current excess XP
-        for (i = curlev; i < level; i++) 
-        { 
+        for (i = curlev; i < level; i++)
+        {
             _doLevelUp(cast_idx);
         }
         // The character is given exactly the amount of XP that will take him to the new level,
@@ -266,15 +266,15 @@ void JoinPartyAtLevelI( int cast_idx, int level ) {
     else if (curlev > level)
     {
         xpdif = GetXP(cast_idx) - GetXPRequired(cast_idx, curlev); // xpdif is current excess XP
-        for (i = curlev; i > level; i--) 
-        { 
+        for (i = curlev; i > level; i--)
+        {
             _doLevelDown(cast_idx);
-        }   
-        // The character loses exactly enough XP to give him the minimum for his new level, 
+        }
+        // The character loses exactly enough XP to give him the minimum for his new level,
         // plus any excess XP beyond the minimum for his original level. If this gives him
         // enough XP to level up again he is set to 1 below the XP required for the next level.
         if (level = MAX_LEVELS) SetXP(cast_idx, GetXPRequired(cast_idx, level)); // This shouldn't be possible, but you never know
-        else SetXP(cast_idx, min(GetXPRequired(cast_idx,level+1), GetXPRequired(cast_idx,level) + xpdif));      
+        else SetXP(cast_idx, min(GetXPRequired(cast_idx,level+1), GetXPRequired(cast_idx,level) + xpdif));
     }
 
     FullHeal(cast_idx);
@@ -289,31 +289,31 @@ void JoinPartyAtLevelI( int cast_idx, int level ) {
 ///
 /// @param name the master_cast[] name of a PC.
 int GetPartyEntity( string name ) {
-    return GetPartyEntityByIndex(FindPartyPos(name));   
+    return GetPartyEntityByIndex(FindPartyPos(name));
 }
 
-/// Thus functions the same as GetPartyEntity, above, save that it takes 
-/// the character's party index rather than name. This allows you to easily 
-/// iterate over the entire party. 
+/// Thus functions the same as GetPartyEntity, above, save that it takes
+/// the character's party index rather than name. This allows you to easily
+/// iterate over the entire party.
 ///
 /// errors if the index is <0 or >PartySize()
 ///
-/// @param idx the party[] index of a PC. Note that this is NOT the 
+/// @param idx the party[] index of a PC. Note that this is NOT the
 ///     same as the master_cast index.
-int GetPartyEntityByIndex( int idx ) 
-{   
+int GetPartyEntityByIndex( int idx )
+{
     if(idx<0 || idx >= PartySize()) {
         ErrorHandler( "GetPartyEntityByIndex("+str(idx)+"): Index out of bounds (must be nonnegative and less than current PartySize())." );
     } else {
         return master_cast[party[idx]].entity;
     }
-    
+
     return 0-1;
 }
 
 
-/// takes a master_cast name 
-/// adds cast member to the active party.  If the party was empty, 
+/// takes a master_cast name
+/// adds cast member to the active party.  If the party was empty,
 ///   this member becomes leader.
 ///
 /// errors if the specified name isn't valid.
@@ -321,12 +321,12 @@ int GetPartyEntityByIndex( int idx )
 /// errors if the party is full.
 void AddPlayer( string name ) {
     int i;
-    
+
     if( IsCharacter(name) < 0 ) {
         ErrorHandler( "AddPlayer('"+name+"'): '"+name+"' is not a valid character's name." );
         return;
     }
-    
+
     for( i=0; i<MAX_CAST; i++ ) {
         if( equ(name, master_cast[i].name) ) {
             AddPlayerI(i);
@@ -337,7 +337,7 @@ void AddPlayer( string name ) {
 
 
 // takes a master_cast index.
-// adds cast member to the active party.  If the party was empty, 
+// adds cast member to the active party.  If the party was empty,
 //   this member becomes leader.
 //
 // errors if the character was already in the party
@@ -346,7 +346,7 @@ void AddPlayerI( int i ) {
 
     if (CharInPartyI(i)) {
         ErrorHandler( "AddPlayerI("+str(i)+"): '"+str(i)+"' is not a valid party member's cast index." );
-        return; 
+        return;
     }
 
     if (PartySize() >= MAX_PARTY_SIZE) {
@@ -354,18 +354,18 @@ void AddPlayerI( int i ) {
         return;
     }
 
-    party[PartySize()] = i; 
+    party[PartySize()] = i;
 
     int e = EntitySpawn(0, 0, master_cast[i].chrname);
     EntityStalk(e, master_cast[party[PartySize()-1]].entity);
     master_cast[party[PartySize()]].entity = e;
-    curpartysize++; 
+    curpartysize++;
 
-    // Under certain circumstances (see AssemblePartyAt) it's necessary to set an 
+    // Under certain circumstances (see AssemblePartyAt) it's necessary to set an
     // entity's coordinates to themselves because of how the stalking system works.
     // I don't THINK that's necessary here, since this has been commented out for
     // a while with no problems, but someone (probably Gayo) put these lines here,
-    // so I'm leaving them in with this explanation just in case some problem 
+    // so I'm leaving them in with this explanation just in case some problem
     // arises due to them being commented out.
     //
     //entity.x[playerent] = entity.x[playerent];
@@ -425,28 +425,28 @@ int FindPartyPos(string s)
 // errors if the character is not in the party.
 void RemovePlayer(string name)
 {
-    if (!CharInParty(name)) 
+    if (!CharInParty(name))
     {
         ErrorHandler( "RemovePlayer('"+name+"'): '"+name+"' is not in the party." );
         return;
     }
-    
+
     CutsceneOn();
     int j=0;
     int ent;
-    
+
     j=FindPartyPos(name);
 
     ent = master_cast[party[j]].entity;
-        
-    for (j=FindPartyPos(name); j<PartySize()-1; j++) 
+
+    for (j=FindPartyPos(name); j<PartySize()-1; j++)
     {
         party[j]=party[j+1];
     }
-    
+
     curpartysize--;
     CutsceneOff();
-    
+
     //disappear the character!
     entity.obstruct[ent]        = 0;
     entity.visible[ent]     = 0;
@@ -466,7 +466,7 @@ void CutsceneOn()
 }
 
 
-//turns partyfollowing and random encounters on.  
+//turns partyfollowing and random encounters on.
 //Works best if everyone's stacked on the same tile at the time.
 void CutsceneOff()
 {
@@ -479,48 +479,48 @@ void CutsceneOff()
 // sets every party member's current HP to their max HP (healing them completely).
 void RecoverPartyHP() {
     int i;
-    
+
     for( i=0; i<PartySize(); i++ ) {
         HealHP( party[i], MAXIMUM_HP_VALUE );
     }
-} 
+}
 
 // sets every party member's current MP to their max MP (recovering their MP completely).
 void RecoverPartyMP() {
     int i;
-    
+
     for( i=0; i<PartySize(); i++ ) {
-        HealMP( party[i], MAXIMUM_MP_VALUE );       
+        HealMP( party[i], MAXIMUM_MP_VALUE );
     }
-} 
+}
 
 
 // Spawns a party based on the contents of the party[] array.
 // Party[0] becomes the Player, and each following party slot stalks the previous.
 //
-// This function should be called in the autoexec function of any map you wish to 
+// This function should be called in the autoexec function of any map you wish to
 // have your party to exist in.
 //
-// The party is spawned at x,y.  This function does not change cameratracking, 
+// The party is spawned at x,y.  This function does not change cameratracking,
 // so the camera will not automatically jump to the party if not in mode 1.
 //
 // Errors if the current party size is 0 or less or greater than MAX_PARTY_SIZE.
 void SpawnParty( int x, int y ) {
-    
+
     // Initialize entities
     int i, e, last=0-1;
-    
+
     if( !PartySize() || PartySize() > MAX_PARTY_SIZE ) {
         ErrorHandler( "SpawnParty(): your party has an invalid size to spawn ( "+str(PartySize())+" of "+str(MAX_PARTY_SIZE)+" max)" );
         return;
     }
-    
+
     for (i=0; i<PartySize(); i++) {
 
         e = EntitySpawn( x,y, master_cast[party[i]].chrname );
         EntityStalk(e, last);
         master_cast[party[i]].entity = e;
-        if (last<0) 
+        if (last<0)
         {
             SetPlayer(e);
             playerent = e;
@@ -538,21 +538,21 @@ string getName( int party_idx ) {
 // Like SpawnParty, but uses alternate overworld chrs.
 
 void SpawnPartyOverworld( int x, int y ) {
-// SPAWN MORE OVERWORLDS    
+// SPAWN MORE OVERWORLDS
     // Initialize entities
     int i, e, last=0-1;
-    
+
     if( !PartySize() || PartySize() > MAX_PARTY_SIZE ) {
         ErrorHandler( "SpawnParty(): your party has an invalid size to spawn ( "+str(PartySize())+" of "+str(MAX_PARTY_SIZE)+" max)" );
         return;
     }
-    
+
     for (i=0; i<PartySize(); i++) {
 
         e = EntitySpawn( x,y, master_cast[party[i]].overworld_chrname );
         EntityStalk(e, last);
         master_cast[party[i]].entity = e;
-        if (last<0) 
+        if (last<0)
         {
             SetPlayer(e);
             playerent = e;
@@ -562,20 +562,6 @@ void SpawnPartyOverworld( int x, int y ) {
     }
 }
 
-
-/// returns true if the party is still kicking, false if they're all pushing up daisies.
-int allyPartyLives()
-{
-    int i;
-    
-    for( i=0; i<PartySize(); i++ )
-    {
-        if( !AllyIsIncapacitated(i) )
-            return 1;
-    }
-    
-    return 0;
-}
 
 int _MPB_panes[MAX_PARTY_SIZE];
 int _MPB_restore, _MPB_store;
@@ -588,16 +574,16 @@ void MenuPartyBoxRestorePosition()
 
 
 
-//  Lines up all party members behind the party leader. All other party members will be "on 
-// top" of each other when this is done. The function waits for everybody to get lined up, then 
-// sets party following on. 
-//  All party members must be on the map already, and they must have been added to the party 
-// previously, since this works using the party roster. 
+//  Lines up all party members behind the party leader. All other party members will be "on
+// top" of each other when this is done. The function waits for everybody to get lined up, then
+// sets party following on.
+//  All party members must be on the map already, and they must have been added to the party
+// previously, since this works using the party roster.
 //  Unlike AlignStalker, which doesn't actually set the entity to stalk, this turns party-
-// following on when it's done. If for some reason you don't want that, just comment out that 
+// following on when it's done. If for some reason you don't want that, just comment out that
 // line and set it manually whenever you do want it.
-//  At the end of execution, every moved entity (ie not the leader) is set to tile-based 
-// movement and is obstructable, 
+//  At the end of execution, every moved entity (ie not the leader) is set to tile-based
+// movement and is obstructable,
 // (by Gayo)
 void AssembleParty()
 {
@@ -614,13 +600,13 @@ void AssembleParty()
 }
 
 //  Moves all party members to the specified spot. Originally I had planned to make this
-// work sort of like AssembleParty, but there's no way to do this while preserving stalk 
-// positions, so it just moves everyone to the same spot and then once the leader moves 
+// work sort of like AssembleParty, but there's no way to do this while preserving stalk
+// positions, so it just moves everyone to the same spot and then once the leader moves
 // they'll spread back into the normal stalking pattern.
 //  This function leaves everyone stalking, obstructable and in tile-based movement mode.
 // Note that the coordinates you feed it are pixel-based.
 void AssemblePartyAt(int apxcoord, int apycoord)
-{   
+{
     int apacount;
     string goalmove;
     if (PartySize() <= 0) return; // If the party is empty, nothing happens
@@ -628,7 +614,7 @@ void AssemblePartyAt(int apxcoord, int apycoord)
     for (apacount = 0; apacount<PartySize(); apacount++)
     {
         // Build the movestring
-        goalmove = "P"; 
+        goalmove = "P";
         if (entity.x[master_cast[party[apacount]].entity] > apxcoord) // If to the right, move left.
             { goalmove = goalmove + "L" + str(entity.x[master_cast[party[apacount]].entity]-apxcoord); }
         else if (entity.x[master_cast[party[apacount]].entity] < apxcoord) // If to the left, move right.
@@ -639,7 +625,7 @@ void AssemblePartyAt(int apxcoord, int apycoord)
             { goalmove = goalmove + "D" + str(apycoord-entity.y[master_cast[party[apacount]].entity]); }
         goalmove = goalmove + "T"; // Switch to tile-based movement.
         EntityMove(master_cast[party[apacount]].entity, goalmove);  // Assign the movestring
-    }   
+    }
     // Now sit around and wait for everyone to get into position.
     for (apacount = 0; apacount<PartySize(); apacount++)
     {
@@ -654,10 +640,10 @@ void AssemblePartyAt(int apxcoord, int apycoord)
 }
 
 
-//  This is a helper function for AssembleParty. It sets all the party members' movestrings to 
+//  This is a helper function for AssembleParty. It sets all the party members' movestrings to
 // guide them into position. Useful if you want to manage the other aspects of the function by hand.
-// Beware! If you use this on its own, note that it does not actually set anyone to stalk, and it 
-// leaves everybody unobstructable. It also assumes that party size is greater than 1, though I 
+// Beware! If you use this on its own, note that it does not actually set anyone to stalk, and it
+// leaves everybody unobstructable. It also assumes that party size is greater than 1, though I
 // *think* it'll work if not.
 // (by Gayo)
 void _AssemblePartyMovestringSetup()
@@ -666,9 +652,9 @@ void _AssemblePartyMovestringSetup()
     int apscount, apdone;
     string goalmove;
     for (apscount = 1; apscount<PartySize(); apscount++)
-    {       
+    {
         // Save initial coordinates in the temp array
-        artemp[(apscount-1)*2] = entity.x[master_cast[party[apscount]].entity]; 
+        artemp[(apscount-1)*2] = entity.x[master_cast[party[apscount]].entity];
         artemp[((apscount-1)*2)+1] = entity.y[master_cast[party[apscount]].entity];
         // make sure entity isn't going to bump into anything
         entity.obstructable[apscount] = 0;
@@ -676,12 +662,12 @@ void _AssemblePartyMovestringSetup()
     CutsceneOff(); // Set everyone to stalk, moving them into stalking position
     // Set up movescripts for each person (except the leader, who stays where he is, hence starting at 1),
     for (apscount = 1; apscount<PartySize(); apscount++)
-    {       
+    {
         // Set the entity to stalk and check where it ends up (it will be moved back later).
         // This is necessary because EntityStalk's results cannot be predicted easily.
         goalx = entity.x[master_cast[party[apscount]].entity]; // Store goal coordinates
         goaly = entity.y[master_cast[party[apscount]].entity];
-        
+
         //EntityStalk(master_cast[party[apscount]].entity, 0-1); // Unstalk entity so it can be moved
         entity.obstructable[master_cast[party[apscount]].entity] = 0; // Allow entity to pass through obstacles
         // Now build the movestring.
@@ -695,18 +681,18 @@ void _AssemblePartyMovestringSetup()
         else if (artemp[((apscount-1)*2)+1] < goaly) // If above, move down.
             { goalmove = goalmove + "D" + str(goaly-artemp[((apscount-1)*2)+1]); }
         goalmove = goalmove + "T"; // Switch to tile-based movement.
-        EntityMove(master_cast[party[apscount]].entity, goalmove);      
+        EntityMove(master_cast[party[apscount]].entity, goalmove);
     }
-    
-    CutsceneOn(); // Unstalk all party members so they can be moved 
+
+    CutsceneOn(); // Unstalk all party members so they can be moved
 
     // Now return each entity to its original position
     for (apscount = 1; apscount<PartySize(); apscount++)
-    {       
-        entity.x[master_cast[party[apscount]].entity] = artemp[(apscount-1)*2]; 
-        entity.y[master_cast[party[apscount]].entity] = artemp[((apscount-1)*2)+1];     
+    {
+        entity.x[master_cast[party[apscount]].entity] = artemp[(apscount-1)*2];
+        entity.y[master_cast[party[apscount]].entity] = artemp[((apscount-1)*2)+1];
     }
-    
+
 }
 
 int getDefaultPartySpeed() {
@@ -721,33 +707,43 @@ void setPartySpeed( int speed ) {
     if( speed <= 0 )
         speed = getDefaultPartySpeed();
 
-    int i=0;        
+    int i=0;
     int ent_idx;
     for( i=0; i<curpartysize; i++ )
     {
-        ent_idx = GetPartyEntityByIndex(i);   
-        
+        ent_idx = GetPartyEntityByIndex(i);
+
         entity.speed[ent_idx] = speed;
     }
 }
 
 void setPartyFrame( int frame ) {
-    int i=0;        
+    int i=0;
     int ent_idx;
     for( i=0; i<curpartysize; i++ )
     {
-        ent_idx = GetPartyEntityByIndex(i);   
-        
+        ent_idx = GetPartyEntityByIndex(i);
+
         entity.specframe[ent_idx] = frame;
     }
 }
 
 void setPartyFacing( int face ) {
-    int i=0;        
+    int i=0;
     int ent_idx;
     for( i=0; i<curpartysize; i++ )
     {
-        ent_idx = GetPartyEntityByIndex(i);   
+        ent_idx = GetPartyEntityByIndex(i);
         Entity.Face[ent_idx] = face;
     }
+}
+
+
+int getCastIndexFromPartyIndex( int party_index, string what_func ) {
+
+    if( party_index < 0 || party_index >= PartySize() ) {
+        FATAL_ERROR( "getCastIndexFromPartyIndex(), " +str(party_index) + " invalid party index. valid range [0,"+str(PartySize())+").  Offending function: '"+what_func+"'" );
+    }
+
+    return party[party_index];
 }
