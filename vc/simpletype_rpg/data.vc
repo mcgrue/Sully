@@ -443,6 +443,9 @@ void debugAllItems()
         debugItem( i );
 }
 
+string getBattleSprite(int idx) {
+    return master_cast[idx].battle_sprite;
+}
 
 void debugCast( int idx )
 {
@@ -460,7 +463,6 @@ void debugCast( int idx )
     }
     else
     {
-
         log( "                 master_cast["+str(idx)+"].name: " + master_cast[idx].name );
         log( "                 master_cast["+str(idx)+"].desc: " + master_cast[idx].desc );
         log( "              master_cast["+str(idx)+"].chrname: " + master_cast[idx].chrname );

@@ -186,13 +186,13 @@ int __ally_bs_pos_y_initializer() {
 int _BsPlacePartySprites_position( int base_x, int min_x, int max_x, int bidx ) {
     int x, ref, spriteref;
 
-    int party_idx = getCastIndexFromPartyIndex(bidx, "_BsPlacePartySprites_position");
+    int cast_idx = getCastIndexFromPartyIndex(bidx, "_BsPlacePartySprites_position");
 
     spriteref = LoadSprite(
-        master_cast[party_idx].battle_sprite, SPRITETYPE_ALLY
+        master_cast[cast_idx].battle_sprite, SPRITETYPE_ALLY
     );
 
-Log( "spriteref for party member "+str(party_idx)+": " + master_cast[party[party_idx]].battle_sprite );
+Log( "spriteref for party member "+str(cast_idx)+" ("+bat_getName(bidx,PARTY_ALLY)+"): " + getBattleSprite(cast_idx) );
 
     x = base_x + Random( min_x, max_x );
     ref = mcg_add_sprite(
@@ -201,7 +201,7 @@ Log( "spriteref for party member "+str(party_idx)+": " + master_cast[party[party
         0, spriteref
     );
 
-    master_cast[party_idx].mcg_sprite_battle_ref = spriteref;
+    master_cast[cast_idx].mcg_sprite_battle_ref = spriteref;
 
     return ref;
 }
