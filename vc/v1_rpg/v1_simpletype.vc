@@ -1,19 +1,19 @@
-// These are functions that are hybrids between the v1-rpg library and the 
+// These are functions that are hybrids between the v1-rpg library and the
 // Simpletype Systems library.
 //
-// Basically, the graphical-drawing-ness/message-displayery is in the v1_rpg lib, and 
+// Basically, the graphical-drawing-ness/message-displayery is in the v1_rpg lib, and
 //  all of the stuff actually being altered (money/items/etc) is in the simpletype lib.
 //////////////////////////////////
 
 
 // Removes an amount of money from the party's coffers.
-// 
+//
 // lets you remove more than you have, resulting in a negative amount.
 //  so check before you do it!
 void TakeMoney(int amount)
 {
     Banner( "Lost "+str(amount)+" "+moneyname+"!", 300 );
-    
+
     money -= amount;
 }
 
@@ -21,12 +21,12 @@ void TakeMoney(int amount)
 //
 void FindMoney(int amt) {
     Banner( "Got "+str(amt)+" "+moneyname+"!", 300 );
-    
+
     money += amt;
 }
 
 
-// Takes an itemname and a quantity and give it to the party with a pretty banner 
+// Takes an itemname and a quantity and give it to the party with a pretty banner
 // with the item name, quatity and icon
 //
 // Does all errorchecking as SimpleType's GiveItem()... cuz it calls that at the top. ;)
@@ -34,48 +34,50 @@ void FindItem( string itemname, int quantity )
 {
     int idx;
     string msgstr;
-    
+
     int menu_mode = MenuCanBeOn();
     MenuOff();
-    
+
     GiveItem( itemname, quantity );
-    
+
     idx=IsItem(itemname);
-    
+
     msgstr = "Procured "+master_items[idx].name;
-    
+
     if( quantity > 1 ) {
         msgstr = msgstr + " x"+str(quantity)+"!";
     } else {
         msgstr = msgstr + "!";
     }
-    
+
     int wid, high;
     int icon;
-    
+
     icon = icon_get( master_items[idx].icon );
-    
+
     high = FontHeight( v1rpg_SmallFont );
     wid = TextWidth( v1rpg_SmallFont, msgstr );
-    
+
+    UnPress(UNPRESS_ALL);
+
     timer = 0;
     while( timer<300 && !ButtonAccept(1) )
     {
         Render();
-    
+
         V1_Box( (ImageWidth(screen)/2)-(wid/2)-high, ((ImageHeight(screen)/2)-high)-16, wid+(high*2), high*3+32 );
 
         PrintCenter(ImageWidth(screen)/2, (ImageHeight(screen)/2)-16, screen, v1rpg_SmallFont, msgstr);
 
         TBlit( (ImageWidth(screen)/2)-8, (ImageHeight(screen)/2)+8, icon, screen );
-        
+
         ShowPage();
     }
 
     UnPress(UNPRESS_ALL);
-    
+
     FreeImage( icon );
-    
+
     if( menu_mode ) MenuOn();
 }
 
@@ -87,42 +89,42 @@ void DramaticUseItem( string itemname, int quantity )
 {
     int idx;
     string msgstr;
-    
+
     int menu_mode = MenuCanBeOn();
     MenuOff();
-    
+
     TakeItem( itemname, quantity );
-    
+
     idx=IsItem(itemname);
-    
+
     msgstr = "Used "+master_items[idx].name+".";
-        
+
     int wid, high;
     int icon;
-    
+
     icon = icon_get( master_items[idx].icon );
-    
+
     high = FontHeight( v1rpg_SmallFont );
     wid = TextWidth( v1rpg_SmallFont, msgstr );
-    
+
     timer = 0;
     while( timer<300 && !ButtonAccept(1) )
     {
         Render();
-    
+
         V1_Box( (ImageWidth(screen)/2)-(wid/2)-high, ((ImageHeight(screen)/2)-high)-16, wid+(high*2), high*3+32 );
 
         PrintCenter(ImageWidth(screen)/2, (ImageHeight(screen)/2)-16, screen, v1rpg_SmallFont, msgstr);
 
         TBlit( (ImageWidth(screen)/2)-8, (ImageHeight(screen)/2)+8, icon, screen );
-        
+
         ShowPage();
     }
 
     UnPress(UNPRESS_ALL);
-    
+
     FreeImage( icon );
-    
+
     if( menu_mode ) MenuOn();
 }
 
@@ -139,7 +141,7 @@ void Heal_Well()
     RecoverPartyHP();
     RecoverPartyMP();
     Banner( "Recovered full HP and MP!", 300 );
-    
+
 
     UnPress(UNPRESS_ALL); //all
 }
@@ -153,7 +155,7 @@ void Heal_Well()
 void Inn() {
     string old_music;
     int end_song_time;
-    
+
     MenuOff();
 
     //store the original music
@@ -166,22 +168,22 @@ void Inn() {
     PlayMusic( "res/music/WA_INN.MP3" );
     //fadeout
     FadeOut( 250 );
-    
+
     //wait a second for effect
     WaitOut(500, 0);
-    
+
     //recover HP/MP
     RecoverPartyHP();
     RecoverPartyMP();
-    
+
     //cure any status ailments that get removed at an inn
     PartyRest();
-    
+
     //play a little heal chirp
     MenuHappyBeep();
-    
+
     //cue a dialog box saying that HP/MP recovered!
-    while ( !ButtonAccept(1) ) 
+    while ( !ButtonAccept(1) )
     {
         Render();
         RectFill(0, 0, ImageWidth(screen), ImageHeight(screen), 0, screen);
@@ -192,16 +194,16 @@ void Inn() {
         }
 
         ShowPage();
-    }   
-    
+    }
+
     //fadein
     FadeIn(100);
-    
+
     StopMusic();
-    
+
     //play the original music
     V1_StartMusic( old_music );
-    
+
     MenuOn();
 }
 

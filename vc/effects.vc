@@ -512,7 +512,6 @@ MessageBox( "Please implement for the menu." );
     }
 
     target_idx = GetTargIdxByText( "Target" );
-
     if( !bat_is_dead( GetTargID(target_idx), GetTargMode(target_idx) ) ) {
         TurnBattleEffectOn( "skill_fizzle" );
         return;

@@ -76,7 +76,9 @@ int bat_change_hp( int bidx, int pidx, int amt )
 
 //Log( "bat_change_hp( "+bat_getName(bidx, pidx)+", "+str(amt)+" )" );
 //Log( "starting HP: " + str(bat_cur_hp(bidx,pidx)) );
-    if( !amt ) return 0;
+    if( !amt ) {
+        return 0;
+    }
 
     if( pidx == PARTY_ALLY )
     {
@@ -86,7 +88,7 @@ int bat_change_hp( int bidx, int pidx, int amt )
         }
         else
         {
-            HealHP( bidx, abs(amt) );
+            HealHP( party[bidx], abs(amt) );
         }
 
 //Log( "ending HP: " + str(bat_cur_hp(bidx,pidx)) );
@@ -198,6 +200,7 @@ void bat_revive( int bidx, int pidx, int amt )
     /// if the character has "Grave", they cannot be revived.
     if( bat_hasStatus(bidx, pidx, "Grave") )
     {
+MessageBox( "This character has 'Grave'.  Which is entertaining since it hasn't been implemented yet." );
         return;
     }
 
@@ -508,6 +511,32 @@ int bat_getSpriteRef( int bidx, int pidx ) {
     }
 
     ErrorHandler( "bat_getRenderRef() invalid party index '"+str(pidx)+"'");
+    return -1;
+}
+
+int __bat_getBidxFromSpriteRef( int sprite_ref ) {
+    int i;
+    for( i=0; i<PartySize(); i++ ) {
+        if(master_cast[party[i]].mcg_sprite_battle_ref == sprite_ref) return i;
+    }
+    for( i=0; i<EnemyPartySize(); i++ ) {
+        if(mcg_get_sprite_ref(battle_enemies[i].mcgrender_heap_ref) == sprite_ref) return i;
+    }
+
+    ErrorHandler( "__bat_getBidxFromSpriteRef() no bidx for sprite_ref '"+str(sprite_ref)+"'");
+    return -1;
+}
+
+int __bat_getPidxFromSpriteRef( int sprite_ref ) {
+    int i;
+    for( i=0; i<PartySize(); i++ ) {
+        if(master_cast[party[i]].mcg_sprite_battle_ref == sprite_ref) return PARTY_ALLY;
+    }
+    for( i=0; i<EnemyPartySize(); i++ ) {
+        if(mcg_get_sprite_ref(battle_enemies[i].mcgrender_heap_ref) == sprite_ref) return PARTY_ENEMY;
+    }
+
+    ErrorHandler( "__bat_getPidxFromSpriteRef() no pidx for sprite_ref '"+str(sprite_ref)+"'");
     return -1;
 }
 

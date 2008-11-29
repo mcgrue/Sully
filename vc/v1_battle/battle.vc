@@ -1570,7 +1570,7 @@ void PlayBattleVictory()
 
 
 void LoseBattleEffect() {
-
+    Exit("LoseBattleEffect");
 }
 
 int __initRewards = 0;
@@ -1717,18 +1717,26 @@ void makeLevelUpIndicatorDisappear() {
     mcg_turn_invisible(getCurrentMcGIdx());
 }
 
+string _determineSpriteAnimation( int bidx, int pidx ) {
+    string anim;
+
+    if( bat_is_dead(bidx,pidx) ) {
+        anim = "DEATH";
+    } else if(bat_is_weak(bidx,pidx)) {
+        anim = "WEAK";
+    } else {
+        anim = "IDLE";
+    }
+
+    return anim;
+}
+
 void setStartingBattleSpriteAnimations( int ally_party_idx, int sprite_idx )
 {
     string anim;
     int bat_spr_ref;
 
-    if( bat_is_dead(ally_party_idx,PARTY_ALLY) ) {
-        anim = "DEATH";
-    } else if(bat_is_weak(ally_party_idx,PARTY_ALLY)) {
-        anim = "WEAK";
-    } else {
-        anim = "IDLE";
-    }
+    anim = _determineSpriteAnimation(ally_party_idx,PARTY_ALLY);
 
 Log( "ally_party_idx ["+str(ally_party_idx)+"]: "+bat_getName(ally_party_idx,PARTY_ALLY)+" ("+anim+")" );
 
@@ -1793,9 +1801,9 @@ void render_battle_debug_window()
         y += FontHeight(fontBattleWhite) + 1;
 
         if( equ(SM_get_str_data(selectmap_cursor),"ENEMY") ) {
-            tmp = bat_getName(bat_actor_idx,PARTY_ENEMY) + " HP: " + str(bat_cur_hp(bat_actor_idx,PARTY_ENEMY)) + "/" + str(bat_max_hp(bat_actor_idx,PARTY_ENEMY));
+            tmp = "ENEMY: "+bat_getName(bat_actor_idx,PARTY_ENEMY) + " HP: " + str(bat_cur_hp(bat_actor_idx,PARTY_ENEMY)) + "/" + str(bat_max_hp(bat_actor_idx,PARTY_ENEMY));
         } else if( equ(SM_get_str_data(selectmap_cursor),"ALLY") ) {
-            tmp = bat_getName(bat_actor_idx,PARTY_ENEMY) + " HP: " + str(bat_cur_hp(bat_actor_idx,PARTY_ALLY)) + "/" + str(bat_max_hp(bat_actor_idx,PARTY_ALLY));
+            tmp = "ALLY: "+bat_getName(bat_actor_idx,PARTY_ALLY) + " HP: " + str(bat_cur_hp(bat_actor_idx,PARTY_ALLY)) + "/" + str(bat_max_hp(bat_actor_idx,PARTY_ALLY));
         } else {
             tmp = "UNKNOWN OH GOD WHAT? ("+SM_get_str_data(selectmap_cursor)+")";
         }
@@ -1840,29 +1848,16 @@ int DrawBattleQueueText( int my_screen )
             aod = "TEMP t";
         }
 
-        if( battle_queue[i].batent_party == PARTY_ALLY )
+        if( battle_queue[i].batent_party == PARTY_ALLY || battle_queue[i].batent_party == PARTY_ENEMY )
         {
             PrintString(
                 1,y,
                 my_screen,
                 fontBattleWhite,
 
-                aod+str(battle_queue[i].time)+","+
-                master_cast[battle_queue[i].batent_ref].name+","+
+                aod+str(battle_queue[i].time)+","+ bat_getName(battle_queue[i].batent_ref, battle_queue[i].batent_party)+","+
                 str(battle_queue[i].action)+","+
-
                 battle_queue[i].data
-            );
-        } else if( battle_queue[i].batent_party == PARTY_ENEMY ) {
-            PrintString(
-                1,y,
-                my_screen,
-                fontBattleWhite,
-
-                aod+str(battle_queue[i].time)+","+
-                bat_getName(battle_queue[i].batent_ref, PARTY_ENEMY)+
-                ","+str(battle_queue[i].action)+
-                ","+battle_queue[i].data
             );
         } else {
             PrintString(

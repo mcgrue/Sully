@@ -179,7 +179,7 @@ int LoadSprite( string filename, int sprite_type )
     sprite_heap[ldsp_idx].active = 1;
 //MessageBox( filename+" ("+str(sprite_type)+") end: "+str(numimagehandles) );
 
-DumpSprite(ldsp_idx);
+//DumpSprite(ldsp_idx);
 
     return ldsp_idx; // Finally, pass back the index of this sprite.
 }
@@ -735,6 +735,9 @@ string GetSprOpData( int spr_idx, int str_idx, int op_idx )
 ///
 void sprite_endstrand_process( int idx )
 {
+    string anim;
+    int bidx, pidx;
+
     if( sprite_heap[idx].sprite_type != SPRITETYPE_UNSAFE )
     {
         if(
@@ -745,7 +748,13 @@ void sprite_endstrand_process( int idx )
         }
         else
         {
-            SpriteChangeStrand( idx, "IDLE" );
+            bidx = __bat_getBidxFromSpriteRef(idx);
+            pidx = __bat_getPidxFromSpriteRef(idx);
+            anim = _determineSpriteAnimation(bidx,pidx);
+
+//messageBox( "sprite_endstrand_process: " + bat_getName(bidx,pidx) + " to '" + anim +"'" );
+
+            SpriteChangeStrand( idx, anim );
         }
     }
     else

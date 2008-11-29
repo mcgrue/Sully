@@ -339,7 +339,7 @@ int BattleQueueActorIsActive( int i )
 {
     if( battle_queue[i].batent_party == PARTY_ALLY || battle_queue[i].batent_party == PARTY_ENEMY )
     {
-        return !bat_is_incapacitated(battle_queue[i].batent_ref, PARTY_ALLY);
+        return !bat_is_incapacitated(battle_queue[i].batent_ref, battle_queue[i].batent_party);
     }
     else if( battle_queue[i].batent_party == PARTY_NULL ) //status effects, etc.
     {

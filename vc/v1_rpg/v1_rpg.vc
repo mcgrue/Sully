@@ -713,10 +713,10 @@ void CenterMessageBox( int font, string msg ) {
 /// the menu is disabled during this function.
 void Banner( string msg, int duration )
 {
-    UnPress(UNPRESS_ALL);
-
     int menu_mode = MenuCanBeOn();
     MenuOff();
+
+    UnPress(UNPRESS_ALL);
 
     timer = 0;
     while ( timer<duration && !ButtonAccept(1) )
