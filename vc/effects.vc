@@ -4,94 +4,9 @@
 /// like item/spell targetting and effect functions!
 ///
 
-////////////////////////////////
-//  Effect-triggers!
-////////////////////////////////
-
-/// everytime a battle-actor executes an action, this gets called for them.
-///
-/// @see ResolveAction() The function that calls this.
-void trigger_on_act( int bidx, int pidx )
-{
-    int i, cur_status_idx;
-    string cur_status_name;
-
-    for( i=0; i<bat_getStatusCount(bidx,pidx); i++ )
-    {
-        cur_status_name = bat_getStatus( bidx, pidx, i );
-
-        cur_status_idx = GetStatus( cur_status_name );
-
-        if( cur_status_idx >= 0 )
-        {
-            if( StatusRemovedByI(cur_status_idx, "on_act") )
-            {
-                bat_removeAllInstancesOfStatus( bidx, pidx, cur_status_name );
-            }
-        }
-    }
-}
-
-/// everytime a battle actor dies, this gets called.
-///
-/// @see EndOfBattleAction() The function that calls this.
-void trigger_on_death( int bidx, int pidx )
-{
-    int i, cur_status_idx, doLifeline;
-    string cur_status_name;
-
-    for( i=0; i<bat_getStatusCount(bidx,pidx); i++ )
-    {
-        cur_status_name = bat_getStatus( bidx, pidx, i );
-
-        cur_status_idx = GetStatus( cur_status_name );
-
-        if( cur_status_idx >= 0 )
-        {
-            if( StatusRemovedByI(cur_status_idx, "on_death") )
-            {
-                bat_removeAllInstancesOfStatus( bidx, pidx, cur_status_name );
-
-                /// LIFELINE status check.
-                if( equ("LIFELINE",cur_status_name) )
-                {
-                    doLifeline = 1;
-                }
-            }
-        }
-    }
-
-    /// if there was a "lifeline" active at the time of death, we ressurect
-    /// the lucky battle actor (but only after all of the on_death effects finish!)
-    if( doLifeline )
-    {
-        bat_revive( bidx, pidx, bat_max_hp(bidx,pidx) );
-    }
-}
-
-/// every time a battle actor is revived, this gets called.
-///
-/// @see bat_revive() The function that calls this.
-void trigger_on_life( int bidx, int pidx )
-{
-    int i, cur_status_idx;
-    string cur_status_name;
-
-    for( i=0; i<bat_getStatusCount(bidx,pidx); i++ )
-    {
-        cur_status_name = bat_getStatus( bidx, pidx, i );
-
-        cur_status_idx = GetStatus( cur_status_name );
-
-        if( cur_status_idx >= 0 )
-        {
-            if( StatusRemovedByI(cur_status_idx, "on_life") )
-            {
-                bat_removeAllInstancesOfStatus( bidx, pidx, cur_status_name );
-            }
-        }
-    }
-}
+/////////////////////////////////////////////////////////////////////////////////////////////
+/// NON-battle triggers!
+/////////////////////////////////////////////////////////////////////////////////////////////
 
 /// everytime a player-character is involved in a resting action (sleeping at
 /// an inn, sleeping in a tent, etc) this gets called.
@@ -119,55 +34,10 @@ void trigger_on_rest( int cast_idx )
     }
 }
 
-/// everytime a battle character gets hit, this gets called for them.
-///
-/// @see _GAT_do_change() The function that calls this.
-void trigger_on_hit( int bidx, int pidx )
-{
-    int i, cur_status_idx;
-    string cur_status_name;
+/////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
 
-    for( i=0; i<bat_getStatusCount(bidx,pidx); i++ )
-    {
-        cur_status_name = bat_getStatus( bidx, pidx, i );
-
-        cur_status_idx = GetStatus( cur_status_name );
-
-        if( cur_status_idx >= 0 )
-        {
-            if( StatusRemovedByI(cur_status_idx, "on_hit") )
-            {
-                bat_removeAllInstancesOfStatus( bidx, pidx, cur_status_name );
-            }
-        }
-    }
-}
-
-/// This gets called for every party member (living and dead) at the end of a battle.
-///
-/// @see endOfBattle() The function that calls this.
-void trigger_on_end( int battle_idx )
-{
-    int cast_idx = getCastIndexFromPartyIndex(battle_idx, "trigger_on_end");
-
-    int j, cur_status_idx;
-    string cur_status_name;
-
-    for( j=0; j<GetCastStatusCount(cast_idx); j++ )
-    {
-        cur_status_name = GetCastStatus( cast_idx, j );
-
-        cur_status_idx = GetStatus( cur_status_name );
-
-        if( cur_status_idx >= 0 )
-        {
-            if( StatusRemovedByI(cur_status_idx, "on_rest") )
-            {
-                castRemoveAllStatus( cast_idx, cur_status_name );
-            }
-        }
-    }
-}
 
 /// This gets called when a PARTY_NULL effect expires.
 ///

@@ -397,7 +397,7 @@ Log( "Amount: " + str(amount) );
                 {
                     /// anything that happens when a player
                     /// gets physically hit happens now..
-                    trigger_on_hit( b_idx, p_idx );
+                    bat_trigger_on_hit( b_idx, p_idx );
                 }
 
                 NewBounceText(
@@ -429,7 +429,7 @@ Log( "Amount: " + str(amount) );
                 {
                     /// anything that happens when a player
                     /// gets physically hit happens now..
-                    trigger_on_hit( b_idx, p_idx );
+                    bat_trigger_on_hit( b_idx, p_idx );
                 }
 
                 NewBounceText(

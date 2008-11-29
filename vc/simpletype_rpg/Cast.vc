@@ -736,7 +736,7 @@ void _testStatusAbilities()
     i = bat_addStatus( 0, /*PARTY_ALLY*/ 0, "PROTECT" );
     LogTestStatusAbilities( "after add PROTECT (result: "+str(i)+")" );
 
-    trigger_on_hit( 0, /*PARTY_ALLY*/ 0 );
+    bat_trigger_on_hit( 0, /*PARTY_ALLY*/ 0 );
     LogTestStatusAbilities( "after simulated 'on_hit'" );
 
     /*

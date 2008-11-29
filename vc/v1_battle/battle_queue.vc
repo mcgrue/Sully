@@ -580,7 +580,7 @@ void ResolveAction( int actor_idx, int actor_party, string action_data, int dela
 
     /// anything that gets triggered upon an action (on_act)
     /// gets called right now.
-    trigger_on_act( actor_idx, actor_party );
+    bat_trigger_on_act( actor_idx, actor_party );
 
     /// The action executes!  FINALLY.
     MandatoryCallFunction( GetTargettingEffectFunc() );

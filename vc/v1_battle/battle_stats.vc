@@ -213,7 +213,7 @@ void bat_revive( int bidx, int pidx, int amt )
     }
 
     /// call the do-this-on-ressurect trigger.
-    trigger_on_life( bidx, pidx );
+    bat_trigger_on_life( bidx, pidx );
 }
 
 

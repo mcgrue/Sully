@@ -54,6 +54,9 @@ void bLog( String s )
 /// in it's definition entry but the specified callfunc does not exist.
 #define BATTLE_GROUP_CALLFUNC_STRICT 0
 
+/// the battle effect triggers
+#include "vc/v1_battle/battle_triggers.vc"
+
 /// the battle action queue
 #include "vc/v1_battle/battle_queue.vc"
 
@@ -143,7 +146,7 @@ void endOfBattle()
     int i;
     for( i=0; i<PartySize(); i++ )
     {
-        trigger_on_end( i );
+        bat_trigger_on_endOfBattle( i );
 
         WipeAllyBattleModifiers( i );
     }
@@ -1481,7 +1484,7 @@ void EndOfBattleAction()
 
                 nme_setDead( i );
 
-                trigger_on_death( i, PARTY_ENEMY );
+                bat_trigger_on_death( i, PARTY_ENEMY );
             }
         }
     }
@@ -1506,7 +1509,7 @@ void EndOfBattleAction()
 
                 changeDeadFlag( party[i], 1 );
 
-                trigger_on_death( party[i], PARTY_ALLY );
+                bat_trigger_on_death( party[i], PARTY_ALLY );
             }
         }
     }

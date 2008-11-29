@@ -1,0 +1,62 @@
+void nme_LogTestStatusAbilities( String lbl )
+{
+
+    Log( "" );
+    Log( "---" );
+    Log( lbl+":" );
+
+    Log( "battle_enemies[].current_status: '"+battle_enemies[0].current_status+"'" );
+    Log( "                           count: "+str(nme_GetStatusCount(0)) );
+    Log( "---" );
+    Log( "" );
+}
+
+void nme_testStatusAbilities()
+{
+    int i;
+
+    if( !enemyPartySize() )
+        setEnemyPartySize(1);
+
+    battle_enemies[0].master_enemy_idx = 0;
+    //master_enemy[0].immune = "POISON,";
+    master_enemy[0].immune = "";
+
+    nme_LogTestStatusAbilities( "start of nme_testStatusAbilities()" );
+
+    i = nme_AddStatus( 0, "POISON" );
+    nme_LogTestStatusAbilities( "after add POISON 1 (result: "+str(i)+")" );
+
+    i = nme_AddStatus( 0, "BLIND" );
+    nme_LogTestStatusAbilities( "after add BLIND (result: "+str(i)+")" );
+
+    i = nme_AddStatus( 0, "POISON" );
+    nme_LogTestStatusAbilities( "after add POISON 2 (result: "+str(i)+")" );
+
+    i = nme_AddStatus( 0, "BAMBOOZLE" );
+    nme_LogTestStatusAbilities( "after add BAMBOOZLE (result: "+str(i)+")" );
+
+    i = nme_AddStatus( 0, "CONFUSE" );
+    nme_LogTestStatusAbilities( "after add CONFUSE (result: "+str(i)+")" );
+
+    i = nme_AddStatus( 0, "POISON" );
+    nme_LogTestStatusAbilities( "after add POISON 3 (result: "+str(i)+")" );
+
+    i = nme_RemoveStatus( 0, "POISON" );
+    nme_LogTestStatusAbilities( "after remove one POISON (result: "+str(i)+")" );
+
+    i = nme_RemoveAllStatus( 0, "POISON" );
+    nme_LogTestStatusAbilities( "after remove *all* POISON (result: "+str(i)+")" );
+
+    i = bat_addStatus( 0, PARTY_ENEMY, "FRAGILE" );
+    nme_LogTestStatusAbilities( "after add FRAGILE (result: "+str(i)+")" );
+
+    i = bat_addStatus( 0, PARTY_ENEMY, "PROTECT" );
+    nme_LogTestStatusAbilities( "after add PROTECT (result: "+str(i)+")" );
+
+    bat_trigger_on_hit( 0, PARTY_ENEMY );
+    nme_LogTestStatusAbilities( "after simulated 'on_hit'" );
+
+    ///this needs to exit because it mutates loaded data structs...  IN THE NAME OF SCIENCE!
+    exit( "" );
+}
