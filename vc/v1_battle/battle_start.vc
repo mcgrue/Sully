@@ -10,68 +10,74 @@ _debug_tick_counter = 0;
     /// wipe the battle menus!
     CleanupAllBattleMenus();
 
-    /// clean out the mcgrender engine.  Hope you saved anything you needed in there 
+    /// clean out the mcgrender engine.  Hope you saved anything you needed in there
     /// from before!
     mcg_destroy_everything();
+
+/*
+for( i=0; i<PartySize(); i++ ) {
+    FreeSprite( master_cast[party[i]].mcg_sprite_battle_ref, 1, 0 );
+}
+*/
 
     /// clean out the previous battle background to make way for the new one.
     if( ImageValid(imBattleBG) )
     {
         FreeImage( imBattleBG );
     }
-    
+
     if( ImageValid(imBattleActorPointer) )
     {
         FreeImage( imBattleActorPointer );
     }
-    
+
     ref_levelUp_count = 0;
     if( ImageValid(imLevelup) )
     {
         FreeImage(imLevelup);
     }
-    
+
     /// wipe out the old enemy party associations.
     resetBattleEnemyList();
-    
+
     /// wipe out the old battle queue.
     clear_battle_queue();
-    
+
     /// turns the battle menu off.  Duh.
     TurnBattleMenuOff();
-    
+
     /// initialize the battle inventory.
     GenerateBattleMenuInventory( 1 );
-    
-    /// make sure the engine knows that there isn't a graphical 
-    /// battle effect resolving.  The '0' in there means to not trigger 
+
+    /// make sure the engine knows that there isn't a graphical
+    /// battle effect resolving.  The '0' in there means to not trigger
     /// the GATTACA library.
     TurnBattleEffectOff( 0 );
-    
-    /// Make sure GATTACA is clear.  GATTACA is a little library that resolves 
-    /// the actual healing/hurting of MP/HP, triggers bouncy numbers, animates 
-    /// weapon slashies, and all that stuff that generally  happens at the end 
+
+    /// Make sure GATTACA is clear.  GATTACA is a little library that resolves
+    /// the actual healing/hurting of MP/HP, triggers bouncy numbers, animates
+    /// weapon slashies, and all that stuff that generally  happens at the end
     /// of a battle action.
     EmptyGATTACA();
-    
+
     ///turn the slashy library off!
     TurnSlashyOff();
-        
+
     /// zero out the battle effect delay variable.
     __after_effect_targtime = 0;
-    
+
     /// zero out the rewards switch.
     __initRewards = 0;
 
-    /// battle can't be over if it's just startin'.  Woo!    
+    /// battle can't be over if it's just startin'.  Woo!
     ____battle_over_maaaan = 0;
-    
+
     SetGATTACA_onComplete( "" );
     __current_strikecount = 0;
-    
+
     /// reset the battle menu
     _prev_bm_idx = -1;
-    
+
     UnPress(UNPRESS_ALL);
 }
 
@@ -144,7 +150,7 @@ void doBattle( String battle_group_dat_area )
                     arTempStr[0] = __GATTACA_onComplete;
                     SetGATTACA_onComplete("");
                     MandatoryCallFunction( arTempStr[0] );
-                    
+
                 } else {
                     advance_battle_queue_to_next_action();
                 }
@@ -161,11 +167,11 @@ void doBattle( String battle_group_dat_area )
 
             else if( battle_queue[0].action == BACT_CHARGE )
             {
-                ResolveAction( 
-                    battle_queue[0].batent_ref, 
-                    battle_queue[0].batent_party, 
-                    battle_queue[0].data, 
-                    battle_queue[0].post_time 
+                ResolveAction(
+                    battle_queue[0].batent_ref,
+                    battle_queue[0].batent_party,
+                    battle_queue[0].data,
+                    battle_queue[0].post_time
                 );
                 pop_battle_queue();
             }
@@ -225,7 +231,7 @@ void initBattleRenderer()
     int i, tmp, x, y, tmp_ref;
 
     cleanupPreviousBattle();
-    
+
     // set the fonts
     fontBattleWhite = menu_font[0];
     fontBattleGrey  = menu_font[1];
@@ -234,29 +240,29 @@ void initBattleRenderer()
 
     // we're in a battle now.  Tell the engine that.
     __sully_battle_flag = 1;
-    
+
     /// set this to an area-based loader.
-    imBattleBG = LoadImage( "res/images/battle/backgrounds/Grass.png" );   
-    
+    imBattleBG = LoadImage( "res/images/battle/backgrounds/Grass.png" );
+
     /// TEMP. put this in a one-time init somewhere and remove the freeing in the above function.
     imBattleActorPointer = LoadImage( "res\images\battle\ui\actoractive.pcx" );
-        
+
     /// create three new layers in the McGrender engine.
-    
-    /// The background layer, mainly for the background image and any spell 
+
+    /// The background layer, mainly for the background image and any spell
     /// effects that will occur behind the enemies and allies.
-    bs_layerBG      = McgSpawnLayer(); 
-    
-    /// The foreground layer, containing at the bottom levels the enemy and ally sprites, 
+    bs_layerBG      = McgSpawnLayer();
+
+    /// The foreground layer, containing at the bottom levels the enemy and ally sprites,
     /// and to be used for any effect drawn over them.
     bs_layerFG      = McgSpawnLayer();
-    
-    /// The interface layer, used for the HUD, menus, and any messageboxes.  Could have effects 
+
+    /// The interface layer, used for the HUD, menus, and any messageboxes.  Could have effects
     /// drawn over them too. Yay!
     bs_layerInterface   = McgSpawnLayer();
 
     McgSetActiveLayer( bs_layerBG );
-    mcg_add_image( 0,0, 0,0, 100, imBattleBG ); 
+    mcg_add_image( 0,0, 0,0, 100, imBattleBG );
 
     McgSetActiveLayer( bs_layerFG );
 
@@ -265,33 +271,33 @@ void initBattleRenderer()
     for( i=0; i<bs_enemy_sprite_ref_count; i++ )
     {
         tmp = GetBattleGroupEnemy( i );
-        
+
         if( tmp < 0 )
         {
             ErrorHandler (
                 "v1_battle::battle.vc() The battle group returned -1 for an " +
                 "enemy access.  Most distressing."
-            );      
+            );
         }
-        
+
         /// sets up the graphics for the enemy
         bs_enemy_sprite_ref[i] = LoadSprite( master_enemy[tmp].sprite, SPRITETYPE_ENEMY );
-    
+
         x = GetBattleGroupEnemyX( i );
         y = GetBattleGroupEnemyY( i );
 
         tmp_ref = mcg_add_sprite( x,y,  x,y,    0, bs_enemy_sprite_ref[i] );
-        
+
         /// adds the enemy to the battle as far as the non-graphical aspects are concerned
         addEnemyToBattle( tmp, tmp_ref, IsBattleGroupEnemyLeader(i) );
-        
+
         SpriteChangeStrand( bs_enemy_sprite_ref[i], "IDLE" );
     }
-        
+
     BsPlacePartySprites();
-        
+
     McgSetActiveLayer( bs_layerInterface );
-    
+
     ref_effects = mcg_add_complex( "DoBattleEffects", -1 );
     ref_slashy = mcg_add_complex( "DoSlashy", -1 );
     ref_bouncynums = mcg_add_complex( "DoBouncy", -1 );
@@ -315,11 +321,11 @@ void initBattleRenderer()
 
     if( mode_battle_debug )
     {
-        h_window_debug = WindowCreate( 10, 10, 640, 480, "Battle debug info" ); 
+        h_window_debug = WindowCreate( 10, 10, 640, 480, "Battle debug info" );
 
         ref_BattleQueue = mcg_add_complex( "render_battle_debug_window", -1 );
     }
-    
+
     //SpriteChangeStrand( bs_enemy_sprite_ref[i], "IDLE" );
 }
 
@@ -342,16 +348,16 @@ void doBattleStep() {
     if (battle_avoidance > 0) battle_avoidance--;
     else {
         battle_steps--;
-    
+
         if( battle_steps <= 0 )
         {
             doBattle( "Overworld_A" );
-            battle_steps = calculateGracePeriod(0);    
-        }    
+            battle_steps = calculateGracePeriod(0);
+        }
     }
 }
 
-// Calculates the number of steps until the next battle, to be used after a battle has occurred or when a new map is loaded. 
+// Calculates the number of steps until the next battle, to be used after a battle has occurred or when a new map is loaded.
 // Right now this always does the same thing but eventually we'll probably set it to be context-sensitive.
 int calculateGracePeriod(int on_overworld) {
     Random(1,50);
@@ -379,15 +385,15 @@ void BadmanRandomSlide() {
         case 0: // from left
             __badman_x = -16;
             __badman_y = -16;
-            
+
         case 1: // from right
             __badman_x = 320;
             __badman_y = 240;
-            
+
         case 2: // from down
             __badman_x = -16;
             __badman_y = 240;
-            
+
         case 3: // from up
             __badman_x = 320;
             __badman_y = -16;
@@ -399,10 +405,10 @@ int imBadman[21][16];
 int refBadman[21][16];
 
 void BattleTransition_ScreenShatter(string bat_music) {
-    
+
     int i;
     int x, y, _x, _y;
-    if (!equ(bat_music,"")) V1_StartMusic(bat_music);   
+    if (!equ(bat_music,"")) V1_StartMusic(bat_music);
     SetLucent(50);
     ColorFilter(CF_GREY,prebattle_screencap);
     SetLucent(0);
@@ -410,59 +416,59 @@ void BattleTransition_ScreenShatter(string bat_music) {
     RenderBattle();
     Blit(0,0,screen,battle_screencap); // copy screen image to screencap
 
-    transition_layer = mcgSpawnLayer();    
+    transition_layer = mcgSpawnLayer();
     McgSetActiveLayer(transition_layer);
 
     mcg_add_complex("TransitionLayerDeathCountdown",-1);
     mcg_add_image(0,0,0,0,0,battle_screencap);
 
     for (i=0;i<transition_layer;i++) mcgTurnLayerOff(i);
-    
+
     for( x=0; x<320; x+=16 ) {
         for( y=0; y<240; y+=16 ) {
-            
+
             BadmanRandomSlide();
-                    
+
             mcg_add_image(
                 x,y,
                 __badman_x,__badman_y,
                 Random(25, 100),
                 ImageShell(x, y, 16, 16, prebattle_screencap)
             );
-        }    
+        }
     }
 
     transition_layer_death_time = systemtime + 105;
 }
 
-int transition_layer_death_time = -1; 
-// When the systemtime passes transition_layer_death_time, nuke the transition layer and everything on it, 
+int transition_layer_death_time = -1;
+// When the systemtime passes transition_layer_death_time, nuke the transition layer and everything on it,
 // and start the battle in earnest.
 // You may set the transition_layer_death_time negative to postpone the destruction indefinitely (in case
 // you want to flip it on manually later).
-void TransitionLayerDeathCountdown() {  
+void TransitionLayerDeathCountdown() {
     int idx;
-    if (systemtime >= transition_layer_death_time && transition_layer_death_time >= 0) {         
-        // This layer...         
-        
+    if (systemtime >= transition_layer_death_time && transition_layer_death_time >= 0) {
+        // This layer...
+
         for (idx=0;idx<transition_layer;idx++) mcgTurnLayerOn(idx); // Bring back the real battle layers
-        
+
         mcgrender_call_in_n_ticks( "deathklok", 1 );
-        
+
         transition_layer_death_time = -1;
-        
-        // other battle resumption stuff goes here.        
+
+        // other battle resumption stuff goes here.
     }
 }
 
 void deathklok() {
     mcg_delete_layer(transition_layer);
     transition_layer = -1;
-    
+
     if( ImageValid(prebattle_screencap) ) {
-        FreeImage( prebattle_screencap ); 
+        FreeImage( prebattle_screencap );
     }
-    
+
     if( ImageValid(battle_screencap) ) {
         FreeImage( battle_screencap );
     }

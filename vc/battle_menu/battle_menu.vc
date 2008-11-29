@@ -6,51 +6,51 @@
 
 #include "vc\battle_menu\battle_menu_mouse.vc"
 
-struct battle_menu 
+struct battle_menu
 {
     string src; /// the source for this battle menu
     int parsed; /// true if the src has been parsed, false if not.
-    
+
     int x,y;    /// coordinates of the topleft corner of the first level's window
     int lvl_offx, lvl_offy; ///the offset from the first level that each subsequent level should be displayed at.
-    
+
     int content_offx, content_offy; ///the offset from the x,y of the content
-    
+
     int white_font, grey_font;      /// the fonts this menu uses.
     int white_listfont, grey_listfont;  /// the fonts this menu uses.
-    
+
     string submenu_chr; //the string to put at the end of an entry that has a submenu.
     int y_spacer;
-    
+
     int is_memory;  ///is this menu in memory-mode?
-    
+
     int im_cursor;  /// the cursor's image reference
     int cursor_offx, cursor_offy;   //the x,y offset of the cursor (so the pointy end points at the menu item!)
-    
+
     int cur_page, cur_level, cursor;
     int last_page; /*last_level, last_cursor;*/
     int level_history[MAX_BATTLE_MENU_LEVELS];  //replacing the flawed last_level
     int cursor_history[MAX_BATTLE_MENU_LEVELS]; //replacing the flawed last_cursor
-    
+
     int scratch_img[MAX_BATTLE_MENU_LEVELS];        //image references
     //int scratch_img_dirty[MAX_BATTLE_MENU_LEVELS];
-    
+
     string  page_data[MAX_BATTLE_MENU_PAGES];
     string  page_sub[MAX_BATTLE_MENU_PAGES];
     int     page_count;
-    
+
     string  page_base;      //the indexes of the base pages.
     int page_base_count;    //the count of the base pages.
-    
+
     //if menus wrap top to bottom.
-    int mode_modulus;   
-    
+    int mode_modulus;
+
     //if we're in listmode, everything goes funky control-wise.
     int mode_list;
-    
+
     //if we're in monobasemode, all bases will have the same dimensions (as big as the biggest in each)
     int mode_monobase, mode_monobase_x, mode_monobase_y;
-    
+
     // if we're in mousemode, this is a workaround for the helpmode cursor
     int _mouse_helpcursor;
 }
@@ -95,11 +95,11 @@ void InitializeListBM( int m_idx, int page )
     {
         Exit( "InitializeListBM: specified page ("+str(page)+") is not a page." );
     }
-    
+
     _data_width = 0;
     _cost_width = 0;
     _list_cursor_offs = 0;
-    
+
     string data = right( master_battle_menus[m_idx].page_data[page], len(master_battle_menus[m_idx].page_data[page])-1);
     _list_count = TokenCount( data, "," );
 
@@ -115,11 +115,11 @@ void InitializeListBM( int m_idx, int page )
         item_wid = TextWidth(master_battle_menus[m_idx].white_listfont, arTempStr[i]);
         cost_wid = TextWidth(master_battle_menus[m_idx].white_listfont, arTempStr[i+1]);
 
-        if( item_wid > _data_width )    
+        if( item_wid > _data_width )
         {
             _data_width = item_wid;
         }
-        
+
         if( cost_wid > _cost_width )
         {
             _cost_width = cost_wid;
@@ -131,7 +131,7 @@ void InitializeListBM( int m_idx, int page )
     {
         Log( "["+str(i)+"]: '"+arTempStr[i]+"', ("+str(arTemp[i])+")" );
     }
-*/        
+*/
 //Log( "        _list_count: " + str(_list_count) );
 //Log( "      _list_columns: " + str(_list_columns) );
 //Log( "        _data_width: " + str(_data_width) );
@@ -161,12 +161,12 @@ LOG( "====================================" );
 int SpawnListPageIMG( int m_idx, int page_idx )
 {
     int vagina = NewBox( "BoxLib_V1Border", "BoxLib_V1BG" );
-    
+
     _data_width = _data_width + TextWidth( master_battle_menus[m_idx].white_listfont,"W" );
-    
+
     int x = _data_width + _cost_width + _list_sidebar_width;
     int y = (FontHeight( master_battle_menus[m_idx].white_listfont )+1)*5;
-    
+
     SetTargetBox(vagina);
 
     SetBoxPadding( 1,1,1,1 );
@@ -176,21 +176,21 @@ int SpawnListPageIMG( int m_idx, int page_idx )
     SetBoxColor( 1, rgb(112, 112, 112) );
     SetBoxColor( 2, rgb(144, 144, 144) );
     SetBoxColor( 3, rgb(0, 0, 255) );
-    
+
     int my_content = NewImage( x,y );
     RectFill( 0,0, x,y, transcolor, my_content);
-    
+
     SetBoxContent(my_content);
     int im = SaveBoxToIMG();
     FreeBox(0);
-    
+
     return im;
 }
 
 int SpawnHelpBoxIMG( int m_idx, string help_string )
 {
     int vagina = NewBox( "BoxLib_V1Border", "BoxLib_V1BG" );
-    
+
     int helpsign = NewImage( 23,11 );
     int tmp_hlp;
 
@@ -199,17 +199,17 @@ int SpawnHelpBoxIMG( int m_idx, string help_string )
     RectFill( 0,4, 23,10, rgb(0, 0, 255), helpsign);
     TBlit( 0, 0, tmp_hlp, helpsign);
     FreeImage(tmp_hlp);
-    
-    
+
+
     SetAutoTextMaxX( 250 );
-    SetAutoTextFont( master_battle_menus[m_idx].white_font );   
-    
+    SetAutoTextFont( master_battle_menus[m_idx].white_font );
+
     SetAutoText( help_string );
     SetAutoTextJustification( 0 );
     MakeAutoText();
 
 //  LogAutoTextOutput();
-    
+
     SetTargetBox(vagina);
 
     //top, bottom,left, right
@@ -223,17 +223,17 @@ int SpawnHelpBoxIMG( int m_idx, string help_string )
 
     SetBoxContent( MakeAutoTextContentImage() );
     int im = SaveBoxToIMG();
-    
+
     int im2 = NewImage( ImageWidth(im), (ImageHeight(im)+5) );
     RectFill( 0,0, ImageWidth(im),(ImageHeight(im)+5), transcolor, im2);
-    
+
     TBlit( 0, 5, im, im2);
     TBlit( 10, 0, helpsign, im2);
-    
+
     FreeBox(0);
     FreeImage(im);
     FreeImage(helpsign);
-    
+
     return im2;
 }
 
@@ -243,7 +243,7 @@ int getBasepage( int m_idx, int offs )
     return val( GetToken(master_battle_menus[m_idx].page_base, ",", offs) );
 }
 
-/// returns the page index for the new base page.  
+/// returns the page index for the new base page.
 /// hard errors if it detects a curbase that isn't in the base list.
 /// @param m_idx The master_battle_menus index for this operation.
 /// @param direction <0 if left, >=0 if right
@@ -251,9 +251,9 @@ int ChangeBasePageBM( int m_idx, int direction )
 {
     int curbase;
     int i;
-    
+
     int prior, next;
-    
+
     if( master_battle_menus[m_idx].cur_level == 0 )
     {
         curbase = master_battle_menus[m_idx].cur_page;
@@ -262,7 +262,7 @@ int ChangeBasePageBM( int m_idx, int direction )
     {
         curbase = master_battle_menus[m_idx].level_history[0];
     }
-    
+
     if( master_battle_menus[m_idx].page_base_count == 1 )
     {
         return curbase;
@@ -270,7 +270,7 @@ int ChangeBasePageBM( int m_idx, int direction )
     else
     {
         for( i=0; i<master_battle_menus[m_idx].page_base_count; i++ )
-        {       
+        {
             if( getBasepage(m_idx,i) == curbase )
             {
                 if( i == 0 )
@@ -281,7 +281,7 @@ int ChangeBasePageBM( int m_idx, int direction )
                 {
                     prior = getBasepage( m_idx, i-1 );
                 }
-                
+
                 if( i==(master_battle_menus[m_idx].page_base_count-1) )
                 {
                     next = getBasepage( m_idx, 0 );
@@ -289,13 +289,13 @@ int ChangeBasePageBM( int m_idx, int direction )
                 else
                 {
                     next = getBasepage( m_idx, i+1 );
-                }           
+                }
 
-                // set done.            
+                // set done.
                 i = master_battle_menus[m_idx].page_base_count;
             }
         }
-    
+
         if( direction < 0 ) //left
         {
             return prior;
@@ -310,19 +310,19 @@ int ChangeBasePageBM( int m_idx, int direction )
 void dump_bm(int idx)
 {
     int i;
-    
+
     log( "dump_bm("+str(idx)+")..." );
     log( "========================" );
     log( "bm.page_count: "+str(master_battle_menus[idx].page_count) );
     log( " bm.page_base: '"+master_battle_menus[idx].page_base+"'" );
     log( "" );
-    
+
     for(i=0; i<master_battle_menus[idx].page_count; i++)
     {
         log( "  "+str(i)+" data: '"+master_battle_menus[idx].page_data[i]+"'" );
         log( "  "+str(i)+"  sub: '"+master_battle_menus[idx].page_sub[i]+"'" );
     }
-    
+
     for(i=0; i<master_battle_menus[idx].cur_level; i++)
     {
         log( "  "+str(i)+"  level_history: '"+str(master_battle_menus[idx].level_history[i])+"'" );
@@ -351,12 +351,12 @@ void dump_all_bm()
     Log( "-----------------------------" );
     Log( "-----------------------------" );
     Log( "" );
-    
+
     for( i=0; i<MAX_BATTLE_MENUS; i++ )
     {
         dump_bm( i );
     }
-    
+
     Log( "" );
     Log( "-----------------------------" );
     Log( "-----------------------------" );
@@ -374,20 +374,20 @@ void dump_all_bm()
 /// Errors if the csv tokencount on non-list items is not equal in the two strings and returns -665
 int BM_AddPage( int mnu_idx, string data, string sub )
 {
-    
+
 //log("");
 //log(">>> BM_AddPage...");
-    
+
     if( master_battle_menus[mnu_idx].page_count >= MAX_BATTLE_MENU_PAGES )
     {
         ErrorHandler( "Battle_Menu::BM_AddPage() attempted to add a new page while parsing when the menu was at maximum ("+str(master_battle_menus[mnu_idx].page_count)+" of "+str(MAX_BATTLE_MENU_PAGES)+").  Either revise your menu, or increase the MAX_BATTLE_MENU_PAGES define." );
         return 0-666;
     }
-    
+
     if( strcmp(sub,"-65535") )  //if data's not a list...
     {
         //error if their csv tokencount is not the same.
-        if( TokenCount(data,",") != TokenCount(sub,",") )   
+        if( TokenCount(data,",") != TokenCount(sub,",") )
         {
             ErrorHandler( "Battle_Menu::BM_AddPage() the csv tokencount on a non-list entry did not match ("+str(TokenCount(data,","))+" != "+str(TokenCount(sub,","))+")." );
             bm_dbg( "full debug data follows:" );
@@ -399,7 +399,7 @@ int BM_AddPage( int mnu_idx, string data, string sub )
             return 0-665;
         }
     }
-    
+
     //if there's nothing to add, save nothing, return -1.
     if( !strcmp(sub,"") && !strcmp(data,"") )
     {
@@ -412,14 +412,14 @@ int BM_AddPage( int mnu_idx, string data, string sub )
 
         return 0-664;
     }
-    
+
     int i = master_battle_menus[mnu_idx].page_count;
-    
+
     master_battle_menus[mnu_idx].page_data[master_battle_menus[mnu_idx].page_count] = data;
     master_battle_menus[mnu_idx].page_sub[master_battle_menus[mnu_idx].page_count]  = sub;
-    
+
     master_battle_menus[mnu_idx].page_count++;
-    
+
 //log( "...added: " + str(i) );
 //log("");
 
@@ -456,7 +456,7 @@ int BM_Level_Count( string src )
             return cnt;
         }
     }
-    
+
     return 0;
 }
 
@@ -468,7 +468,7 @@ int BM_isList( string ln )
     {
         return 1;
     }
-    
+
     return 0;
 }
 
@@ -479,7 +479,7 @@ string glob_this,glob_next;
 void bm_dbg( string msg )
 {
     log( "+"+ msg );
-    
+
     log( "+     "+str(glob_ln) +","+str(glob_lvl)+"         thisline: '"+glob_this+"'" );
     log( "+     "+str(glob_nxtln) +","+str(glob_nxtlvl)+"           nextline: '"+glob_next+"'" );
     log( "+==========================================================================");
@@ -492,55 +492,40 @@ string bm_g(int lvl)
     string gay;
     for(i=0; i<lvl; i++)
         gay = gay + chr(9);
-    
+
     return gay;
 }
 
 int __bm_ln_helper, __bm_lvl_helper;
 
 /// takes a source string, starting line, and starting level.  builds and saves out lines.
-/// returns the index of a newly saved level 
+/// returns the index of a newly saved level
 int BM_Parse( int mnu_idx, string src, int ln, int level )
 {
     string thisline, nextline;      //the temp data for the lines we're currently probing.
     string data, sub;               //the strings being built to be saved into the menu heapstack!
     int thislevel, nextlevel, done, next;   //helpers!
 
-log( bm_g(level)+"BM_Parse('"+src+"',"+str(ln)+","+str(level)+")..." );
-    
     while( !done )
     {
-//log( "TOP OF LOOP: ln " + str(ln+1) );
-        
         thisline = BM_GetLine( src, ln );
         nextline = BM_GetLine( src, ln+1 );
 
         thislevel = BM_Level_Count( thisline );
         nextlevel = BM_Level_Count( nextline );
 
-/*
-log( bm_g(level)+" thisline: '"+thisline+"'" );
-log( bm_g(level)+"thislevel: "+str(thislevel) );
-log( "" );
-log( bm_g(level)+" nextline: '"+nextline+"'" );
-log( bm_g(level)+"nextlevel: "+str(nextlevel) );
-log( "" );
-log( "" );
-*/
+        glob_ln     = ln;
+        glob_lvl    = thislevel;
+        glob_nxtln  = ln+1;
+        glob_nxtlvl = nextlevel;
+        glob_this   = thisline;
+        glob_next   = nextline;
 
-glob_ln     = ln;
-glob_lvl    = thislevel;
-glob_nxtln  = ln+1;
-glob_nxtlvl = nextlevel;
-glob_this   = thisline;
-glob_next   = nextline;
-
-        
         if( !strcmp("", trim(thisline)) ) // if there is no thisline...
         {
             __bm_ln_helper = ln;
             __bm_lvl_helper = level;
-            
+
             if(BM_DEBUG) bm_dbg( "there is no thisline, saving this level out and return." );
             return BM_AddPage( mnu_idx, data, sub );
         }
@@ -548,7 +533,7 @@ glob_next   = nextline;
         {
             __bm_ln_helper = ln;
             __bm_lvl_helper = level;
-            
+
             if( BM_isList(thisline) )
             {
                 if( strcmp("",data) || strcmp("",sub)  )
@@ -562,17 +547,17 @@ glob_next   = nextline;
             else
             {
                 data    = data + trim( thisline );
-                sub     = sub + "-1";   
+                sub     = sub + "-1";
             }
-            
+
             if(BM_DEBUG) bm_dbg( "there is no nextline, saving this level out and returning." );
             return BM_AddPage( mnu_idx, data, sub );
-        } 
+        }
         else if( thislevel > nextlevel )    //we're about to unwind...
         {
             __bm_ln_helper = ln;
             __bm_lvl_helper = level;
-            
+
             if( BM_isList(thisline) )
             {
                 if( strcmp("",data) || strcmp("",sub)  )
@@ -580,18 +565,18 @@ glob_next   = nextline;
                     ErrorHandler( "Battle_Menu::BM_Parse(): There was a list item on a dirty line (2)!  NOOOOOO!.");
                     return 0-662;
                 }
-                
+
                 return BM_AddPage( mnu_idx, trim(thisline), "-65535" );
             }
             else
             {
                 data    = data + trim( thisline );
-                sub     = sub + "-1";   
+                sub     = sub + "-1";
             }
-            
+
             if(BM_DEBUG) bm_dbg( "the nextline is backwards levels...saving this level out and returning." );
             return BM_AddPage( mnu_idx, data, sub );
-        } 
+        }
         else if( thislevel < nextlevel )
         {
             if( thislevel+1 != nextlevel ) //if it's more than a 1-level increment, throw an error.
@@ -601,7 +586,7 @@ glob_next   = nextline;
             }
             //else if( BM_isList(thisline) )
             //{
-            //  
+            //
             //  return BM_AddPage( mnu_idx, thisline, "-65535" );
             //}
 
@@ -609,22 +594,22 @@ glob_next   = nextline;
 
             //save this to the data jobbie.
             data    = data + trim( thisline ) +",";
-            
+
             //recurse in a level starting with the next line, then save the resultant index when it unwinds back here.
-            sub     = sub + str( BM_Parse(mnu_idx, src, ln+1, nextlevel) ) + ",";   
+            sub     = sub + str( BM_Parse(mnu_idx, src, ln+1, nextlevel) ) + ",";
 
             ln = __bm_ln_helper; //update the line after the unwinding.
             next = BM_Level_Count(BM_GetLine(src,ln+1));
 
-//log( "*****  lvl: " +str(level) );            
+//log( "*****  lvl: " +str(level) );
 //log( "***** from: " +str(__bm_lvl_helper) );
-            
+
             while( next != level )  //while next != level
             {
                 if( next > level )
                 {
                     ErrorHandler( "Battle_Menu::BM_Parse(): There was an increase in level while unwinding.");
-                    return 0-661;   
+                    return 0-661;
                 }
                 else
                 {
@@ -632,7 +617,7 @@ glob_next   = nextline;
                     __bm_lvl_helper = level;
                     return BM_AddPage( mnu_idx, data, sub );
                 }
-                
+
                 next = BM_Level_Count(BM_GetLine(src,ln+1));
             }
 
@@ -643,8 +628,8 @@ glob_next   = nextline;
         {
             data    = data + trim( thisline ) +",";
             sub     = sub + "-1,";
-        }       
-        
+        }
+
         ln++;
     }
 }
@@ -678,10 +663,10 @@ void SetBattleMenu( int m_idx, string src )
     master_battle_menus[m_idx].src = src;
 
     master_battle_menus[m_idx].parsed = 0;
-    
+
     SetupDefaultBM( m_idx );
-    
-//  int i;  
+
+//  int i;
 //  for(i=0; i<MAX_BATTLE_MENU_LEVELS; i++)
 //  {
 //      master_battle_menus[m_idx].scratch_img_dirty[i] = 0;
@@ -706,11 +691,11 @@ void SetBattleMenuPos( int m_idx, int x, int y )
 }
 
 
-/// returns the number of items 
+/// returns the number of items
 ///
 int getPageCountBM( int m_idx, int page_idx )
 {
-    return TokenCount( master_battle_menus[m_idx].page_sub[page_idx], "," ); 
+    return TokenCount( master_battle_menus[m_idx].page_sub[page_idx], "," );
 }
 
 /// returns 1 if a specified page on a menu is a list, 0 if not.
@@ -759,7 +744,7 @@ int MenuLineIsImpasable( string s )
 {
     if( !strcmp( left(s,4), ">___") )
         return 1;
-    return 0;   
+    return 0;
 }
 
 int CreateMenuContentImageBM( int m_idx, int page_idx )
@@ -772,23 +757,23 @@ int CreateMenuContentImageBM( int m_idx, int page_idx )
     {
         arTempStr[i] = getPageItem( m_idx, page_idx, i );
         if( hasChildBM(m_idx, page_idx, i) ) arTempStr[i] = arTempStr[i] + " " + master_battle_menus[m_idx].submenu_chr;
-        
+
         tSize = TextWidth( master_battle_menus[m_idx].white_font, arTempStr[i] );
-        
+
         if( longest < tSize )
         {
             longest = tSize;
         }
-        
+
         ySize += (FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer);
     }
-    
+
     ySize -= master_battle_menus[m_idx].y_spacer;
-    
+
     int im = NewImage( longest, ySize );
-    
+
     RectFill(0,0, longest,ySize, transcolor, im);
-    
+
     for(i=0; i<getPageCountBM(m_idx,page_idx); i++)
     {
         if( MenuLineIsInactive(arTempStr[i]) )
@@ -800,7 +785,7 @@ int CreateMenuContentImageBM( int m_idx, int page_idx )
             PrintString(0, i*(FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer), im, master_battle_menus[m_idx].white_font, arTempStr[i]);
         }
     }
-    
+
     return im;
 }
 
@@ -814,20 +799,20 @@ int CreateMenuContentClickingImageBM( int m_idx, int page_idx )
 
     int i, longest, tSize, ySize;
     string list_temp;
-    
+
     if( master_battle_menus[m_idx].mode_list )
     {
         list_temp = getPageItem( m_idx, page_idx, i );
-        
+
         if( hasChildBM(m_idx, page_idx, i) ) list_temp = list_temp + " " + master_battle_menus[m_idx].submenu_chr;
-        
+
         tSize = TextWidth( master_battle_menus[m_idx].white_font, list_temp );
-        
+
         if( longest < tSize )
         {
             longest = tSize;
         }
-        
+
         ySize += (FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer);
     }
     else
@@ -848,25 +833,25 @@ int CreateMenuContentClickingImageBM( int m_idx, int page_idx )
             ySize += (FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer);
         }
     }
-    
+
     ySize -= master_battle_menus[m_idx].y_spacer;
-    
+
     int im = NewImage( longest, ySize );
-    
+
     RectFill(0,0, longest,ySize, transcolor, im);
-    
+
     for(i=0; i<getPageCountBM(m_idx,page_idx); i++)
     {
         RectFill(
             0,i*(FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer),
-            longest, (i+1)*(FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer),     
+            longest, (i+1)*(FontHeight(master_battle_menus[m_idx].white_font)+master_battle_menus[m_idx].y_spacer),
             RGB(255-i,0,0),
             im
         );
     }
 
 
-    
+
     return im;
 }
 
@@ -876,19 +861,19 @@ void InitMonobaseBattleMenu( int m_idx )
 {
     int i, tmp;
     int biggest_x, biggest_y;
-    
+
     for( i=0; i<TokenCount(master_battle_menus[m_idx].page_base,",");i++ )
     {
         tmp = CreateMenuContentImageBM( m_idx, val(GetToken(master_battle_menus[m_idx].page_base,",",i)) );
-        
+
         if( ImageHeight(tmp) > biggest_y )
             biggest_y = ImageHeight(tmp);
         if( ImageWidth(tmp) > biggest_x )
             biggest_x = ImageWidth(tmp);
-            
+
         FreeImage(tmp);
     }
-    
+
     master_battle_menus[m_idx].mode_monobase_y = biggest_y;
     master_battle_menus[m_idx].mode_monobase_x = biggest_x;
 }
@@ -901,7 +886,7 @@ void CleanBattleMenu( int m_idx )
     }
 
     int i;
-    
+
     for( i=0; i<MAX_BATTLE_MENU_LEVELS; i++ )
     {
         if( master_battle_menus[m_idx].scratch_img[i] )
@@ -910,13 +895,13 @@ void CleanBattleMenu( int m_idx )
             master_battle_menus[m_idx].scratch_img[i] = 0;
         }
     }
-    
+
     master_battle_menus[m_idx].parsed = 0;
-    
+
     master_battle_menus[m_idx].page_count = 0;
-    
+
     master_battle_menus[m_idx].page_base_count = 0;
-    
+
     master_battle_menus[m_idx].mode_list = 0;
 }
 
@@ -925,41 +910,41 @@ void CleanBattleMenu( int m_idx )
 void StartBattleMenu( int m_idx )
 {
     int my_box, my_content;
-    
+
     __bm_visible = 1;
-    
+
 //CleanBattleMenu(m_idx);
-    
+
     if( master_battle_menus[m_idx].mode_monobase && !master_battle_menus[m_idx].mode_monobase_x )
     {
         InitMonobaseBattleMenu( m_idx );
     }
-    
-    if( master_battle_menus[m_idx].is_memory ) 
+
+    if( master_battle_menus[m_idx].is_memory )
     {
-    
+
 exit( "memory mode needs fixing." );
-    
+
         master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].last_page;
 //      master_battle_menus[m_idx].cur_level    = master_battle_menus[m_idx]._last_level;
-//      master_battle_menus[m_idx].cursor   = master_battle_menus[m_idx].last_cursor;       
+//      master_battle_menus[m_idx].cursor   = master_battle_menus[m_idx].last_cursor;
     }
     else
-    {   
+    {
         master_battle_menus[m_idx].cur_page     = val(GetToken(master_battle_menus[m_idx].page_base, ",", 0));
         master_battle_menus[m_idx].cur_level    = 0;
         master_battle_menus[m_idx].cursor       = 0;
-                
+
         master_battle_menus[m_idx].scratch_img[0] = SpawnPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
     }
-    
+
     BattleMenuMenuOpen();
 }
 
 void CleanupAllBattleMenus() {
-    
+
     int i;
-    
+
     for( i=0; i<MAX_BATTLE_MENUS; i++ ) {
         CleanBattleMenu(i);
     }
@@ -980,7 +965,7 @@ void UpdateBattleMenuControls( int m_idx )
 
 
 /// The mouseclick handling code for "special" clicks.
-/// 
+///
 void BM_MouseHandleSpecialClick( int m_idx )
 {
     switch( BM_MouseClickSpecial() )
@@ -1012,7 +997,7 @@ void BM_MouseHandleSpecialClick( int m_idx )
             {
                 MessageBox( "error in BM_MouseHandleSpecialClick( "+str(m_idx)+" ).  List Up, but not in Listmode. " );
             }
-        
+
         case 3: //List Down (B: 252)
             if( master_battle_menus[m_idx].mode_list )
             {
@@ -1024,15 +1009,15 @@ void BM_MouseHandleSpecialClick( int m_idx )
             {
                 MessageBox( "error in BM_MouseHandleSpecialClick( "+str(m_idx)+" ).  List Down, but not in Listmode. " );
             }
-            
+
         default:
             MessageBox( "error in BM_MouseHandleSpecialClick( "+str(m_idx)+" ).  Mouseclick value was: "+str(BM_MouseClickSpecial()) );
-            
+
     }
 }
 
 
-/// If you wish battle menu mouse control to 'fall through' to another handler, 
+/// If you wish battle menu mouse control to 'fall through' to another handler,
 /// pass that function name into here.
 ///
 /// user mouse.x and mouse.y within that function to determine the mouse-coordinates.
@@ -1049,10 +1034,10 @@ void SetBMPassthruCallfunc( string callfunc )
     else
     {
         __bm_mouseclick_passthrumode = 1;
-    }   
+    }
 }
 
-/// Gets the function currently being called my the battle menu if a click is 
+/// Gets the function currently being called my the battle menu if a click is
 /// made outside it's bounds.
 string GetBMPassthruCallfunc()
 {
@@ -1099,7 +1084,7 @@ void BM_MouseControl( int m_idx )
                     else
                     {
                         BM_MouseHandleSpecialClick(m_idx);
-                    }                   
+                    }
                 }
                 else
                 {
@@ -1113,7 +1098,7 @@ void BM_MouseControl( int m_idx )
                     master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].level_history[master_battle_menus[m_idx].cur_level];
 
                     BattleMenuReturnALevel(m_idx);
-                }       
+                }
 
             }
             else
@@ -1136,13 +1121,13 @@ void BM_MouseControl( int m_idx )
                             InitializeListBM( m_idx, master_battle_menus[m_idx].cur_page );
                             master_battle_menus[m_idx].scratch_img[master_battle_menus[m_idx].cur_level] = SpawnListPageIMG( m_idx, master_battle_menus[m_idx].cur_page );
                             master_battle_menus[m_idx].mode_list = 1;
-                            
+
                             BM_MouseScrollUnpress();
-                            
+
                             //master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].last_page;
 
                             BattleMenuEnterALevel(m_idx);
-                            
+
                             DrawBattleMenuListClickmap( m_idx,_battlemenu_mouse_clickmap );
                         }
                         else
@@ -1161,9 +1146,9 @@ Log( "EXEC 1" );
                     }
                 }
             }
-        } 
+        }
         else if( BM_MouseCancel() )
-        {   
+        {
             BM_TryCancel(m_idx);
 
             BM_MouseCancelUnpress();
@@ -1173,12 +1158,12 @@ Log( "EXEC 1" );
             MS_CaptureMousePixel();
 
             if( BM_MouseClickCursor() >= 0 )
-            {               
+            {
                 master_battle_menus[m_idx]._mouse_helpcursor = BM_MouseClickCursor();
-                
+
                 __mousehelp_trigger = 1;
             }
-            
+
             BM_MouseHelpUnpress();
         }
     }
@@ -1188,8 +1173,8 @@ Log( "EXEC 1" );
         {
             BM_MouseAcceptUnpress();
             BM_MouseCancelUnpress();
-            BM_MouseHelpUnpress();          
-            
+            BM_MouseHelpUnpress();
+
             __mousehelp_trigger = 1;
         }
     }
@@ -1208,7 +1193,7 @@ void BM_KeyControl( int m_idx )
     {
         //if we're on the ground floor...
         if( master_battle_menus[m_idx].cur_level == 0 )
-        {        
+        {
             if( master_battle_menus[m_idx].page_base_count > 1 )
             {
                 if( ButtonLeftTop(1) )
@@ -1253,7 +1238,7 @@ void BM_KeyControl( int m_idx )
                 master_battle_menus[m_idx].cursor--;
                 BattleMenuCursorMove();
             }
-        } 
+        }
         else if( ButtonDown(1) )
         {
 
@@ -1288,7 +1273,7 @@ void BM_KeyControl( int m_idx )
             if( master_battle_menus[m_idx].cur_level > 0 )
             {
                 BM_TryCancel(m_idx);
-            } 
+            }
             else
             {
                 BMSetCancelFromBase(1);
@@ -1315,7 +1300,7 @@ void BattleMenuToString( int x, int y, int f, int idx )
 {
     int fy;
     int bx;
-    
+
     fy = FontHeight(f)+1;
     bx = x+TextWidth(f, "         coord: ("+str(master_battle_menus[idx].x)+","+str(master_battle_menus[idx].y)+")");
 
@@ -1355,18 +1340,18 @@ void BattleMenuToString( int x, int y, int f, int idx )
     y+=fy;
     PrintString(x, y, screen, f, "    page_count: '"+str(master_battle_menus[idx].page_count)+"'"   );
     y+=fy;
-    
+
     string my_history = "    history["+str(MAX_BATTLE_MENU_LEVELS)+" ]: '";
     int i;
-    
+
     for( i=0; i<MAX_BATTLE_MENU_LEVELS; i++ )
     {
         my_history = my_history + str(master_battle_menus[idx].level_history[i]) + ",";
     }
-    
+
     PrintString(x, y, screen, f, my_history );
-    y+=fy;  
-    
+    y+=fy;
+
 
 
 /// variables not yet listed out:
@@ -1379,14 +1364,14 @@ void BattleMenuToString( int x, int y, int f, int idx )
 //  int white_font, grey_font;  /// the fonts this menu uses.
 
 //  int scratch_img[MAX_BATTLE_MENU_LEVELS];        //image references
-    
+
 }
 
 void ListToString( int x, int y, int f, int idx )
 {
     int fy;
     int bx;
-    
+
     fy = FontHeight(f)+1;
     bx = x+TextWidth(f, " _list_columns: '"+master_battle_menus[idx].page_base+"'");
 
@@ -1394,8 +1379,8 @@ void ListToString( int x, int y, int f, int idx )
 
 //  string  page_base;
 
-    
-    
+
+
     PrintString(x, y, screen, f, "      _list_count: '"+str(_list_count)+"'" );
     y+=fy;
     PrintString(x, y, screen, f, "    _list_columns: '"+str(_list_columns)+"'" );
@@ -1432,15 +1417,15 @@ void DrawBattleMenu( int m_idx, int targ_img )
     int i;
     for( i=0; i<=master_battle_menus[m_idx].cur_level; i++ )
     {
-        
+
 //log( "rendering "+str(i)+": "+str(master_battle_menus[m_idx].scratch_img[i]) );
-        TBlit(  master_battle_menus[m_idx].x+(i*master_battle_menus[m_idx].lvl_offx), 
-            master_battle_menus[m_idx].y+(i*master_battle_menus[m_idx].lvl_offy), 
-            master_battle_menus[m_idx].scratch_img[i], 
+        TBlit(  master_battle_menus[m_idx].x+(i*master_battle_menus[m_idx].lvl_offx),
+            master_battle_menus[m_idx].y+(i*master_battle_menus[m_idx].lvl_offy),
+            master_battle_menus[m_idx].scratch_img[i],
             targ_img );
 //log( "yay!" );
     }
-            
+
     if( master_battle_menus[m_idx].page_base_count > 1 )
     {
         if( master_battle_menus[m_idx].cur_level == 0 )
@@ -1452,23 +1437,23 @@ void DrawBattleMenu( int m_idx, int targ_img )
             DrawBasepageFlipIndicators( m_idx, 0 );
         }
     }
-    
+
     if( master_battle_menus[m_idx].mode_list )
     {
         DrawBattleMenuList(m_idx,targ_img);
     }
-        
+
     if( __menuHelpMode )
     {
         TBlit( 10,14, __menuHelpModeIMG, targ_img );
     }
-    
+
     if( _battlemenu_mouse_mode )
     {
         TBlit( mouse.x, mouse.y, master_battle_menus[m_idx].im_cursor, targ_img );
     }
     else
-    {   
+    {
         /// cursor!
         TBlit(  master_battle_menus[m_idx].x+master_battle_menus[m_idx].content_offx-master_battle_menus[m_idx].cursor_offx + (master_battle_menus[m_idx].cur_level*master_battle_menus[m_idx].lvl_offx),
                 master_battle_menus[m_idx].y+master_battle_menus[m_idx].content_offy-master_battle_menus[m_idx].cursor_offy +
@@ -1482,59 +1467,59 @@ void DrawBattleMenuList( int m_idx, int targ_img ) {
 
     if( !__bm_visible )
         return;
-        
+
     int i, my_rows;
     int my_base_x, my_base_y, my_entry_height, my_y;
-    
-    
+
+
     if( _list_rows < _list_count )
         my_rows = _list_rows;
     else
         my_rows = _list_count;
-    
-    my_base_x = 
-        _box_border_x + master_battle_menus[m_idx].x + 
-        
+
+    my_base_x =
+        _box_border_x + master_battle_menus[m_idx].x +
+
         (
             master_battle_menus[m_idx].cur_level *
             master_battle_menus[m_idx].lvl_offx
         );
-        
-    my_base_y = 
-        _box_border_y + 
-        master_battle_menus[m_idx].y + 
-        
+
+    my_base_y =
+        _box_border_y +
+        master_battle_menus[m_idx].y +
+
         (
             master_battle_menus[m_idx].cur_level *
             master_battle_menus[m_idx].lvl_offy
         );
-        
+
     my_entry_height = (
-            FontHeight(master_battle_menus[m_idx].white_font) + 
+            FontHeight(master_battle_menus[m_idx].white_font) +
             master_battle_menus[m_idx].y_spacer
         );
-    
+
     for( i=_list_cursor_offs; i<(_list_cursor_offs+my_rows); i++ )
     {
         my_y = my_base_y + ((i-_list_cursor_offs)*my_entry_height);
-    
+
         if( MenuLineIsInactive(arTempStr[i]) )
         {
-            PrintString( 
+            PrintString(
                 my_base_x,
                 my_y,
-                targ_img, 
-                master_battle_menus[m_idx].grey_font, 
+                targ_img,
+                master_battle_menus[m_idx].grey_font,
                 right(arTempStr[i], len(arTempStr[i])-1)
             );
-            
+
             if( arTemp[i] > 0 )
             {
-                PrintString( 
+                PrintString(
                     my_base_x+_data_width,
                     my_y,
-                    targ_img, 
-                    master_battle_menus[m_idx].grey_font, 
+                    targ_img,
+                    master_battle_menus[m_idx].grey_font,
                     str(arTemp[i])
                 );
             }
@@ -1544,18 +1529,18 @@ void DrawBattleMenuList( int m_idx, int targ_img ) {
             PrintString(
                 my_base_x,
                 my_y,
-                targ_img, 
-                master_battle_menus[m_idx].white_font, 
+                targ_img,
+                master_battle_menus[m_idx].white_font,
                 arTempStr[i]
             );
-            
-            if( arTemp[i] > 0 ) 
+
+            if( arTemp[i] > 0 )
             {
                 PrintString(
                     my_base_x+_data_width,
                     my_y,
-                    targ_img, 
-                    master_battle_menus[m_idx].white_font, 
+                    targ_img,
+                    master_battle_menus[m_idx].white_font,
                     str(arTemp[i])
                 );
             }
@@ -1565,21 +1550,21 @@ void DrawBattleMenuList( int m_idx, int targ_img ) {
     if( _battlemenu_mouse_mode )
     {
         //_imListUp, _imListDown
-        
+
         DrawScrollBar(
             my_base_x+_data_width+_cost_width,
-            my_base_y+ImageHeight(_imListUp)+1, 
+            my_base_y+ImageHeight(_imListUp)+1,
             my_base_x+_data_width+_cost_width+_list_sidebar_width,
-            my_base_y+(my_entry_height*_list_rows)-ImageHeight(_imListDown)-1, 
+            my_base_y+(my_entry_height*_list_rows)-ImageHeight(_imListDown)-1,
 
             _list_rows,
             my_entry_height,
             _list_count,
             _list_cursor_offs
         );
-        
+
         TBlit( my_base_x+_data_width+_cost_width, my_base_y, _imListUp, screen );
-        
+
         TBlit( my_base_x+_data_width+_cost_width, my_base_y+(my_entry_height*_list_rows)-ImageHeight(_imListDown), _imListDown, screen );
     }
     else
@@ -1587,9 +1572,9 @@ void DrawBattleMenuList( int m_idx, int targ_img ) {
 
         DrawScrollBar(
             my_base_x+_data_width+_cost_width,
-            my_base_y, 
+            my_base_y,
             my_base_x+_data_width+_cost_width+_list_sidebar_width,
-            my_base_y+(my_entry_height*_list_rows), 
+            my_base_y+(my_entry_height*_list_rows),
 
             _list_rows,
             my_entry_height,
@@ -1606,46 +1591,46 @@ void DrawBattleMenuListClickmap( int m_idx, int targ_img )
 
     int i, my_rows;
     int my_base_x, my_base_y, my_entry_height, my_y;
-    
-    
+
+
     if( _list_rows < _list_count )
         my_rows = _list_rows;
     else
         my_rows = _list_count;
-    
-    my_base_x = 
-        _box_border_x + master_battle_menus[m_idx].x + 
-        
+
+    my_base_x =
+        _box_border_x + master_battle_menus[m_idx].x +
+
         (
             master_battle_menus[m_idx].cur_level *
             master_battle_menus[m_idx].lvl_offx
         );
-        
-    my_base_y = 
-        _box_border_y + 
-        master_battle_menus[m_idx].y + 
-        
+
+    my_base_y =
+        _box_border_y +
+        master_battle_menus[m_idx].y +
+
         (
             master_battle_menus[m_idx].cur_level *
             master_battle_menus[m_idx].lvl_offy
         );
-        
+
     my_entry_height = (
-            FontHeight(master_battle_menus[m_idx].white_font) + 
+            FontHeight(master_battle_menus[m_idx].white_font) +
             master_battle_menus[m_idx].y_spacer
         );
-    
+
     for( i=_list_cursor_offs; i<(_list_cursor_offs+my_rows); i++ )
     {
         my_y = my_base_y + ((i-_list_cursor_offs)*my_entry_height);
-        
+
         RectFill(
             my_base_x,
             my_y,
-            
+
             my_base_x+_data_width+_cost_width,
             my_y+my_entry_height,
-            
+
             RGB( 255-i,0,0 ),
             targ_img
         );
@@ -1653,24 +1638,24 @@ void DrawBattleMenuListClickmap( int m_idx, int targ_img )
 
 
     /// list up/down buttons.
-    RectFill( 
-        my_base_x+_data_width+_cost_width, 
-        my_base_y, 
-        
-        my_base_x+_data_width+_cost_width + ImageWidth(_imListUp), 
-        my_base_y+ ImageHeight(_imListUp), 
-        
+    RectFill(
+        my_base_x+_data_width+_cost_width,
+        my_base_y,
+
+        my_base_x+_data_width+_cost_width + ImageWidth(_imListUp),
+        my_base_y+ ImageHeight(_imListUp),
+
         RGB(0,0,253),
-        
+
         targ_img );
 
-    RectFill( 
-        my_base_x+_data_width+_cost_width, 
-        my_base_y+(my_entry_height*_list_rows)-ImageHeight(_imListDown), 
-        
-        my_base_x+_data_width+_cost_width+ ImageWidth(_imListDown), 
-        my_base_y+(my_entry_height*_list_rows), 
-        
+    RectFill(
+        my_base_x+_data_width+_cost_width,
+        my_base_y+(my_entry_height*_list_rows)-ImageHeight(_imListDown),
+
+        my_base_x+_data_width+_cost_width+ ImageWidth(_imListDown),
+        my_base_y+(my_entry_height*_list_rows),
+
         RGB(0,0,252),
         targ_img );
 }
@@ -1681,29 +1666,29 @@ void DrawBattleMenuListClickmap( int m_idx, int targ_img )
 void DrawBasepageFlipIndicators( int m_idx, int is_active )
 {
     if( is_active )
-    {   
-        TBlit( 
+    {
+        TBlit(
             master_battle_menus[m_idx].x,
             (master_battle_menus[m_idx].y - 1 - ImageHeight(_imLeftActive)),
             _imLeftActive,
-            screen );   
-        
-    
-        TBlit( 
+            screen );
+
+
+        TBlit(
             master_battle_menus[m_idx].x + ImageWidth(master_battle_menus[m_idx].scratch_img[0]) - ImageWidth(_imRightActive),
             master_battle_menus[m_idx].y - 1 - ImageHeight(_imRightActive),
             _imRightActive,
-            screen );           
+            screen );
     }
     else
-    {           
-        TBlit( 
+    {
+        TBlit(
             master_battle_menus[m_idx].x,
             master_battle_menus[m_idx].y - 1 - ImageHeight(_imLeftInActive),
             _imLeftInActive,
             screen );
-    
-        TBlit( 
+
+        TBlit(
             master_battle_menus[m_idx].x + ImageWidth(master_battle_menus[m_idx].scratch_img[0]) - ImageWidth(_imRightInActive),
             master_battle_menus[m_idx].y - 1 - ImageHeight(_imRightInActive),
             _imRightInActive,
@@ -1718,24 +1703,24 @@ void DrawBasepageFlipIndicatorsClickmap( int m_idx, int is_active, int clickmap 
 {
     if( is_active )
     {
-        RectFill( 
+        RectFill(
             master_battle_menus[m_idx].x,
             (master_battle_menus[m_idx].y - 1 - ImageHeight(_imLeftActive)),
 
             master_battle_menus[m_idx].x+ImageWidth(_imLeftActive),
             master_battle_menus[m_idx].y - 1,
-            
+
             RGB(0,0,255),
-            clickmap ); 
-        
-    
-        RectFill( 
+            clickmap );
+
+
+        RectFill(
             master_battle_menus[m_idx].x + ImageWidth(master_battle_menus[m_idx].scratch_img[0]) - ImageWidth(_imRightActive),
             master_battle_menus[m_idx].y - 1 - ImageHeight(_imRightActive),
 
-            master_battle_menus[m_idx].x + ImageWidth(master_battle_menus[m_idx].scratch_img[0]), 
+            master_battle_menus[m_idx].x + ImageWidth(master_battle_menus[m_idx].scratch_img[0]),
             master_battle_menus[m_idx].y - 1,
-            
+
             RGB(0,0,254),
             clickmap );
     }
@@ -1757,7 +1742,7 @@ void BM_MouseListControls( int m_idx )
                     if( BM_MouseClickSpecial() < 0 )
                     {
                         __mouse_hlpr = mcg_findclick( mouse.x, mouse.y );
-                    
+
                         if( __mouse_hlpr >= 0 )
                         {
                             mcg_doclick();
@@ -1785,11 +1770,11 @@ void BM_MouseListControls( int m_idx )
                     master_battle_menus[m_idx].cur_page = master_battle_menus[m_idx].level_history[master_battle_menus[m_idx].cur_level];
 
                     BattleMenuReturnALevel(m_idx);
-                }       
+                }
 
             }
             else
-            {               
+            {
                 if( MenuLineIsInactive(getPageItem(m_idx, master_battle_menus[m_idx].cur_page, BM_MouseClickCursor())) )
                 {
                     BattleMenuDeny();
@@ -1801,7 +1786,7 @@ Log( "EXEC 3"  );
                     ExecuteLove( arTempStr[BM_MouseClickCursor()] );
                 }
             }
-        } 
+        }
         else if( BM_MouseCancel() )
         {
             BM_TryCancel(m_idx);
@@ -1813,18 +1798,18 @@ Log( "EXEC 3"  );
             MS_CaptureMousePixel();
 
             if( BM_MouseClickCursor() >= 0 )
-            {               
+            {
                 master_battle_menus[m_idx]._mouse_helpcursor = BM_MouseClickCursor();
-                
+
                 __mousehelp_trigger = 1;
             }
-            
+
             BM_MouseHelpUnpress();
         }
         else if( BM_MouseScrollUp() )   //pageup.  Ignore modulus.
         {
             BM_MouseScrollUnpress();
-        
+
             if( master_battle_menus[m_idx].cursor == 0 && _list_cursor_offs == 0 )
             {
                 //BattleMenuDeny();
@@ -1847,7 +1832,7 @@ Log( "EXEC 3"  );
                     master_battle_menus[m_idx].cursor = 0;
                     BattleMenuCursorMove();
                 }
-                
+
                 if( _list_cursor_offs || master_battle_menus[m_idx].cursor )
                 {
                     __volume_hack = __battlemenu_interface_volume;
@@ -1856,20 +1841,20 @@ Log( "EXEC 3"  );
                     BM_DoListUp( m_idx );
                     __battlemenu_interface_volume = __volume_hack;
                 }
-                
+
                 DrawBattleMenuListClickmap( m_idx,_battlemenu_mouse_clickmap );
             }
         }
         else if( BM_MouseScrollDown() ) //pagedown.  Ignore modulus.
         {
             BM_MouseScrollUnpress();
-        
+
             if( MenuListIsAtBottom(m_idx) )
             {
                 //BattleMenuDeny();
             }
-            else 
-            {               
+            else
+            {
                 if( _list_count < _list_rows )
                 {
                     master_battle_menus[m_idx].cursor = (_list_count-1);
@@ -1886,7 +1871,7 @@ Log( "EXEC 3"  );
                     master_battle_menus[m_idx].cursor = _list_rows-1;
                     BattleMenuCursorMove();
                 }
-                
+
                 if( _list_cursor_offs || master_battle_menus[m_idx].cursor )
                 {
                     __volume_hack = __battlemenu_interface_volume;
@@ -1895,7 +1880,7 @@ Log( "EXEC 3"  );
                     BM_DoListDown( m_idx );
                     __battlemenu_interface_volume = __volume_hack;
                 }
-                
+
                 DrawBattleMenuListClickmap( m_idx,_battlemenu_mouse_clickmap );
             }
         }
@@ -1906,8 +1891,8 @@ Log( "EXEC 3"  );
         {
             BM_MouseAcceptUnpress();
             BM_MouseCancelUnpress();
-            BM_MouseHelpUnpress();          
-            
+            BM_MouseHelpUnpress();
+
             __mousehelp_trigger = 1;
         }
     }
@@ -1931,7 +1916,7 @@ void BM_TryAccept( int m_idx ) {
 
     master_battle_menus[m_idx].level_history[master_battle_menus[m_idx].cur_level] = master_battle_menus[m_idx].cur_page;
     master_battle_menus[m_idx].cursor_history[master_battle_menus[m_idx].cur_level] = master_battle_menus[m_idx].cursor;
-    
+
     if( hasChildBM(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor) )
     {
         master_battle_menus[m_idx].cur_page = getItemChildBM(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor);
@@ -1997,9 +1982,9 @@ void BM_KeyListControls( int m_idx )
             BM_TryCancel(m_idx);
 
             Unpress(0);
-        } 
+        }
         else if( ButtonAccept(1) )
-        {   
+        {
             if( MenuLineIsInactive(arTempStr[master_battle_menus[m_idx].cursor+_list_cursor_offs]) )
             {
                 BattleMenuDeny();
@@ -2013,7 +1998,7 @@ void BM_KeyListControls( int m_idx )
         else if( ButtonUp(1) )
         {
             BM_DoListUp( m_idx );
-        } 
+        }
         else if( ButtonDown(1) )
         {
             BM_DoListDown( m_idx );
@@ -2050,7 +2035,7 @@ void BM_KeyListControls( int m_idx )
             {
                 BattleMenuDeny();
             }
-            else 
+            else
             {
                 if( _list_count < _list_rows )
                 {
@@ -2131,7 +2116,7 @@ void BM_DoListDown( int m_idx )
     }
 
     if( master_battle_menus[m_idx].mode_modulus )
-    {   
+    {
         if( (master_battle_menus[m_idx].cursor + _list_cursor_offs) >= (_list_count-1)  )
         {
             master_battle_menus[m_idx].cursor = 0;
@@ -2189,7 +2174,7 @@ void UpdateBattleMenuListControls(int m_idx)
     else
     {
         BM_KeyListControls(m_idx);
-    }   
+    }
 }
 
 /// Returns true if the current list is on the bottommost entry, false if not.
@@ -2200,7 +2185,7 @@ int MenuListIsAtBottom( int m_idx )
     {
         return 1;
     }
-    
+
     return 0;
 }
 
@@ -2213,7 +2198,7 @@ int IsBasePage( int m_idx, int page_idx )
         if( val(GetToken(master_battle_menus[m_idx].page_base,",",i)) == page_idx )
             return 1;
     }
-    
+
     return 0;
 }
 
@@ -2229,10 +2214,10 @@ int SpawnPageIMG( int m_idx, int page_idx )
     SetBoxColor( 1, rgb(112, 112, 112) );
     SetBoxColor( 2, rgb(144, 144, 144) );
     SetBoxColor( 3, rgb(0, 0, 255) );
-    
+
     int my_content = CreateMenuContentImageBM( m_idx, page_idx );
     int my_mono, im;
-    
+
     if( master_battle_menus[m_idx].mode_monobase )
     {
         if( IsBasePage(m_idx, page_idx) )
@@ -2241,22 +2226,22 @@ int SpawnPageIMG( int m_idx, int page_idx )
                         master_battle_menus[m_idx].mode_monobase_y );
             RectFill( 0,0, ImageWidth(my_mono), ImageHeight(my_mono), transcolor, my_mono);
             TBlit(0,0, my_content, my_mono);
-            
+
             SetBoxContent(my_mono);
-            
+
             im = SaveBoxToIMG();
             FreeBox(0);
             FreeImage(my_content);
- 
+
             return im;
         }
     }
-    
-    
+
+
     SetBoxContent(my_content);
     im = SaveBoxToIMG();
     FreeBox(0);
-    
+
     return im;
 }
 
@@ -2265,15 +2250,15 @@ int SpawnPageIMG( int m_idx, int page_idx )
 int SpawnClickPageIMG( int m_idx, int page_idx )
 {
     int tmp_img = CreateMenuContentClickingImageBM( m_idx, page_idx );
-    
+
     int im = NewImage( ImageWidth(tmp_img)+12, ImageHeight(tmp_img)+12 );
-    
+
     RectFill( 0,0, ImageWidth(tmp_img)+12, ImageHeight(tmp_img)+12, RGB(255,0,255), im );
-    
+
     Blit( 6,6, tmp_img, im );
-    
+
     FreeImage(tmp_img);
-    
+
     return im;
 }
 
@@ -2310,9 +2295,9 @@ void BattleMenuReturnALevel( int m_idx )
 {
     if( !_sfxBMMove )   _sfxBMMove = LoadSound("res\sfx\battle_menu\CHIRP.WAV");
     PlaySound( _sfxBMMove, __battlemenu_interface_volume );
-    
+
     master_battle_menus[m_idx].mode_list = 0;
-    
+
     if( _battlemenu_mouse_mode )
     {
         BM_UpdateMouseClickMap( m_idx );
@@ -2323,7 +2308,7 @@ void BattleMenuEnterALevel( int m_idx )
 {
     if( !_sfxBMMove )   _sfxBMMove = LoadSound("res\sfx\battle_menu\CHIRP.WAV");
     PlaySound( _sfxBMMove, __battlemenu_interface_volume );
-    
+
     if( _battlemenu_mouse_mode )
     {
         BM_UpdateMouseClickMap( m_idx );
@@ -2341,7 +2326,7 @@ void CheckHelpMode( int m_idx )
             {
                 __menuHelpMode = 0;
                 __mousehelp_trigger = 0;
-                
+
                 FreeImage(__menuHelpModeIMG);
             }
         }
@@ -2349,7 +2334,7 @@ void CheckHelpMode( int m_idx )
         {
             if( __mousehelp_trigger )
             {
-            
+
                 __menuHelpMode = 1;
                 __mousehelp_trigger = 0;
                 __menuHelpText = GetMenuHelpModeText( m_idx );
@@ -2405,14 +2390,14 @@ string GetMenuHelpModeText( int m_idx )
             s = getPageItem(m_idx, master_battle_menus[m_idx].cur_page, master_battle_menus[m_idx].cursor);
         }
     }
-    
+
     if( MenuLineIsInactive(s) )
     {
         s = right(s, len(s)-1);
     }
-    
+
     s = GetBattleMenuHelpText( s );
-    
+
     return s;
 }
 

@@ -1,6 +1,6 @@
 /// Selectmap.vc
-/// 
-/// This is a library to generate a map of points that you can shuttle a cursor around on 
+///
+/// This is a library to generate a map of points that you can shuttle a cursor around on
 /// that keeps track of the positions of the entries and the position of the cursor internally.
 
 #define MAX_SELECTMAP_NODES 64
@@ -9,14 +9,14 @@ struct select_node
 {
     int x,y;
     int w,h;
-    
+
     int mid_x, mid_y;
-    
+
     int up_node, up_dist;
     int down_node, down_dist;
     int left_node, left_dist;
     int right_node, right_dist;
-    
+
     string name;
     string str_data;
     int int_data;
@@ -40,22 +40,22 @@ void selectnode_clear( int idx )
     master_selectmap[idx].y = -1;
     master_selectmap[idx].w = -1;
     master_selectmap[idx].h = -1;
-    
+
     master_selectmap[idx].mid_x = -1;
     master_selectmap[idx].mid_y = -1;
-    
+
     master_selectmap[idx].up_node = -1;
     master_selectmap[idx].up_dist = -1;
-    
+
     master_selectmap[idx].down_node = -1;
     master_selectmap[idx].down_dist = -1;
-    
+
     master_selectmap[idx].left_node = -1;
     master_selectmap[idx].left_dist = -1;
-    
+
     master_selectmap[idx].right_node = -1;
-    master_selectmap[idx].right_dist = -1;  
-    
+    master_selectmap[idx].right_dist = -1;
+
     master_selectmap[idx].name = "";
     master_selectmap[idx].str_data = "";
     master_selectmap[idx].int_data = -1;
@@ -64,17 +64,17 @@ void selectnode_clear( int idx )
 void selectmap_clear( int initmode )
 {
     int i, cnt;
-    
+
     if( initmode )
         cnt = MAX_SELECTMAP_NODES;
     else
         cnt = selectmap_count;
-    
+
     for( i=0; i<cnt; i++ )
     {
         selectnode_clear( i );
     }
-    
+
     selectmap_count = 0;
     selectmap_cursor = 0;
     selectmap_on = 0;
@@ -95,23 +95,23 @@ int SM_newnode( int x, int y, int w, int h )
 {
     int idx = selectmap_count;
     int i;
-    
+
     for( i=0; i<idx; i++ )
     {
         if( master_selectmap[i].x == x && master_selectmap[i].y == y )
             return -1;
     }
-    
-    
+
+
     master_selectmap[idx].x = x;
     master_selectmap[idx].y = y;
     master_selectmap[idx].w = w;
-    master_selectmap[idx].h = h;    
-    
+    master_selectmap[idx].h = h;
+
     SM_calc_midpoints(idx);
-    
+
     selectmap_count++;
-    
+
     return idx;
 }
 
@@ -127,7 +127,7 @@ int SM_newnode_rend( int mcgrender_ref )
             mcg_getX( i ),
             mcg_getY( i ),
             mcg_width( i ),
-            mcg_height( i ) 
+            mcg_height( i )
         );
 }
 
@@ -149,11 +149,8 @@ void SM_set_int_data( int idx, int newdata ) { master_selectmap[idx].int_data = 
 
 void SM_autocalculate()
 {
-
-//Log( "SM_autocalculate()..." );
-
     int i, j;
-    
+
     for( i=0; i<selectmap_count ; i++ )
     {
         for( j=0; j<selectmap_count ; j++ )
@@ -164,7 +161,6 @@ void SM_autocalculate()
             }
         }
     }
-//Log( "...SM_autocalculate() done." );
 }
 
 
@@ -174,15 +170,13 @@ void _sm_ac_helper( int us, int them )
 {
     int x = master_selectmap[them].mid_x - master_selectmap[us].mid_x;
     int y = master_selectmap[them].mid_y - master_selectmap[us].mid_y;
-    
+
     int dist = abs(x*x) + abs(y*y);
-//log( "us,them = ("+str(us)+","+str(them)+")::"+str(dist) );
+
     if( x < 0 ) // they are left of us.
     {
-//log( "left a" );
         if( master_selectmap[us].left_dist < 0 || dist < master_selectmap[us].left_dist )
         {
-//log( "left b" );
             master_selectmap[us].left_dist = dist;
             master_selectmap[us].left_node = them;
         }
@@ -190,52 +184,40 @@ void _sm_ac_helper( int us, int them )
 
     if( x > 0 ) // they are right of us.
     {
-//log( "right a" );
         if( master_selectmap[us].right_dist < 0 || dist < master_selectmap[us].right_dist )
         {
-//log( "right b" );
-
             master_selectmap[us].right_dist = dist;
             master_selectmap[us].right_node = them;
-        }   
+        }
     }
 
     if( y < 0 ) // they are above us.
     {
-//log( "above a" );
         if( master_selectmap[us].up_dist < 0 || dist < master_selectmap[us].up_dist )
         {
-//log( "above b" );
-
             master_selectmap[us].up_dist = dist;
             master_selectmap[us].up_node = them;
-        }   
+        }
     }
-    
+
     if( y > 0 ) // they are below us.
     {
-//log( "below a" );
-
         if( master_selectmap[us].down_dist < 0 || dist < master_selectmap[us].down_dist )
         {
-//log( "below b" );
-
             master_selectmap[us].down_dist = dist;
             master_selectmap[us].down_node = them;
-        }   
+        }
     }
-//log( "done us them..." );
-
 }
 
 void dump_selectnode( int i )
 {
     Log( "node["+str(i)+"]: "+SM_get_name(i)+", '"+SM_get_str_data(i)+"', "+str(SM_get_int_data(i))  );
-    
+
     if( i==selectmap_cursor ) {
         Log( "***selected node***" );
     }
-    
+
     Log( "   up: " + str(master_selectmap[i].up_node) );
     Log( " down: " + str(master_selectmap[i].down_node) );
     Log( " left: " + str(master_selectmap[i].left_node) );
@@ -247,7 +229,7 @@ void dump_all_selectnodes()
 {
     Log( "==============================" );
     Log( "======= SELECTMAP DUMP =======" );
-    
+
     Log( "Cursor at node: " + str(selectmap_cursor) );
 
     int i;
@@ -281,15 +263,15 @@ void set_selectmap_cursor( int node )
 
 void selectmap_draw_cursor()
 {
-    Rect(  
+    Rect(
         master_selectmap[selectmap_cursor].x-2,
         master_selectmap[selectmap_cursor].y-2,
-        
+
         master_selectmap[selectmap_cursor].x+master_selectmap[selectmap_cursor].w+2,
         master_selectmap[selectmap_cursor].y+master_selectmap[selectmap_cursor].h+2,
-        
+
         RGB(255,0,0),
-        
+
         screen
     );
 }
@@ -299,7 +281,7 @@ void update_selectmap_input()
 
     /// no need to do this if it's already in the master loop.
     //UpdateControlsMcFAIL();
-    
+
     if( ButtonUp(1) ) {
         if( master_selectmap[selectmap_cursor].up_node >= 0 )
         {
@@ -311,7 +293,7 @@ void update_selectmap_input()
         {
             CallFunction(selectmap_badmove_callfunc);
         }
-    
+
     } else if( ButtonDown(1) ) {
         if( master_selectmap[selectmap_cursor].down_node >= 0 )
         {
@@ -322,7 +304,7 @@ void update_selectmap_input()
         {
             CallFunction(selectmap_badmove_callfunc);
         }
-    
+
     } else if( ButtonLeft(1) ) {
         if( master_selectmap[selectmap_cursor].left_node >= 0 )
         {
@@ -333,7 +315,7 @@ void update_selectmap_input()
         {
             CallFunction(selectmap_badmove_callfunc);
         }
-    
+
     } else if( ButtonRight(1) ) {
         if( master_selectmap[selectmap_cursor].right_node >= 0 )
         {
@@ -344,10 +326,10 @@ void update_selectmap_input()
         {
             CallFunction(selectmap_badmove_callfunc);
         }
-    
+
     } else if( ButtonAccept(0) ) {
         CallFunction( selectmap_accept_callfunc );
-    
+
     } else if( ButtonCancel(0) ) {
         CallFunction( selectmap_cancel_callfunc );
     }
@@ -357,16 +339,16 @@ void update_selectmap_input()
 void draw_testmap() {
 
     int i;
-    
-    RectFill(  
+
+    RectFill(
         0,0,
         320,240,
         0,
         screen
     );
-    
+
     for( i=0; i<selectmap_count; i++ ) {
-        RectFill(  
+        RectFill(
             master_selectmap[i].x,
             master_selectmap[i].y,
 
@@ -383,11 +365,9 @@ void draw_testmap() {
 
 void do_selectmap()
 {
-
-//Log( "do_selectmap" );
     update_selectmap_input();
-    //draw_testmap();
-    selectmap_draw_cursor();    
+
+    selectmap_draw_cursor();
 }
 
 

@@ -1,4 +1,4 @@
-/// Attempt #2 at making a little library to handle bouncy numbers, 
+/// Attempt #2 at making a little library to handle bouncy numbers,
 /// slashies, and general "end of battle skill" stuff.
 ///
 /// For a lack of a better name, this shall be known as Grue's Awesome Thing That Also Counts Awesomes (GATTACA)
@@ -20,15 +20,15 @@ void EmptyGATTACA()
 struct bs_change {
     int type;   /// as defined above in the BS_CHANGE_ flavors.
     int amount; ///
-    
+
     int is_physical;
     int is_magical;
 }
 
-/// the maximum number of bouncy letters for a 
+/// the maximum number of bouncy letters for a
 #define MAX_CHANGES_PER_ACTOR   3
 
-/// the max number of allies and enemies per action that can be slashed, 
+/// the max number of allies and enemies per action that can be slashed,
 /// have bouncy numbers, etc.
 #define MAX_CHANGING_ACTORS 16
 
@@ -38,10 +38,10 @@ struct bs_change {
 struct bs_change_actor {
 
     int actor_idx, party_idx;
-    
+
     int change_ref[MAX_CHANGES_PER_ACTOR];
     int change_count;
-    
+
     string animation_strandname;
     int my_slashy_idx;
 }
@@ -65,7 +65,7 @@ void EmptyGATTACA() {
 
 /// gets the number of people being changed by GATTACA
 /// useful in conjunction with GetGatticanCX and GetGatticanCY for Battle Effects.
-int GetGatticanCount() 
+int GetGatticanCount()
 {
     return bs_change_actor_count;
 }
@@ -79,10 +79,10 @@ int GetGatticanCX( int idx )
     {
         FATAL_ERROR( "GATTACA:GetGatticanCX() tried to access index '"+str(idx)+"' out of a maximum '"+str(bs_change_actor_count)+"'." );
     }
-    
+
 //LOG( "GetGatticanCX" );
     mcg_idx = bat_getRenderRef( bs_change_actor_list[idx].actor_idx, bs_change_actor_list[idx].party_idx );
-    
+
     return mcg_get_x(mcg_idx) + (mcg_width(mcg_idx)/2);
 }
 
@@ -98,7 +98,7 @@ int GetGatticanCY( int idx )
 
 //LOG( "GetGatticanCY" );
     mcg_idx = bat_getRenderRef( bs_change_actor_list[idx].actor_idx, bs_change_actor_list[idx].party_idx );
-    
+
     return mcg_get_y(mcg_idx) + (mcg_height(mcg_idx)/2);
 }
 
@@ -106,14 +106,14 @@ int GetGatticanCY( int idx )
 int __addGattaca_is_phys = 0;
 int __addGattaca_is_magi = 0;
 
-/// Adds a is_physical flag to the next AddGATTACA call. 
+/// Adds a is_physical flag to the next AddGATTACA call.
 /// This change is wiped at the end of the very next AddGATTACA.
 void NextAddGATTACAisPhysical()
 {
     __addGattaca_is_phys = 1;
 }
 
-/// Adds a is_magical flag to the next AddGATTACA call. 
+/// Adds a is_magical flag to the next AddGATTACA call.
 /// This change is wiped at the end of the very next AddGATTACA.
 void NextAddGATTACAisMagical()
 {
@@ -134,10 +134,10 @@ void __wipeGATTACAPhysMagiFlags()
 string __ARBITRARY_STRING;
 int __ARBITRARY_STRING_COLOR;
 
-void AddGATTACA_ArbitraryString( int actor_idx, int party_idx, string message, int gattaca_color ) 
+void AddGATTACA_ArbitraryString( int actor_idx, int party_idx, string message, int gattaca_color )
 {
     AddGATTACA( actor_idx, party_idx, BS_ARBITRARY_STRING, 0 );
-    
+
     __ARBITRARY_STRING = message;
     __ARBITRARY_STRING_COLOR = gattaca_color;
 }
@@ -147,13 +147,13 @@ void AddGATTACA_ArbitraryString( int actor_idx, int party_idx, string message, i
 void AddGATTACA( int actor_idx, int party_idx, int change_type, int amount ) {
 
     int i;
-    
-    /// look over the existing guys loaded into GATTACA.  
-    /// If we're adding something to someone already here, 
+
+    /// look over the existing guys loaded into GATTACA.
+    /// If we're adding something to someone already here,
     /// just add a new entry to their
     for( i=0; i<bs_change_actor_count; i++ )
     {
-        if(     
+        if(
             bs_change_actor_list[i].actor_idx == actor_idx &&
             bs_change_actor_list[i].party_idx == party_idx
         )
@@ -162,12 +162,12 @@ void AddGATTACA( int actor_idx, int party_idx, int change_type, int amount ) {
             return;
         }
     }
-    
+
     if( i>=MAX_CHANGING_ACTORS )
     {
         FATAL_ERROR( "GATTACA:AddGATTACA() too many actors.  Either GATTACA was never cleareded properly, or you need to up the maxes." );
     }
-    
+
     i = bs_change_actor_count;
 
     bs_change_actor_list[i].actor_idx = actor_idx;
@@ -175,19 +175,19 @@ void AddGATTACA( int actor_idx, int party_idx, int change_type, int amount ) {
     bs_change_actor_list[i].change_count = 0;
     bs_change_actor_list[i].animation_strandname = "";
     bs_change_actor_list[i].my_slashy_idx = -1;
-    
+
     _GAT_add_amount( i, change_type, amount );
     bs_change_actor_count++;
 }
 
 /// Sets a GATTACA Actor's animation strand state for the duration of GATTACA's execution.
-void SetGATTACAAnimStrand( int actor_idx, int party_idx, string strand ) 
+void SetGATTACAAnimStrand( int actor_idx, int party_idx, string strand )
 {
     int i;
-    
+
     for( i=0; i<bs_change_actor_count; i++ )
     {
-        if(     
+        if(
             bs_change_actor_list[i].actor_idx == actor_idx &&
             bs_change_actor_list[i].party_idx == party_idx
         )
@@ -196,12 +196,12 @@ void SetGATTACAAnimStrand( int actor_idx, int party_idx, string strand )
             return;
         }
     }
-    
+
     if( i>=MAX_CHANGING_ACTORS )
     {
         FATAL_ERROR( "GATTACA:SetGATTACAAnimStrand() too many actors.  Either GATTACA was never cleareded properly, or you need to up the maxes." );
     }
-    
+
     i = bs_change_actor_count;
 
     bs_change_actor_list[i].actor_idx = actor_idx;
@@ -209,17 +209,17 @@ void SetGATTACAAnimStrand( int actor_idx, int party_idx, string strand )
     bs_change_actor_list[i].animation_strandname = strand;
     bs_change_actor_list[i].my_slashy_idx = -1;
     bs_change_actor_list[i].change_count = 0;
-    
+
     bs_change_actor_count++;
 }
 
 /// Adds a slashy animation to a GATTACA actor.
 void SetGATTACASlashy( int actor_idx, int party_idx, int slashy_idx ) {
     int i;
-    
+
     for( i=0; i<bs_change_actor_count; i++ )
     {
-        if(     
+        if(
             bs_change_actor_list[i].actor_idx == actor_idx &&
             bs_change_actor_list[i].party_idx == party_idx
         )
@@ -228,12 +228,12 @@ void SetGATTACASlashy( int actor_idx, int party_idx, int slashy_idx ) {
             return;
         }
     }
-    
+
     if( i>=MAX_CHANGING_ACTORS )
     {
         FATAL_ERROR( "GATTACA:SetGATTACAAnimStrand() too many actors.  Either GATTACA was never cleareded properly, or you need to up the maxes." );
     }
-    
+
     i = bs_change_actor_count;
 
     bs_change_actor_list[i].actor_idx = actor_idx;
@@ -241,7 +241,7 @@ void SetGATTACASlashy( int actor_idx, int party_idx, int slashy_idx ) {
     bs_change_actor_list[i].animation_strandname = "";
     bs_change_actor_list[i].my_slashy_idx = slashy_idx;
     bs_change_actor_list[i].change_count = 0;
-    
+
     bs_change_actor_count++;
 }
 
@@ -259,69 +259,44 @@ void StartGATTACA()
 
     TurnSlashyOff();
     KillAllBouncy();
-    
-//Log( "StartGATTACA..." );
-//Log( "bs_change_actor_count: " + str(bs_change_actor_count) );
 
-    
     for( i=0; i<bs_change_actor_count; i++ )
     {
-//Log( "---" );
-//Log( "GATTACA["+str(i)+"]: '"+bat_getName( bs_change_actor_list[i].actor_idx, bs_change_actor_list[i].party_idx )+"'" );
-    
-    
+
         if( bs_change_actor_list[i].my_slashy_idx >= 0 )
         {
-//Log( "OMG SLASH'D" );
-            AddCurrentSlashy( 
-                bat_getRenderRef( 
-                    bs_change_actor_list[i].actor_idx, 
+            AddCurrentSlashy(
+                bat_getRenderRef(
+                    bs_change_actor_list[i].actor_idx,
                     bs_change_actor_list[i].party_idx
-                ), 
-                
-                bs_change_actor_list[i].my_slashy_idx 
+                ),
+
+                bs_change_actor_list[i].my_slashy_idx
             );
         }
-        else
-        {
-//Log( "no slash :(" );
-        }
-        
+
         if( bs_change_actor_list[i].change_count > 0 )
         {
-//Log( str(bs_change_actor_list[i].change_count)+" stat changes! :D" );
             for( j=0; j<bs_change_actor_list[i].change_count; j++ )
             {
-//Log( "DOING CHANGE..." );
                 _GAT_do_change( i, bs_change_actor_list[i].change_ref[j], j );
-//Log( "...CHANGE DONE!" );
             }
-//sExit("");
         }
-        else
-        {
-//Log( "no stat changes :(" );
-        }
-        
+
         if( !equ( bs_change_actor_list[i].animation_strandname ,"" ) )
         {
-//Log( "new animation: '"+bs_change_actor_list[i].animation_strandname+"'" );
-            ChangeSpriteAnimation( 
+            ChangeSpriteAnimation(
                 bat_getRenderRef(
-                    bs_change_actor_list[i].actor_idx, 
+                    bs_change_actor_list[i].actor_idx,
                     bs_change_actor_list[i].party_idx
-                ), 
+                ),
 
                 bs_change_actor_list[i].animation_strandname
             );
         }
-        else
-        {
-//Log( "no new animation :( " );
-        }   
-        
+
     }
-    
+
     StartCurrentSlashy();
 }
 
@@ -340,7 +315,7 @@ int isGATTACArunning()
         ___pgs = 1;
         return 1;
     }
-    
+
     /// Is a slashy-lib slashy going on?
     if( IsSlashyOn() )
     {
@@ -348,23 +323,23 @@ int isGATTACArunning()
         ___pgs = 1;
         return 1;
     }
-    
+
     if( ___pgs )
     {
 //**// Log( "isGATTACArunning NO A!" );
         EmptyGATTACA();
         ___pgs = 0;
-        
+
         /// trigger end-of-battle-action checks.
         EndOfBattleAction();
-        
+
         __after_effect_targtime = systemtime + GetBattleEffectPauseTime();
-        __after_effect_cigarette = 1;        
+        __after_effect_cigarette = 1;
     }
 //**//  else
 //**// Log( "isGATTACArunning NO B!" );
-        
-        
+
+
     return 0;
 }
 
@@ -388,7 +363,7 @@ int hasGATTACA_onComplete() {
 
 
 /// Actually changes the battle actor's stats and makes bouncy numbers appear!
-/// 
+///
 /// EVERYONE FUCKING LOVES BOUNCING NUMBERS.
 ///
 ///
@@ -396,13 +371,13 @@ void _GAT_do_change( int GAT_idx, int change_idx, int level )
 {
     int type = bs_change_heap[bs_change_actor_list[GAT_idx].change_ref[change_idx]].type;
     int amount = bs_change_heap[bs_change_actor_list[GAT_idx].change_ref[change_idx]].amount;
-    
+
     /// true if the stat change was flagged as 'physical'
     int is_phys = bs_change_heap[bs_change_actor_list[GAT_idx].change_ref[change_idx]].is_physical;
-    
+
     /// true if the stat change was flagged as 'magical'
     int is_magi = bs_change_heap[bs_change_actor_list[GAT_idx].change_ref[change_idx]].is_magical;
-    
+
     int b_idx = bs_change_actor_list[GAT_idx].actor_idx;
     int p_idx = bs_change_actor_list[GAT_idx].party_idx;
 
@@ -417,7 +392,7 @@ Log( "Amount: " + str(amount) );
     {
         case BS_CHANGE_HP:
             bat_change_hp( b_idx, p_idx, amount ); ///damages (or heals) the battle actor!
-            
+
             if( amount <= 0 ) ///bounce white text of hurting!
             {
                 if( is_phys )
@@ -426,30 +401,30 @@ Log( "Amount: " + str(amount) );
                     /// gets physically hit happens now..
                     trigger_on_hit( b_idx, p_idx );
                 }
-            
-                NewBounceText( 
-                    b_idx, 
-                    p_idx, 
-                    str(abs(amount)), 
+
+                NewBounceText(
+                    b_idx,
+                    p_idx,
+                    str(abs(amount)),
                     BOUNCETEXT_WHITE,
                     level
                 );
             }
             else ///bounce green text of healing!
             {
-                NewBounceText( 
-                    b_idx, 
-                    p_idx, 
-                    str(amount), 
+                NewBounceText(
+                    b_idx,
+                    p_idx,
+                    str(amount),
                     BOUNCETEXT_GREEN,
                     level
                 );
             }
 
-        
-        case BS_CHANGE_CRIT_HP: 
+
+        case BS_CHANGE_CRIT_HP:
             bat_change_hp( b_idx, p_idx, amount ); ///damages (or heals) the battle actor!
-            
+
             if( amount <= 0 ) ///bounce red text of critical-hurting!
             {
                 if( is_phys )
@@ -457,71 +432,71 @@ Log( "Amount: " + str(amount) );
                     /// anything that happens when a player
                     /// gets physically hit happens now..
                     trigger_on_hit( b_idx, p_idx );
-                }               
-            
-                NewBounceText( 
-                    b_idx, 
-                    p_idx, 
-                    str(abs(amount)), 
+                }
+
+                NewBounceText(
+                    b_idx,
+                    p_idx,
+                    str(abs(amount)),
                     BOUNCETEXT_RED,
                     level
                 );
             }
             else ///bounce green text of healing!
             {
-                NewBounceText( 
-                    b_idx, 
-                    p_idx, 
-                    str(amount), 
+                NewBounceText(
+                    b_idx,
+                    p_idx,
+                    str(amount),
                     BOUNCETEXT_GREEN,
                     level
                 );
             }
-            
+
         case BS_CHANGE_MP:
             bat_change_mp( b_idx, p_idx, amount );
-        
+
             if( amount <= 0 )
-                NewBounceText( 
-                    b_idx, 
-                    p_idx, 
-                    str(abs(amount))+" MP", 
+                NewBounceText(
+                    b_idx,
+                    p_idx,
+                    str(abs(amount))+" MP",
                     BOUNCETEXT_WHITE,
                     level
                 );
             else
-                NewBounceText( 
-                    b_idx, 
-                    p_idx, 
-                    str(amount)+" MP", 
+                NewBounceText(
+                    b_idx,
+                    p_idx,
+                    str(amount)+" MP",
                     BOUNCETEXT_GREEN,
                     level
                 );
-        
+
         case BS_CHANGE_NONE:
             // NOTHING HAPPENS!  STUB!  NEWT!  FISH!  GARUDA!
-            
+
         case BS_CHANGE_MISS:
-                NewBounceText( 
-                    b_idx, 
-                    p_idx, 
-                    "MISS!", 
+                NewBounceText(
+                    b_idx,
+                    p_idx,
+                    "MISS!",
                     BOUNCETEXT_WHITE,
                     level
                 );
-                
+
         case BS_ARBITRARY_STRING:
-                NewBounceText( 
-                    b_idx, 
-                    p_idx, 
-                    __ARBITRARY_STRING, 
+                NewBounceText(
+                    b_idx,
+                    p_idx,
+                    __ARBITRARY_STRING,
                     __ARBITRARY_STRING_COLOR,
                     level
                 );
     }
 }
 
-/// either adds a change-entry to the GATTACA change heap, 
+/// either adds a change-entry to the GATTACA change heap,
 /// or augments an existing entry.
 ///
 /// For example, if 30 normal damage is done to darin, it adds a 30/normal to the heap for darin.
@@ -529,49 +504,49 @@ Log( "Amount: " + str(amount) );
 /// If 40 normal damage is then done to darin, it adds it to the 30/normal, becoming 70/normal.
 /// If 15 critical damage is done to Crystal, it adds a new entry of 15/critical to the heap for her.
 ///
-/// So, in this example, there are now 3 heap entries: 70/normal for Darin, 20/normal for crystal, 
+/// So, in this example, there are now 3 heap entries: 70/normal for Darin, 20/normal for crystal,
 /// and 15/critical for Crystal.
 ///
-/// When this example resolves, a white "70" will bounce in front of darin, 
-/// a white "20" in front of crystal, and a red "15" on to ofd the white "20".  Then Darin will lose 70 HP, 
+/// When this example resolves, a white "70" will bounce in front of darin,
+/// a white "20" in front of crystal, and a red "15" on to ofd the white "20".  Then Darin will lose 70 HP,
 /// and crystal will lose 35 HP.
 void _GAT_add_amount( int idx, int type, int amount )
 {
     int i, _is_physical, _is_magical;
-    
+
     _is_physical = __addGattaca_is_phys;
     _is_magical = __addGattaca_is_magi;
-    
+
     for( i=0; i<bs_change_actor_list[idx].change_count; i++ )
     {
         if( bs_change_heap[bs_change_actor_list[idx].change_ref[i]].type == type )
         {
 // Log( "ADDED heap["+str(i)+"] type("+str(type)+") amount = " + str(amount) );
             bs_change_heap[bs_change_actor_list[idx].change_ref[i]].amount += amount;
-            
+
             bs_change_heap[bs_change_actor_list[idx].change_ref[i]].is_physical += _is_physical;
             bs_change_heap[bs_change_actor_list[idx].change_ref[i]].is_magical += _is_magical;
-            
+
             __wipeGATTACAPhysMagiFlags();
             return;
-        }   
+        }
     }
 
     if( i>=MAX_CHANGING_ACTORS )
     {
         FATAL_ERROR( "GATTACA:_GAT_add_amount() too many changes for this actor.  Either GATTACA was never cleared properly, or you need to up MAX_CHANGES_PER_ACTOR." );
     }
-    
+
     bs_change_heap[bs_change_heap_count].type = type;
     bs_change_heap[bs_change_heap_count].amount = amount;
     bs_change_heap[bs_change_heap_count].is_physical += _is_physical;
     bs_change_heap[bs_change_heap_count].is_magical += _is_magical;
-    
+
 // Log( "ADDED heap["+str(bs_change_heap_count)+"] type("+str(type)+") amount = " + str(amount) );
     bs_change_actor_list[idx].change_ref[bs_change_actor_list[idx].change_count] = bs_change_heap_count;
     bs_change_actor_list[idx].change_count++;
-    
-    
+
+
     bs_change_heap_count++;
     __wipeGATTACAPhysMagiFlags();
 }

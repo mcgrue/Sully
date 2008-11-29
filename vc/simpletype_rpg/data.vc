@@ -6,7 +6,7 @@
 // Best viewed with tab of 4 in a text-editor with syntax-highlighted vc
 /////////////////////////////////////////////////////////////////////////
 // These are the master arrays of structs that the datafiles parse into.
-// 
+//
 // The Load/Save system alters none of them *except* master_cast[], for
 // reasons that I hope are obvious.
 //
@@ -35,7 +35,7 @@ string sprfile_dir      = "res/images/sprites/";
 #define MAX_CAST        10
 #define MAX_ITEMS       800
 
-// These are the maximums for Max HP, Max MP, and all other stats. 
+// These are the maximums for Max HP, Max MP, and all other stats.
 // Enemies are bound to the normal stat maximums, but not the HP/MP maximums.
 #define MAXIMUM_HP_VALUE    999
 #define MAXIMUM_MP_VALUE    999
@@ -73,12 +73,12 @@ string sprfile_dir      = "res/images/sprites/";
 #define MAX_EQUIP_SLOTS 5
 
 
-//UNEQUIP ALLOWANCE DEFINES - set to false to disallow unequipping from the 
+//UNEQUIP ALLOWANCE DEFINES - set to false to disallow unequipping from the
 // specified slot. Changing what's equipped is still allowed, of course.
 // Be warned that characters still start with nothing in the slot, so setting
 // these to false isn't a guarantee that the slot will be filled.
-// If you set these to 0 it forces a character to keep some weapon and armor 
-// equipped once he has something there in the first place. This is useful 
+// If you set these to 0 it forces a character to keep some weapon and armor
+// equipped once he has something there in the first place. This is useful
 // because the game uses a slightly peculiar kludge for handling characters
 // with no weapon or armor.
 #define UNEQUIP_WEAPON_OK 1
@@ -97,10 +97,10 @@ string sprfile_dir      = "res/images/sprites/";
 #define STAT_MAX_MP 1
 #define STAT_STR    2
 #define STAT_END    3
-#define STAT_MAG    4 
-#define STAT_MGR    5 
-#define STAT_HIT    6 
-#define STAT_DOD    7 
+#define STAT_MAG    4
+#define STAT_MGR    5
+#define STAT_HIT    6
+#define STAT_DOD    7
 #define STAT_STK    8
 #define STAT_FER    9
 #define STAT_REA    10
@@ -112,7 +112,7 @@ string sprfile_dir      = "res/images/sprites/";
 
 /// a global array of ints and one of strings for use in functions,
 /// since you can't have local arrays in mapfunctions.
-/// Also useful scratch.  This data is by definition *not* saved... 
+/// Also useful scratch.  This data is by definition *not* saved...
 /// it's just a small playground of scratch space!
 #define MAX_SCRATCH 1000
 
@@ -120,10 +120,10 @@ string sprfile_dir      = "res/images/sprites/";
 int     arTemp[MAX_SCRATCH];
 string  arTempStr[MAX_SCRATCH];
 
-// These vars are used by maps specifically. Don't use them outside 
-// the context of map scripting or the maps might screw up. 
+// These vars are used by maps specifically. Don't use them outside
+// the context of map scripting or the maps might screw up.
 // Unlike the normal temp array, these ARE saved.
-int     arMapTemp[MAX_SCRATCH];  
+int     arMapTemp[MAX_SCRATCH];
 
 /// sorts the arTemp array from start_idx to end_idx, inclusive.
 /// there is no errorchecking on this.  Be careful!
@@ -134,17 +134,17 @@ void sortArTemp( int start_idx, int end_idx )
 //Log( "sorting ["+str(start_idx)+"] through ["+str(end_idx)+"]" );
 
     int i,j, lowest_idx, tmp;
-    
+
     for( i=start_idx; i<end_idx+1; i++ )
     {
         lowest_idx = i;
-    
+
         for( j=i+1; j<end_idx+1; j++ )
         {
             if( arTemp[j] < arTemp[lowest_idx] )
                 lowest_idx = j;
         }
-        
+
         tmp = arTemp[i];
         arTemp[i] = arTemp[lowest_idx];
         arTemp[lowest_idx] = tmp;
@@ -163,7 +163,7 @@ struct SkillType {
     string  name; //remember to make sure names are unique.
     string  desc; //the description string.
     int     icon; //the index of the icon in the iconfile. (see icons.vc)
-    
+
     int visibility; //the visibility mode for this skilltype's known children
 
     /// a comma-seperated list of all status ailments that, if present in the character that has
@@ -217,10 +217,10 @@ struct Skill {
     string  effect_func;    //the callfunc for the skill's effect.
     int     mp_cost;    //the MP cost to use this skill.  Can be 0.
     int     type;       //index reference to the master_skilltypes array (see above)
-    
+
     int charge_time;    //how long does this skill charge for. (charge is the period between choosing it on your character's turn and it's actual execution.)
     int delay_time; //how long does this skill delay your character after it executes?
-    
+
     int is_reflectable; //is this skill 'reflectable'?
     int is_nullable;    //is this skill 'nullable'?
 }
@@ -239,81 +239,81 @@ Skill master_skills[MAX_SKILLS];
 // wacky systems coder.
 //
 struct Cast {
-    string  name;       //The name is a second unique identifier for this character.  
+    string  name;       //The name is a second unique identifier for this character.
     string  desc;       //description.
-    
+
     string  chrname;        //relative path and filename of this cast member's chr.
     string  overworld_chrname;  //relative path and filename of this cast member's ovrworld chr.
-    
+
     int entity;     //the entity reference of this character on the current map!
                 //
-                //NOTE: this system only sets this to the mapentity reference when 
-                //      SpawnParty() or AddPlayer() are called.  Please refer to the 
+                //NOTE: this system only sets this to the mapentity reference when
+                //      SpawnParty() or AddPlayer() are called.  Please refer to the
                 //      Party.vc docs on their proper usage.
-    
+
     int portrait_idx;   //the speech portrait index for this character.
                 // NOTE: these are presently set by the completely hacky
                 //       initSpeechPortsInData() in the Sully system.vc file.
                 //       It is advised that any future revisions include this index
                 //       in the datafile.
-    
+
     string  battle_sprite;  //the sprite definition filename for the battle sprite of this
                 //character.  (stored in the sprite definition file directory,
                 //no need to put the path in.)
-    
+
     int icon;       //the image index of the icon for this PC.  Used mainly in the battle system.
-    
-    int battle_ref; //the index of the actual battle renderengine entry for this character in battle
-    
+
+    int mcg_sprite_battle_ref; //the index of the actual battle renderengine entry for this character in battle
+
     int class_ref;  //index reference to the master_classes[] array.
-    
-    
-    
+
+
+
     int level;      // the level of this cast member. Obvious, no?
     int exp;        // the experience point total of this cast member.
     int cur_hp, cur_mp; // current HP and MP.
-    
-    
+
+
     int stats[MAX_STATS];   //the current stats for this cast member
                     //refer to STAT_MAX_HP through STAT_DEF for index defines for this array.
-    
-    
-    int stat_growth[MAX_LEVELS][MAX_GROWABLE_STATS];    
+
+
+    int stat_growth[MAX_LEVELS][MAX_GROWABLE_STATS];
                 //the stat-growth table for this character.
                 //refer to STAT_MAX_HP through STAT_REA for index defines for this array.
-                                
-    
+
+
     int exp_require[MAX_LEVELS];    //the XP requirements for each level for this character
 
 
     int equipment[MAX_EQUIP_SLOTS]; //the equipment slots for this character
                         //contains master_items[] references for each slot.
                         //-1 if nothing is in that slot
-    
-                                    
+
+
     int skills[MAX_SKILLS]; //the skills this cast member knows.
                     //contains master_skills[] references for each slot.
-    
+
     int skillcount; //the count of skills this cast member currently has in his skills[] array.
-    
+
     int battle_menu_idx;    //the index to this cast member's current battle menu
     int battle_menu_dirty;  //a flag denoting whether or not this character needs to have their battle menu string regenerated.
 
     string condition; // The character's current status, in comma-delimited string form. Doesn't include durations since those only apply in battles.
-    
-    
-    /// The following formatted strings are not saved by the 
+
+
+    /// The following formatted strings are not saved by the
     string e_immune;        // Comma-delimited list of immune statuses granted by equipment
     string e_auto;          // Comma-delimited list of automatic statuses granted by equipment
     string e_resist[MAX_RESISTS];   // Comma-delimited lists of elemental affinities granted by equipment
     string e_element;       // Comma-delimited list of elements attached to weapon attacks granted by equipment.
-    
+
     string o_immune;        // Comma-delimited list of immune statuses granted by non-equipment sources.  It is cleared after every battle.
     string o_auto;          // Comma-delimited list of automatic statuses granted by non-equipment sources.  It is cleared after every battle.
     string o_resist[MAX_RESISTS];   // Comma-delimited lists of elemental affinities granted by non-equipment sources.  It is cleared after every battle.
     string o_element;       // Comma-delimited list of elements attached to weapon attacks granted by non-equipment sources.  It is cleared after every battle.
-    
-    
+
+
     int dead_flag;  /// a flag that's raised if the PC's dead or not.  Mainly to make sure on_death() triggers aren't called multiple, inappropriate times.
 }
 
@@ -331,12 +331,12 @@ struct Item {
     string  desc;   //description.  FLUFF.
     int icon;   //index to icon
     int price;  //base price for the item.  value of zero or less prevents sale.
-    
+
     int use_flag;   //specifies if it can be used in battle, menu, or both.
-    
-    string  target_func;    //the name of the function that deals with targetting for this 
+
+    string  target_func;    //the name of the function that deals with targetting for this
     string  effect_func;    //the name of the function that deals with effect resolution.
-    
+
     int equ_classes[MAX_CLASSES]; //master_class[] index references to the classes that can equip this item
 
     int equ_slot;   //the slot this equipment can be put in.
@@ -344,7 +344,7 @@ struct Item {
 
     string equ_immune;      // Comma-delimited list of immune statuses granted by equipment
     string equ_auto;        // Comma-delimited list of automatic statuses granted by equipment
-    
+
     string equ_resist[MAX_RESISTS]; // Comma-delimited lists of elemental affinities granted by equipment
     string equ_element;     // Comma-delimited list of elements attached to weapon attacks granted by equipment.
 }
@@ -378,12 +378,12 @@ void debugItem( int idx )
 
     string classes;
 
-    
+
     log( "" );
     log( "==============================" );
     log( "debugItem( "+str(idx)+" )" );
     log( "==============================" );
-    
+
     if( idx < 0 || idx > MAX_ITEMS )
     {
         log( str(idx)+" is an invalid index.  master_items[] has a valid range of 0 through " + str(MAX_ITEMS) );
@@ -398,8 +398,8 @@ void debugItem( int idx )
         log( "master_items["+str(idx)+"].effect_func: " + master_items[idx].effect_func );
         log( "   master_items["+str(idx)+"].equ_slot: " + str(master_items[idx].equ_slot) );
         log( "master_items["+str(idx)+"].equ_modcode: " + master_items[idx].equ_modcode );
-        
-        
+
+
         for( i=0; i<MAX_CLASSES; i++ )
         {
             if( master_items[idx].equ_classes[i] > 0 )
@@ -414,31 +414,31 @@ void debugItem( int idx )
                 }
             }
         }
-        
+
         log( "    master_items["+str(idx)+"].classes: " + classes );
-    
+
         if( !equ( master_items[idx].equ_element,"") )
             log( "This item grants the following elements to attacks: '"+master_items[idx].equ_element+"'" );
         if( !equ( master_items[idx].equ_immune,"") )
             log( "This item grants immunity to the following statuses: '"+master_items[idx].equ_immune+"'" );
         if( !equ( master_items[idx].equ_auto,"") )
             log( "This item automatically grants the following statuses: '"+master_items[idx].equ_auto+"'" );
-            
+
         for( i=0; i<MAX_RESISTS; i++ )
         {
             if( !equ( master_items[idx].equ_resist[i],"") )
                 log( "This item grants elemental["+GetResistName(i)+"] for: '"+master_items[idx].equ_resist[i]+"'" );
         }
-        
+
     }
-    
+
     log( "==============================" );
 }
 
 void debugAllItems()
 {
     int i;
-    
+
     for( i=0; i<item_count; i++ )
         debugItem( i );
 }
@@ -448,49 +448,49 @@ void debugCast( int idx )
 {
     int i;
 
-    
+
     log( "" );
     log( "==============================" );
     log( "debugCast( "+str(idx)+" )" );
     log( "==============================" );
-    
+
     if( idx < 0 || idx > MAX_CAST )
     {
         log( str(idx)+" is an invalid index.  master_cast[] has a valid range of 0 through " + str(MAX_CAST) );
     }
     else
     {
-            
-        log( "             master_cast["+str(idx)+"].name: " + master_cast[idx].name );
-        log( "             master_cast["+str(idx)+"].desc: " + master_cast[idx].desc );
-        log( "          master_cast["+str(idx)+"].chrname: " + master_cast[idx].chrname );
-        log( "master_cast["+str(idx)+"].overworld_chrname: " + master_cast[idx].overworld_chrname );
-        log( "           master_cast["+str(idx)+"].entity: " + str(master_cast[idx].entity) );
-        log( "     master_cast["+str(idx)+"].portrait_idx: " + str(master_cast[idx].portrait_idx) );
-        log( "    master_cast["+str(idx)+"].battle_sprite: " + master_cast[idx].battle_sprite );
-        log( "             master_cast["+str(idx)+"].icon: " + str(master_cast[idx].icon) );
-        log( "       master_cast["+str(idx)+"].battle_ref: " + str(master_cast[idx].battle_ref) );
-        
-        log( "            master_cast["+str(idx)+"].class: " + master_classes[master_cast[idx].class_ref].name );
-        log( "            master_cast["+str(idx)+"].level: " + str(master_cast[idx].level) );
-        log( "              master_cast["+str(idx)+"].exp: " + str(master_cast[idx].exp) );
-        log( "           master_cast["+str(idx)+"].cur_hp: " + str(master_cast[idx].cur_hp) );
-        log( "           master_cast["+str(idx)+"].cur_mp: " + str(master_cast[idx].cur_mp) );
-        
-        log( "  master_cast["+str(idx)+"].battle_menu_idx: " + str(master_cast[idx].battle_menu_idx) );
-        log( "master_cast["+str(idx)+"].battle_menu_dirty: " + str(master_cast[idx].battle_menu_dirty) );
-        
+
+        log( "                 master_cast["+str(idx)+"].name: " + master_cast[idx].name );
+        log( "                 master_cast["+str(idx)+"].desc: " + master_cast[idx].desc );
+        log( "              master_cast["+str(idx)+"].chrname: " + master_cast[idx].chrname );
+        log( "    master_cast["+str(idx)+"].overworld_chrname: " + master_cast[idx].overworld_chrname );
+        log( "               master_cast["+str(idx)+"].entity: " + str(master_cast[idx].entity) );
+        log( "         master_cast["+str(idx)+"].portrait_idx: " + str(master_cast[idx].portrait_idx) );
+        log( "        master_cast["+str(idx)+"].battle_sprite: " + master_cast[idx].battle_sprite );
+        log( "                 master_cast["+str(idx)+"].icon: " + str(master_cast[idx].icon) );
+        log( "master_cast["+str(idx)+"].mcg_sprite_battle_ref: " + str(master_cast[idx].mcg_sprite_battle_ref) );
+
+        log( "                master_cast["+str(idx)+"].class: " + master_classes[master_cast[idx].class_ref].name );
+        log( "                master_cast["+str(idx)+"].level: " + str(master_cast[idx].level) );
+        log( "                  master_cast["+str(idx)+"].exp: " + str(master_cast[idx].exp) );
+        log( "               master_cast["+str(idx)+"].cur_hp: " + str(master_cast[idx].cur_hp) );
+        log( "               master_cast["+str(idx)+"].cur_mp: " + str(master_cast[idx].cur_mp) );
+
+        log( "      master_cast["+str(idx)+"].battle_menu_idx: " + str(master_cast[idx].battle_menu_idx) );
+        log( "    master_cast["+str(idx)+"].battle_menu_dirty: " + str(master_cast[idx].battle_menu_dirty) );
+
         log( "" );
         log( "STATS: " );
-        
+
         for( i=0; i<MAX_STATS; i++ )
         {
             log( GetStatName(i)+": real: "+str(master_cast[idx].stats[i])+"; getStat(): " +str(getStat(idx, i)) );
         }
-        
+
         log( "" );
         log( "EQUIPMENT: " );
-        
+
         for( i=0; i<MAX_EQUIP_SLOTS; i++ )
         {
             if( master_cast[idx].equipment[i] < 0 )
@@ -502,7 +502,7 @@ void debugCast( int idx )
                 log( GetSlotName(i)+": "+master_items[master_cast[idx].equipment[i]].name+" (id: "+str(master_cast[idx].equipment[i])+")" );
             }
         }
-        
+
         log( "" );
         log( "SKILLS (currently has "+str(master_cast[idx].skillcount)+"): " );
         for( i=0; i<master_cast[idx].skillcount; i++ )
@@ -512,29 +512,29 @@ void debugCast( int idx )
             else
                 log( master_skills[master_cast[idx].skills[i]].name + " (COMMAND)" );
         }
-        
+
         log( "" );
         Log( "ELEMENTAL and STATUS factors:" );
         Log( "Current condition: '"+master_cast[idx].condition+"'" );
         Log( "         e_immune: '"+master_cast[idx].e_immune+"'" );
         Log( "           e_auto: '"+master_cast[idx].e_auto+"'" );
         Log( "        e_element: '"+master_cast[idx].e_element+"'" );
-        
+
         for( i=0; i<MAX_RESISTS; i++ )
         {
             Log( "e_resist["+GetResistName(i)+"]: '"+master_cast[idx].e_resist[i]+"'" );
         }
-        
+
         Log( "         o_immune: '"+master_cast[idx].o_immune+"'" );
         Log( "           o_auto: '"+master_cast[idx].o_auto+"'" );
         Log( "        o_element: '"+master_cast[idx].o_element+"'" );
-        
+
         for( i=0; i<MAX_RESISTS; i++ )
         {
             Log( "o_resist["+GetResistName(i)+"]: '"+master_cast[idx].o_resist[i]+"'" );
         }
     }
-    
+
     log( "==============================" );
 }
 
@@ -542,16 +542,16 @@ void debugCast( int idx )
 void dump_skills()
 {
     int i;
-    
+
     Log( "dumping skills..." );
-    
+
     for( i=0; i<MAX_SKILLS; i++ )
     {
         Log(  "master_skills["+str(i)+"]..." );
-        
-        
+
+
         Log(  "name: '"+master_skills[i].name+"'" );
-        
+
         if( master_skills[i].type < 0 )
         {
             Log(  "type: '-1, (COMMAND)'" );
@@ -560,7 +560,7 @@ void dump_skills()
         {
             Log(  "type: '"+master_skilltypes[master_skills[i].type].name+"'" );
         }
-        
+
         Log(  "targ_func: '"+master_skills[i].target_func+"'" );
         Log(  "efct_func: '"+master_skills[i].effect_func+"'" );
         Log( "" );
@@ -573,12 +573,12 @@ void dump_skills()
         Log(  "    icon: '"+str(master_skills[i].icon)+"'" );
         Log(  "use_flag: '"+str(master_skills[i].use_flag)+"'" );
         Log( "" );
-        Log(  "desc: '"+master_skills[i].desc+"'" );        
+        Log(  "desc: '"+master_skills[i].desc+"'" );
         Log(  "" );
         Log(  "------------------------------" );
         Log(  "" );
     }
-    
+
     Log( "... done dumping skills." );
 }
 
@@ -586,25 +586,25 @@ void dump_skills()
 void dump_skilltypes()
 {
     int i;
-    
+
     Log( "dumping skills..." );
-    
+
     for( i=0; i<MAX_SKILLTYPES; i++ )
     {
         Log(  "master_skilltypes["+str(i)+"]..." );
-        
-        
+
+
         Log(  "name: '"+master_skilltypes[i].name+"'" );
         Log(  "icon: '"+str(master_skilltypes[i].icon)+"'" );
         Log(  "visi: '"+str(master_skilltypes[i].visibility)+"'" );
-        
+
         Log(  "stat: '"+master_skilltypes[i].disabling_status_ailments+"'" );
-        
+
         Log(  "desc: '"+master_skilltypes[i].desc+"'" );
         Log(  "" );
         Log(  "------------------------------" );
         Log(  "" );
     }
-    
+
     Log( "... done dumping skilltypes." );
 }
