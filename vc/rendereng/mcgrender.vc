@@ -1394,7 +1394,7 @@ Log( "*** ChangeSpriteAnimation: "+bat_getName(battle_actor_idx,party_idx)+" to 
     );
 }
 
-string GetCurrentSpriteStrandFromMcGrenderHeapIndex( int mcg_idx )
+string GetCurrentSpriteStrand_FromMcGrenderHeapIndex( int mcg_idx )
 {
     int spr_idx;
 
@@ -1411,12 +1411,12 @@ string GetCurrentSpriteStrandFromMcGrenderHeapIndex( int mcg_idx )
     }
     else
     {
-        ErrorHandler( "GetCurrentSpriteStrandFromMcGrenderHeapIndex( "+str(mcg_idx)+" ): that mcgrender heap entry didn't have a valid sprite reference." );
+        ErrorHandler( "GetCurrentSpriteStrand_FromMcGrenderHeapIndex( "+str(mcg_idx)+" ): that mcgrender heap entry didn't have a valid sprite reference." );
     }
 }
 
 /// Unpauses a frozen sprite.
-void SetSpriteUnpause( int mcg_idx )
+void SetSpriteUnpause_FromMcGrenderHeapIndex( int mcg_idx )
 {
     int spr_idx;
 
@@ -1428,6 +1428,6 @@ void SetSpriteUnpause( int mcg_idx )
     }
     else
     {
-        ErrorHandler( "SetSpriteUnpause( "+str(mcg_idx)+" ): that mcgrender heap entry didn't have a valid sprite reference." );
+        ErrorHandler( "SetSpriteUnpause_FromMcGrenderHeapIndex( "+str(mcg_idx)+" ): that mcgrender heap entry didn't have a valid sprite reference." );
     }
 }

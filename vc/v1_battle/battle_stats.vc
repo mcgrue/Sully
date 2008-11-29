@@ -490,7 +490,7 @@ int bat_getMcGrenderHeapRef( int bidx, int pidx ) {
     }
     else if( pidx == PARTY_ENEMY )
     {
-        return battle_enemies[bidx].mcgrender_idx;
+        return battle_enemies[bidx].mcgrender_heap_ref;
     }
 
     ErrorHandler( "bat_getMcGrenderHeapRef() invalid party index '"+str(pidx)+"'");
@@ -504,7 +504,7 @@ int bat_getSpriteRef( int bidx, int pidx ) {
     }
     else if( pidx == PARTY_ENEMY )
     {
-        return mcg_get_sprite_ref(battle_enemies[bidx].mcgrender_idx);
+        return mcg_get_sprite_ref(battle_enemies[bidx].mcgrender_heap_ref);
     }
 
     ErrorHandler( "bat_getRenderRef() invalid party index '"+str(pidx)+"'");

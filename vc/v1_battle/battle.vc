@@ -1237,14 +1237,14 @@ int calc_elem_mod_stack( string att_elem_csv, int def_idx, int def_party, int ba
 int _bm_idx, _prev_bm_idx;
 
 /// call this when starting up a battle menu for the first time for an action.
-void TurnBattleMenuOn( int cast_idx )
+void TurnBattleMenuOn( int party_idx )
 {
     if( _prev_bm_idx >= 0 )
     {
         CleanBattleMenu( _prev_bm_idx );
     }
 
-    _bm_idx = cast_idx;
+    _bm_idx = party[party_idx];
     menu_cast = _bm_idx;
 
     master_cast[menu_cast].battle_menu_idx = menu_cast;
@@ -1385,11 +1385,9 @@ void HandleBattleMenuActorIndicator()
 {
     int ridx;
 
-PENIS
-
     if( !BattleMenuIsOff() )
     {
-        ridx = master_cast[party[_bm_idx]].mcg_sprite_battle_ref;
+        ridx = master_cast[_bm_idx].mcgrender_heap_ref;
 
         TBlit(
             mcg_getX(ridx) + (mcg_width(ridx)/2) - (ImageWidth(imBattleActorPointer)/2),
@@ -1467,20 +1465,22 @@ int AreBattleEffectsRendering() {
 ///
 void EndOfBattleAction()
 {
-    int i, ref, cast_idx;
+    int i, cast_idx, ref;
 
     for( i=0; i<enemyPartySize(); i++ )
     {
-        if( equ(GetCurrentSpriteStrandFromMcGrenderHeapIndex(battle_enemies[i].mcgrender_idx),"hit") )
+        ref = bat_getMcGrenderHeapRef( i, PARTY_ENEMY );
+
+        if( equ(GetCurrentSpriteStrand_FromMcGrenderHeapIndex(ref),"hit") )
         {
-            SetSpriteUnpause( bat_getSpriteRef(i,PARTY_ENEMY) );
+            SetSpriteUnpause_FromMcGrenderHeapIndex( ref );
         }
 
         if( bat_is_incapacitated(i,PARTY_ENEMY) )
         {
             if( !nme_getDeadFlag(i) )
             {
-                if( !equ(GetCurrentSpriteStrandFromMcGrenderHeapIndex(battle_enemies[i].mcgrender_idx),"death") )
+                if( !equ(GetCurrentSpriteStrand_FromMcGrenderHeapIndex(ref),"death") )
                 {
                     ChangeSpriteAnimation( i, PARTY_ENEMY, "death" );
                 }
@@ -1496,16 +1496,16 @@ void EndOfBattleAction()
     {
         ref = bat_getMcGrenderHeapRef( i, PARTY_ALLY );
 
-        if( equ(GetCurrentSpriteStrandFromMcGrenderHeapIndex(ref),"hit") )
+        if( equ(GetCurrentSpriteStrand_FromMcGrenderHeapIndex(ref),"hit") )
         {
-            SetSpriteUnpause(ref);
+            SetSpriteUnpause_FromMcGrenderHeapIndex(ref);
         }
 
         if( bat_is_incapacitated(i, PARTY_ALLY) )
         {
             if( !bat_was_dead(i, PARTY_ALLY) )
             {
-                if( !equ(GetCurrentSpriteStrandFromMcGrenderHeapIndex(ref),"death") )
+                if( !equ(GetCurrentSpriteStrand_FromMcGrenderHeapIndex(ref),"death") )
                 {
                     ChangeSpriteAnimation( i, PARTY_ALLY, "death" );
                 }
@@ -1558,7 +1558,7 @@ void PlayBattleVictory()
         {
             ref = bat_getMcGrenderHeapRef( i, PARTY_ALLY );
 
-            if( !equ(GetCurrentSpriteStrandFromMcGrenderHeapIndex(ref),"dance") )
+            if( !equ(GetCurrentSpriteStrand_FromMcGrenderHeapIndex(ref),"dance") )
             {
                 ChangeSpriteAnimation( i, PARTY_ALLY, "dance" );
             }
