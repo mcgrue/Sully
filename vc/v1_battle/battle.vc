@@ -183,23 +183,25 @@ int __ally_bs_pos_y_initializer() {
 }
 
 
-int _BsPlacePartySprites_position( int base_x, int min_x, int max_x, int party_idx ) {
+int _BsPlacePartySprites_position( int base_x, int min_x, int max_x, int bidx ) {
     int x, ref, spriteref;
 
+    int party_idx = getCastIndexFromPartyIndex(bidx, "_BsPlacePartySprites_position");
+
     spriteref = LoadSprite(
-        master_cast[party[party_idx]].battle_sprite, SPRITETYPE_ALLY
+        master_cast[party_idx].battle_sprite, SPRITETYPE_ALLY
     );
 
 Log( "spriteref for party member "+str(party_idx)+": " + master_cast[party[party_idx]].battle_sprite );
 
     x = base_x + Random( min_x, max_x );
     ref = mcg_add_sprite(
-        x,_ally_bs_pos_y[party_idx],
-        x,_ally_bs_pos_y[party_idx],
+        x,_ally_bs_pos_y[bidx],
+        x,_ally_bs_pos_y[bidx],
         0, spriteref
     );
 
-    master_cast[party[party_idx]].mcg_sprite_battle_ref = spriteref;
+    master_cast[party_idx].mcg_sprite_battle_ref = spriteref;
 
     return ref;
 }
@@ -251,25 +253,23 @@ void DrawBattleHUD()
 
     for( i=0; i<PartySize(); i++ )
     {
-        if( master_cast[party[i]].cur_hp > 0 ) // YOU KNOW, WE DO HAVE ACCESSORS FOR THIS KIND OF THING
-                                               //       I'M JUST SAYING
+        if( bat_cur_hp(i,PARTY_ALLY) > 0 )
         {
-            PrintString( x,y, screen, fontBattleWhite, master_cast[party[i]].name );
-            PrintRight( x+101,y, screen, fontBattleWhite, str(master_cast[party[i]].cur_hp) );
+            PrintString( x,y, screen, fontBattleWhite, bat_getName(i,PARTY_ALLY) );
+            PrintRight( x+101,y, screen, fontBattleWhite, str(bat_cur_hp(i,PARTY_ALLY)) );
         }
         else
         {
-            PrintString( x,y, screen, fontBattleGrey, master_cast[party[i]].name );
+            PrintString( x,y, screen, fontBattleGrey, bat_getName(i,PARTY_ALLY) );
             PrintRight( x+101,y, screen, fontBattleRed, "0" );
         }
 
-        DrawBattleMeters( x+102, y, party[i] );
+        DrawBattleMeters( x+102, y, getCastIndexFromPartyIndex( i, "DrawBattleHUD" ) );
 
-        PrintRight( x+169,y, screen, fontBattleWhite, str(master_cast[party[i]].cur_mp) );
+        PrintRight( x+169,y, screen, fontBattleWhite, str(bat_cur_mp(i,PARTY_ALLY)) );
 
         y += FontHeight(fontBattleWhite) + 1;
     }
-
 }
 
 int _DrawBattleMeters_maxwid = 34;
