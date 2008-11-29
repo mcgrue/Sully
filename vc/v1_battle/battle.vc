@@ -1497,7 +1497,7 @@ void EndOfBattleAction()
 
         if( bat_is_incapacitated(i, PARTY_ALLY) )
         {
-            if( !wasDead(party[i]) )
+            if( !bat_was_dead(i, PARTY_ALLY) )
             {
                 if( !equ(GetCurrentSpriteStrand(ref),"death") )
                 {
