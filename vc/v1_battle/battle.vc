@@ -1464,7 +1464,7 @@ int AreBattleEffectsRendering() {
 ///
 void EndOfBattleAction()
 {
-    int i, ref;
+    int i, ref, cast_idx;
 
     for( i=0; i<enemyPartySize(); i++ )
     {
@@ -1507,9 +1507,11 @@ void EndOfBattleAction()
                     ChangeSpriteAnimation( i, PARTY_ALLY, "death" );
                 }
 
-                changeDeadFlag( party[i], 1 );
+                cast_idx = getCastIndexFromPartyIndex( i, "EndOfBattleAction" );
 
-                bat_trigger_on_death( party[i], PARTY_ALLY );
+                changeDeadFlag( cast_idx, 1 );
+
+                bat_trigger_on_death( i, PARTY_ALLY );
             }
         }
     }
