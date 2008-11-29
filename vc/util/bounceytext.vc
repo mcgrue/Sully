@@ -11,13 +11,13 @@
 #define NUM_BOUNCYDIGITS 100    //if you get errors about to many
                                 //digits on screen at once, increase this
                                 //decrease for a (very)minor speed gain
-                
+
 #define NUM_BOUNCYMAXLEN 10     //how many digits can be in a string?
 #define NUM_BOUNCYSTRINGS 10    //how many bouncy strings are there?
 
 #define BOUNCEYTICK_MULTI 1000  //the multiplier for the timecodes.
 
-#define BOUNCYSTRINGDELAY 50    //how many 100ths of a second should the bouncystring 
+#define BOUNCYSTRINGDELAY 50    //how many 100ths of a second should the bouncystring
                                 //stick around before terminating?
 
 #define BOUNCETEXT_WHITE    0
@@ -32,13 +32,13 @@ struct BouncyDigit
     int stamp;      //a time stamp to prevent timer coruption
 
     int counter;        //where we store the cumulative counterness.
-    
+
     int delay;      //delay, inflated by BOUNCEYTICK_MULTI
 
     int font;       //the font
     string text;        //the text
     int active;     //is it alive or dead
-    
+
     int string_id;      //the id of the full bouncy it's a part of.
 }
 
@@ -46,15 +46,15 @@ struct BouncyString
 {
     //pBouncyDigits[] indexes for this bouncy string.
     int my_digits[NUM_BOUNCYMAXLEN];
-    
+
     //how many digits
     int count;
-    
+
     //the systemtimer time this string ceased moving.  this + BOUNCEYTICK_MULTI is when to kill the string.
     int time_died;
-    
+
     //is it alive or dead?
-    int active; 
+    int active;
 }
 
 BouncyDigit pBouncyDigits[NUM_BOUNCYDIGITS];
@@ -66,9 +66,9 @@ int nBouncy[NUM_BOUNCY];
 //init the bouncy numbers
 //these are the y ofsets at each frame of the bounce.
 void InitBouncy()
-{   
+{
     int i;
-/*  
+/*
     nBouncy[0] = 3;
     nBouncy[1] = 4;
     nBouncy[2] = 6;
@@ -101,7 +101,7 @@ void InitBouncy()
     nBouncy[29] = 2;
     nBouncy[30] = 1;
     nBouncy[31] = 1;
-*/  
+*/
 
     nBouncy[0] = 3;
     nBouncy[1] = 6;
@@ -142,7 +142,7 @@ void ProcessBouncy(int i)
         if( timer != pBouncyDigits[i].stamp )
         {
             pBouncyDigits[i].counter += pBouncyDigits[i].delay;
-        
+
             pBouncyDigits[i].frame = pBouncyDigits[i].counter/BOUNCEYTICK_MULTI;
 
             //START NEW LINE
@@ -170,7 +170,7 @@ void DoBouncy()
                 DrawBouncy(pBouncyStrings[i].my_digits[j]);
                 ProcessBouncy(pBouncyStrings[i].my_digits[j]);
             }
-            
+
             if( IsBouncyStringDead(i) )
             {
                 if( !pBouncyStrings[i].time_died )
@@ -196,23 +196,23 @@ int _bouncy_xoffs;
 int CreateBouncyString( string text, int x, int y, int font, int mindel, int maxdel, int left_low )
 {
     int i,j, chunk;
-        
+
     if( len(text) > NUM_BOUNCYMAXLEN )
         exit( "nicebounce.vc::CreateBouncyString() tried to create a string of length "+str(len(text))+ " '"+text+"'.  Please increase NUM_BOUNCYMAXLEN" );
-    
+
     for(i=0;i<NUM_BOUNCYSTRINGS;i++)
     {
         if(!pBouncyStrings[i].active)
         {
             bouncyLiveCount++;
-            
+
             pBouncyStrings[i].count = 0;
             pBouncyStrings[i].active = 1;
             _bouncy_globid = i;
             _bouncy_xoffs = 0;
-            
+
             chunk = (maxdel-mindel)/len(text);
-                        
+
             if( left_low )
             {
                 for( j=0; j<len(text); j++ )
@@ -226,8 +226,8 @@ int CreateBouncyString( string text, int x, int y, int font, int mindel, int max
                 {
                     AddBouncyCharacter( x, y, font, mid(text,j,1), mindel - (j*chunk) );
                 }
-            }                                       
-            
+            }
+
             return i;
         }
     }
@@ -240,15 +240,15 @@ int CreateBouncyString( string text, int x, int y, int font, int mindel, int max
 int IsBouncyStringDead( int string_id )
 {
     int i;
-    
+
     if( !pBouncyStrings[string_id].active ) return 1;
-    
+
     for( i=0; i<pBouncyStrings[string_id].count; i++ )
     {
         if( pBouncyDigits[pBouncyStrings[string_id].my_digits[i]].active )
             return 0;
     }
-    
+
     return 1;
 }
 
@@ -266,7 +266,7 @@ void KillBouncyString( int string_id )
             pBouncyDigits[pBouncyStrings[string_id].my_digits[i]].string_id = -1;
             pBouncyDigits[pBouncyStrings[string_id].my_digits[i]].active = 0;
         }
-        
+
         bouncyLiveCount--;
     }
 }
@@ -281,7 +281,7 @@ void AddBouncyCharacter( int x, int y, int font_idx, string text, int delay )
     {
         if( !pBouncyDigits[i].active && pBouncyDigits[i].string_id < 0  )
         {
-        
+
             pBouncyDigits[i].x = x + _bouncy_xoffs;
             pBouncyDigits[i].y = y;
             pBouncyDigits[i].font = font_idx;
@@ -292,12 +292,12 @@ Log( "'"+pBouncyDigits[i].text+"' => " + str(delay) );
             pBouncyDigits[i].frame = 0;
             pBouncyDigits[i].counter = 0;
             pBouncyDigits[i].string_id = _bouncy_globid;
-            
+
             _bouncy_xoffs += TextWidth( font_idx, text );
-            
+
             pBouncyStrings[pBouncyDigits[i].string_id].my_digits[pBouncyStrings[pBouncyDigits[i].string_id].count] = i;
             pBouncyStrings[pBouncyDigits[i].string_id].count++;
-            
+
             return;
         }
     }
@@ -316,17 +316,17 @@ void KillBouncy(int i)
 void KillAllBouncy()
 {
     int i;
-    
+
     for( i=0; i<NUM_BOUNCYDIGITS; i++ )
     {
         KillBouncy(i);
     }
-        
+
     for( i=0; i<NUM_BOUNCYSTRINGS; i++ )
     {
         KillBouncyString(i);
     }
-    
+
     bouncyLiveCount = 0;
 }
 
@@ -346,7 +346,7 @@ int batnum_white, batnum_red, batnum_green;
 void NewBounceText( int b_idx, int p_idx, string text, int color, int level )
 {
     int x, y, f, ent;
-    
+
     if( !__bounce_initd )
     {
         InitBouncy();   //yo, make a like a ball, and bounce!
@@ -354,14 +354,14 @@ void NewBounceText( int b_idx, int p_idx, string text, int color, int level )
         batnum_white    = LoadFont("res\images\battle\fonts\numberfont_white.png");
         batnum_red  = LoadFont("res\images\battle\fonts\numberfont_red.png");
         batnum_green    = LoadFont("res\images\battle\fonts\numberfont_green.png");
-        
+
         EnableVariableWidth(batnum_white);
         EnableVariableWidth(batnum_red);
         EnableVariableWidth(batnum_green);
-        
+
         __bounce_initd = 1;
     }
-    
+
     switch( color )
     {
         case -1:
@@ -372,19 +372,19 @@ void NewBounceText( int b_idx, int p_idx, string text, int color, int level )
             f = batnum_white;
     }
 
-    ent = bat_getRenderRef( b_idx, p_idx );
-    
+    ent = bat_getMcGrenderHeapRef( b_idx, p_idx );
+
     x = mcg_width( ent );
     x = (x / 2) - (TextWidth(f, text)/2);
     y = mcg_height( ent );
-    
+
     x = mcg_getX( ent ) + x;
     y = mcg_getY( ent ) + y;
-    
+
     if( level > 0 )
     {
         y -= ((FontHeight(f)+1)*level);
     }
-    
-    CreateBouncyString( text, x, y, f, 650, 800, Random(0,1) );    
+
+    CreateBouncyString( text, x, y, f, 650, 800, Random(0,1) );
 }

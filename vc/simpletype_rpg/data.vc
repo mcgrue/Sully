@@ -263,7 +263,8 @@ struct Cast {
 
     int icon;       //the image index of the icon for this PC.  Used mainly in the battle system.
 
-    int mcg_sprite_battle_ref; //the index of the actual battle renderengine entry for this character in battle
+    int mcgrender_heap_ref;     //the index of the actual battle renderengine entry for this character in battle
+    int mcg_sprite_battle_ref;  //the index of the sprite entry in mcgrender for this character in battle
 
     int class_ref;  //index reference to the master_classes[] array.
 

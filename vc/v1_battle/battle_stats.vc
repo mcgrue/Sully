@@ -482,14 +482,29 @@ int bat_getIcon( int bidx, int pidx ) {
     return -1;
 }
 
-int bat_getRenderRef( int bidx, int pidx ) {
+int bat_getMcGrenderHeapRef( int bidx, int pidx ) {
+
+    if( pidx == PARTY_ALLY )
+    {
+        return master_cast[party[bidx]].mcgrender_heap_ref;
+    }
+    else if( pidx == PARTY_ENEMY )
+    {
+        return battle_enemies[bidx].mcgrender_idx;
+    }
+
+    ErrorHandler( "bat_getMcGrenderHeapRef() invalid party index '"+str(pidx)+"'");
+    return -1;
+}
+
+int bat_getSpriteRef( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
         return master_cast[party[bidx]].mcg_sprite_battle_ref;
     }
     else if( pidx == PARTY_ENEMY )
     {
-        return battle_enemies[bidx].render_idx;
+        return mcg_get_sprite_ref(battle_enemies[bidx].mcgrender_idx);
     }
 
     ErrorHandler( "bat_getRenderRef() invalid party index '"+str(pidx)+"'");

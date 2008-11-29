@@ -5,7 +5,7 @@ struct battle_enemy
 {
     int master_enemy_idx;   //reference to the master_enemy[] array
 
-    int render_idx;     //reference to the battle sprite for this enemy
+    int mcgrender_idx;     //reference to the mcgrender heap_idx for this enemy
 
     int cur_hp, cur_mp;
 
@@ -33,12 +33,12 @@ void resetBattleEnemyList()
 }
 
 /// Takes a master_enemy[] index and adds that enemy to the current battle
-int addEnemyToBattle( int idx, int render_idx, int is_leader )
+int addEnemyToBattle( int idx, int mcgrender_idx, int is_leader )
 {
     int i = enemyPartySize();
     battle_enemies[i].master_enemy_idx  = idx;
     battle_enemies[i].leader_flag       = is_leader;
-    battle_enemies[i].render_idx        = render_idx;
+    battle_enemies[i].mcgrender_idx     = mcgrender_idx;
     battle_enemies[i].cur_hp            = master_enemy[idx].stats[STAT_MAX_HP];
     battle_enemies[i].cur_mp            = master_enemy[idx].stats[STAT_MAX_MP];
     battle_enemies[i].stole_flag        = 0; // this is also used to calculate drops at fight end, by setting it to -1. So...don't set it to -1 otherwise!.
@@ -594,10 +594,6 @@ int nme_dropCheck(int bidx) {
     if (nme_hasStatus(bidx, "Rewarding") || Random(1,100) <= nme_DropItemChance(bidx)) return 1;
     return 0;
 }
-
-
-
-
 
 
 

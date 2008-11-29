@@ -81,7 +81,7 @@ int GetGatticanCX( int idx )
     }
 
 //LOG( "GetGatticanCX" );
-    mcg_idx = bat_getRenderRef( bs_change_actor_list[idx].actor_idx, bs_change_actor_list[idx].party_idx );
+    mcg_idx = bat_getMcGrenderHeapRef( bs_change_actor_list[idx].actor_idx, bs_change_actor_list[idx].party_idx );
 
     return mcg_get_x(mcg_idx) + (mcg_width(mcg_idx)/2);
 }
@@ -97,7 +97,7 @@ int GetGatticanCY( int idx )
     }
 
 //LOG( "GetGatticanCY" );
-    mcg_idx = bat_getRenderRef( bs_change_actor_list[idx].actor_idx, bs_change_actor_list[idx].party_idx );
+    mcg_idx = bat_getMcGrenderHeapRef( bs_change_actor_list[idx].actor_idx, bs_change_actor_list[idx].party_idx );
 
     return mcg_get_y(mcg_idx) + (mcg_height(mcg_idx)/2);
 }
@@ -266,7 +266,7 @@ void StartGATTACA()
         if( bs_change_actor_list[i].my_slashy_idx >= 0 )
         {
             AddCurrentSlashy(
-                bat_getRenderRef(
+                bat_getMcGrenderHeapRef(
                     bs_change_actor_list[i].actor_idx,
                     bs_change_actor_list[i].party_idx
                 ),

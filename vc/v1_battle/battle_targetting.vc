@@ -194,7 +194,7 @@ void A_MP_OC_targ() {
 
         if( bat_cur_mp(i, PARTY_ALLY) < bat_max_mp(i, PARTY_ALLY) )
         {
-            idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ALLY) );
+            idx = SM_newnode_rend( bat_getMcGrenderHeapRef(i, PARTY_ALLY) );
             SM_setData( idx, bat_getName(i, PARTY_ALLY),"ALLY", i );
         }
     }
@@ -227,7 +227,7 @@ void A_HP_OC_targ() {
 
         if( bat_cur_hp(i, PARTY_ALLY) < bat_max_hp(i, PARTY_ALLY) )
         {
-            idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ALLY) );
+            idx = SM_newnode_rend( bat_getMcGrenderHeapRef(i, PARTY_ALLY) );
             SM_setData( idx, bat_getName(i, PARTY_ALLY),"ALLY", i );
         }
     }
@@ -271,26 +271,26 @@ void _bt_setup_selectmap()
                 case -1: //dead allies only
                     if( bat_cur_hp(i, PARTY_ALLY) <= 0 )
                     {
-                        idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ALLY) );
+                        idx = SM_newnode_rend( bat_getMcGrenderHeapRef(i, PARTY_ALLY) );
                         commit = 1;
                     }
 
                 case 0: //auto-accept
 
-                    idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ALLY) );
+                    idx = SM_newnode_rend( bat_getMcGrenderHeapRef(i, PARTY_ALLY) );
                     commit = 1;
 
                 case 1: //living allies only
                     if( bat_cur_hp(i, PARTY_ALLY) > 0 )
                     {
-                        idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ALLY) );
+                        idx = SM_newnode_rend( bat_getMcGrenderHeapRef(i, PARTY_ALLY) );
                         commit = 1;
                     }
                 case 2: // self only (current actor only)
 
                     if( i == battle_queue[0].batent_ref ) {
 
-                        idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ALLY) );
+                        idx = SM_newnode_rend( bat_getMcGrenderHeapRef(i, PARTY_ALLY) );
 
                         commit = 1;
                     }
@@ -314,19 +314,19 @@ void _bt_setup_selectmap()
                 case -1: //dead enemies only
                     if( bat_cur_hp(i, PARTY_ENEMY) <= 0 )
                     {
-                        idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ENEMY) );
+                        idx = SM_newnode_rend( bat_getMcGrenderHeapRef(i, PARTY_ENEMY) );
                         commit = 1;
                     }
 
                 case 0: //auto-accept
 
-                    idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ENEMY) );
+                    idx = SM_newnode_rend( bat_getMcGrenderHeapRef(i, PARTY_ENEMY) );
                     commit = 1;
 
                 case 1: //living enemies only
                     if( bat_cur_hp(i, PARTY_ENEMY) > 0 )
                     {
-                        idx = SM_newnode_rend( bat_getRenderRef(i, PARTY_ENEMY) );
+                        idx = SM_newnode_rend( bat_getMcGrenderHeapRef(i, PARTY_ENEMY) );
                         commit = 1;
                     }
             }

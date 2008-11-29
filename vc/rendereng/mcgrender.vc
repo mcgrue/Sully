@@ -588,7 +588,20 @@ int mcg_add_sprite( int start_x, int start_y, int end_x, int end_y, int delay, i
     return i;
 }
 
+int mcg_get_sprite_ref( int mcg_idx ) {
 
+    if( mcg_idx < 0 || mcg_idx >= mcgV_heap_count )
+    {
+        FATAL_ERROR( "mcg_get_sprite_ref("+str(mcg_idx)+"), bad index.  valid range [0,"+str(mcgV_heap_count)+")." );
+    }
+
+    if( mcgV_heap[mcg_idx].sprite_ref < 0 || mcgV_heap[mcg_idx].sprite_ref >= _cur_max_sprites )
+    {
+        FATAL_ERROR( "mcg_get_sprite_ref("+str(mcg_idx)+"), bad sprite ref.  got ("+str(mcgV_heap[mcg_idx].sprite_ref)+"), valid range [0,"+str(_cur_max_sprites)+")." );
+    }
+
+    return mcgV_heap[mcg_idx].sprite_ref;
+}
 
 /// Reverses direction of the image's motion without altering the chunk's scalar value or the current position.
 ///
@@ -1376,12 +1389,12 @@ void ChangeSpriteAnimation( int battle_actor_idx, int party_idx, string anim )
 Log( "*** ChangeSpriteAnimation: "+bat_getName(battle_actor_idx,party_idx)+" to '"+anim+"'." );
 
      _changeSpriteAnimation(
-        bat_getRenderRef(battle_actor_idx,party_idx),
+        bat_getMcGrenderHeapRef(battle_actor_idx,party_idx),
         anim
     );
 }
 
-string GetCurrentSpriteStrand( int mcg_idx )
+string GetCurrentSpriteStrandFromMcGrenderHeapIndex( int mcg_idx )
 {
     int spr_idx;
 
@@ -1398,7 +1411,7 @@ string GetCurrentSpriteStrand( int mcg_idx )
     }
     else
     {
-        ErrorHandler( "GetCurrentSpriteStrand( "+str(mcg_idx)+" ): that mcgrender heap entry didn't have a valid sprite reference." );
+        ErrorHandler( "GetCurrentSpriteStrandFromMcGrenderHeapIndex( "+str(mcg_idx)+" ): that mcgrender heap entry didn't have a valid sprite reference." );
     }
 }
 

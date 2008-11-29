@@ -29,7 +29,7 @@ void EmptyBSStatQueue() {
 
 int IsValidBSStatChangeStat( int stat_type )
 {
-    if( 
+    if(
         stat_type == BATSTAT_CHANGE_HP ||
         stat_type == BATSTAT_CHANGE_MP ||
         stat_type == BATSTAT_CHANGE_MISS ||
@@ -37,7 +37,7 @@ int IsValidBSStatChangeStat( int stat_type )
     ) {
         return 1;
     }
-    
+
     return 0;
 }
 
@@ -49,19 +49,19 @@ void AddBSStatChange( int stat_type, int amount, int bidx, int pidx )
         FATAL_ERROR( "AddBSStatChange: tried to add too many stat changes. Try increasing MAX_BATTLESTAT_STATE_CHANGE or clearing a dirty BS Stat Queue." );
         return;
     }
-    
+
     if( !IsValidBSStatChangeStat(stat_type) )
     {
         FATAL_ERROR( "AddBSStatChange: "+str(stat_type)+" is not a valid stat change type." );
-        return; 
+        return;
     }
-    
+
     int i;
     int idx = bs_statchange_count;
-    
+
     for( i=0; i<idx; i++ )
     {
-        if( 
+        if(
             bs_statchange_queue[i].type_change == stat_type &&
             bs_statchange_queue[i].idx == bidx &&
             bs_statchange_queue[i].party_idx == pidx
@@ -69,9 +69,9 @@ void AddBSStatChange( int stat_type, int amount, int bidx, int pidx )
             bs_statchange_queue[idx].amount += amount;
             return;
         }
-    
+
     }
-    
+
     bs_statchange_queue[idx].type_change = stat_type;
     bs_statchange_queue[idx].amount = amount;
     bs_statchange_queue[idx].idx = bidx;
@@ -85,50 +85,50 @@ void AddBSStatChange( int stat_type, int amount, int bidx, int pidx )
 void ExecuteBattleStatChanges()
 {
     int i;
-    
+
 LOG( "ExecuteBattleStatChanges" );
-    
-    for( i=0; i<bs_statchange_count; i++ ) 
+
+    for( i=0; i<bs_statchange_count; i++ )
     {
         ///
         /// MISS
         ///
         if( bs_statchange_queue[i].type_change == BATSTAT_CHANGE_MISS )
         {
-            ChangeSpriteAnimation( 
-                bat_getRenderRef(
-                    bs_statchange_queue[i].idx, 
+            ChangeSpriteAnimation(
+                bat_getMcGrenderHeapRef(
+                    bs_statchange_queue[i].idx,
                     bs_statchange_queue[i].party_idx,
                 ),
-                "EVADE" 
+                "EVADE"
             );
-            
-            NewBounceText( 
-                bs_statchange_queue[i].idx, 
+
+            NewBounceText(
+                bs_statchange_queue[i].idx,
                 bs_statchange_queue[i].party_idx,
-                "MISS!", 
-                0 
+                "MISS!",
+                0
             );
         }
         ///
         /// HP CHANGE
         ///
-        else if(  
+        else if(
             bs_statchange_queue[i].type_change == BATSTAT_CHANGE_CRIT_HP ||
             bs_statchange_queue[i].type_change == BATSTAT_CHANGE_HP
         )
         {
-            
+
             ///
             /// HEAL HP
             ///
             if( bs_statchange_queue[i].amount > 0 )
             {
-                NewBounceText( 
-                    bs_statchange_queue[i].idx, 
+                NewBounceText(
+                    bs_statchange_queue[i].idx,
                     bs_statchange_queue[i].party_idx,
-                    str(bs_statchange_queue[i].amount), 
-                    -1 
+                    str(bs_statchange_queue[i].amount),
+                    -1
                 );
             }
             else
@@ -138,35 +138,35 @@ LOG( "ExecuteBattleStatChanges" );
                 ///
                 if( bs_statchange_queue[i].type_change == BATSTAT_CHANGE_CRIT_HP )
                 {
-                    NewBounceText( 
-                        bs_statchange_queue[i].idx, 
+                    NewBounceText(
+                        bs_statchange_queue[i].idx,
                         bs_statchange_queue[i].party_idx,
-                        str(bs_statchange_queue[i].amount), 
-                        1 
+                        str(bs_statchange_queue[i].amount),
+                        1
                     );
                 }
-                
+
                 ///
                 /// NORMAL DAMAGE
                 ///
                 else
                 {
-                    NewBounceText( 
-                        bs_statchange_queue[i].idx, 
+                    NewBounceText(
+                        bs_statchange_queue[i].idx,
                         bs_statchange_queue[i].party_idx,
-                        str(bs_statchange_queue[i].amount), 
-                        0 
+                        str(bs_statchange_queue[i].amount),
+                        0
                     );
                 }
             }
-            
-            bat_change_hp( 
-                bs_statchange_queue[i].idx, 
+
+            bat_change_hp(
+                bs_statchange_queue[i].idx,
                 bs_statchange_queue[i].party_idx,
                 bs_statchange_queue[i].amount
             );
         }
-        
+
         ///
         /// MP Damage
         ///
@@ -177,32 +177,32 @@ LOG( "ExecuteBattleStatChanges" );
             ///
             if( bs_statchange_queue[i].amount > 0 )
             {
-                NewBounceText( 
-                    bs_statchange_queue[i].idx, 
+                NewBounceText(
+                    bs_statchange_queue[i].idx,
                     bs_statchange_queue[i].party_idx,
-                    str(bs_statchange_queue[i].amount)+" MP", 
-                    -1 
+                    str(bs_statchange_queue[i].amount)+" MP",
+                    -1
                 );
             }
-            
+
             ///
             /// MP DAMAGE
             ///
             else
             {
-                NewBounceText( 
-                    bs_statchange_queue[i].idx, 
+                NewBounceText(
+                    bs_statchange_queue[i].idx,
                     bs_statchange_queue[i].party_idx,
-                    str(bs_statchange_queue[i].amount)+" MP", 
+                    str(bs_statchange_queue[i].amount)+" MP",
                     0
                 );
             }
-            
-            bat_change_mp( 
-                bs_statchange_queue[i].idx, 
+
+            bat_change_mp(
+                bs_statchange_queue[i].idx,
                 bs_statchange_queue[i].party_idx,
                 bs_statchange_queue[i].amount
-            );      
+            );
         }
         else
         {

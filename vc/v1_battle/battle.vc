@@ -204,6 +204,7 @@ Log( "spriteref for party member "+str(cast_idx)+" ("+bat_getName(bidx,PARTY_ALL
         0, spriteref
     );
 
+    master_cast[cast_idx].mcgrender_heap_ref = ref;
     master_cast[cast_idx].mcg_sprite_battle_ref = spriteref;
 
     return ref;
@@ -229,7 +230,7 @@ void BsPlacePartySprites()
 
         setStartingBattleSpriteAnimations(
             i,
-            bat_getRenderRef(i, PARTY_ALLY)
+            bat_getMcGrenderHeapRef(i, PARTY_ALLY)
         );
     }
 }
@@ -1384,9 +1385,11 @@ void HandleBattleMenuActorIndicator()
 {
     int ridx;
 
+PENIS
+
     if( !BattleMenuIsOff() )
     {
-        ridx = master_cast[_bm_idx].mcg_sprite_battle_ref;
+        ridx = master_cast[party[_bm_idx]].mcg_sprite_battle_ref;
 
         TBlit(
             mcg_getX(ridx) + (mcg_width(ridx)/2) - (ImageWidth(imBattleActorPointer)/2),
@@ -1468,16 +1471,16 @@ void EndOfBattleAction()
 
     for( i=0; i<enemyPartySize(); i++ )
     {
-        if( equ(GetCurrentSpriteStrand(battle_enemies[i].render_idx),"hit") )
+        if( equ(GetCurrentSpriteStrandFromMcGrenderHeapIndex(battle_enemies[i].mcgrender_idx),"hit") )
         {
-            SetSpriteUnpause( battle_enemies[i].render_idx );
+            SetSpriteUnpause( bat_getSpriteRef(i,PARTY_ENEMY) );
         }
 
         if( bat_is_incapacitated(i,PARTY_ENEMY) )
         {
             if( !nme_getDeadFlag(i) )
             {
-                if( !equ(GetCurrentSpriteStrand(battle_enemies[i].render_idx),"death") )
+                if( !equ(GetCurrentSpriteStrandFromMcGrenderHeapIndex(battle_enemies[i].mcgrender_idx),"death") )
                 {
                     ChangeSpriteAnimation( i, PARTY_ENEMY, "death" );
                 }
@@ -1491,9 +1494,9 @@ void EndOfBattleAction()
 
     for( i=0; i<PartySize(); i++ )
     {
-        ref = bat_getRenderRef( i, PARTY_ALLY );
+        ref = bat_getMcGrenderHeapRef( i, PARTY_ALLY );
 
-        if( equ(GetCurrentSpriteStrand(ref),"hit") )
+        if( equ(GetCurrentSpriteStrandFromMcGrenderHeapIndex(ref),"hit") )
         {
             SetSpriteUnpause(ref);
         }
@@ -1502,7 +1505,7 @@ void EndOfBattleAction()
         {
             if( !bat_was_dead(i, PARTY_ALLY) )
             {
-                if( !equ(GetCurrentSpriteStrand(ref),"death") )
+                if( !equ(GetCurrentSpriteStrandFromMcGrenderHeapIndex(ref),"death") )
                 {
                     ChangeSpriteAnimation( i, PARTY_ALLY, "death" );
                 }
@@ -1553,9 +1556,9 @@ void PlayBattleVictory()
     {
         if( !bat_is_incapacitated(i, PARTY_ALLY) )
         {
-            ref = bat_getRenderRef( i, PARTY_ALLY );
+            ref = bat_getMcGrenderHeapRef( i, PARTY_ALLY );
 
-            if( !equ(GetCurrentSpriteStrand(ref),"dance") )
+            if( !equ(GetCurrentSpriteStrandFromMcGrenderHeapIndex(ref),"dance") )
             {
                 ChangeSpriteAnimation( i, PARTY_ALLY, "dance" );
             }
@@ -1700,7 +1703,7 @@ void CalculatePhatBattleBooty() {
 // Draws a "level up!" message over the party member in question.
 void doLevelUpIndicator(int party_idx) {
 
-    int char_ref = bat_getRenderRef(party_idx,PARTY_ALLY);
+    int char_ref = bat_getMcGrenderHeapRef(party_idx,PARTY_ALLY);
     int startx = mcg_getX(char_ref) + (mcg_width(char_ref)/2) - (ImageWidth(imLevelup)/2);
     int starty = mcg_getY(char_ref) + mcg_height(char_ref) - ImageHeight(imLevelup);
 

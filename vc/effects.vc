@@ -587,7 +587,8 @@ void skill_wm_might() {
     }
 
     int target_idx = GetTargIdxByText( "Target" );
-    int targ_mcg_ref = bat_getRenderRef(GetTargID(target_idx),GetTargMode(target_idx));
+
+    int targ_mcg_ref = bat_getMcGrenderHeapRef(GetTargID(target_idx),GetTargMode(target_idx));
 
     if( bat_is_dead( GetTargID(target_idx), GetTargMode(target_idx) ) ) {
         TurnBattleEffectOn( "skill_fizzle" );
