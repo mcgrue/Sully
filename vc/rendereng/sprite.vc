@@ -178,6 +178,9 @@ int LoadSprite( string filename, int sprite_type )
     sprite_heap[ldsp_idx].sprite_type = sprite_type;
     sprite_heap[ldsp_idx].active = 1;
 //MessageBox( filename+" ("+str(sprite_type)+") end: "+str(numimagehandles) );
+
+DumpSprite(ldsp_idx);
+
     return ldsp_idx; // Finally, pass back the index of this sprite.
 }
 
@@ -662,7 +665,7 @@ int LoadAnimationFromHandle(int imagehandle, int sizex, int sizey)
     return index;
 }
 
-int DumpSprite(int _idx)
+void DumpSprite(int _idx)
 {
     int _dsi;
     log("---");
@@ -756,6 +759,8 @@ void sprite_endstrand_process( int idx )
 void SpriteChangeStrand( int idx, string strand_key )
 {
     int i;
+
+LOG( "SpriteChangeStrand( "+str(idx)+", "+strand_key+" )" );
 
     i = getStrandIndex( idx, strand_key );
 

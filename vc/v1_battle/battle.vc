@@ -628,7 +628,7 @@ void _BasicAttackFunc()
         /// else, set the attacker to attack-animation!
         else
         {
-            ChangeSpriteAnimation( bat_getRenderRef(GetTargID(i), GetTargMode(i)), "ATTACK" );
+            ChangeSpriteAnimation( GetTargID(i), GetTargMode(i), "ATTACK" );
         }
 
         /// temporary measure
@@ -1525,7 +1525,7 @@ void EndOfBattleAction()
             {
                 if( !equ(GetCurrentSpriteStrand(battle_enemies[i].render_idx),"death") )
                 {
-                    ChangeSpriteAnimation( battle_enemies[i].render_idx, "death" );
+                    ChangeSpriteAnimation( i, PARTY_ENEMY, "death" );
                 }
 
                 nme_setDead( i );
@@ -1550,7 +1550,7 @@ void EndOfBattleAction()
             {
                 if( !equ(GetCurrentSpriteStrand(ref),"death") )
                 {
-                    ChangeSpriteAnimation( ref, "death" );
+                    ChangeSpriteAnimation( i, PARTY_ALLY, "death" );
                 }
 
                 changeDeadFlag( party[i], 1 );
@@ -1601,7 +1601,7 @@ void PlayBattleVictory()
 
             if( !equ(GetCurrentSpriteStrand(ref),"dance") )
             {
-                ChangeSpriteAnimation( ref, "dance" );
+                ChangeSpriteAnimation( i, PARTY_ALLY, "dance" );
             }
         }
     }
@@ -1758,19 +1758,22 @@ void makeLevelUpIndicatorDisappear() {
     mcg_turn_invisible(getCurrentMcGIdx());
 }
 
-void setStartingBattleSpriteAnimations( int party_idx, int sprite_idx )
+void setStartingBattleSpriteAnimations( int ally_party_idx, int sprite_idx )
 {
     string anim;
+    int bat_spr_ref;
 
-    if( isDead(party_idx) ) {
+    if( bat_is_dead(ally_party_idx,PARTY_ALLY) ) {
         anim = "DEATH";
-    } else if(bat_is_weak(party_idx,PARTY_ALLY)) {
+    } else if(bat_is_weak(ally_party_idx,PARTY_ALLY)) {
         anim = "WEAK";
     } else {
         anim = "IDLE";
     }
 
-    ChangeSpriteAnimation( sprite_idx, anim );
+Log( "ally_party_idx ["+str(ally_party_idx)+"]: "+bat_getName(ally_party_idx,PARTY_ALLY)+" ("+anim+")" );
+
+    ChangeSpriteAnimation( ally_party_idx, PARTY_ALLY, anim );
 }
 
 
@@ -1842,14 +1845,7 @@ void render_battle_debug_window()
         y += FontHeight(fontBattleWhite) + 1;
         PrintString( 10,y,debug_screen,fontBattleWhite, "Selectmap says it's: '"+SM_get_name(selectmap_cursor)+"'");
         y += FontHeight(fontBattleWhite) + 1;
-
     }
-
-/*
-    PrintString( 10,y,debug_screen,fontBattleWhite, "Enemies: " + str(right) );
-    y += FontHeight(fontBattleWhite) + 1;
-    for()
-*/
 
     __debug_screen_y = y;
 }

@@ -24,7 +24,7 @@
 
 /***************************** gamestate data *****************************/
 
-/// the two vc layers!  
+/// the two vc layers!
 /// These are basically optional persistant images you can draw to.
 int v1_vclayer = DuplicateImage(screen);
 int v1_vclayer2 = DuplicateImage(screen);
@@ -39,14 +39,14 @@ int v1rpg_SmallFont, _v1rpg_SmallFont; ///stores the original smallfont.
 
 /// something to switch the font used by the textbox.
 /// initially set to whatever you want.
-int textBox_font = v1rpg_LargeFont; 
+int textBox_font = v1rpg_LargeFont;
 
 /// something to switch the font used by the promptbox.
 /// initially set to whatever you want.
 int promptBox_font = v1rpg_LargeFont;
 
 
-/// Three global variables for the global music, interface, 
+/// Three global variables for the global music, interface,
 /// and sound effect volumes.
 /// Note: The music volume is only enforced by using the V1_sound.vc
 /// functions, and is not directly tied to any builtin sound functions.
@@ -60,7 +60,7 @@ int can_save;
 /// The (x,y) coordinates for the mapswitch, and the transition mode
 int mapswitchx, mapswitchy, mapswitche = TBLACK;
 
-/// the currently-playing music 
+/// the currently-playing music
 string curmusic;
 
 /// the number of steps until the next battle
@@ -94,10 +94,10 @@ int _debugTile = LoadImage( "tile.png" );
 
 /********************************** code **********************************/
 
-/// The main renderfunction for the v1 RPG effects library.  
-/// Every time Render() is called or an R is reached on the map's 
+/// The main renderfunction for the v1 RPG effects library.
+/// Every time Render() is called or an R is reached on the map's
 /// Renderstring, this function is called... as long as HookRetrace("V1RPG_RenderFunc")
-/// was set beforehand (by default in The Sully Chronicles, this line is placed in 
+/// was set beforehand (by default in The Sully Chronicles, this line is placed in
 /// the system.vc autoexec function())
 ///
 /// This function checks for and does the following events:
@@ -118,21 +118,21 @@ void V1RPG_RenderFunc()
     RenderWeather();
 
     if( vc_filter_on ) {
-        
+
         if( vc_filter_lucent )
         {
             SetLucent(vc_filter_lucent);
             ColorFilter( vc_filter, screen );
-            SetLucent(0);   
+            SetLucent(0);
         }
         else
         {
             ColorFilter( vc_filter, screen );
         }
     }
-    
+
     TBlit(0, 0, v1_vclayer, screen);
-    
+
     //for vclayer tinting.
     if ( tint_on )
     {
@@ -140,7 +140,7 @@ void V1RPG_RenderFunc()
         RectFill(0, 0, 320, 240, tint_color, screen);
         SetLucent(0);
     }
-    
+
     //for continuous quaking!
     if( vc_quake_on )
     {
@@ -152,32 +152,32 @@ void V1RPG_RenderFunc()
         } else {
             cameratracking = 1;
         }
-                
+
         xwin =  xwin+Random(0-vc_quake_x,vc_quake_x);
-        ywin =  ywin+Random(0-vc_quake_y,vc_quake_y);   
+        ywin =  ywin+Random(0-vc_quake_y,vc_quake_y);
     }
-    
+
     MyGame_PlayerSpeed();
-    
-    
+
+
     PrintString(10, 10, screen, 0, "Steps to battle: " +str(get_steps_to_next_battle()));
-    
+
     //PrintString(10, 10, screen, 0, "Player Entity: " +str(GetPlayer()));
     //PrintString(10, 20, screen, 0, "entity.speed[Player()]: " +str(entity.speed[GetPlayer()]));
-    
+
 //  int tx = entity.x[GetPlayer()]/16;
 //  int ty = entity.y[GetPlayer()]/16;
-    
+
 //  PrintString(10, 10, screen, 0, "tx: " +str(tx));
 //  PrintString(10, 20, screen, 0, "ty: " +str(ty));
-    
+
 //  TBlit( (tx*16)-xwin, (ty*16)-ywin, _debugTile, screen );
 }
 
 /// Sets the colorfilter option for V1RPG_RenderFunc.
-/// 
-/// @param color_filter The RGB()-encoded colorvalue 
-void VCScreenFilter( int color_filter ) 
+///
+/// @param color_filter The RGB()-encoded colorvalue
+void VCScreenFilter( int color_filter )
 {
     vc_filter_on = 1;
     vc_filter = color_filter;
@@ -196,7 +196,7 @@ int IsVCScreenFilterOn()
 ///
 /// @see VCScreenFilter()
 /// @see V1RPG_RenderFunc()
-void VCScreenFilterOff() 
+void VCScreenFilterOff()
 {
     vc_filter_on = 0;
     vc_custom_filter_on = 0;
@@ -206,29 +206,29 @@ void VCScreenFilterOff()
 }
 
 
-/// applies a lucency to the colorfilter.  
-/// Remember: 100% lucent is nothing, 
-/// 0% lucent is solid, 25% lucent is lightly see-though, 
+/// applies a lucency to the colorfilter.
+/// Remember: 100% lucent is nothing,
+/// 0% lucent is solid, 25% lucent is lightly see-though,
 /// 75% lucent is very see-through, etc etc.
 ///
 /// @param perc the percent lucency to apply to the VCScreenFilter.
 ///
 /// @see VCScreenFilter()
-void VCScreenFilterLucent( int perc ) 
+void VCScreenFilterLucent( int perc )
 {
     vc_filter_lucent = perc;
 }
 
 
-/// This sets a custom color filter.  
+/// This sets a custom color filter.
 ///
 /// Make sure to supply both arguments using RGB()
 ///
 /// Example:
-/// VCCustomFilter( RGB(0,0,0), RGB(255,255,0) ); //this will make the screen 
+/// VCCustomFilter( RGB(0,0,0), RGB(255,255,0) ); //this will make the screen
 ///     //all shades of Yellow... as long as V1RPG_RenderFunc is in the HookRetrace.
 ///
-/// @param color_1 the RGB-encoded definition of the darkest color on a screen, 
+/// @param color_1 the RGB-encoded definition of the darkest color on a screen,
 /// @param color_2 the RGB-encoded definition of the brightest color on a screen.
 ///
 /// @see V1RPG_RenderFunc()
@@ -237,20 +237,20 @@ void VCCustomFilter( int color_1, int color_2 )
     vc_custom_filter_on = 1;
 
     vc_filter_on = 1;
-    vc_filter = CF_CUSTOM;  
-    
+    vc_filter = CF_CUSTOM;
+
     SetCustomColorFilter( color_1, color_2 );
-    
+
     _VCCustomFilter_color_1 = color_1;
     _VCCustomFilter_color_2 = color_2;
 }
 
-/// If something else accesses SetCustomColorFilter() directly without accessing 
-/// VCCustomFilter(), that something else can just call VCCustomFilterRestore() after 
+/// If something else accesses SetCustomColorFilter() directly without accessing
+/// VCCustomFilter(), that something else can just call VCCustomFilterRestore() after
 /// it's done and the V1RPG library will continue to function as normal with it's custom
 /// color filter.
 ///
-/// In the Sully Chronicles, the menu function uses SetCustomColorFilter() to draw it's 
+/// In the Sully Chronicles, the menu function uses SetCustomColorFilter() to draw it's
 /// colored menu backgrounds, and so it calls this function after it's done to make sure
 /// any custom screen filtering resumes as normal (like in Sara's flashback).
 ///
@@ -290,7 +290,7 @@ int getVCCustomFilterColor2()
 
 /// Tints the vc layer the given color a given percent.
 /// Useful for fading too and from a specific color.
-/// 
+///
 /// @see VCLayerTintOff()
 /// @see V1RPG_RenderFunc()
 /// @see RGB()
@@ -306,7 +306,7 @@ void VCLayerTintScreen(int color, int percent)
 
 
 /// Turns off the vc layer tinting, if it was on.
-/// 
+///
 /// @see V1RPG_RenderFunc()
 /// @see VCLayerTintScreen()
 void VCLayerTintOff()
@@ -316,19 +316,19 @@ void VCLayerTintOff()
 
 
 /// Clears the VC Layer of any and all images.
-/// 
+///
 /// @see v1_vclayer
-void ClearVCLayer() 
+void ClearVCLayer()
 {
     RectFill(0, 0, ImageWidth(v1_vclayer), ImageHeight(v1_vclayer), transcolor, v1_vclayer); //blanks the vc layer
 }
 
 
-/// Takes an image's path and filename, and the position to put it onto the 
-/// VC Layer.  It then loads it, blits it only the vc layer, and deletes the 
+/// Takes an image's path and filename, and the position to put it onto the
+/// VC Layer.  It then loads it, blits it only the vc layer, and deletes the
 /// image.
 ///
-/// No fuss, no muss.  Very useful for drawing things to the screen to stick 
+/// No fuss, no muss.  Very useful for drawing things to the screen to stick
 /// around for a while in a simple manner.
 ///
 /// If you ever want to wipe the screen after calling this, use ClearVCLayer().
@@ -341,7 +341,7 @@ void ClearVCLayer()
 void VCPutIMG( string img_name, int x_pos, int y_pos )
 {
     int img;
-    
+
     img = LoadImage( img_name );
     TBlit( x_pos, y_pos, img, v1_vclayer );
     FreeImage(img);
@@ -354,10 +354,10 @@ void VCPutIMG( string img_name, int x_pos, int y_pos )
 ///
 /// @see v1_vclayer
 /// @see RGB()
-void FillVCLayer( int matte_color ) 
+void FillVCLayer( int matte_color )
 {
     //fills the vc layer with matte_color
-    RectFill(0, 0, ImageWidth(v1_vclayer), ImageHeight(v1_vclayer), matte_color, v1_vclayer); 
+    RectFill(0, 0, ImageWidth(v1_vclayer), ImageHeight(v1_vclayer), matte_color, v1_vclayer);
 }
 
 
@@ -368,10 +368,10 @@ void FillVCLayer( int matte_color )
 /// @param x the x-coordinate of the vc layer to print string s on.
 /// @param y the y-coordinate of the vc layer to print string s on.
 /// @param s the string to print in v1rpg_SmallFont upon the vclayer.
-/// 
+///
 /// @see v1_vclayer
 /// @see v1rpg_SmallFont
-void VCText( int x, int y, string s ) 
+void VCText( int x, int y, string s )
 {
     PrintString( x,y, v1_vclayer, v1rpg_SmallFont, s);
 }
@@ -382,7 +382,7 @@ void VCText( int x, int y, string s )
 ///
 /// @see v1_vclayer
 /// @see v1rpg_SmallFont
-void VCCenterText( int y, string s ) 
+void VCCenterText( int y, string s )
 {
     PrintCenter( ImageWidth(v1_vclayer)/2, y, v1_vclayer, v1rpg_SmallFont, s );
 }
@@ -390,11 +390,11 @@ void VCCenterText( int y, string s )
 
 /// Turns on vc-layer quaking with a horizontal shake of quake_x and a vertical
 /// shake of quake_y.
-/// 
-/// The screen will shake but loosely follow the player until VCQuakeOff() is 
+///
+/// The screen will shake but loosely follow the player until VCQuakeOff() is
 /// called.
 ///
-/// This is similar to EarthQuake() in v1_weather.vc, but allows the player to 
+/// This is similar to EarthQuake() in v1_weather.vc, but allows the player to
 /// walk around and do stuff wile the screen is shaking.
 ///
 /// @param quake_x the amount to shake the screen, in pixels, horizontally.
@@ -402,7 +402,7 @@ void VCCenterText( int y, string s )
 ///
 /// @see V1RPG_RenderFunc()
 /// @see VCQuakeOff()
-void VCQuake( int quake_x, int quake_y ) 
+void VCQuake( int quake_x, int quake_y )
 {
     vc_quake_on = 1;
     vc_quake_x = quake_x;
@@ -414,7 +414,7 @@ void VCQuake( int quake_x, int quake_y )
 /// Turns off the vclayer quake effect.
 ///
 /// @see V1RPG_RenderFunc()
-void VCQuakeOff() 
+void VCQuakeOff()
 {
     vc_quake_on = 0;
     cameratracking = 1;
@@ -422,16 +422,16 @@ void VCQuakeOff()
 
 
 /// This function enables the V1RPG Dual VC-layer mode!  It's totally wacky!
-/// It basically allows for two Rs in curmap.rstring, with V1RPG_RenderFunc() being 
-/// called when the first R triggers, and a straight-up TBlit of the second vc layer 
+/// It basically allows for two Rs in curmap.rstring, with V1RPG_RenderFunc() being
+/// called when the first R triggers, and a straight-up TBlit of the second vc layer
 /// image on the second R.
 ///
-/// This mode is used on lab.map to blit things in the foreground, since lab.map puts 
+/// This mode is used on lab.map to blit things in the foreground, since lab.map puts
 /// the regular R-layer behind the entities and the tiles to make the neat translucent
 /// fog effect work.
 ///
 /// @see V1RPG_RenderFunc_DUALMODE()
-void V1_StartDualMode( string newrstring ) 
+void V1_StartDualMode( string newrstring )
 {
     _dualmode_on = 1;
     _dualmode_counter = 0;
@@ -440,20 +440,20 @@ void V1_StartDualMode( string newrstring )
 
     //clear vclayer2 before we start!
     RectFill(0, 0, ImageWidth(v1_vclayer2), ImageHeight(v1_vclayer2), transcolor, v1_vclayer2); //clear vclayer2
-    
+
     HookRetrace("V1RPG_RenderFunc_DUALMODE");
 }
 
 
-/// If Dual-rendering mode is on when this is called, it turns the mode off and 
+/// If Dual-rendering mode is on when this is called, it turns the mode off and
 /// restores the original curmap.rstring.
 ///
 /// Otherwise does nothing at all.
 ///
 /// @see V1RPG_RenderFunc()
 /// @see V1_StartDualMode()
-void V1_StopDualMode() 
-{   
+void V1_StopDualMode()
+{
     if( _dualmode_on )
     {
         _dualmode_on = 0;
@@ -468,27 +468,27 @@ void V1_StopDualMode()
 /// This is the function that gets set to the HookRetrace by V1_StartDualMode()
 /// Do not call this yourself unless you Know What You're Doing.
 ///
-/// ...generally, you shouldn't use the Dual rendering mode unless you Know What 
+/// ...generally, you shouldn't use the Dual rendering mode unless you Know What
 /// You're Doing, too.
 ///
 /// @see V1RPG_RenderFunc()
-void V1RPG_RenderFunc_DUALMODE() 
+void V1RPG_RenderFunc_DUALMODE()
 {
-    if( !_dualmode_counter ) 
+    if( !_dualmode_counter )
     {
         V1RPG_RenderFunc();
         _dualmode_counter = 1;
-    } 
-    else 
+    }
+    else
     {
         TBlit(0, 0, v1_vclayer2, screen);
         _dualmode_counter = 0;
-    }   
+    }
 }
 
 
-/// This function takes care of all the loading and initialization for the v1_RPG 
-/// library.  
+/// This function takes care of all the loading and initialization for the v1_RPG
+/// library.
 ///
 /// You may recall seeing it in The Sully Chronicles's system.vc at the top of the
 /// autoexec() function with all the other library load functions!
@@ -496,7 +496,7 @@ void V1RPG_LoadResources()
 {
     textboxframe = LoadImage("res\system\textbox2.gif");
     textmore = LoadImage("res\system\more.gif");
-        
+
     v1rpg_LargeFont = LoadFont("res\system\font3_vw.gif");
     _v1rpg_LargeFont = v1rpg_LargeFont; //stores the original largefont.
 
@@ -513,29 +513,29 @@ void V1RPG_LoadResources()
 
 
 
-/// One of the cornerstones of the v1RPG effect library, this function takes 
+/// One of the cornerstones of the v1RPG effect library, this function takes
 /// care of all of the awesome things this library can do on the mapswitch.
 ///
 /// It stores the x and y that the party goes to on the new map, and the effect
-/// to use when the new map loads.  The it does the first half of the effect, 
+/// to use when the new map loads.  The it does the first half of the effect,
 /// sets the music volume to the global value (set by the v1_music.vc functions)
 /// just incase the volume was altered manually using SetVolume(), and turns off
 /// any weather that was going on.
 ///
-/// At that point, it calls Map() with the specified mapname.  Map(), if you've 
-/// read the v3 manual, ceases all activity on the present map, loads the new map, 
-/// and calls the new map's personal autoexec function (you set that in maped.  
-/// All of the Sully maps have theirs set to "start()", but you can name yours 
+/// At that point, it calls Map() with the specified mapname.  Map(), if you've
+/// read the v3 manual, ceases all activity on the present map, loads the new map,
+/// and calls the new map's personal autoexec function (you set that in maped.
+/// All of the Sully maps have theirs set to "start()", but you can name yours
 /// whatever.)
 ///
-/// To have a V1_MapSwitch() complete successfully on the new map, make sure 
-/// v1_InitMap(); is called.  In The Sully Chronicles, v1_InitMap() is called 
+/// To have a V1_MapSwitch() complete successfully on the new map, make sure
+/// v1_InitMap(); is called.  In The Sully Chronicles, v1_InitMap() is called
 /// inside InitMap(), which is defined in system.vc
 ///
 /// @param mapn The name of the map to switch to.
 /// @param x The tile-x coordinate for the player to respawn on the new map at.
 /// @param y The tile-y coordinate for the player to respawn on the new map at.
-/// @param effect The pre-defined effect 
+/// @param effect The pre-defined effect
 ///
 /// @see SetWeather()
 /// @see TNONE
@@ -553,7 +553,7 @@ void V1_MapSwitch(string mapn, int x, int y, int effect)
     mapswitche = effect;
     mapswitchx = x;
     mapswitchy = y;
-    
+
     switch (effect)
     {
         case 1: FadeOut(30);
@@ -563,7 +563,7 @@ void V1_MapSwitch(string mapn, int x, int y, int effect)
         case 5: Blit(0, 0, screen, crossfade_img);
         case 6: CircleOut(50);
     }
-    
+
     SetMusicVolume( global_music_volume );
     SetWeather(WEATHER_NONE);
     Map(mapn);
@@ -573,13 +573,13 @@ void V1_MapSwitch(string mapn, int x, int y, int effect)
 
 /// The v1_rpg library's map upkeep function.
 ///
-/// Put this function in your map's autoexec function if you want 
+/// Put this function in your map's autoexec function if you want
 /// your v1_mapswitch transitions to properly work.
 ///
-/// To have a V1_MapSwitch() complete successfully on the new map, make sure 
-/// v1_InitMap(); is called.  
+/// To have a V1_MapSwitch() complete successfully on the new map, make sure
+/// v1_InitMap(); is called.
 ///
-/// In The Sully Chronicles, v1_InitMap() is called inside InitMap(), which is 
+/// In The Sully Chronicles, v1_InitMap() is called inside InitMap(), which is
 /// defined in system.vc
 ///
 /// @see global_music_volume
@@ -598,7 +598,7 @@ void V1_InitMap()
         case 4: BoxIn(30);
         case 5: TransWipe(100);
         case 6: CircleIn(50);
-    }   
+    }
 }
 
 
@@ -606,10 +606,10 @@ int __setFaceMidwarpFlag;
 int __setFaceMidwarpVal;
 
 
-/// tells the party to change their facing in-between the 
+/// tells the party to change their facing in-between the
 /// first half of a warp and the second half.
 ///
-/// 
+///
 void SetFaceMidWarp( int new_facing )
 {
     __setFaceMidwarpFlag = 1;
@@ -621,10 +621,10 @@ void SetFaceMidWarp( int new_facing )
 /// Warps the player to tile coordinates (x,y), using a specified fade effect.
 /// The fade effects have the following valid defines:
 ///   TNONE, TWHITE, TCROSS, TBOX, TWIPE, TCIRCLE
-/// 
-/// NOTE: References simpletype library's GetPlayer() to get the mapindex of 
-///       the player entity.  If you decide to use a different partyhandling 
-///       system with this library, make sure to change those to the proper 
+///
+/// NOTE: References simpletype library's GetPlayer() to get the mapindex of
+///       the player entity.  If you decide to use a different partyhandling
+///       system with this library, make sure to change those to the proper
 ///       player entity index.
 ///
 /// @see TNONE
@@ -656,7 +656,7 @@ void Warp(int x, int y, int effect)
 Log( "curmap.rstring before render: '" + curmap.rstring + "'" );
     Render();
 Log( " curmap.rstring after render: '" + curmap.rstring + "'" );
-        
+
     switch (effect)
     {
         case 1: FadeIn(30);
@@ -666,7 +666,7 @@ Log( " curmap.rstring after render: '" + curmap.rstring + "'" );
         case 5: TransWipe(50);
         case 6: CircleIn(50);
     }
-    
+
     /// clear the midwarp facing flag.
     __setFaceMidwarpFlag = 0;
 }
@@ -677,7 +677,7 @@ Log( " curmap.rstring after render: '" + curmap.rstring + "'" );
 /// Draws a box at screen coordinates (x,y) with width and height of (w,h)
 ///
 /// NOTE: This is presently a wrapper around the v1_Menu's MenuDrawBackground() function.
-///       if you wish to use this library without v1_Menu, alter the contents of this 
+///       if you wish to use this library without v1_Menu, alter the contents of this
 ///       function as you see fit.
 ///
 /// @see MenuDrawBackground()
@@ -695,24 +695,26 @@ void V1_Box(int x, int y, int w, int h)
 /// @see V1_Box()
 void CenterMessageBox( int font, string msg ) {
     int wid, high;
-    
+
     high = FontHeight( font );
     wid = TextWidth( font, msg );
 
     V1_Box( (ImageWidth(screen)/2)-(wid/2)-high, (ImageHeight(screen)/2)-high, wid+(high*2), high*3 );
-    
+
     PrintCenter(ImageWidth(screen)/2, ImageHeight(screen)/2, screen, font, msg);
 }
 
 
 
-/// Takes a one-line message and prints it in a centered MenuBox 
-/// with the v1rpg Small Font.  The message stays up for duration, or until 
+/// Takes a one-line message and prints it in a centered MenuBox
+/// with the v1rpg Small Font.  The message stays up for duration, or until
 /// b1 is pressed.
 ///
 /// the menu is disabled during this function.
-void Banner( string msg, int duration ) 
+void Banner( string msg, int duration )
 {
+    UnPress(UNPRESS_ALL);
+
     int menu_mode = MenuCanBeOn();
     MenuOff();
 
@@ -720,25 +722,25 @@ void Banner( string msg, int duration )
     while ( timer<duration && !ButtonAccept(1) )
     {
         Render();
-        CenterMessageBox( v1rpg_SmallFont, msg );   
+        CenterMessageBox( v1rpg_SmallFont, msg );
         ShowPage();
     }
 
     UnPress(UNPRESS_ALL);
-    
+
     if(menu_mode)   MenuOn();
 }
 
 
 /// Turns on the ability to save.
-void SaveEnable() 
+void SaveEnable()
 {
     can_save = 1;
 }
 
 
 /// Turns off the ability to save.
-void SaveDisable() 
+void SaveDisable()
 {
     can_save = 0;
 }
@@ -748,11 +750,11 @@ void SaveDisable()
 ///
 /// obstructs the tile if obs is 1, unobstructs the tile if obs is 0
 /// leaves the obstruction alone if obs is any other value.
-void AlterBTile(int x, int y, int t, int obs) 
+void AlterBTile(int x, int y, int t, int obs)
 {
     SetTile(x,y,0,t);
-    
-    if( !obs || obs == 1 ) 
+
+    if( !obs || obs == 1 )
         SetObs(x,y,obs);
 }
 
@@ -761,17 +763,17 @@ void AlterBTile(int x, int y, int t, int obs)
 ///
 /// obstructs the tile if obs is 1, unobstructs the tile if obs is 0
 /// leaves the obstruction alone if obs is any other value.
-void AlterFTile(int x, int y, int t, int obs) 
+void AlterFTile(int x, int y, int t, int obs)
 {
     SetTile(x,y,1,t);
-    
-    if( !obs || obs == 1  ) 
+
+    if( !obs || obs == 1  )
         SetObs(x,y,obs);
 }
 
 
 /// The master Chest-opening script.
-/// returns 1 if the chest referenced at flags[flag] was not open, and sets the tile at 
+/// returns 1 if the chest referenced at flags[flag] was not open, and sets the tile at
 /// (x,y) to t, while playing an opening-the-chest sound.
 ///
 /// else returns 0.
@@ -779,15 +781,15 @@ void AlterFTile(int x, int y, int t, int obs)
 /// See any treasure script in Sully for use example.
 ///
 /// @see SoundSwitch();
-int OpenTreasure( int flag, int x, int y, int open_tile, int layer ) 
+int OpenTreasure( int flag, int x, int y, int open_tile, int layer )
 {
-    if( !flags[flag] ) 
+    if( !flags[flag] )
     {
         flags[flag] = 1;
         SetTile(x,y,layer,open_tile);
         SoundSwitch();
         return 1;
-    } else 
+    } else
     {
         return 0;
     }

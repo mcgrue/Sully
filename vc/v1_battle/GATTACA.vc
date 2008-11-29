@@ -286,10 +286,8 @@ void StartGATTACA()
         if( !equ( bs_change_actor_list[i].animation_strandname ,"" ) )
         {
             ChangeSpriteAnimation(
-                bat_getRenderRef(
-                    bs_change_actor_list[i].actor_idx,
-                    bs_change_actor_list[i].party_idx
-                ),
+                bs_change_actor_list[i].actor_idx,
+                bs_change_actor_list[i].party_idx
 
                 bs_change_actor_list[i].animation_strandname
             );

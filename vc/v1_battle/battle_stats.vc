@@ -16,7 +16,7 @@ string bat_partyname( int pidx )
 int bat_max_hp( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return getMaxHP( bidx );
+        return getMaxHP( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -30,7 +30,7 @@ int bat_max_hp( int bidx, int pidx ) {
 int bat_max_mp( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return getMaxMP( bidx );
+        return getMaxMP( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -44,7 +44,7 @@ int bat_max_mp( int bidx, int pidx ) {
 int bat_cur_hp( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return getCurHP( bidx );
+        return getCurHP( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -58,7 +58,7 @@ int bat_cur_hp( int bidx, int pidx ) {
 int bat_cur_mp( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return getCurMP( bidx );
+        return getCurMP( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -82,7 +82,7 @@ int bat_change_hp( int bidx, int pidx, int amt )
     {
         if( amt < 0 )
         {
-            HurtHP( bidx, amt );
+            HurtHP( party[bidx], amt );
         }
         else
         {
@@ -121,7 +121,7 @@ int bat_change_mp( int bidx, int pidx, int amt )
     {
         if( amt < 0 )
         {
-            HurtMP( bidx, abs(amt) );
+            HurtMP( party[bidx], abs(amt) );
         }
         else
         {
@@ -153,7 +153,7 @@ void bat_toggle_deadflag( int bidx, int pidx, int is_dead )
 {
     if( pidx == PARTY_ALLY )
     {
-        changeDeadFlag( bidx, is_dead );
+        changeDeadFlag( party[bidx], is_dead );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -221,7 +221,7 @@ int bat_was_dead( int bidx, int pidx )
 {
     if( pidx == PARTY_ALLY )
     {
-        return wasDead( bidx );
+        return wasDead( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -258,7 +258,7 @@ int bat_is_weak( int bidx, int pidx )
 int bat_str( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return getSTR( bidx );
+        return getSTR( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -273,7 +273,7 @@ int bat_str( int bidx, int pidx ) {
 int bat_end( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return getEND( bidx );
+        return getEND( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -288,7 +288,7 @@ int bat_end( int bidx, int pidx ) {
 int bat_mag( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return getMAG( bidx );
+        return getMAG( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -303,7 +303,7 @@ int bat_mag( int bidx, int pidx ) {
 int bat_mgr( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return getMGR( bidx );
+        return getMGR( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -318,7 +318,7 @@ int bat_mgr( int bidx, int pidx ) {
 int bat_hit( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return getHIT( bidx );
+        return getHIT( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -333,7 +333,7 @@ int bat_hit( int bidx, int pidx ) {
 int bat_dod( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return getDOD( bidx );
+        return getDOD( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -348,7 +348,7 @@ int bat_dod( int bidx, int pidx ) {
 int bat_stk( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return getSTK( bidx );
+        return getSTK( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -363,7 +363,7 @@ int bat_stk( int bidx, int pidx ) {
 int bat_fer( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return getFER( bidx );
+        return getFER( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -378,7 +378,7 @@ int bat_fer( int bidx, int pidx ) {
 int bat_rea( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return getREA( bidx );
+        return getREA( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -393,7 +393,7 @@ int bat_rea( int bidx, int pidx ) {
 int bat_ctr( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return getCTR( bidx );
+        return getCTR( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -409,7 +409,7 @@ int bat_AtV( int bidx, int pidx ) {
 
     if( pidx == PARTY_ALLY )
     {
-        return getAtV( bidx );
+        return getAtV( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -425,7 +425,7 @@ int bat_DfV( int bidx, int pidx ) {
 
     if( pidx == PARTY_ALLY )
     {
-        return getDfV( bidx );
+        return getDfV( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -476,7 +476,7 @@ void bat_updateBattleSpriteAnimations( int bidx, int pidx )
         anim = "IDLE";
     }
 
-    ChangeSpriteAnimation( bat_getRenderRef(bidx,pidx), anim );
+    ChangeSpriteAnimation( bidx,pidx, anim );
 }
 
 
@@ -499,7 +499,7 @@ int bat_attackElementCount( int bidx, int pidx )
 {
     if( pidx == PARTY_ALLY )
     {
-        return GetAttackElementCount( bidx );
+        return GetAttackElementCount( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -517,7 +517,7 @@ int bat_attackElementCount( int bidx, int pidx )
 string bat_attackElement( int bidx, int pidx, int aidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return GetAttackElement( bidx, aidx );
+        return GetAttackElement( party[bidx], aidx );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -548,7 +548,7 @@ string bat_attackElementList( int bidx, int pidx ) {
 int bat_ImmuneCount( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return GetImmuneCount( bidx );
+        return GetImmuneCount( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -563,7 +563,7 @@ int bat_ImmuneCount( int bidx, int pidx ) {
 string bat_getImmune( int bidx, int pidx, int immune_idx ) {
     if( pidx == PARTY_ALLY )
     {
-        return GetImmune( bidx, immune_idx );
+        return GetImmune( party[bidx], immune_idx );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -579,7 +579,7 @@ string bat_getImmune( int bidx, int pidx, int immune_idx ) {
 int bat_AutoCount( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return GetAutoCount( bidx );
+        return GetAutoCount( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -594,7 +594,7 @@ int bat_AutoCount( int bidx, int pidx ) {
 string bat_getAuto( int bidx, int pidx, int auto_idx ) {
     if( pidx == PARTY_ALLY )
     {
-        return GetAuto( bidx, auto_idx );
+        return GetAuto( party[bidx], auto_idx );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -610,7 +610,7 @@ string bat_getAuto( int bidx, int pidx, int auto_idx ) {
 int bat_ElemAbsorbCount( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return GetElemAbsorbCount( bidx );
+        return GetElemAbsorbCount( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -625,7 +625,7 @@ int bat_ElemAbsorbCount( int bidx, int pidx ) {
 string bat_getElemAbsorb( int bidx, int pidx, int elem_idx ) {
     if( pidx == PARTY_ALLY )
     {
-        return GetElemAbsorb( bidx, elem_idx );
+        return GetElemAbsorb( party[bidx], elem_idx );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -641,7 +641,7 @@ string bat_getElemAbsorb( int bidx, int pidx, int elem_idx ) {
 int bat_ElemNegateCount( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return GetElemNegateCount( bidx );
+        return GetElemNegateCount( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -656,7 +656,7 @@ int bat_ElemNegateCount( int bidx, int pidx ) {
 string bat_getElemNegate( int bidx, int pidx, int elem_idx ) {
     if( pidx == PARTY_ALLY )
     {
-        return GetElemNegate( bidx, elem_idx );
+        return GetElemNegate( party[bidx], elem_idx );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -672,7 +672,7 @@ string bat_getElemNegate( int bidx, int pidx, int elem_idx ) {
 int bat_ElemHalfCount( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return GetElemHalfCount( bidx );
+        return GetElemHalfCount( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -687,7 +687,7 @@ int bat_ElemHalfCount( int bidx, int pidx ) {
 string bat_getElemHalf( int bidx, int pidx, int elem_idx ) {
     if( pidx == PARTY_ALLY )
     {
-        return GetElemHalf( bidx, elem_idx );
+        return GetElemHalf( party[bidx], elem_idx );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -703,7 +703,7 @@ string bat_getElemHalf( int bidx, int pidx, int elem_idx ) {
 int bat_ElemDoubleCount( int bidx, int pidx ) {
     if( pidx == PARTY_ALLY )
     {
-        return GetElemDoubleCount( bidx );
+        return GetElemDoubleCount( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -718,7 +718,7 @@ int bat_ElemDoubleCount( int bidx, int pidx ) {
 string bat_getElemDouble( int bidx, int pidx, int elem_idx ) {
     if( pidx == PARTY_ALLY )
     {
-        return GetElemDouble( bidx, elem_idx );
+        return GetElemDouble( party[bidx], elem_idx );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -735,7 +735,7 @@ int bat_isImmune( int bidx, int pidx, string ailment )
  {
     if( pidx == PARTY_ALLY )
     {
-        return IsImmune( bidx, ailment );
+        return IsImmune( party[bidx], ailment );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -752,7 +752,7 @@ int bat_hasElemAbsorb( int bidx, int pidx, string element )
  {
     if( pidx == PARTY_ALLY )
     {
-        return HasElemAbsorb( bidx, element );
+        return HasElemAbsorb( party[bidx], element );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -769,7 +769,7 @@ int bat_hasElemNegate( int bidx, int pidx, string element )
  {
     if( pidx == PARTY_ALLY )
     {
-        return HasElemNegate( bidx, element );
+        return HasElemNegate( party[bidx], element );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -787,7 +787,7 @@ int bat_hasElemHalf( int bidx, int pidx, string element )
  {
     if( pidx == PARTY_ALLY )
     {
-        return HasElemHalf( bidx, element );
+        return HasElemHalf( party[bidx], element );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -804,7 +804,7 @@ int bat_hasElemDouble( int bidx, int pidx, string element )
 {
     if( pidx == PARTY_ALLY )
     {
-        return HasElemDouble( bidx, element );
+        return HasElemDouble( party[bidx], element );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -819,7 +819,7 @@ int bat_hasStatus( int bidx, int pidx, string cond )
 {
     if( pidx == PARTY_ALLY )
     {
-        return castHasStatus( bidx, cond );
+        return castHasStatus( party[bidx], cond );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -834,7 +834,7 @@ int bat_getStatusCount( int bidx, int pidx )
 {
     if( pidx == PARTY_ALLY )
     {
-        return GetCastStatusCount( bidx );
+        return GetCastStatusCount( party[bidx] );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -849,7 +849,7 @@ string bat_getStatus( int bidx, int pidx, int sidx )
 {
     if( pidx == PARTY_ALLY )
     {
-        return GetCastStatus( bidx, sidx );
+        return GetCastStatus( party[bidx], sidx );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -864,7 +864,7 @@ int bat_addStatus( int bidx, int pidx, string cond )
 {
     if( pidx == PARTY_ALLY )
     {
-        castRemoveCancelledStatus( bidx, cond );
+        castRemoveCancelledStatus( party[bidx], cond );
 
         return castAddStatus( bidx, cond );
     }
@@ -883,7 +883,7 @@ int bat_removeOneInstanceOfStatus( int bidx, int pidx, string cond )
 {
     if( pidx == PARTY_ALLY )
     {
-        return castRemoveStatus( bidx, cond );
+        return castRemoveStatus( party[bidx], cond );
     }
     else if( pidx == PARTY_ENEMY )
     {
@@ -898,7 +898,7 @@ int bat_removeAllInstancesOfStatus( int bidx, int pidx, string cond )
 {
     if( pidx == PARTY_ALLY )
     {
-        return castRemoveAllStatus( bidx, cond );
+        return castRemoveAllStatus( party[bidx], cond );
     }
     else if( pidx == PARTY_ENEMY )
     {

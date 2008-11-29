@@ -82,7 +82,7 @@ int McGrender_active_layer;
 void InitMcgrender()
 {
     mcg_destroy_everything();
-    
+
     /// the dicts can stay after being born
     if( !_mcg_dict_init ) {
         _mcg_init_dicts();
@@ -135,11 +135,11 @@ int McgGetActiveLayer() {
 
 int McgGetLayersImageCount( int layer_idx ) {
     int i = 0;
-    
+
     if(layer_idx<0||layer_idx>=MCGRENDER_MAXLAYERS) {
         Exit( "McgGetLayersImageCount: layer ("+str(layer_idx)+") is invalid.  Range is [0"+str(MCGRENDER_MAXLAYERS)+")" );
     }
-    
+
     __mcg_cur_node = McGrender_layers[layer_idx].head_idx;
     while( __mcg_cur_node >= 0 )
     {
@@ -200,11 +200,11 @@ void __McgLayerAddImg( int img_heap_idx )
     if( McGrender_active_layer < 0 || McGrender_layer_count >= MCGRENDER_MAXLAYERS ) {
         exit( "__McgLayerAddImg(): invalid active layer ("+str(McGrender_active_layer)+"), valid range[0,"+str(MCGRENDER_MAXLAYERS)+")" );
     }
-    
+
     if( img_heap_idx < 0 || img_heap_idx >= MCGRENDER_STACKSIZE ) {
         exit( "__McgLayerAddImg(): img_heap_idx had an out of bounds value.  Was ("+str(img_heap_idx)+"), needed [0,"+str(MCGRENDER_STACKSIZE)+")" );
     }
-     
+
     if( McGrender_active_layer < 0 || McGrender_active_layer >= MCGRENDER_MAXLAYERS )
     {
         exit( "__McgLayerAddImg(): supposedly active layer ("+str(McGrender_active_layer)+") is invalid.  There are presently ("+str(McGrender_layer_count)+") valid layers." );
@@ -248,15 +248,15 @@ void mcg_delete_layer( int i ) {
     {
         exit( "mcg_delete_layer(): specified layer ("+str(i)+") is invalid.  There are presently ("+str(McGrender_layer_count)+") valid layers." );
     }
-    
+
     if( i == McGrender_active_layer ) {
         McGrender_active_layer = -1;
     }
-    
+
     int idx = McGrender_layers[i].head_idx;
 
-    // This layer...            
-    while( idx >= 0 ) { // while the layer still has content (i.e., the head is not -1)        
+    // This layer...
+    while( idx >= 0 ) { // while the layer still has content (i.e., the head is not -1)
         mcg_delete(idx); // This layer is an eyesore.
         idx = McGrender_layers[i].head_idx;
     }
@@ -311,11 +311,50 @@ int mcg_count_valid_imgs()
             j++;
         }
     }
-    
+
     mcg_valid_img_cnt = j;
 
     return j;
 }
+
+int mcg_initialize() {
+    int i;
+
+    for( i=0; i<MCGRENDER_STACKSIZE; i++ )
+    {
+        /// initial state for the heap is -1, not 0.
+        mcgV_heap[i].prev_idx = -1;
+        mcgV_heap[i].next_idx = -1;
+        mcgV_heap[i].layer_idx = -1;
+        mcgV_heap[i].image = -1;
+    }
+
+    for( i=0; i<mcgV_sprite_count; i++ )
+    {
+        mcgV_sprites[i] = -1;
+    }
+
+    for( i=0; i<MCGRENDER_MAXLAYERS; i++ )
+    {
+        McGrender_layers[i].count       = 0;
+        McGrender_layers[i].head_idx    = -1;
+        McGrender_layers[i].tail_idx    = -1;
+        McGrender_layers[i].on          = 0;
+    }
+
+    McGrender_layer_count   = 0;
+    McGrender_active_layer  = -1;
+
+    McGrender_layer_count   = 0;
+    mcgV_sprite_count       = 0;
+    mcgV_heap_count         = 0;
+
+    __mcgrender_ticks = 0;
+
+    return 1;
+}
+
+int _mcg_initialize = mcg_initialize();
 
 /// destroys everything on this mcgrender
 void mcg_destroy_everything()
@@ -325,7 +364,7 @@ void mcg_destroy_everything()
     for( i=0; i<MCGRENDER_STACKSIZE; i++ )
     {
         //CallFunction( mcgV_heap[i].delete_callfunc );
-        
+
         if( i <= mcgV_heap_count ) {
             mcg_delete( i );
         } else {
@@ -335,7 +374,7 @@ void mcg_destroy_everything()
             mcgV_heap[i].layer_idx = -1;
             mcgV_heap[i].image = -1;
         }
-        
+
         mcgV_heap[i].is_visible = 0;
     }
 
@@ -343,7 +382,7 @@ void mcg_destroy_everything()
     {
         mcgV_sprites[i] = -1;
     }
-    
+
     for( i=0; i<_cur_max_sprites; i++ )
     {
         FreeSprite( i, 1, 1 );
@@ -365,9 +404,9 @@ void mcg_destroy_everything()
     McGrender_layer_count   = 0;
     mcgV_sprite_count       = 0;
     mcgV_heap_count         = 0;
-    
+
     __mcgrender_ticks = 0;
-    
+
     if( _mcg_dict_init ) {
         _Mcgrender_EmptyDicts();
     }
@@ -375,16 +414,16 @@ void mcg_destroy_everything()
 
 void _Mcgrender_EmptyDicts() {
     if( !_mcg_dict_init ) return;
-    
+
     int i, n;
     string _key, callfunc;
-        
+
     /// the scheduledTick_start dict has time-based keys.
     string csv_keys = DictListKeys(dict_scheduledTick_start, ",");
     n = TokenCount(csv_keys, ",");
     for(i=0; i<n; i++) {
-        _key = GetToken(csv_keys,",",i);  
-            
+        _key = GetToken(csv_keys,",",i);
+
         DictRemove(dict_scheduledTick_start, _key);
     }
     _do_scheduled_tick_start_is_dirty = 0;
@@ -422,12 +461,12 @@ void mcg_delete( int idx )
     {
         _McImgSetPrevLink( mcgV_heap[idx].next_idx, -1 );
     }
-        
+
     if( mcgV_heap[idx].layer_idx >= 0 && mcgV_heap[idx].layer_idx < MCGRENDER_MAXLAYERS ) {
         /// if the head is still us at this point, the layer is dead.
         if( McGrender_layers[mcgV_heap[idx].layer_idx].head_idx == idx ) {
             McGrender_layers[mcgV_heap[idx].layer_idx].head_idx = -1;
-        }    
+        }
     } else {
         WARNING_ERROR( "mcg_delete tried to delete a mcgrender heap item("+str(idx)+") with an invalid layer indice ("+str(mcgV_heap[idx].layer_idx)+").  This really shouldn't happen." );
     }
@@ -440,7 +479,7 @@ void mcg_delete( int idx )
     {
         FreeImage( mcgV_heap[idx].image );
     }
-    
+
     mcgV_heap[idx].image = -1;
 }
 
@@ -849,7 +888,7 @@ void mcgrender()
     for( i=0; i<McGrender_layer_count; i++ )
     {
         mcgrender_start_layer(i);
-    
+
         if( McGrender_layers[i].count && McGrender_layers[i].on )
         {
             __mcg_cur_node = McGrender_layers[i].head_idx;
@@ -868,10 +907,10 @@ void mcgrender()
                 __mcg_cur_node = mcgV_heap[__mcg_cur_node].next_idx;
             }
         }
-        
+
         mcgrender_end_layer(i);
     }
-    
+
     mcgrender_end_tick();
 }
 
@@ -899,29 +938,29 @@ void mcgrender_call_in_n_ticks( string callfunc, int n_ticks )
     if( n_ticks <= 0 ) {
         FATAL_ERROR( "mcgrender_call_in_n_ticks: cannot be called with a value <= 0, got: " + str(n_ticks)+".  (was going to callfunc '"+callfunc+"')" );
     }
-    
+
     string _key = str(__mcgrender_ticks+n_ticks);
     string _tmp;
-    
+
     if( !DictContains(dict_scheduledTick_start, _key) ) {
 
         DictSetString(dict_scheduledTick_start, _key, callfunc);
     } else {
 
         _tmp = DictGetString(dict_scheduledTick_start, _key);
-    
+
         DictSetString(
-            dict_scheduledTick_start, 
-            _key, 
+            dict_scheduledTick_start,
+            _key,
             _tmp+","+callfunc
-        );        
+        );
     }
-    
+
     _do_scheduled_tick_start_is_dirty = 1;
 }
 
 void __do_mcgrender_call_in_n_ticks() {
-    
+
     if( !DictContains(dict_scheduledTick_start, str(__mcgrender_ticks)) ) return;
 
     string callfunc;
@@ -931,10 +970,10 @@ void __do_mcgrender_call_in_n_ticks() {
     int n = TokenCount(csv_keys, ",");
     for(i=0; i<n; i++) {
         callfunc = GetToken(csv_keys,",",i);
-        
+
         MandatoryCallfunction( callfunc );
     }
-    
+
     DictRemove(dict_scheduledTick_start, str(__mcgrender_ticks));
 }
 
@@ -950,7 +989,7 @@ int _fps_count = 0;
 void mcgrender_start_tick() {
     _tick_starttime = systemtime;
     if( _second_starttime < 0 ) {
-        _second_starttime = _tick_starttime; 
+        _second_starttime = _tick_starttime;
     }
 
     if( _do_scheduled_tick_start_is_dirty ) {
@@ -963,11 +1002,11 @@ int _display_fps = 0;
 void mcgrender_end_tick() {
 
     if( (systemtime - _second_starttime) > 100 ) {
-        
-        _display_fps = _fps_count; 
+
+        _display_fps = _fps_count;
         _fps_count = 0;
         _second_starttime = -1;
-        
+
     } else {
         _fps_count++;
     }
@@ -1317,16 +1356,29 @@ int GetMcgrenderCallfuncIdx( int idx )
     return __McgrenderCallfuncIdx;
 }
 
-void ChangeSpriteAnimation( int mcg_idx, string anim )
+void _changeSpriteAnimation( int mcg_idx, string anim )
 {
+
+Log( "*** _changeSpriteAnimation: "+str(mcg_idx)+" to '"+anim+"'." );
+
     if( mcgV_heap[mcg_idx].sprite_ref >= 0 )
     {
         SpriteChangeStrand( mcgV_heap[mcg_idx].sprite_ref, anim );
     }
     else
     {
-        ErrorHandler( "ChangeSpriteAnimation( "+str(mcg_idx)+",'"+anim+"'): that mcgrender heap entry didn't have a valid sprite reference." );
+        ErrorHandler( "_changeSpriteAnimation( "+str(mcg_idx)+",'"+anim+"'): that mcgrender heap entry didn't have a valid sprite reference." );
     }
+}
+
+void ChangeSpriteAnimation( int battle_actor_idx, int party_idx, string anim )
+{
+Log( "*** ChangeSpriteAnimation: "+bat_getName(battle_actor_idx,party_idx)+" to '"+anim+"'." );
+
+     _changeSpriteAnimation(
+        bat_getRenderRef(battle_actor_idx,party_idx),
+        anim
+    );
 }
 
 string GetCurrentSpriteStrand( int mcg_idx )
@@ -1347,42 +1399,6 @@ string GetCurrentSpriteStrand( int mcg_idx )
     else
     {
         ErrorHandler( "GetCurrentSpriteStrand( "+str(mcg_idx)+" ): that mcgrender heap entry didn't have a valid sprite reference." );
-    }
-}
-
-/// DEPRECATED.  ALSO DUMB.
-///
-/// Set a sprite to "hit"
-/// ignore this if they're dead, or stoned,
-/// or some condition where they really shouldn't be hit.
-///
-/// This only takes into account basic 1-frame hits.
-/// This function will be unnecessary if a proper 'stop' command is
-/// implemented in the sprite definition system
-void SetSpriteHit( int mcg_idx )
-{
-    int spr_idx;
-
-    if( mcgV_heap[mcg_idx].sprite_ref >= 0 )
-    {
-        spr_idx = mcgV_heap[mcg_idx].sprite_ref;
-
-        if(
-            getStrandIndex( spr_idx, "death" ) == sprite_heap[spr_idx].current_strand ||
-            getStrandIndex( spr_idx, "stoned" ) == sprite_heap[spr_idx].current_strand
-        ) {
-
-            /// do nothing!
-        }
-        else
-        {
-            ChangeSpriteAnimation( mcg_idx, "hit" );
-            sprite_heap[spr_idx].done = 1;
-        }
-    }
-    else
-    {
-        ErrorHandler( "SetSpriteHit( "+str(mcg_idx)+" ): that mcgrender heap entry didn't have a valid sprite reference." );
     }
 }
 

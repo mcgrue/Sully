@@ -4,17 +4,17 @@
 struct battle_enemy
 {
     int master_enemy_idx;   //reference to the master_enemy[] array
-    
+
     int render_idx;     //reference to the battle sprite for this enemy
-    
+
     int cur_hp, cur_mp;
-    
+
     int leader_flag;    //this is the real leaderflag.  The one in struct enemy is like, dumb.
-    
+
     int stole_flag;     //raise this is someone successfully stole the phat lewt.
-    
+
     int dead_flag;      //raise this to mark that they are dead and have been dead for a while.
-    
+
     string current_status;  //csv of current status conditions.
 }
 
@@ -41,13 +41,13 @@ int addEnemyToBattle( int idx, int render_idx, int is_leader )
     battle_enemies[i].render_idx        = render_idx;
     battle_enemies[i].cur_hp            = master_enemy[idx].stats[STAT_MAX_HP];
     battle_enemies[i].cur_mp            = master_enemy[idx].stats[STAT_MAX_MP];
-    battle_enemies[i].stole_flag        = 0; // this is also used to calculate drops at fight end, by setting it to -1. So...don't set it to -1 otherwise!. 
+    battle_enemies[i].stole_flag        = 0; // this is also used to calculate drops at fight end, by setting it to -1. So...don't set it to -1 otherwise!.
     battle_enemies[i].dead_flag         = 0;
-    
-    
+
+
     battle_enemies[i].current_status = master_enemy[battle_enemies[i].master_enemy_idx].auto;
-    
-nme_dump( i );
+
+//nme_dump( i );
 
     battle_enemy_count++;
 }
@@ -56,7 +56,7 @@ int enemyIsIncapacitated( int idx )
 {
     if( battle_enemies[idx].cur_hp <= 0 )
         return 1;
-        
+
     return 0;
 }
 
@@ -68,7 +68,7 @@ int enemyPartyLives()
         if( !enemyIsIncapacitated(i) )
             return 1;
     }
-    
+
     return 0;
 }
 
@@ -91,7 +91,7 @@ int nme_cur_mp( int bidx ) { return max(0,battle_enemies[bidx].cur_mp); }
 int nme_end( int bidx ) { return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_END]); }
 int nme_atk( int bidx ) { return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_ATK]); }
 int nme_def( int bidx ) { return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_DEF]); }
-int nme_mag( int bidx ) { 
+int nme_mag( int bidx ) {
 
     ///~STATUS: Fugue
     if( nme_hasStatus(bidx, "Fugue") ) // decrease by 33%
@@ -99,7 +99,7 @@ int nme_mag( int bidx ) {
         return max(1,((master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_MAG]*2)/3));
     }
     ///~END STATUS: Fugue
-    
+
     ///~STATUS: Enlighten
     if( nme_hasStatus(bidx, "Enlighten") ) // increase by 50%
     {
@@ -107,19 +107,19 @@ int nme_mag( int bidx ) {
     }
     ///~END STATUS: Enlighten
 
-    return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_MAG]); 
+    return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_MAG]);
 }
 
 int nme_mgr( int bidx ) { return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_MGR]); }
-int nme_hit( int bidx ) 
-{ 
+int nme_hit( int bidx )
+{
     ///~STATUS: Blind
     if( nme_hasStatus(bidx, "Blind") ) // decrease by 50%
     {
         return max(1,(master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_HIT]/2));
     }
     ///~END STATUS: Blind
-    
+
     ///~STATUS: Accurate
     if( nme_hasStatus(bidx, "Accurate") ) // decrease by 50%
     {
@@ -127,18 +127,18 @@ int nme_hit( int bidx )
     }
     ///~END STATUS: Accurate
 
-    return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_HIT]); 
+    return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_HIT]);
 }
 
-int nme_dod( int bidx ) 
-{ 
+int nme_dod( int bidx )
+{
     ///~STATUS: Tangle
     if( nme_hasStatus(bidx, "Tangle") ) // decrease by 50%
     {
         return max(1,(master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_DOD]/2));
     }
     ///~END STATUS: Tangle
-    
+
     ///~STATUS: Evade
     if( nme_hasStatus(bidx, "Evade") ) // increase by 50%
     {
@@ -146,18 +146,18 @@ int nme_dod( int bidx )
     }
     ///~END STATUS: Evade
 
-    return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_DOD]); 
+    return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_DOD]);
 }
 int nme_stk( int bidx ) { return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_STK]); }
-int nme_fer( int bidx ) 
-{ 
+int nme_fer( int bidx )
+{
     ///~STATUS: Blind
     if( nme_hasStatus(bidx, "Blind") ) // decrease by 50%
     {
         return 1;
     }
     ///~END STATUS: Blind
-    
+
     ///~STATUS: Accurate
     if( nme_hasStatus(bidx, "Accurate") ) // double
     {
@@ -165,18 +165,18 @@ int nme_fer( int bidx )
     }
     ///~END STATUS: Accurate
 
-    return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_FER]); 
+    return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_FER]);
 }
 
-int nme_str( int bidx ) 
-{ 
+int nme_str( int bidx )
+{
     ///~STATUS: Weak
     if( nme_hasStatus(bidx, "Weak") ) // decrease by 33%
     {
         return max(1,((master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_STR]*2)/3));
     }
     ///~END STATUS: Weak
-    
+
     ///~STATUS: Might
     if( nme_hasStatus(bidx, "Might") ) // increases by 50%
     {
@@ -184,18 +184,18 @@ int nme_str( int bidx )
     }
     ///~END STATUS: Might
 
-    return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_STR]); 
+    return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_STR]);
 }
 
-int nme_rea( int bidx ) 
-{ 
+int nme_rea( int bidx )
+{
     ///~STATUS: Slow
     if( nme_hasStatus(bidx, "Slow") ) // decrease by 33%
     {
         return max(1,((master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_REA]*2)/3));
     }
     ///~END STATUS: Slow
-    
+
     ///~STATUS: Quick
     if( nme_hasStatus(bidx, "Quick") ) // increase by 50%
     {
@@ -203,12 +203,12 @@ int nme_rea( int bidx )
     }
     ///~END STATUS: Quick
 
-    return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_REA]); 
+    return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_REA]);
 }
 
 
-int nme_ctr( int bidx ) 
-{ 
+int nme_ctr( int bidx )
+{
     ///~STATUS: Counter
     if( nme_hasStatus(bidx, "Counter") ) // set to 999
     {
@@ -216,7 +216,7 @@ int nme_ctr( int bidx )
     }
     ///~END STATUS: Counter
 
-    return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_CTR]); 
+    return max(1,master_enemy[battle_enemies[bidx].master_enemy_idx].stats[STAT_CTR]);
 }
 
 void nme_setDead( int bidx )
@@ -289,7 +289,7 @@ int nme_isImmune( int bidx, string ailment )
         if( equ(nme_getImmune( bidx, i ), ailment) )
             return 1;
     }
-    
+
     return 0;
 }
 
@@ -301,7 +301,7 @@ int nme_hasElemAbsorb( int bidx, string element )
         if( equ(nme_getElemAbsorb( bidx, i ), element) )
             return 1;
     }
-    
+
     return 0;
 }
 
@@ -313,7 +313,7 @@ int nme_hasElemNegate( int bidx, string element )
         if( equ(nme_getElemNegate( bidx, i ), element) )
             return 1;
     }
-    
+
     return 0;
 }
 
@@ -326,7 +326,7 @@ int nme_hasElemHalf( int bidx, string element )
         if( equ(nme_getElemHalf( bidx, i ), element) )
             return 1;
     }
-    
+
     return 0;
 }
 
@@ -338,7 +338,7 @@ int nme_hasElemDouble( int bidx, string element )
         if( equ(nme_getElemDouble( bidx, i ), element) )
             return 1;
     }
-    
+
     return 0;
 }
 
@@ -356,7 +356,7 @@ int nme_hasStatus( int bidx, string cond )
 {
     int i;
     int cnt = nme_GetStatusCount( bidx );
-    
+
     for( i=0; i<cnt; i++ )
     {
         if( equ(GetToken(battle_enemies[bidx].current_status,",",i), cond) )
@@ -364,7 +364,7 @@ int nme_hasStatus( int bidx, string cond )
             return 1;
         }
     }
-    
+
     return 0;
 }
 
@@ -372,10 +372,10 @@ int nme_hasStatus( int bidx, string cond )
 
 /// attempts to add a status ailment to an ally.  fails to add if the ally is immune.
 ///
-/// you can add mutiple copies of a status ailment to a person, although it'll only 
-/// count as them having it once (but you *could* make special effects that take advantage of 
+/// you can add mutiple copies of a status ailment to a person, although it'll only
+/// count as them having it once (but you *could* make special effects that take advantage of
 /// having mutiple instances of an ailment).  The multiple instances thing is useful from
-/// a cheapass bookkeeping POV for granting multiple expiring status abilities, and just removing 
+/// a cheapass bookkeeping POV for granting multiple expiring status abilities, and just removing
 /// one at a time.
 ///
 /// Errors on invalid aidx (master_cast) or if cond isn't a real status effect (master_status).
@@ -390,20 +390,20 @@ int nme_addStatus( int bidx, string cond )
         ErrorHandler( "nme_addStatus(): "+str(bidx)+" is not a valid battle enemy index." );
         return -1;
     }
-    
+
     sidx = GetStatus( cond );
-    
+
     if( !IsStatusI(sidx) )
     {
         ErrorHandler( "nme_addStatus(): '"+cond+"' is not a valid status ailment." );
         return -1;
     }
-    
+
     if( nme_isImmune(bidx, cond) )
     {
         return 0;
     }
-    
+
     battle_enemies[bidx].current_status = battle_enemies[bidx].current_status + cond + ",";
 
     return 1;
@@ -412,27 +412,27 @@ int nme_addStatus( int bidx, string cond )
 
 
 /// removes the first instance of cond that battle_enemies[bidx] has.
-/// 
+///
 /// Errors on invalid bidx (battle_enemies)
-/// 
+///
 /// @returns 1 if something was successfully removed, 0 if there was no matching condition to remove, -1 on error.
 int nme_removeStatus( int bidx, string cond )
 {
     if( bidx < 0 || bidx >= battle_enemy_count )
     {
         ErrorHandler( "nme_removeStatus(): "+str(bidx)+" is not a valid battle enemy index." );
-        return -1;          
+        return -1;
     }
-    
+
     int found = 0;
     int sCount = nme_GetStatusCount( bidx );
     int i;
     string tmpToken, tmpAil;
-    
+
     for( i=0; i<sCount; i++ )
     {
         tmpToken = nme_GetStatus( bidx, i );
-    
+
         if( !found )
         {
             if( equ(tmpToken, cond) )
@@ -441,7 +441,7 @@ int nme_removeStatus( int bidx, string cond )
             }
             else
             {
-                tmpAil = tmpAil + tmpToken + ",";       
+                tmpAil = tmpAil + tmpToken + ",";
             }
         }
         else //we've already found it
@@ -449,12 +449,12 @@ int nme_removeStatus( int bidx, string cond )
             tmpAil = tmpAil + tmpToken + ",";
         }
     }
-    
+
     if( found )
     {
         battle_enemies[bidx].current_status = tmpAil;
     }
-    
+
     return found;
 }
 
@@ -465,33 +465,33 @@ int nme_removeAllStatus( int bidx, string cond )
     if( bidx < 0 || bidx >= battle_enemy_count )
     {
         ErrorHandler( "nme_removeAllStatus(): "+str(bidx)+" is not a valid battle enemy index." );
-        return -1;          
+        return -1;
     }
-    
+
     int numfound = 0;
     int sCount = nme_GetStatusCount( bidx );
     int i;
     string tmpToken, tmpAil;
-    
+
     for( i=0; i<sCount; i++ )
     {
         tmpToken = nme_GetStatus( bidx, i );
-    
+
         if( equ(tmpToken, cond) )
         {
             numfound++;
         }
         else
         {
-            tmpAil = tmpAil + tmpToken + ",";       
+            tmpAil = tmpAil + tmpToken + ",";
         }
     }
-    
+
     if( numfound > 0 )
     {
         battle_enemies[bidx].current_status = tmpAil;
     }
-    
+
     return numfound;
 }
 
@@ -502,24 +502,24 @@ int nme_RemoveCancelledStatus( int bidx, string cond )
     if( bidx < 0 || bidx >= MAX_CAST )
     {
         ErrorHandler( "nme_RemoveCancelledStatus(): "+str(bidx)+" is not a valid cast index." );
-        return -1;          
+        return -1;
     }
-    
+
     int sidx = GetStatus( cond );
-    
+
     if( sidx < 0 )
     {
         ErrorHandler( "nme_RemoveCancelledStatus(): "+cond+" is not a valid status ailment." );
-        return -1;      
+        return -1;
     }
-    
+
     int i;
     string tmp_status;
-    
+
     for( i=0; i<nme_GetStatusCount(bidx); i++ )
     {
         tmp_status = nme_GetStatus( bidx, i );
-        
+
         /// if (new status idx) cancels (old status name)
         if( StatusCancelsI(sidx, tmp_status) )
         {
@@ -551,49 +551,49 @@ void nme_LogTestStatusAbilities( String lbl )
 void nme_testStatusAbilities()
 {
     int i;
-    
+
     if( !battle_enemy_count )
         battle_enemy_count = 1;
-        
+
     battle_enemies[0].master_enemy_idx = 0;
     //master_enemy[0].immune = "POISON,";
     master_enemy[0].immune = "";
 
     nme_LogTestStatusAbilities( "start of nme_testStatusAbilities()" );
-    
+
     i = nme_AddStatus( 0, "POISON" );
     nme_LogTestStatusAbilities( "after add POISON 1 (result: "+str(i)+")" );
-    
+
     i = nme_AddStatus( 0, "BLIND" );
     nme_LogTestStatusAbilities( "after add BLIND (result: "+str(i)+")" );
-    
+
     i = nme_AddStatus( 0, "POISON" );
     nme_LogTestStatusAbilities( "after add POISON 2 (result: "+str(i)+")" );
 
     i = nme_AddStatus( 0, "BAMBOOZLE" );
     nme_LogTestStatusAbilities( "after add BAMBOOZLE (result: "+str(i)+")" );
-    
+
     i = nme_AddStatus( 0, "CONFUSE" );
     nme_LogTestStatusAbilities( "after add CONFUSE (result: "+str(i)+")" );
 
     i = nme_AddStatus( 0, "POISON" );
     nme_LogTestStatusAbilities( "after add POISON 3 (result: "+str(i)+")" );
-    
+
     i = nme_RemoveStatus( 0, "POISON" );
     nme_LogTestStatusAbilities( "after remove one POISON (result: "+str(i)+")" );
-    
+
     i = nme_RemoveAllStatus( 0, "POISON" );
     nme_LogTestStatusAbilities( "after remove *all* POISON (result: "+str(i)+")" );
-    
+
     i = bat_addStatus( 0, PARTY_ENEMY, "FRAGILE" );
     nme_LogTestStatusAbilities( "after add FRAGILE (result: "+str(i)+")" );
-    
+
     i = bat_addStatus( 0, PARTY_ENEMY, "PROTECT" );
     nme_LogTestStatusAbilities( "after add PROTECT (result: "+str(i)+")" );
-    
+
     trigger_on_hit( 0, PARTY_ENEMY );
     nme_LogTestStatusAbilities( "after simulated 'on_hit'" );
-    
+
     ///this needs to exit because it mutates loaded data structs...  IN THE NAME OF SCIENCE!
     exit( "" );
 }
@@ -616,17 +616,17 @@ void nme_HealHP( int bidx, int amount ) {
 Log( "nme_HealHP... start: " +str(battle_enemies[bidx].cur_hp) );
     battle_enemies[bidx].cur_hp += amount;
 Log( "nme_HealHP... middle: " +str(battle_enemies[bidx].cur_hp) );
-    
-    if( battle_enemies[bidx].cur_hp > nme_max_hp(bidx) ) 
+
+    if( battle_enemies[bidx].cur_hp > nme_max_hp(bidx) )
     {
         battle_enemies[bidx].cur_hp = nme_max_hp(bidx);
     } else if( battle_enemies[bidx].cur_hp < 0 ) {
         battle_enemies[bidx].cur_hp = 0;
     }
-    
+
 Log( "nme_HealHP... end: " +str(battle_enemies[bidx].cur_hp) );
-    
-    
+
+
 }
 
 // Takes a cast index and an amount to decrease the HP by.
@@ -636,7 +636,7 @@ Log( "nme_HealHP... end: " +str(battle_enemies[bidx].cur_hp) );
 //
 // no error handling at this time.
 void nme_HurtHP( int bidx, int amount ) {
-    
+
     nme_HealHP( bidx, 0-abs(amount) );
 }
 
@@ -644,14 +644,14 @@ void nme_HurtHP( int bidx, int amount ) {
 
 
 void nme_HealMP( int bidx, int amount ) {
-    
+
     battle_enemies[bidx].cur_mp += amount;
-    
+
     if( battle_enemies[bidx].cur_mp > nme_max_mp(bidx) ) {
         battle_enemies[bidx].cur_mp = nme_max_mp(bidx);
     } else if( battle_enemies[bidx].cur_mp < 0 ) {
         battle_enemies[bidx].cur_mp = 0;
-    }   
+    }
 }
 
 // Takes a cast index and an amount to decrease the HP by.
@@ -661,7 +661,7 @@ void nme_HealMP( int bidx, int amount ) {
 //
 // no error handling at this time.
 void nme_HurtMP( int bidx, int amount ) {
-    
+
     nme_HealMP( bidx, 0-amount );
 }
 void nme_TakeMP( int bidx, int amount ) { nme_HurtMP( bidx, amount ); }
@@ -696,15 +696,15 @@ void SetCurrentQueueIdxForAI( int i )
 void DefaultEnemyAI()
 {
     int targ;
-    
+
     int qidx = GetCurrentQueueIdxForAI();
-    
+
     targ = SelectRandomAlly( 1 );
-    
+
     ClearTargetting();
-    
+
     SetTargettingEffectFunc( "BasicAttackFunc" );
-    
+
     AddTarget( battle_queue[qidx].batent_ref, battle_queue[qidx].batent_party, "ATTACKER" );
     AddTarget( targ, PARTY_ALLY, "TARGET" );
     TargettingDone();
@@ -724,7 +724,7 @@ void nme_dump( int bidx )
     Log( "------------------------------" );
     Log( "  Name: " + nme_getName(bidx) );
     Log( "==============================" );
-    
+
     Log( "Max HP: "+ str(nme_max_hp(bidx)) );
     Log( "    HP: "+ str(nme_cur_hp(bidx)) );
     Log( "Max MP: "+ str(nme_max_mp(bidx)) );
@@ -754,7 +754,7 @@ void nme_dump( int bidx )
     Log( "Drop Item %: " + str(nme_DropItemChance(bidx))  );
     Log( "Steal Item idx: " + str(nme_StealItemIdx(bidx)) );
     Log( "Steal Item %: " + str(nme_StealItemChance(bidx))  );
-    
+
     Log( "Money: " + str(nme_money(bidx)) );
     Log( "   XP: " + str(nme_exp(bidx))  );
 }

@@ -11,7 +11,7 @@ void InitializeAllCharacters()
     int i;
     for (i=0;i<MAX_CAST;i++)
     {
-        if (IsCharacterIndex(i)) InitializeCharacterI(i,1); // If this is a real character, initialize fully        
+        if (IsCharacterIndex(i)) InitializeCharacterI(i,1); // If this is a real character, initialize fully
     }
 }
 
@@ -28,18 +28,18 @@ void HealHP( int cast_idx, int amount ) {
         ErrorHandler( "HealHP(): "+str(cast_idx)+" is not a valid cast index." );
         return;
     }
-    
+
     curval = GetRawCurHP(cast_idx); // curval is currently original value
 Log( "Heal HP start: " + str(curval) );
-    
+
     curval += amount; // curval is currently final value
-    
+
 Log( "Heal HP middle: " + str(curval) );
-    
+
     if( curval > GetMaxHP(cast_idx) ) curval = GetMaxHP(cast_idx);
     else if( curval < 0 ) curval = 0;
     SetCurHP(cast_idx, curval);
-    
+
 Log( "Heal HP end: " + str(curval) );
 }
 
@@ -70,11 +70,11 @@ void HealMP( int cast_idx, int amount ) {
         ErrorHandler( "HealMP(): "+str(cast_idx)+" is not a valid cast index." );
         return;
     }
-    
+
     curval = GetRawCurMP(cast_idx);
 
-    curval += amount; // curval is currently final value    
-    
+    curval += amount; // curval is currently final value
+
     if( curval > GetMaxMP(cast_idx) ) curval = GetMaxMP(cast_idx);
     else if( curval < 0 ) curval = 0;
     SetCurMP(cast_idx, curval);
@@ -91,7 +91,7 @@ void TakeMP( int cast_idx, int amount ) {
         ErrorHandler( "TakeMP(): "+str(cast_idx)+" is not a valid cast index." );
         return;
     }
-    
+
     HealMP( cast_idx, 0-amount );
 }
 void HurtMP( int cast_idx, int amount ) { TakeMP(cast_idx, amount); }
@@ -99,19 +99,19 @@ void HurtMP( int cast_idx, int amount ) { TakeMP(cast_idx, amount); }
 // gives a cast member an amount of XP based on their master_cast[] index
 // levels the cast member up to the appropriate level for that amount of XP.
 //
-// errors if the XP amount was less than or equal to zero, or if 
+// errors if the XP amount was less than or equal to zero, or if
 // the master_cast[] index was bad.
 void GiveXP( string name, int xp ) {
     if (!CharInParty(name)) {
         ErrorHandler( "GiveXP('"+name+"'): '"+name+"' is not in the party." );
         return;
     }
-    
+
     if( xp <= 0 ) {
         ErrorHandler( "GiveXP('"+str(xp)+"'): cannot give a negative or zero amount of XP." );
         return;
     }
-    
+
     GiveXPI( party[FindPartyPos(name)], xp );
 }
 
@@ -119,7 +119,7 @@ void GiveXP( string name, int xp ) {
 // gives a cast member a=n amount of XP based on their master_cast[] index
 // levels the cast member up to the appropriate level for that amount of XP.
 //
-// errors if the XP amount was less than or equal to zero, or if 
+// errors if the XP amount was less than or equal to zero, or if
 // the master_cast[] index was bad.
 void GiveXPI( int cast_idx, int xp ) {
     int newlev;
@@ -127,14 +127,14 @@ void GiveXPI( int cast_idx, int xp ) {
         ErrorHandler( "GiveXPI(): cast idx '"+str(cast_idx)+"' is not in the party." );
         return;
     }
-    
+
     if( xp <= 0 ) {
         ErrorHandler( "GiveXPI('"+str(xp)+"'): cannot give a negative or zero amount of XP." );
         return;
     }
-    
+
     SetXP(cast_idx, GetXP(cast_idx) + xp);
-    
+
     //level up if neccesary!
     newlev = _calcMyLevelFromMyXP(cast_idx);
     while( GetLevel(cast_idx) < newlev ) {
@@ -151,31 +151,31 @@ void FullHeal( int cast_idx )
 
 /// changes the value of the deadflag.
 ///
-void changeDeadFlag( int idx, int newVal )
+void changeDeadFlag( int master_cast_idx, int newVal )
 {
-    master_cast[idx].dead_flag = newVal;
+    master_cast[master_cast_idx].dead_flag = newVal;
 }
 
 /// returns the status of the deadflag.
 ///
-int wasDead( int idx )
+int wasDead( int master_cast_idx )
 {
-    return master_cast[idx].dead_flag;
+    return master_cast[master_cast_idx].dead_flag;
 }
 
-int isDead( int idx )
+int isDead( int master_cast_idx )
 {
-    if( getCurHP(idx) <= 0 )
+    if( getCurHP(master_cast_idx) <= 0 )
     {
         return 1;
     }
-    
+
     return 0;
 }
 
-/// Currently, "weak" is <=20% of Max HP 
+/// Currently, "weak" is <=20% of Max HP
 ///
-int isWeak( int cur, int _max ) 
+int isWeak( int cur, int _max )
 {
     int limit;
     limit = _max/5;
@@ -184,7 +184,7 @@ int isWeak( int cur, int _max )
     {
         return 1;
     }
-    
+
     return 0;
 }
 
@@ -208,7 +208,7 @@ int boundStat(int stat_idx, int stat_val)
 int getMySkillGroupCount( int cast_idx )
 {
     int i;
-    
+
     for( i=0; i<MAX_SKILLGROUPS_PER_CLASS; i++ )
     {
         if( GetMySkillGroup(cast_idx,i) < 0 )
@@ -216,7 +216,7 @@ int getMySkillGroupCount( int cast_idx )
             return i;
         }
     }
-    
+
     return i;
 }
 
@@ -228,14 +228,14 @@ int getMySkillGroupCount( int cast_idx )
 int GetMySkillGroup( int cast_idx, int my_group_index )
 {
     int tmp = master_classes[master_cast[cast_idx].class_ref].skill_groups[my_group_index];
-    
-    if( !IsSkillTypeI(tmp) ) return 0-1;    
+
+    if( !IsSkillTypeI(tmp) ) return 0-1;
 
     return tmp;
 }
 
 // This clears all of the non-permanent parts of master_cast.
-// Really, we should probably redesign the system so the 'master' and 'variable' 
+// Really, we should probably redesign the system so the 'master' and 'variable'
 // parts of PCs and enemies live in saperate places, but we don't because some
 // of us are lame.
 //
@@ -251,7 +251,7 @@ void ClearCast()
         SetXP(i,0);
         SetCurHP(i,0);
         SetCurMP(i,0);
-        
+
         for( j=0; j<MAX_STATS; j++ )
         {
             SetRawStat(i,j,0);
@@ -262,7 +262,7 @@ void ClearCast()
             // This should probably eventually be done by some sort of set function
             master_cast[i].equipment[j] = -1;
         }
-        
+
         for( j=0; j<MAX_SKILLS; j++ )
         {
             // This too
@@ -278,7 +278,7 @@ void ClearCast()
     string e_auto;          // Comma-delimited list of automatic statuses granted by equipment
     string e_resist[MAX_RESISTS];   // Comma-delimited lists of elemental affinities granted by equipment
     string e_element;       // Element of enemy's normal attack granted by equipment
-    
+
     string o_immune;        // Comma-delimited list of immune statuses granted by non-equipment sources
     string o_auto;          // Comma-delimited list of automatic statuses granted by non-equipment sources
     string o_resist[MAX_RESISTS];   // Comma-delimited lists of elemental affinities granted by non-equipment sources
@@ -289,27 +289,27 @@ void ClearCast()
 string add_unique_modifier( string old, string add )
 {
     int i, j, pass;
-    
+
     for( i=0; i<TokenCount(add,","); i++ )
     {
         pass = 1;
-        
+
         for( j=0; j<TokenCount(old,","); j++ )
         {
             if( equ(GetToken( old,",",j ),GetToken(add,",",i)) )
                 pass = 0;
         }
-        
+
         if( pass )
         {
             old = old + GetToken(add,",",i) + ",";
         }
     }
-    
+
     return old;
 }
 
-/// clears the o_immune, o_auto, o_resist, and o_element csv strings 
+/// clears the o_immune, o_auto, o_resist, and o_element csv strings
 /// happens at the end of every battle
 ///
 /// @param cidx the master_cast[] index of the person to reset.
@@ -320,108 +320,108 @@ void WipeAllyBattleModifiers( int cidx )
     master_cast[cidx].o_immune   = "";
     master_cast[cidx].o_auto     = "";
     master_cast[cidx].o_element  = "";
-    
+
     for( i=0; i<MAX_RESISTS; i++ )
     {
         master_cast[cidx].o_resist[i] = "";
-    }   
+    }
 }
 
 
 
-int GetAttackElementCount( int aidx ) 
+int GetAttackElementCount( int master_cast_idx )
 {
-    string s = add_unique_modifier( master_cast[aidx].e_element, master_cast[aidx].o_element );
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_element, master_cast[master_cast_idx].o_element );
     return TokenCount( s, "," );
 }
 
-string GetAttackElement( int aidx, int ele_idx )
+string GetAttackElement( int master_cast_idx, int ele_idx )
 {
-    string s = add_unique_modifier( master_cast[aidx].e_element, master_cast[aidx].o_element );
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_element, master_cast[master_cast_idx].o_element );
     return GetToken(s,",",ele_idx);
 }
 
-int GetImmuneCount( int aidx ) 
-{ 
-    string s = add_unique_modifier( master_cast[aidx].e_immune, master_cast[aidx].o_immune );
-    return TokenCount(s, ","); 
-}
-string GetImmune( int aidx, int immune_idx ) 
+int GetImmuneCount( int master_cast_idx )
 {
-    string s = add_unique_modifier( master_cast[aidx].e_immune, master_cast[aidx].o_immune );
-    return GetToken(s, ",", immune_idx); 
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_immune, master_cast[master_cast_idx].o_immune );
+    return TokenCount(s, ",");
 }
-
-int GetAutoCount( int aidx ) 
+string GetImmune( int master_cast_idx, int immune_idx )
 {
-    string s = add_unique_modifier( master_cast[aidx].e_auto, master_cast[aidx].o_auto );
-    return TokenCount(s, ","); 
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_immune, master_cast[master_cast_idx].o_immune );
+    return GetToken(s, ",", immune_idx);
 }
 
-string GetAuto( int aidx, int auto_idx ) 
+int GetAutoCount( int master_cast_idx )
 {
-    string s = add_unique_modifier( master_cast[aidx].e_auto, master_cast[aidx].o_auto );
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_auto, master_cast[master_cast_idx].o_auto );
+    return TokenCount(s, ",");
+}
+
+string GetAuto( int master_cast_idx, int auto_idx )
+{
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_auto, master_cast[master_cast_idx].o_auto );
     return GetToken(s, ",", auto_idx);
 }
 
-int GetElemAbsorbCount( int aidx ) 
-{ 
-    string s = add_unique_modifier( master_cast[aidx].e_resist[ABSORB_ELEMENT], master_cast[aidx].o_resist[ABSORB_ELEMENT] );
-    return TokenCount(s, ","); 
-}
-string GetElemAbsorb( int aidx, int elem_idx ) 
+int GetElemAbsorbCount( int master_cast_idx )
 {
-    string s = add_unique_modifier( master_cast[aidx].e_resist[ABSORB_ELEMENT], master_cast[aidx].o_resist[ABSORB_ELEMENT] );
-    return GetToken(s, ",", elem_idx); 
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_resist[ABSORB_ELEMENT], master_cast[master_cast_idx].o_resist[ABSORB_ELEMENT] );
+    return TokenCount(s, ",");
 }
-
-int GetElemNegateCount( int aidx ) 
+string GetElemAbsorb( int master_cast_idx, int elem_idx )
 {
-    string s = add_unique_modifier( master_cast[aidx].e_resist[NEGATE_ELEMENT], master_cast[aidx].o_resist[NEGATE_ELEMENT] );
-    return TokenCount(s, ","); 
-}
-string GetElemNegate( int aidx, int elem_idx ) 
-{
-    string s = add_unique_modifier( master_cast[aidx].e_resist[NEGATE_ELEMENT], master_cast[aidx].o_resist[NEGATE_ELEMENT] );
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_resist[ABSORB_ELEMENT], master_cast[master_cast_idx].o_resist[ABSORB_ELEMENT] );
     return GetToken(s, ",", elem_idx);
 }
 
-int GetElemHalfCount( int aidx ) 
+int GetElemNegateCount( int master_cast_idx )
 {
-    string s = add_unique_modifier( master_cast[aidx].e_resist[HALVE_ELEMENT], master_cast[aidx].o_resist[HALVE_ELEMENT] );
-    return TokenCount(s, ","); 
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_resist[NEGATE_ELEMENT], master_cast[master_cast_idx].o_resist[NEGATE_ELEMENT] );
+    return TokenCount(s, ",");
 }
-string GetElemHalf( int aidx, int elem_idx ) 
+string GetElemNegate( int master_cast_idx, int elem_idx )
 {
-    string s = add_unique_modifier( master_cast[aidx].e_resist[HALVE_ELEMENT], master_cast[aidx].o_resist[HALVE_ELEMENT] );
-    return GetToken(s, ",", elem_idx); 
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_resist[NEGATE_ELEMENT], master_cast[master_cast_idx].o_resist[NEGATE_ELEMENT] );
+    return GetToken(s, ",", elem_idx);
 }
 
-int GetElemDoubleCount( int aidx ) 
-{   
-    string s = add_unique_modifier( master_cast[aidx].e_resist[DOUBLE_ELEMENT], master_cast[aidx].o_resist[DOUBLE_ELEMENT] );
-    return TokenCount(s, ","); 
+int GetElemHalfCount( int master_cast_idx )
+{
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_resist[HALVE_ELEMENT], master_cast[master_cast_idx].o_resist[HALVE_ELEMENT] );
+    return TokenCount(s, ",");
 }
-string GetElemDouble( int aidx, int elem_idx ) 
-{ 
-    string s = add_unique_modifier( master_cast[aidx].e_resist[DOUBLE_ELEMENT], master_cast[aidx].o_resist[DOUBLE_ELEMENT] );
-    return GetToken(s, ",", elem_idx); 
+string GetElemHalf( int master_cast_idx, int elem_idx )
+{
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_resist[HALVE_ELEMENT], master_cast[master_cast_idx].o_resist[HALVE_ELEMENT] );
+    return GetToken(s, ",", elem_idx);
 }
 
-int IsImmune( int aidx, string ailment )
+int GetElemDoubleCount( int master_cast_idx )
+{
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_resist[DOUBLE_ELEMENT], master_cast[master_cast_idx].o_resist[DOUBLE_ELEMENT] );
+    return TokenCount(s, ",");
+}
+string GetElemDouble( int master_cast_idx, int elem_idx )
+{
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_resist[DOUBLE_ELEMENT], master_cast[master_cast_idx].o_resist[DOUBLE_ELEMENT] );
+    return GetToken(s, ",", elem_idx);
+}
+
+int IsImmune( int master_cast_idx, string ailment )
 {
     int i;
-    
-    string s = add_unique_modifier( master_cast[aidx].e_immune, master_cast[aidx].o_immune );
-    
+
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_immune, master_cast[master_cast_idx].o_immune );
+
 //Log( "IsImmune '"+s+"' (count: "+str(TokenCount(s,","))+")" );
-    
+
     for( i=0; i<TokenCount(s,","); i++ )
     {
         if( equ(GetToken(s,",",i), ailment) )
         {
 //LOG( "'"+GetToken(s,",",i)+"' was equal to '"+ailment+"'" );
-        
+
             return 1;
         }
         else
@@ -429,157 +429,157 @@ int IsImmune( int aidx, string ailment )
 //LOG( "'"+GetToken(s,",",i)+"' was NOT equal to '"+ailment+"'" );
         }
     }
-    
+
     return 0;
 }
 
-int HasElemAbsorb( int aidx, string element )
+int HasElemAbsorb( int master_cast_idx, string element )
 {
     int i;
-    
-    string s = add_unique_modifier( master_cast[aidx].e_resist[ABSORB_ELEMENT], master_cast[aidx].o_resist[ABSORB_ELEMENT] );
-    
+
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_resist[ABSORB_ELEMENT], master_cast[master_cast_idx].o_resist[ABSORB_ELEMENT] );
+
     for( i=0; i<TokenCount(s,","); i++ )
     {
         if( equ(GetToken(s,",",i), element) )
             return 1;
     }
-    
+
     return 0;
 }
 
-int HasElemNegate( int aidx, string element )
+int HasElemNegate( int master_cast_idx, string element )
 {
     int i;
-    
-    string s = add_unique_modifier( master_cast[aidx].e_resist[NEGATE_ELEMENT], master_cast[aidx].o_resist[NEGATE_ELEMENT] );
-    
+
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_resist[NEGATE_ELEMENT], master_cast[master_cast_idx].o_resist[NEGATE_ELEMENT] );
+
     for( i=0; i<TokenCount(s,","); i++ )
     {
         if( equ(GetToken(s,",",i), element) )
             return 1;
     }
-    
+
     return 0;
 }
 
 
-int HasElemHalf( int aidx, string element )
+int HasElemHalf( int master_cast_idx, string element )
 {
     int i;
-    
-    string s = add_unique_modifier( master_cast[aidx].e_resist[HALVE_ELEMENT], master_cast[aidx].o_resist[HALVE_ELEMENT] );
-    
+
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_resist[HALVE_ELEMENT], master_cast[master_cast_idx].o_resist[HALVE_ELEMENT] );
+
     for( i=0; i<TokenCount(s,","); i++ )
     {
         if( equ(GetToken(s,",",i), element) )
             return 1;
     }
-    
+
     return 0;
 }
 
-int HasElemDouble( int aidx, string element )
+int HasElemDouble( int master_cast_idx, string element )
 {
     int i;
-    
-    string s = add_unique_modifier( master_cast[aidx].e_resist[DOUBLE_ELEMENT], master_cast[aidx].o_resist[DOUBLE_ELEMENT] );
-    
+
+    string s = add_unique_modifier( master_cast[master_cast_idx].e_resist[DOUBLE_ELEMENT], master_cast[master_cast_idx].o_resist[DOUBLE_ELEMENT] );
+
     for( i=0; i<TokenCount(s,","); i++ )
     {
         if( equ(GetToken(s,",",i), element) )
             return 1;
     }
-    
+
     return 0;
 }
 
-int GetCastStatusCount( int aidx )
+int GetCastStatusCount( int master_cast_idx )
 {
-    return TokenCount(master_cast[aidx].condition,",");
+    return TokenCount(master_cast[master_cast_idx].condition,",");
 }
 
-string GetCastStatus( int aidx, int sidx )
+string GetCastStatus( int master_cast_idx, int sidx )
 {
-    return GetToken(master_cast[aidx].condition,",",sidx);
+    return GetToken(master_cast[master_cast_idx].condition,",",sidx);
 }
 
-int CastHasStatus( int aidx, string cond )
+int CastHasStatus( int master_cast_idx, string cond )
 {
     int i;
-    int cnt = GetCastStatusCount( aidx );
-    
+    int cnt = GetCastStatusCount( master_cast_idx );
+
     for( i=0; i<cnt; i++ )
     {
-        if( equ(GetToken(master_cast[aidx].condition,",",i), cond) )
+        if( equ(GetToken(master_cast[master_cast_idx].condition,",",i), cond) )
         {
             return 1;
         }
     }
-    
+
     return 0;
 }
 
 /// attempts to add a status ailment to an ally.  fails to add if the ally is immune.
 ///
-/// you can add mutiple copies of a status ailment to a person, although it'll only 
-/// count as them having it once (but you *could* make special effects that take advantage of 
+/// you can add mutiple copies of a status ailment to a person, although it'll only
+/// count as them having it once (but you *could* make special effects that take advantage of
 /// having mutiple instances of an ailment).  The multiple instances thing is useful from
-/// a cheapass bookkeeping POV for granting multiple expiring status abilities, and just removing 
+/// a cheapass bookkeeping POV for granting multiple expiring status abilities, and just removing
 /// one at a time.
 ///
-/// Errors on invalid aidx (master_cast) or if cond isn't a real status effect (master_status).
+/// Errors on invalid master_cast_idx (master_cast) or if cond isn't a real status effect (master_status).
 ///
 /// @return -1 on error, 0 on immunity, 1 on successfully inflicted.
-int castAddStatus( int aidx, string cond )
+int castAddStatus( int master_cast_idx, string cond )
 {
     int sidx;
 
-    if( aidx < 0 || aidx >= MAX_CAST )
+    if( master_cast_idx < 0 || master_cast_idx >= MAX_CAST )
     {
-        ErrorHandler( "castAddStatus(): "+str(aidx)+" is not a valid cast index." );
+        ErrorHandler( "castAddStatus(): "+str(master_cast_idx)+" is not a valid cast index." );
         return -1;
     }
-    
+
     sidx = GetStatus( cond );
-    
+
     if( !IsStatusI(sidx) )
     {
         ErrorHandler( "castAddStatus(): '"+cond+"' is not a valid status ailment." );
         return -1;
     }
-    
-    if( IsImmune(aidx, cond) )
+
+    if( IsImmune(master_cast_idx, cond) )
     {
         return 0;
     }
-    
-    master_cast[aidx].condition = master_cast[aidx].condition + cond + ",";
+
+    master_cast[master_cast_idx].condition = master_cast[master_cast_idx].condition + cond + ",";
     return 1;
 }
 
-/// removes the first instance of cond that master_cast[aidx] has.
-/// 
-/// Errors on invalid aidx (master_cast)
-/// 
+/// removes the first instance of cond that master_cast[master_cast_idx] has.
+///
+/// Errors on invalid master_cast_idx (master_cast)
+///
 /// @returns 1 if something was successfully removed, 0 if there was no matching condition to remove, -1 on error.
-int castRemoveStatus( int aidx, string cond )
+int castRemoveStatus( int master_cast_idx, string cond )
 {
-    if( aidx < 0 || aidx >= MAX_CAST )
+    if( master_cast_idx < 0 || master_cast_idx >= MAX_CAST )
     {
-        ErrorHandler( "castRemoveStatus(): "+str(aidx)+" is not a valid cast index." );
-        return -1;          
+        ErrorHandler( "castRemoveStatus(): "+str(master_cast_idx)+" is not a valid cast index." );
+        return -1;
     }
-    
+
     int found = 0;
-    int sCount = GetCastStatusCount( aidx );
+    int sCount = GetCastStatusCount( master_cast_idx );
     int i;
     string tmpToken, tmpAil;
-    
+
     for( i=0; i<sCount; i++ )
     {
-        tmpToken = GetCastStatus( aidx, i );
-    
+        tmpToken = GetCastStatus( master_cast_idx, i );
+
         if( !found )
         {
             if( equ(tmpToken, cond) )
@@ -588,7 +588,7 @@ int castRemoveStatus( int aidx, string cond )
             }
             else
             {
-                tmpAil = tmpAil + tmpToken + ",";       
+                tmpAil = tmpAil + tmpToken + ",";
             }
         }
         else //we've already found it
@@ -596,83 +596,83 @@ int castRemoveStatus( int aidx, string cond )
             tmpAil = tmpAil + tmpToken + ",";
         }
     }
-    
+
     if( found )
     {
-        master_cast[aidx].condition = tmpAil;
+        master_cast[master_cast_idx].condition = tmpAil;
     }
-    
+
     return found;
 }
 
 
-/// removes all instances of cond from master_cast[aidx]'s status ailment list.
+/// removes all instances of cond from master_cast[master_cast_idx]'s status ailment list.
 /// @returns the number of instances found and removed, -1 on error.
-int castRemoveAllStatus( int aidx, string cond )
+int castRemoveAllStatus( int master_cast_idx, string cond )
 {
-    if( aidx < 0 || aidx >= MAX_CAST )
+    if( master_cast_idx < 0 || master_cast_idx >= MAX_CAST )
     {
-        ErrorHandler( "castRemoveAllStatus(): "+str(aidx)+" is not a valid cast index." );
-        return -1;          
+        ErrorHandler( "castRemoveAllStatus(): "+str(master_cast_idx)+" is not a valid cast index." );
+        return -1;
     }
-    
+
     int numfound = 0;
-    int sCount = GetCastStatusCount( aidx );
+    int sCount = GetCastStatusCount( master_cast_idx );
     int i;
     string tmpToken, tmpAil;
-    
+
     for( i=0; i<sCount; i++ )
     {
-        tmpToken = GetCastStatus( aidx, i );
-    
+        tmpToken = GetCastStatus( master_cast_idx, i );
+
         if( equ(tmpToken, cond) )
         {
             numfound++;
         }
         else
         {
-            tmpAil = tmpAil + tmpToken + ",";       
+            tmpAil = tmpAil + tmpToken + ",";
         }
     }
-    
+
     if( numfound > 0 )
     {
-        master_cast[aidx].condition = tmpAil;
+        master_cast[master_cast_idx].condition = tmpAil;
     }
-    
+
     return numfound;
 }
 
 
 /// @see bat_addStatus()
-int castRemoveCancelledStatus( int aidx, string cond )
+int castRemoveCancelledStatus( int master_cast_idx, string cond )
 {
-    if( aidx < 0 || aidx >= MAX_CAST )
+    if( master_cast_idx < 0 || master_cast_idx >= MAX_CAST )
     {
-        ErrorHandler( "castRemoveCancelledStatus(): "+str(aidx)+" is not a valid cast index." );
-        return -1;          
+        ErrorHandler( "castRemoveCancelledStatus(): "+str(master_cast_idx)+" is not a valid cast index." );
+        return -1;
     }
-    
+
     int sidx = GetStatus( cond );
-    
+
     if( sidx < 0 )
     {
         ErrorHandler( "castRemoveCancelledStatus(): "+cond+" is not a valid status ailment." );
-        return -1;      
+        return -1;
     }
-    
+
     int i;
     string tmp_status;
-    
-    for( i=0; i<GetCastStatusCount(aidx); i++ )
+
+    for( i=0; i<GetCastStatusCount(master_cast_idx); i++ )
     {
-        tmp_status = GetCastStatus( aidx, i );
-     
+        tmp_status = GetCastStatus( master_cast_idx, i );
+
         /// if (new status idx) cancels (old status name)
         if( StatusCancelsI(sidx, tmp_status) )
         {
             /// remoev all of these.
-            castRemoveAllStatus( aidx, tmp_status );
+            castRemoveAllStatus( master_cast_idx, tmp_status );
 
             /// start from the beginning of the list again since we may've
             /// moved the pointer a few positions...
@@ -699,17 +699,17 @@ void LogTestStatusAbilities( String lbl )
 void _testStatusAbilities()
 {
     int i;
-    
+
     master_cast[0].o_immune = "POISON,";
 
     LogTestStatusAbilities( "start" );
-    
+
     i = CastAddStatus( 0, "POISON" );
     LogTestStatusAbilities( "after add POISON 1 (result: "+str(i)+")" );
-    
+
     i = CastAddStatus( 0, "BLIND" );
     LogTestStatusAbilities( "after add BLIND (result: "+str(i)+")" );
-    
+
     i = CastAddStatus( 0, "POISON" );
     LogTestStatusAbilities( "after add POISON 2 (result: "+str(i)+")" );
 
@@ -718,32 +718,32 @@ void _testStatusAbilities()
 
     i = CastAddStatus( 0, "POISON" );
     LogTestStatusAbilities( "after add POISON 3 (result: "+str(i)+")" );
-    
+
     i = CastAddStatus( 0, "CONFUSE" );
     LogTestStatusAbilities( "after add CONFUSE (result: "+str(i)+")" );
-    
+
     i = CastRemoveStatus( 0, "POISON" );
     LogTestStatusAbilities( "after remove one POISON (result: "+str(i)+")" );
-        
+
     i = CastRemoveAllStatus( 0, "POISON" );
     LogTestStatusAbilities( "after remove *all* POISON (result: "+str(i)+")" );
-    
+
     i = bat_addStatus( 0, /*PARTY_ALLY*/ 0, "FRAGILE" );
     LogTestStatusAbilities( "after add FRAGILE (result: "+str(i)+")" );
-    
+
     i = bat_addStatus( 0, /*PARTY_ALLY*/ 0, "PROTECT" );
     LogTestStatusAbilities( "after add PROTECT (result: "+str(i)+")" );
-    
+
     trigger_on_hit( 0, /*PARTY_ALLY*/ 0 );
     LogTestStatusAbilities( "after simulated 'on_hit'" );
-    
+
     /*
-    GetCastStatusCount( int aidx )
-    GetCastStatus( int aidx, int sidx )
-    CastHasStatus( int aidx, string cond )  
-    CastAddStatus( int aidx, string cond )
-    CastRemoveStatus( int aidx, string cond )
-    CastRemoveAllStatus( int aidx, string cond )
+    GetCastStatusCount( int master_cast_idx )
+    GetCastStatus( int master_cast_idx, int sidx )
+    CastHasStatus( int master_cast_idx, string cond )
+    CastAddStatus( int master_cast_idx, string cond )
+    CastRemoveStatus( int master_cast_idx, string cond )
+    CastRemoveAllStatus( int master_cast_idx, string cond )
     */
 }
 
@@ -759,14 +759,14 @@ string BM_MakeCastMenu( int c, int battle_mode )
 {
     int i, cur_sg, prev_sg;
     string tmp = "";
-        
+
     if( !battle_mode )
     {
         tmp = ">";
     }
-    
+
     tmp = tmp + "Attack" + chr(10);
-    
+
     for( i=0; i<master_cast[c].skillcount; i++ )
     {
         if( master_skills[master_cast[c].skills[i]].type < 0 )
@@ -790,17 +790,17 @@ string BM_MakeCastMenu( int c, int battle_mode )
         else
         {
             cur_sg = master_skills[master_cast[c].skills[i]].type;
-            
+
             if( cur_sg != prev_sg )
             {
                 tmp = tmp + master_skilltypes[cur_sg].name + chr(10);
                 tmp = tmp + chr(9) + "@"+_BM_SkillGroupHelper( c, cur_sg, 1, battle_mode )+ chr(10);
             }
-            
+
             prev_sg = cur_sg;
         }
     }
-    
+
     if( !battle_mode )
     {
         tmp = tmp + ">";
@@ -808,15 +808,15 @@ string BM_MakeCastMenu( int c, int battle_mode )
     else
     {
         GenerateBattleMenuInventory(1);
-        
+
         if( equ(__battle_inventory, "") )
             tmp = tmp + ">";
     }
-    
+
     tmp = tmp + "Items" + chr(10);
-    
+
     if( battle_mode )
-    {   
+    {
         tmp = tmp + chr(9)+__battle_inventory+chr(10);
         tmp = tmp + "~"+ chr(10) + "Defend"+ chr(10)+"Meditate"+ chr(10)+"Parry"+ chr(10) + "Run";
     }
@@ -824,7 +824,7 @@ string BM_MakeCastMenu( int c, int battle_mode )
     {
         tmp = tmp + "~"+ chr(10) + ">Defend"+ chr(10)+">Meditate"+ chr(10)+">Parry"+ chr(10) + ">Run";
     }
-    
+
     return tmp;
 }
 
@@ -833,7 +833,7 @@ string BM_MakeCastMenu( int c, int battle_mode )
 int GetCast( string name )
 {
     int i;
-    
+
     for( i=0; i<MAX_CAST; i++ )
     {
         if( equ(master_cast[i].name,name) )
@@ -841,7 +841,7 @@ int GetCast( string name )
             return i;
         }
     }
-    
+
     return 0-1;
 }
 
@@ -851,24 +851,24 @@ int AllyIsIncapacitated( int cast_idx )
 {
     if( GetCurHP(cast_idx) <= 0 )
         return 1;
-        
+
     return 0;
 }
 
-// Returns the ATK bonus given to unarmed characters (STR/4). 
+// Returns the ATK bonus given to unarmed characters (STR/4).
 int nakedATKbonus( int idx)
 {
     return GetRealSTR(idx)/4;
 }
 
-// Returns the DEF bonus given to unarmored characters (END/4). 
+// Returns the DEF bonus given to unarmored characters (END/4).
 int nakedDEFbonus( int idx)
 {
     return GetRealEND(idx)/4;
 }
 
 // Changes the stat value held in the internal array. Always use this rather
-// than altering the value directly. 
+// than altering the value directly.
 void SetRawStat (int cast_idx, int stat_idx, int newval) {
     if( cast_idx <0 || cast_idx >= MAX_CAST ) {
         ErrorHandler( "SetRawStat(): "+str(cast_idx)+" is not a valid cast index." );
@@ -877,7 +877,7 @@ void SetRawStat (int cast_idx, int stat_idx, int newval) {
     if( stat_idx <0 || stat_idx >= MAX_STATS ) {
         ErrorHandler( "SetRawStat(): "+str(cast_idx)+" is not a valid stat index." );
         return;
-    }   
+    }
     master_cast[cast_idx].stats[stat_idx] = newval;
 }
 
@@ -907,10 +907,10 @@ void SetXP (int cast_idx, int newval)
         ErrorHandler( "SetXP(): "+str(cast_idx)+" is not a valid cast index." );
         return;
     }
-    master_cast[cast_idx].exp = newval; 
+    master_cast[cast_idx].exp = newval;
 }
 
-// Never use this to level up a character -- just assign him enough XP with GiveXP 
+// Never use this to level up a character -- just assign him enough XP with GiveXP
 // and he'll level automatically.
 void SetLevel (int cast_idx, int newval)
 {
@@ -918,10 +918,10 @@ void SetLevel (int cast_idx, int newval)
         ErrorHandler( "SetLevel(): "+str(cast_idx)+" is not a valid cast index." );
         return;
     }
-    if (newval <= 0) { 
+    if (newval <= 0) {
         ErrorHandler( "SetLevel(): Level must be positive." );
     }
-    master_cast[cast_idx].level = newval; 
+    master_cast[cast_idx].level = newval;
 }
 
 
@@ -929,19 +929,19 @@ void SetLevel (int cast_idx, int newval)
 //  STAT ACCESSORS BEGIN HERE
 // ---------------------------
 
-// Although Temporary effects and equipment can mod a stat below 1, 
-// when displaying or basing effect upon a stat, we want stats to 
+// Although Temporary effects and equipment can mod a stat below 1,
+// when displaying or basing effect upon a stat, we want stats to
 // show up as no less than 1, except CTR and MMP, which can be 0.
 // Similarly, stats can be modded above 999, but will be treated as
 // being 999.
 
-// There are three levels of stat accessors. 
+// There are three levels of stat accessors.
 
-// The lowest level, GetRawStat, is a single function that takes both a 
-// character index and a stat index. It returns exactly what is located in 
-// the character's stats array. We use this instead of referencing the array 
-// directly so that it's easy to change the internal implementation of stats 
-// later. You should always call this rather than fiddling with the array, 
+// The lowest level, GetRawStat, is a single function that takes both a
+// character index and a stat index. It returns exactly what is located in
+// the character's stats array. We use this instead of referencing the array
+// directly so that it's easy to change the internal implementation of stats
+// later. You should always call this rather than fiddling with the array,
 // for the same reason. GetRawStat performs no bounding.
 
 // The middle level of accessor, GetReal<stat>, returns the raw value subject
@@ -961,7 +961,7 @@ void SetLevel (int cast_idx, int newval)
 
 // Note that curHP and curMP have no "real" accessor -- the regular versions just
 // call the raws. I assumed this was OK since I can't imagine any status effect
-// altering curHP or curMP. 
+// altering curHP or curMP.
 
 // They are named short-form because they'll oft be used inside other functions.
 // if this hurts your paradigm, feel free to do a global search/replace personally.
@@ -970,18 +970,18 @@ void SetLevel (int cast_idx, int newval)
 
 // Returns the specified stat for the specified character. Dips right into the
 // stat array and does no bounding. Always use this rather than touching the
-// array directly, or your first-year programming teacher will widen his eyes 
+// array directly, or your first-year programming teacher will widen his eyes
 // in shock and his monocle will fall out and break.
 int GetRawStat (int cast_idx, int stat_idx) {
     if( cast_idx <0 || cast_idx >= MAX_CAST ) {
         ErrorHandler( "GetRawStat(): "+str(cast_idx)+" is not a valid cast index." );
-        return 0;       
+        return 0;
     }
     if( stat_idx <0 || stat_idx >= MAX_STATS ) {
         ErrorHandler( "GetRawStat(): "+str(cast_idx)+" is not a valid stat index." );
         return 0;
-    }       
-    return master_cast[cast_idx].stats[stat_idx]; 
+    }
+    return master_cast[cast_idx].stats[stat_idx];
 }
 
 // Current HP and current MP aren't in the stat array so they get their own
@@ -998,7 +998,7 @@ int GetRawCurMP (int idx) {
     if( idx <0 || idx >= MAX_CAST ) {
         ErrorHandler( "GetRawCurMP(): "+str(idx)+" is not a valid cast index." );
         return 0;
-    }       
+    }
     return master_cast[idx].cur_mp;
 }
 
@@ -1018,14 +1018,14 @@ int GetXPRequired(int idx, int lev) {
 // This is the only level accessor and it does no bounds-checking. If you want a bounded
 // version you'll have to make it yourself.
 int GetLevel(int idx) {
-    return master_cast[idx].level;  
+    return master_cast[idx].level;
 }
 
 
 // REAL ACCESSORS
 // These return the raw stat but bound it as appropriate.
 // The ATK and DEF accessors also check if you're naked in
-// the relevant slot and give you the default base ATK/DEF 
+// the relevant slot and give you the default base ATK/DEF
 // if so.
 
 int GetRealSTR (int idx) {
@@ -1077,7 +1077,7 @@ int GetRealMaxMP (int idx) {
 }
 
 // GetRealATK and GetRealDEF are a bit special. If the character
-// has no weapon equipped he gets an ATK bonus equal to 1/4 his STR; 
+// has no weapon equipped he gets an ATK bonus equal to 1/4 his STR;
 // likewise if he has no armor he gets a DEF bonus equal to 1/4 END.
 int GetRealATK (int idx) {
     // If the character is unarmed, account for naked bonus
@@ -1095,10 +1095,10 @@ int GetRealDEF (int idx) {
 
 // And this is for people who like to iterate over the stats array!
 
-int getRealStat( int cast_idx, int stat_idx ) 
+int getRealStat( int cast_idx, int stat_idx )
 {
     int i;
-    
+
     switch( stat_idx )
     {
         case STAT_MAX_HP:   i = getRealMaxHP(cast_idx);
@@ -1116,7 +1116,7 @@ int getRealStat( int cast_idx, int stat_idx )
         case STAT_ATK:      i = getRealATK(cast_idx);
         case STAT_DEF:      i = getRealDEF(cast_idx);
     }
-    
+
     return i;
 }
 
@@ -1126,182 +1126,182 @@ int getRealStat( int cast_idx, int stat_idx )
 // Some of these are pointless extra hoops for the game to jump through,
 // but they're here so they can be easily modified if you want.
 
-int getMaxHP( int idx ) { 
-    return boundStat(STAT_MAX_HP, GetRealMaxHP(idx));   
+int getMaxHP( int master_cast_idx ) {
+    return boundStat(STAT_MAX_HP, GetRealMaxHP(master_cast_idx));
 }
 
-int getMaxMP( int idx ) {
-    return boundStat(STAT_MAX_MP, GetRealMaxMP(idx));   
+int getMaxMP( int master_cast_idx ) {
+    return boundStat(STAT_MAX_MP, GetRealMaxMP(master_cast_idx));
 }
 
-int getCurHP( int idx ) {
-    return bound(0,GetMaxHP(idx),GetRawCurHP(idx)); 
+int getCurHP( int master_cast_idx ) {
+    return bound(0,GetMaxHP(master_cast_idx),GetRawCurHP(master_cast_idx));
 }
 
-int getCurMP( int idx ) {
-    return bound(0,GetMaxMP(idx),GetRawCurMP(idx)); 
+int getCurMP( int master_cast_idx ) {
+    return bound(0,GetMaxMP(master_cast_idx),GetRawCurMP(master_cast_idx));
 }
 
-int getSTR( int idx ) {
+int getSTR( int master_cast_idx ) {
     ///~STATUS: Weak
-    if( CastHasStatus(idx, "Weak") ) // decrease by 33%
+    if( CastHasStatus(master_cast_idx, "Weak") ) // decrease by 33%
     {
-        return boundStat(STAT_STR,GetRealSTR(idx)*2/3);
+        return boundStat(STAT_STR,GetRealSTR(master_cast_idx)*2/3);
     }
     ///~END STATUS: Weak
-    
+
     ///~STATUS: Might
-    if( CastHasStatus(idx, "Might") ) // increases by 50%
+    if( CastHasStatus(master_cast_idx, "Might") ) // increases by 50%
     {
-        return boundStat(STAT_STR,GetRealSTR(idx)*3/2);
+        return boundStat(STAT_STR,GetRealSTR(master_cast_idx)*3/2);
     }
-    ///~END STATUS: Might   
-    
-    return boundStat(STAT_STR,GetRealSTR(idx));
+    ///~END STATUS: Might
+
+    return boundStat(STAT_STR,GetRealSTR(master_cast_idx));
 }
 
 // this is the end, my friend, the end
-int getEND( int idx ) { 
-    return boundStat(STAT_END,GetRealEND(idx)); 
+int getEND( int master_cast_idx ) {
+    return boundStat(STAT_END,GetRealEND(master_cast_idx));
 }
 
-int getMAG( int idx ) {
+int getMAG( int master_cast_idx) {
     ///~STATUS: Fugue
-    if( CastHasStatus(idx, "Fugue") ) // decrease by 33%
+    if( CastHasStatus(master_cast_idx, "Fugue") ) // decrease by 33%
     {
-        return boundStat(STAT_MAG,GetRealMAG(idx)*2/3);
+        return boundStat(STAT_MAG,GetRealMAG(master_cast_idx)*2/3);
     }
-    ///~END STATUS: Fugue   
-    
+    ///~END STATUS: Fugue
+
     ///~STATUS: Enlighten
-    if( CastHasStatus(idx, "Enlighten") ) // increase by 50%
+    if( CastHasStatus(master_cast_idx, "Enlighten") ) // increase by 50%
     {
-        return boundStat(STAT_MAG,GetRealMAG(idx)*3/2);
+        return boundStat(STAT_MAG,GetRealMAG(master_cast_idx)*3/2);
     }
-    ///~END STATUS: Enlighten   
-    
-    return boundStat(STAT_MAG,GetRealMAG(idx));
+    ///~END STATUS: Enlighten
+
+    return boundStat(STAT_MAG,GetRealMAG(master_cast_idx));
 }
 
-int getMGR( int idx ) {
-    return boundStat(STAT_MGR,GetRealMGR(idx));
+int getMGR( int master_cast_idx ) {
+    return boundStat(STAT_MGR,GetRealMGR(master_cast_idx));
 }
 
-int getHIT( int idx ) {
+int getHIT( int master_cast_idx ) {
     ///~STATUS: Blind
-    if( CastHasStatus(idx, "Blind") ) // decrease by 50%
+    if( CastHasStatus(master_cast_idx, "Blind") ) // decrease by 50%
     {
-        return boundStat(STAT_HIT,GetRealHIT(idx)/2);
+        return boundStat(STAT_HIT,GetRealHIT(master_cast_idx)/2);
     }
     ///~END STATUS: Blind
-    
+
     ///~STATUS: Accurate
-    if( CastHasStatus(idx, "Accurate") ) // increase by 50%
+    if( CastHasStatus(master_cast_idx, "Accurate") ) // increase by 50%
     {
-        return boundStat(STAT_HIT,GetRealHIT(idx)*3/2);
+        return boundStat(STAT_HIT,GetRealHIT(master_cast_idx)*3/2);
     }
     ///~END STATUS: Accurate
-    
-    return boundStat(STAT_HIT,GetRealHIT(idx));
+
+    return boundStat(STAT_HIT,GetRealHIT(master_cast_idx));
 }
 
-int getDOD( int idx ) {
+int getDOD( int master_cast_idx ) {
     ///~STATUS: Tangle
-    if( CastHasStatus(idx, "Tangle") ) // decrease by 50%
+    if( CastHasStatus(master_cast_idx, "Tangle") ) // decrease by 50%
     {
-        return boundStat(STAT_DOD,GetRealDOD(idx)/2);
+        return boundStat(STAT_DOD,GetRealDOD(master_cast_idx)/2);
     }
     ///~END STATUS: Tangle
-    
+
     ///~STATUS: Evade
-    if( CastHasStatus(idx, "Evade") ) // increase by 50%
+    if( CastHasStatus(master_cast_idx, "Evade") ) // increase by 50%
     {
-        return boundStat(STAT_DOD,GetRealDOD(idx)*3/2);
+        return boundStat(STAT_DOD,GetRealDOD(master_cast_idx)*3/2);
     }
     ///~END STATUS: Evade
-    
-    return boundStat(STAT_DOD,GetRealDOD(idx));
+
+    return boundStat(STAT_DOD,GetRealDOD(master_cast_idx));
 }
 
-int getSTK( int idx ) {
-    return boundStat(STAT_STK,GetRealSTK(idx));
+int getSTK( int master_cast_idx ) {
+    return boundStat(STAT_STK,GetRealSTK(master_cast_idx));
 }
 
-int getFER( int idx ) { 
+int getFER( int master_cast_idx ) {
     ///~STATUS: Blind
-    if( CastHasStatus(idx, "Blind") ) // reduce to 1.
+    if( CastHasStatus(master_cast_idx, "Blind") ) // reduce to 1.
     {
         return 1;
     }
     ///~END STATUS: Blind
-    
+
     ///~STATUS: Accurate
-    if( CastHasStatus(idx, "Accurate") ) // double.
+    if( CastHasStatus(master_cast_idx, "Accurate") ) // double.
     {
-        return boundStat(STAT_FER,GetRealFER(idx)*2);
+        return boundStat(STAT_FER,GetRealFER(master_cast_idx)*2);
     }
     ///~END STATUS: Accurate
-            
-    return boundStat(STAT_FER,GetRealFER(idx));
+
+    return boundStat(STAT_FER,GetRealFER(master_cast_idx));
 }
 
-int getREA( int idx ) {
+int getREA( int master_cast_idx ) {
     ///~STATUS: Slow
-    if( CastHasStatus(idx, "Slow") ) // decrease by 33%
+    if( CastHasStatus(master_cast_idx, "Slow") ) // decrease by 33%
     {
-        return boundStat(STAT_REA,GetRealREA(idx)*2/3);
+        return boundStat(STAT_REA,GetRealREA(master_cast_idx)*2/3);
     }
     ///~END STATUS: Slow
-    
+
     ///~STATUS: Quick
-    if( CastHasStatus(idx, "Quick") ) // increase by 50%
+    if( CastHasStatus(master_cast_idx, "Quick") ) // increase by 50%
     {
-        return boundStat(STAT_REA,GetRealREA(idx)*3/2);
+        return boundStat(STAT_REA,GetRealREA(master_cast_idx)*3/2);
     }
     ///~END STATUS: Quick
-    
-    return boundStat(STAT_REA,GetRealREA(idx));
+
+    return boundStat(STAT_REA,GetRealREA(master_cast_idx));
 }
 
-int getCTR( int idx ) {
+int getCTR( int master_cast_idx ) {
     ///~STATUS: Counter
-    if( CastHasStatus(idx, "Counter") ) // set to 999
+    if( CastHasStatus(master_cast_idx, "Counter") ) // set to 999
     {
         return MAXIMUM_STAT_VALUE;
     }
     ///~END STATUS: Counter
-    
-    return boundStat(STAT_CTR,GetRealCTR(idx)); 
+
+    return boundStat(STAT_CTR,GetRealCTR(master_cast_idx));
 }
 
-int getATK( int idx ) {
-    return boundStat(STAT_ATK,GetRealATK(idx));
+int getATK( int master_cast_idx ) {
+    return boundStat(STAT_ATK,GetRealATK(master_cast_idx));
 }
 
 
-int getDEF( int idx ) {
-    return boundStat(STAT_DEF,GetRealDEF(idx)); 
+int getDEF( int master_cast_idx ) {
+    return boundStat(STAT_DEF,GetRealDEF(master_cast_idx));
 }
 
 // Finally, AtV and DfV are derived stats, so they only have
 // the one accessor each. They're not bounded since bounding
 // is already done on their constituent primary stats.
-int getAtV( int idx ) {
-    return getSTR(idx) * getATK(idx);
+int getAtV( int master_cast_idx ) {
+    return getSTR(master_cast_idx) * getATK(master_cast_idx);
 }
 
 /// this maybe should use fixed point
 /// 32.0 doesn't count? -Gayo
-int getDfV( int idx ) {
-    return sqrt( getEND(idx) * getDEF(idx) );
+int getDfV( int master_cast_idx ) {
+    return sqrt( getEND(master_cast_idx) * getDEF(master_cast_idx) );
 }
 
 // And this is for people who like to iterate over the stats array!
 
-int getStat( int cast_idx, int stat_idx ) 
+int getStat( int cast_idx, int stat_idx )
 {
     int i;
-    
+
     switch( stat_idx )
     {
         case STAT_MAX_HP:   i = getMaxHP(cast_idx);
@@ -1319,7 +1319,7 @@ int getStat( int cast_idx, int stat_idx )
         case STAT_ATK:      i = getATK(cast_idx);
         case STAT_DEF:      i = getDEF(cast_idx);
     }
-    
+
     return i;
 }
 
@@ -1338,18 +1338,18 @@ int getStat( int cast_idx, int stat_idx )
 void _doLevelup( int cast_idx ) {
     int i, curlev;
     curlev = GetLevel(cast_idx);
-    if (curlev >= MAX_LEVELS) 
+    if (curlev >= MAX_LEVELS)
     {
         ErrorHandler( "_doLevelup(): "+str(cast_idx)+" is maxed out already." );
         return;
     }
 
-    for (i = 0; i < MAX_GROWABLE_STATS; i++) { 
+    for (i = 0; i < MAX_GROWABLE_STATS; i++) {
         // Grow stat by the amount specified in the levelling file. This should probably be done through an accessor,
         // but the entire growth system will hopefully be redone later, so there's no point in doing that right now.
-        SetRawStat(cast_idx, i, GetRawStat(cast_idx, i) + master_cast[cast_idx].stat_growth[curlev][i]); 
-    }   
-    
+        SetRawStat(cast_idx, i, GetRawStat(cast_idx, i) + master_cast[cast_idx].stat_growth[curlev][i]);
+    }
+
     SetLevel(cast_idx, curlev+1); // increase level
     if (HEAL_ON_LEVELUP) {
         FullHeal(cast_idx); // Totally restore HP/MP
@@ -1358,24 +1358,24 @@ void _doLevelup( int cast_idx ) {
         // Raise the character's current HP/MP by however much the maximum increased
         SetCurHP(cast_idx, GetCurHP(cast_idx) + master_cast[cast_idx].stat_growth[curlev][STAT_MAX_HP]);
         SetCurMP(cast_idx, GetCurMP(cast_idx) + master_cast[cast_idx].stat_growth[curlev][STAT_MAX_MP]);
-    }   
+    }
 }
 
 // Helper fuction.  Reverses the effects of _doLevelUp,
 void _doLevelDown( int cast_idx ) {
     int i, curlev;
     curlev = GetLevel(cast_idx);
-    if (curlev <= 1) 
+    if (curlev <= 1)
     {
         ErrorHandler( "_doLevelDown(): "+str(cast_idx)+" is already at level 1." );
         return;
     }
 
-    for (i = 0; i < MAX_GROWABLE_STATS; i++) { 
+    for (i = 0; i < MAX_GROWABLE_STATS; i++) {
         // Reduce stat by the amount specified in the levelling file. This should probably be done through an accessor,
         // but the entire growth system will hopefully be redone later, so there's no point in doing that right now.
-        SetRawStat(cast_idx, i, GetRawStat(cast_idx, i) + master_cast[cast_idx].stat_growth[curlev-1][i]); 
-    }   
+        SetRawStat(cast_idx, i, GetRawStat(cast_idx, i) + master_cast[cast_idx].stat_growth[curlev-1][i]);
+    }
     SetLevel(cast_idx, curlev-1); // decrease level
     // Make sure current HP/MP are reduced if they exceed the new maximums.
     if (GetRawCurHP(cast_idx) > GetMaxHP(cast_idx)) SetCurHP(cast_idx,GetMaxHP(cast_idx));
@@ -1383,7 +1383,7 @@ void _doLevelDown( int cast_idx ) {
 }
 
 
-// Helper function.  Calculates what level a master_cast entry should be 
+// Helper function.  Calculates what level a master_cast entry should be
 //
 int _calcMyLevelFromMyXP( int cast_idx ) {
 
@@ -1391,16 +1391,16 @@ int _calcMyLevelFromMyXP( int cast_idx ) {
 
     curexp = GetXP(cast_idx);
     // Total EXP required for each level and compare iteratively to EXP currently possessed.
-    // We'll start at level 2 (at spot 1 in the array) under the assumption that level 1 
+    // We'll start at level 2 (at spot 1 in the array) under the assumption that level 1
     // requires 0 XP. Because otherwise the game would barf if level 1 DIDN'T require 0 XP,
     // and nobody wants that.
-    for (i=1;i<MAX_LEVELS;i++) {    
+    for (i=1;i<MAX_LEVELS;i++) {
         if( GetXPRequired(cast_idx, i+1) > curexp ) {
             // If the character doesn't have the XP required for level i+1, return i
-            return i; 
-        } 
+            return i;
+        }
     }
-    
+
     //we've reached max. Damn!
     return MAX_LEVELS;
 }
@@ -1411,9 +1411,9 @@ string _BM_SkillGroupHelper( int c, int sg, int mp_flag, int battle_mode )
 {
     int i, mode_on, disabled;
     string tmp;
-    
+
     for( i=0; i<master_cast[c].skillcount; i++ )
-    {   
+    {
         if( !mode_on )
         {
             if( master_skills[master_cast[c].skills[i]].type == sg )
@@ -1421,11 +1421,11 @@ string _BM_SkillGroupHelper( int c, int sg, int mp_flag, int battle_mode )
                 mode_on = 1;
             }
         }
-    
+
         if( mode_on )
         {
             disabled = 0;
-        
+
             if( master_skills[master_cast[c].skills[i]].type == sg )
             {
                 /// see if the skill is not usable in this menu context, if not, disable it
@@ -1445,7 +1445,7 @@ string _BM_SkillGroupHelper( int c, int sg, int mp_flag, int battle_mode )
                         disabled = 1;
                     }
                 }
-                
+
                 /// if the skill hasn't already been declared unusable, check if you have enough MP to use it.
                 if( !disabled )
                 {
@@ -1455,9 +1455,9 @@ string _BM_SkillGroupHelper( int c, int sg, int mp_flag, int battle_mode )
                         disabled = 1;
                     }
                 }
-            
+
                 tmp = tmp + master_skills[master_cast[c].skills[i]].name + chr(9);
-                
+
                 if( mp_flag )
                 {
                     tmp = tmp + str(master_skills[master_cast[c].skills[i]].mp_cost) + ",";
@@ -1473,17 +1473,17 @@ string _BM_SkillGroupHelper( int c, int sg, int mp_flag, int battle_mode )
                 {
                     return left(tmp,len(tmp)-1);
                 }
-            
+
                 return tmp;
             }
         }
     }
-    
+
     if( equ(right(tmp,1),",") )
     {
         return left(tmp,len(tmp)-1);
     }
-    
+
     return tmp;
 }
 

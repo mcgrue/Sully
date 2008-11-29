@@ -1,4 +1,4 @@
-/// The queue for battle actions.   
+/// The queue for battle actions.
 /// Hopefully generic enough for adaptability to both realtime and turnbased systems
 ///
 /// McGrue, 2005.09.11 (NEVAR FORGET)
@@ -6,21 +6,21 @@
 #define BACT_DELAY  0   ///specifies that a battle_queue_entry will trigger AI for enemies or
                         ///a battle action menu shold appear for allies.
 
-#define BACT_CHARGE 1   ///specifies that when this triggers, the battle entity in question 
+#define BACT_CHARGE 1   ///specifies that when this triggers, the battle entity in question
                         ///should fire off some sort of action
-                
-#define BACT_GUARD  2   ///Guard actions on the stack.  
+
+#define BACT_GUARD  2   ///Guard actions on the stack.
 
 
 
-#define PARTY_NULL  -8008  ///specifies that the batent_ref in this battle_queue_entry is not a party at all, 
+#define PARTY_NULL  -8008  ///specifies that the batent_ref in this battle_queue_entry is not a party at all,
                            /// and should be checked for special processing.
-                
+
 #define PARTY_ALLY  31337  ///specifies that the batent_ref in this battle_queue_entry is in the ally party.
 #define PARTY_ENEMY 666    ///specifies that the batent_ref in this battle_queue_entry is in the enemy party.
 
-#define MAX_BATTLE_QUEUE_ENTRIES            64  ///the maximum number of battle queue entries.  
-#define MAX_BATTLE_QUEUE_ENTRIES_PLUS_ONE   65  ///A stupid hack so we have a 'temp' slot for shuffling things around.  
+#define MAX_BATTLE_QUEUE_ENTRIES            64  ///the maximum number of battle queue entries.
+#define MAX_BATTLE_QUEUE_ENTRIES_PLUS_ONE   65  ///A stupid hack so we have a 'temp' slot for shuffling things around.
 
 /// The maximum delay in this system
 #define MAX_BATTLE_DELAY 300
@@ -36,9 +36,9 @@ struct battle_queue_entry
 {
     int time;       /// the current time to go until this action fires.
     int post_time;  /// the amount of time to add to the stack after it executes as a BACT_DELAY if it was a BACT_CHARGE
-    
+
     int batent_ref; /// the battle system index to the battle entity this action is assigned to.
-    int action;     /// the type of action this entry represents.  In the sully system, either 
+    int action;     /// the type of action this entry represents.  In the sully system, either
                     /// BACT_DELAY or BACT_CHARGE
     int batent_party;   /// the party reference
     string data;    /// some misc system-specific data to tie into this entry.
@@ -61,35 +61,35 @@ void switch_battle_queue_slots( int idx_a, int idx_b )
         ErrorHandler( "switch_battle_queue_slots(): idx_a was an invalid value ("+str(idx_a)+"), expecting 0-"+str(MAX_BATTLE_QUEUE_ENTRIES-1) );
         return;
     }
-    
+
     if( idx_a < 0 || idx_a >= MAX_BATTLE_QUEUE_ENTRIES )
     {
         ErrorHandler( "switch_battle_queue_slots(): idx_a was an invalid value ("+str(idx_a)+"), expecting 0-"+str(MAX_BATTLE_QUEUE_ENTRIES-1) );
         return;
     }
-    
+
     int tmp_idx = MAX_BATTLE_QUEUE_ENTRIES;
-    
+
     battle_queue[tmp_idx].time          = battle_queue[idx_a].time;
     battle_queue[tmp_idx].post_time     = battle_queue[idx_a].post_time;
     battle_queue[tmp_idx].batent_ref    = battle_queue[idx_a].batent_ref;
     battle_queue[tmp_idx].action        = battle_queue[idx_a].action;
     battle_queue[tmp_idx].data          = battle_queue[idx_a].data;
     battle_queue[tmp_idx].batent_party  = battle_queue[idx_a].batent_party;
-    
+
     battle_queue[idx_a].time            = battle_queue[idx_b].time;
     battle_queue[idx_a].post_time       = battle_queue[idx_b].post_time;
     battle_queue[idx_a].batent_ref      = battle_queue[idx_b].batent_ref;
     battle_queue[idx_a].action          = battle_queue[idx_b].action;
     battle_queue[idx_a].data            = battle_queue[idx_b].data;
     battle_queue[idx_a].batent_party    = battle_queue[idx_b].batent_party;
-    
+
     battle_queue[idx_b].time            = battle_queue[tmp_idx].time;
     battle_queue[idx_b].post_time       = battle_queue[tmp_idx].post_time;
     battle_queue[idx_b].batent_ref      = battle_queue[tmp_idx].batent_ref;
     battle_queue[idx_b].action          = battle_queue[tmp_idx].action;
-    battle_queue[idx_b].data            = battle_queue[tmp_idx].data;   
-    battle_queue[idx_b].batent_party    = battle_queue[tmp_idx].batent_party;   
+    battle_queue[idx_b].data            = battle_queue[tmp_idx].data;
+    battle_queue[idx_b].batent_party    = battle_queue[tmp_idx].batent_party;
 }
 
 void clean_battle_queue_slot(int i) {
@@ -101,7 +101,7 @@ void clean_battle_queue_slot(int i) {
     battle_queue[i].batent_party  = -1;
 }
 
-/// sorts the battle queue by their time values.  
+/// sorts the battle queue by their time values.
 /// Tied times are clustered but not specially distinguished in any way.
 ///
 /// uses a bubble sort because I'm a horrible person.  This should also be changed for effic.
@@ -123,7 +123,7 @@ void sort_battle_queue()
     int i, j;
     for( i=0; i<battle_queue_count; i++ )
     {
-    
+
         cur_low = battle_queue[i].time;
         cur_idx = i;
 
@@ -141,12 +141,12 @@ void sort_battle_queue()
 
                 cur_low = battle_queue[j].time;
                 cur_idx = j;
-                
+
 //Log( "pass "+str(i)+"."+str(j)+" - cur_low: " + str(cur_low) );
 //Log( "pass "+str(i)+"."+str(j)+" - cur_idx: " + str(cur_idx) );
             }
         }
-        
+
         if( cur_idx != i )
         {
 //Log( "pass "+str(i)+" end - swiching ("+str(cur_idx)+","+str(i)+")! " );
@@ -158,7 +158,7 @@ void sort_battle_queue()
 //Log( "*********************************" );
 
 //dump_battle_queue();
-    
+
 //Log( "**** sort_battle_queue END ****" );
 //Log( "*******************************" );
 }
@@ -184,8 +184,8 @@ void dump_battle_queue()
             aliveOrDead = "live";
         else
             aliveOrDead = "dead";
-        
-    
+
+
         Log( "["+str(i)+"] "+
             str(battle_queue[i].time)+" "+
             str(battle_queue[i].post_time)+" "+
@@ -195,9 +195,9 @@ void dump_battle_queue()
             str(battle_queue[i].action)+"   '"+
             battle_queue[i].data+"'"
         );
-    
+
     }
-    
+
     Log( "DONE dump_battle_queue()" );
     Log( "===================" );
     Log( "" );
@@ -208,7 +208,7 @@ void dump_battle_queue()
 /// errors and breaks if batent_ref < 0
 /// if in strict mode (defined with BATTLE_QUEUE_STRICT), will error if trying to add a batent_ref
 ///   that is already in the stack.
-/// 
+///
 /// pre_time is the "charge" until the event fires.
 /// post_time is the time, if any, that will be added until the next action.
 void add_battle_queue_charge_entry( int charge_time, int delay_time, int batent_ref, int batent_party, string data )
@@ -228,13 +228,13 @@ void _add_battle_queue_entry( int pre_time, int post_time, int batent_ref, int b
     {
         pre_time = MAX_BATTLE_DELAY;
     }
-    
+
     if( batent_ref < 0 )
     {
         ErrorHandler( "_add_battle_queue_entry(): batent_ref was an invalid value (cannot be negative)" );
-        return; 
+        return;
     }
-    
+
     int i;
     if( BATTLE_QUEUE_STRICT )
     {
@@ -243,20 +243,20 @@ void _add_battle_queue_entry( int pre_time, int post_time, int batent_ref, int b
             if( battle_queue[i].batent_ref == batent_ref && battle_queue[i].batent_party == batent_party )
             {
                 ErrorHandler( "_add_battle_queue_entry(): batent_ref was already in the stack, while we were in strict mode." );
-                return; 
+                return;
             }
         }
     }
-    
+
     battle_queue[battle_queue_count].time           = pre_time;
-    battle_queue[battle_queue_count].post_time      = post_time; 
+    battle_queue[battle_queue_count].post_time      = post_time;
     battle_queue[battle_queue_count].batent_ref     = batent_ref;
     battle_queue[battle_queue_count].action         = action;
     battle_queue[battle_queue_count].data           = data;
     battle_queue[battle_queue_count].batent_party   = batent_party;
-    
+
     battle_queue_count++;
-    
+
     sort_battle_queue();
 }
 
@@ -273,7 +273,7 @@ void clear_battle_queue()
     battle_queue_count = 0;
 }
 
-/// removes the topmost entry from the battle queue, one assumes after 
+/// removes the topmost entry from the battle queue, one assumes after
 /// that battle entity has fulfilled it's action.
 void pop_battle_queue()
 {
@@ -285,7 +285,7 @@ void pop_battle_queue()
             switch_battle_queue_slots( i, i-1 );
         }
     }
-    
+
     if( battle_queue_count )
     {
         battle_queue_count--;
@@ -294,7 +294,7 @@ void pop_battle_queue()
 
 /// Advances the battle queue by a given amount of ticks.
 /// used by advance_battle_queue_to_next_action(), as it passed in the time of the top item on the queue.
-/// 
+///
 /// Note, allies and enemies, if not incapacitated, decreemnt their queue-slot's time by their current REA
 /// every tick.  Any non-actor event on the queue (such as spell durations) only decrement by 1 every tick.
 ///
@@ -305,7 +305,7 @@ void pop_battle_queue()
 ///   decrement by more than 1 per tick (in the case of 'fast' battles), you'll quite often have
 ///   mounting negative values, etc.
 ///
-/// 
+///
 /// Errors if passed in a negative or 0 value to the time parameter.
 ///
 /// @param the (positive) number of ticks to advance the battle clock.
@@ -313,13 +313,13 @@ void pop_battle_queue()
 void advance_battle_queue_by_time( int time, int reverseMode )
 {
     int i, j;
-    
+
     if( time <= 0 )
     {
         ErrorHandler( "advance_battle_queue_by_time(): cannot pass the clock down by a negative or zero amount ("+str(time)+")." ) ;
         return;
     }
-    
+
     for( j=0; j<time; j++ )
     {
         for( i=0; i<battle_queue_count; i++ )
@@ -327,11 +327,11 @@ void advance_battle_queue_by_time( int time, int reverseMode )
             if( BattleQueueActorIsActive(i) )
             {
 
-                if( 
-                    battle_queue[i].batent_party == PARTY_ENEMY || 
+                if(
+                    battle_queue[i].batent_party == PARTY_ENEMY ||
                     battle_queue[i].batent_party == PARTY_ALLY
                 ) {
-                    
+
                     if( !reverseMode )
                     {
                         battle_queue[i].time -= bat_rea( battle_queue[i].batent_ref, battle_queue[i].batent_party );
@@ -339,7 +339,7 @@ void advance_battle_queue_by_time( int time, int reverseMode )
                     else
                     {
                         battle_queue[i].time += bat_rea( battle_queue[i].batent_ref, battle_queue[i].batent_party );
-                    }   
+                    }
                 }
                 else if( battle_queue[i].batent_party == PARTY_NULL ) //status and spell effects.
                 {
@@ -355,10 +355,10 @@ void advance_battle_queue_by_time( int time, int reverseMode )
                 else
                 {
                     ErrorHandler( "advance_battle_queue_by_time(): Did not recognize how to handle the time-decrementation of someone of party '"+str(battle_queue[i].batent_party)+"'." );
-                }           
+                }
             }
         }
-    
+
         sort_battle_queue();
     }
 }
@@ -385,7 +385,7 @@ int BattleQueueActorIsActive( int i )
     }
 }
 
-/// advances the battle queue so that the top action becomes 0, and everyone else is 
+/// advances the battle queue so that the top action becomes 0, and everyone else is
 /// decremented by the same amount.
 ///
 /// errors and breaks if the topmost entry was already < 0, you insensitive clod.
@@ -393,36 +393,36 @@ int BattleQueueActorIsActive( int i )
 void advance_battle_queue_to_next_action()
 {
     int i, top_actor, errorcount;
-    
+
     /// safety precaution for my sanity's sake.
     errorcount = 0;
 
     if( !battle_queue_count )
     {
         ErrorHandler( "advance_battle_queue_to_next_action(): The battle queue was empty, and so unupdatable.  Jerk." );
-        return;         
+        return;
     }
-    
+
     if( battle_queue[0].time < 0  )
     {
         ErrorHandler( "advance_battle_queue_to_next_action(): The top entry to the battle_queue was already zero or less time ("+str(battle_queue[0].time)+").  You should've popped that bitch off already.  Twit." );
-        return;         
+        return;
     }
-    
+
     top_actor = battle_queue_index_of_top_incapacitated_actor();
-    
+
     if( top_actor < 0 )
     {
         ErrorHandler( "advance_battle_queue_to_next_action(): Everyone in the queue was incapacitated.  This should never have been called." );
-        return;     
+        return;
     }
-    
+
     if( battle_queue[top_actor].time < 0  )
     {
         ErrorHandler( "advance_battle_queue_to_next_action(): The topmost active actor in the battle_queue was already zero or less time ("+str(battle_queue[top_actor].time)+").  You should've popped that bitch off already.  Twit." );
-        return;         
+        return;
     }
-    
+
     /// let's spin this until we return.  Somewhat dangerous!
     while( 1 )
     {
@@ -434,9 +434,9 @@ if( mode_battle_debug )
 {
     render_battle_debug_window();
     showpage();
-    
+
     _debug_tick_counter++;
-    
+
     if( !debug_metamode_active )
     {
         while( !debug_metamode_active_steppassthru )
@@ -445,27 +445,27 @@ if( mode_battle_debug )
             RenderBattle();
             ShowPage();
         }
-    
+
         debug_metamode_active_steppassthru = 0;
     }
 }
 
         /// get the new topmost active actor.
         top_actor = battle_queue_index_of_top_incapacitated_actor();
-        
+
         /// if the new topmost active actor is at go-time, we've accomplished our mission.
         if( battle_queue[top_actor].time <= 0 )
         {
             increment_everyone_after_the_topactor_if_topactor_and_nextactor_are_both_ready(top_actor);
             return;
         }
-        
+
         /// just a little "hey, this is a potentially dangerous infinite loop which has probably gone into uncharted territory" message.
         if( errorcount > 300 )
         {
             ErrorHandler( "The while(1) loop in advance_battle_queue_to_next_action() has spun for 300 or more times without finding anything.  Just thought you should know, dude." );
         }
-        
+
         errorcount++;
     }
 
@@ -477,11 +477,11 @@ Log( ">>> Finding the newest active battle actor and make them the next one to a
     for( i=0; i<battle_queue_count; i++ )
     {
 Log( ">>> checking ["+str(i)+"]..." );
-    
+
         if( BattleQueueActorIsActive(i) )
         {
 Log( ">>> ... ["+str(i)+"] is active!" );
-            
+
             advance_battle_queue_by_time( battle_queue[i].time, 0 );
             return;
         }
@@ -490,30 +490,30 @@ Log( ">>> ... ["+str(i)+"] is active!" );
 Log( ">>> ... ["+str(i)+"] is inactive.  Checking next..." );
         }
     }
-*/  
+*/
 }
 
 void increment_everyone_after_the_topactor_if_topactor_and_nextactor_are_both_ready( int top_actor ) {
-    
+
     if( (top_actor+1) >= battle_queue_count ) { /// if there's nobody next, our job is done.
         return;
     }
-    
+
     int addto = 0;
     int i = 0;
-    
+
     if( battle_queue[top_actor+1].time <= 0 ) {
         addto = abs(battle_queue[top_actor+1].time) + 1;
-        
+
         for( i = top_actor+1; i<battle_queue_count; i++ ) {
             battle_queue[i].time += addto;
-            
+
             if( i != top_actor+1 ) {
                 //adds another tick's worth of time to everyone but the next actor.
                 battle_queue[i].time += bat_rea( battle_queue[i].batent_ref, battle_queue[i].batent_party );
             }
         }
-    }   
+    }
 }
 
 /// returns the battle queue index of the topmost active battle actor.
@@ -521,15 +521,15 @@ void increment_everyone_after_the_topactor_if_topactor_and_nextactor_are_both_re
 int battle_queue_index_of_top_incapacitated_actor()
 {
     int i;
-    
+
     for( i=0; i<battle_queue_count; i++ )
-    {   
+    {
         if( BattleQueueActorIsActive(i) )
         {
             return i;
         }
     }
-    
+
     return -1;
 }
 
@@ -563,14 +563,14 @@ void ResolveAction( int actor_idx, int actor_party, string action_data, int dela
     if( itemUser >= 0 )
     {
         itemUser = GetTargIdxByText( "Attacker" );
-    
+
         if( GetTargMode(itemUser) == PARTY_ALLY )
         {
-            ChangeSpriteAnimation( 
-                bat_getRenderRef(GetTargID(itemUser), GetTargMode(itemUser)), 
-                "USE_ITEM" 
+            ChangeSpriteAnimation(
+                GetTargID(itemUser), GetTargMode(itemUser),
+                "USE_ITEM"
             );
-        }   
+        }
     }
 
     ///////////
@@ -583,24 +583,24 @@ void ResolveAction( int actor_idx, int actor_party, string action_data, int dela
     {
         mpCost = GetTargID( mpCostReq );
         mpCostReq = GetTargIdxByText( "Attacker" );
-        
+
         if( mpCost <= bat_cur_mp(actor_idx,actor_party) )
         {
             bat_change_mp( actor_idx, actor_party, 0-mpCost );
-        
+
             if( actor_party == PARTY_ALLY )
             {
-                ChangeSpriteAnimation( 
-                    bat_getRenderRef(actor_idx, actor_party), 
-                    "CASTING" 
+                ChangeSpriteAnimation(
+                    actor_idx, actor_party,
+                    "CASTING"
                 );
             }
         }
-        /// if there's an MP requirement and it wasn't met, just bail out.  
-        else 
+        /// if there's an MP requirement and it wasn't met, just bail out.
+        else
         {
             //Should use this for the skill name instead of BASE_DELAY --> GetSkillDelayTime(GetSkill("Parry"))
-            
+
             add_battle_queue_delay_entry( delay_time, actor_idx, actor_party, "" );
             return;
         }
@@ -609,8 +609,8 @@ void ResolveAction( int actor_idx, int actor_party, string action_data, int dela
     ///
     ///////////
 
-    
-    /// anything that gets triggered upon an action (on_act) 
+
+    /// anything that gets triggered upon an action (on_act)
     /// gets called right now.
     trigger_on_act( actor_idx, actor_party );
 
@@ -620,12 +620,12 @@ void ResolveAction( int actor_idx, int actor_party, string action_data, int dela
 /***************
 /***************
 /***************
-This would've been true if we remove the item from inventory 
+This would've been true if we remove the item from inventory
 when it's actualy used, but instead we've opted to remove it
 from inventory when it's first selected to be used.
 
     ///we check if there's an item delete command every time.  Maybe we should optimize?
-    ///if we add too many PARTY_NULL special directive checks here, I suggest we just do a 
+    ///if we add too many PARTY_NULL special directive checks here, I suggest we just do a
     /// simple poll for any PARTY_NULL mode entries in the targetting array, and if any exist,
     /// only then should we check everything. -grue
     itemUse = GetTargIdxByText( "ITEM_DELETE" );
@@ -638,9 +638,9 @@ from inventory when it's first selected to be used.
 ***************
 ***************
 ***************/
-    
-    /// Now that the action has executed, let's put this fellah back on the battle queue, 
-    /// with a delay-action.  When next he gets to the top of the battle queue, he'll get to 
+
+    /// Now that the action has executed, let's put this fellah back on the battle queue,
+    /// with a delay-action.  When next he gets to the top of the battle queue, he'll get to
     /// choose a whole new action, and so the cycle continues.  It's the CIRRRRCLE OF DEEEEATH!
     add_battle_queue_delay_entry( delay_time, actor_idx, actor_party, "" );
 }
@@ -660,17 +660,17 @@ int get_best_guard( int b_idx, int b_party )
     for( i=0; i<battle_queue_count; i++ )
     {
         if(
-            battle_queue[i].batent_ref == b_idx && 
+            battle_queue[i].batent_ref == b_idx &&
             battle_queue[i].batent_party == b_party &&
             battle_queue[i].action == BACT_GUARD
         ) {
             d = val(battle_queue[i].data);
-            
+
             if( d > best_def ) {
                 best_def = d;
             }
         }
     }
-    
+
     return best_def;
 }
