@@ -716,7 +716,7 @@ void Banner( string msg, int duration )
     int menu_mode = MenuCanBeOn();
     MenuOff();
 
-    UnPress(UNPRESS_ALL);
+    UnpressButtonAccept();
 
     timer = 0;
     while ( timer<duration && !ButtonAccept(1) )
@@ -726,7 +726,7 @@ void Banner( string msg, int duration )
         ShowPage();
     }
 
-    UnPress(UNPRESS_ALL);
+    UnpressButtonAccept();
 
     if(menu_mode)   MenuOn();
 }

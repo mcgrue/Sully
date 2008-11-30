@@ -1,9 +1,9 @@
 // All the various textbox functionality for the v1rpg library.
 //
-// Originally by vec, converted by zip, then extended and completely 
+// Originally by vec, converted by zip, then extended and completely
 // grossified by Grue.
 //
-// At present, 
+// At present,
 //
 //
 
@@ -23,7 +23,7 @@ int TEXTBOX_BORDER_Y1 = 189-8;
 int TEXTBOX_BORDER_WIDTH    = 317-16;
 int TEXTBOX_BORDER_HIGH     = 50;
 
-//the drawing-area of the textbox 
+//the drawing-area of the textbox
 //(the boundry you want the text to actually sit in)
 
 int TEXTBOX_TEXTAREA_X      = 6+8;
@@ -50,8 +50,8 @@ void SetV1TextboxYBuffer( int y )
     TEXTBOX_Y_BUFF = y;
 }
 
-// Sets how many lines of text a textbox maxes out at (AutoText(), 
-// PromptDirect(), and TextboxDirect() care mostly about this.  TextBox(), 
+// Sets how many lines of text a textbox maxes out at (AutoText(),
+// PromptDirect(), and TextboxDirect() care mostly about this.  TextBox(),
 // TextBoxM(), and Prompt() max out at 3 lines without some abuse or changes.
 //
 void SetV1MaxTextLines( int i )
@@ -60,7 +60,7 @@ void SetV1MaxTextLines( int i )
 }
 
 
-// Sets the bounding box for the background box of the v1rpg textbox and 
+// Sets the bounding box for the background box of the v1rpg textbox and
 // promptbox functions.
 //
 void SetV1TextboxBG( int x, int y, int w, int h )
@@ -72,7 +72,7 @@ void SetV1TextboxBG( int x, int y, int w, int h )
     TEXTBOX_BORDER_HIGH = h;
 }
 
-// Sets the bounding box for the text of the v1rpg textbox and promptbox 
+// Sets the bounding box for the text of the v1rpg textbox and promptbox
 // functions.
 //
 void SetV1TextArea( int x, int y, int w, int h  )
@@ -80,7 +80,7 @@ void SetV1TextArea( int x, int y, int w, int h  )
     TEXTBOX_TEXTAREA_X  = x;
     TEXTBOX_TEXTAREA_Y  = y;
     TEXTBOX_TEXTAREA_WIDTH  = w;
-    TEXTBOX_TEXTAREA_HIGH   = h;    
+    TEXTBOX_TEXTAREA_HIGH   = h;
 }
 
 // Changes the coordinates of the bobby moretext arrow.
@@ -156,8 +156,8 @@ void init_textbox_speech_portraits() {
 }
 
 
-// textbox speech portrait defines. 
-// these are just indexes on the image loaded into 
+// textbox speech portrait defines.
+// these are just indexes on the image loaded into
 // speechprt.
 #define T_NONE      0
 #define T_DARIN     1
@@ -184,16 +184,16 @@ void init_textbox_speech_portraits() {
 /****** Proptbox defines *******/
 
 
-//the x of the left-side of the promptbox.  
-//  to auto-right-align with the textbox, set to any value higher than the current 
+//the x of the left-side of the promptbox.
+//  to auto-right-align with the textbox, set to any value higher than the current
 //  x-resolution.  10000 is a safe value for this for the next few years at least. ;)
 int PROMPT_X        = 10000;
 
 //the fixed width of the promptbox.  set to 0 for dynamic mode!
 int PROMPT_WIDTH    = 0;
 
-//the y of the bottom edge of the promptbox.  If you'd rather define the top edge, 
-//  set this to 0 and PROMPT_Y will be used for the top edge.  If PROMPT_BOTM_Y is nonzero, 
+//the y of the bottom edge of the promptbox.  If you'd rather define the top edge,
+//  set this to 0 and PROMPT_Y will be used for the top edge.  If PROMPT_BOTM_Y is nonzero,
 //  PROMPT_Y is completely ignored.
 int PROMPT_BOTM_Y   = 190;
 int PROMPT_Y        = 1;
@@ -214,8 +214,8 @@ int PROMPT_PADDING =    4;
 //
 //
 //
-// There should probably be a whole passel of Promptbox accessors too, but I 
-// really don't want to make'm at this juncture.  Mainly because the 
+// There should probably be a whole passel of Promptbox accessors too, but I
+// really don't want to make'm at this juncture.  Mainly because the
 // promptbox's implementation is kinda icky in general at the moment.
 //
 // -Grue
@@ -226,7 +226,7 @@ int PROMPT_PADDING =    4;
 
 
 
-// 1 sets Textscrolling on, 
+// 1 sets Textscrolling on,
 // 0 turns it off.
 void SetTextBoxScroll( int on )
 {
@@ -249,16 +249,16 @@ string autoTextPages[MAX_AUTOTEXT_PAGES];
 string AT_temp;
 int autoTextPageCount, atTempCount;
 
-// Takes a single string of text and does as many TextBoxM()'s and a 
+// Takes a single string of text and does as many TextBoxM()'s and a
 // final TextBox() as needed.
 //
 // | and/or TAB will force a newline.
 // ~ and/or NEWLINE will force an entirely new box.
 //
-// VERGEDev doesn't advocate the use of Autotext for most cases because it 
+// VERGEDev doesn't advocate the use of Autotext for most cases because it
 // ruins the dramatic effect of well-plotted out textboxes.  Done correctly,
-// your game is awesomely poetic and quotable.  However, having massive boxes 
-// of text taht don't have complete thoughts in one screen ruins the 
+// your game is awesomely poetic and quotable.  However, having massive boxes
+// of text taht don't have complete thoughts in one screen ruins the
 // illusion.
 //
 // Ask vec for a more in-depth explaination sometime. ;)
@@ -270,20 +270,20 @@ void AutoText( int sp, string master_text )
 {
     ClearATBuffer();
     string page_delim = "~"+chr(10);
-    
+
     int i;
     string tok;
-    
+
     //for each page chunk...
     for( i=0; i<TokenCount(master_text,page_delim); i++ ) {
-        
+
         tok = GetToken( master_text,page_delim,i );
-        
+
         HandlePageChunk(tok);
     }
-    
+
     for( i=0; i<autoTextPageCount; i++ ) {
-        
+
         if( i==(autoTextPageCount-1) ) {
             TextBoxDirect(sp, 0, autoTextPages[i]);
         } else {
@@ -296,23 +296,23 @@ void AutoText( int sp, string master_text )
 //
 void HandlePageChunk( string text ) {
     string line_delim = "|"+chr(9);
-    
+
     int i,j;
     string tok;
-    
+
     for( i=0; i<TokenCount(text,line_delim); i++ ) {
-        
+
         tok = GetToken( text,line_delim,i );
-        
+
         HandleLineChunk( tok );
-        
+
         if( atTempCount == TEXTBOX_LINES ) {
             SaveATPage();
         }
-    }   
-    
+    }
+
     if( !equ(AT_temp,"") ) {
-    
+
         SaveATPage();
     }
 }
@@ -322,55 +322,55 @@ void HandleLineChunk( string text ) {
 
     string my_line, temp, tok;
     int i;
-    
+
     for( i=0; i<TokenCount(text," "); i++ ) {
-        
+
         tok = GetToken(text," ",i);
         if( TextWidth(v1rpg_LargeFont,temp+tok+" ") > TEXTBOX_TEXTAREA_WIDTH ) {
-            
+
             AT_temp = AT_temp + temp + "|";
             atTempCount++;
             temp = tok + " ";
         } else {
             temp = temp + tok + " ";
         }
-        
+
         if( atTempCount == TEXTBOX_LINES ) {
             SaveATPage();
         }
     }
-    
+
     AT_temp = AT_temp + temp + "|";
     atTempCount++;
 }
 
-// Helper function. 
+// Helper function.
 // Adds a page to the AT array.  clears temp vars.
 void SaveATPage() {
-    
+
     string line_delim = "|"+chr(9);
-    
+
     while( TokenCount(AT_temp,line_delim) < TEXTBOX_LINES ) {
         AT_temp = AT_temp + "|_";
     }
-    
+
     autoTextPages[autoTextPageCount] = AT_temp;
 
     autoTextPageCount++;
-    
+
     AT_temp = "";
     atTempCount = 0;
 }
 
-// Helper Function.  
-// Clears all the globals used by the AutoText() function. 
+// Helper Function.
+// Clears all the globals used by the AutoText() function.
 void ClearATBuffer() {
     int i;
-    
+
     for( i=0; i<MAX_AUTOTEXT_PAGES; i++ ) {
         autoTextPages[i] = "";
     }
-    
+
     AT_temp = "";
     autoTextPageCount = 0;
     atTempCount = 0;
@@ -379,18 +379,18 @@ void ClearATBuffer() {
 // Helper function, logs autotext stuff.
 //
 void DiagnoseAT() {
-    
+
     log( "=============" );
     log( "DiagnoseAT()" );
     log( "=============" );
     log( "autoTextPageCount: " + str(autoTextPageCount) );
-    
+
     int i;
     for( i=0; i<autoTextPageCount; i++ ) {
         log( str(i) + ": '"+ autoTextPages[i] +"'" );
     }
 
-    log( "=============" ); 
+    log( "=============" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -398,7 +398,7 @@ void DiagnoseAT() {
 ///////////////////////////////////////////////////////////////////////////////
 
 
-// The main textbox.  Takes a speech portrait index, and three strings and 
+// The main textbox.  Takes a speech portrait index, and three strings and
 // prints them out,
 void TextBox(int sp, string s1, string s2, string s3)
 {
@@ -407,7 +407,7 @@ void TextBox(int sp, string s1, string s2, string s3)
     _in_textbox = 0;
 }
 
-// Like Textbox, but makes a little arrow bob up and down in the corner to 
+// Like Textbox, but makes a little arrow bob up and down in the corner to
 // denote that there will be more text to come.
 //
 void TextBoxM(int sp, string s1, string s2, string s3)
@@ -419,16 +419,16 @@ void TextBoxM(int sp, string s1, string s2, string s3)
 
 int _in_textbox;
 
-// The encapsulated textbox-drawing process. Called by TextBox(), TextBoxM(), 
+// The encapsulated textbox-drawing process. Called by TextBox(), TextBoxM(),
 // and PromptDirect(), and AutoText()
 void TextBoxDirect(int sp, int m, string s)
 {
     int line_it, line_num, time_last;
-    
+
     _in_textbox = 1;
 
     int font_h = FontHeight(v1rpg_LargeFont) + TEXTBOX_Y_BUFF;
-    
+
 
     if (global_noscroll)
     {
@@ -440,43 +440,45 @@ void TextBoxDirect(int sp, int m, string s)
         line_num = 0;
         time_last = systemtime;
     }
-    
+
+    UnpressButtonAccept();
+
     while( line_num < TEXTBOX_LINES )
     {
         MenuBackGroundDraw(); // Draw universal things
-        
+
         //draw the textbox bg.
         V1_Box( TEXTBOX_BORDER_X1,TEXTBOX_BORDER_Y1,  TEXTBOX_BORDER_WIDTH,TEXTBOX_BORDER_HIGH );
-        
-        SetClip(    TEXTBOX_TEXTAREA_X,TEXTBOX_TEXTAREA_Y, 
+
+        SetClip(    TEXTBOX_TEXTAREA_X,TEXTBOX_TEXTAREA_Y,
                     TEXTBOX_TEXTAREA_X+TEXTBOX_TEXTAREA_WIDTH,TEXTBOX_TEXTAREA_Y+TEXTBOX_TEXTAREA_HIGH, screen );
-                    
+
         for (line_it = 0; line_it < line_num; line_it++)
-        { 
-            PrintString(TEXTBOX_TEXTAREA_X,TEXTBOX_TEXTAREA_Y + (font_h * line_it), screen, v1rpg_LargeFont, GetToken(s, "|", line_it)); 
+        {
+            PrintString(TEXTBOX_TEXTAREA_X,TEXTBOX_TEXTAREA_Y + (font_h * line_it), screen, v1rpg_LargeFont, GetToken(s, "|", line_it));
         }
-                
+
         PrintString(TEXTBOX_TEXTAREA_X,TEXTBOX_TEXTAREA_Y + (font_h * line_num), screen, v1rpg_LargeFont, left(GetToken(s, "|", line_num), (systemtime - time_last) / 2));
-        
+
         SetClip(0, 0, ImageWidth(screen), ImageHeight(screen), screen);
-        
-        if( ButtonAccept(1) ) { 
-            line_num++; 
-            time_last = systemtime; 
+
+        if( ButtonAccept(1) ) {
+            line_num++;
+            time_last = systemtime;
         }
-        
+
         else if ((systemtime - time_last) / 2 >= len(GetToken(s, "|", line_num)))
         {
             if (line_num < (TEXTBOX_LINES-1)) { line_num++; time_last = systemtime; }
             else if (m == 1) TBlit(TEXTMORE_X,TEXTMORE_Y + (cos(systemtime * 2) * 4 / 65536), textmore, screen);
             else if (m == 2 && global_noscroll) line_num++;
         }
-        
+
         DrawSpeechPortrait( sp );
-        
-        ShowPage(); 
+
+        ShowPage();
     }
-    
+
     if( m == 1 )
     {
         time_last = systemtime;
@@ -485,41 +487,41 @@ void TextBoxDirect(int sp, int m, string s)
             MenuBackGroundDraw(); // Draw universal things
 
             DrawSpeechPortrait( sp );
-            
+
             //draw the textbox bg.
             V1_Box( TEXTBOX_BORDER_X1,TEXTBOX_BORDER_Y1,  TEXTBOX_BORDER_WIDTH,TEXTBOX_BORDER_HIGH );
-            
-            SetClip(    TEXTBOX_TEXTAREA_X,TEXTBOX_TEXTAREA_Y, 
+
+            SetClip(    TEXTBOX_TEXTAREA_X,TEXTBOX_TEXTAREA_Y,
                         TEXTBOX_TEXTAREA_X+TEXTBOX_TEXTAREA_WIDTH,TEXTBOX_TEXTAREA_Y+TEXTBOX_TEXTAREA_HIGH, screen );
-            
+
             for (line_it = 0; line_it < line_num; line_it++)
                 { PrintString(TEXTBOX_TEXTAREA_X,TEXTBOX_TEXTAREA_Y + (font_h * line_it) - ((systemtime - time_last) * 2), screen, v1rpg_LargeFont, GetToken(s, "|", line_it)); }
-            
+
             SetClip(0,0, ImageWidth(screen), ImageHeight(screen), screen);
-            
+
             DrawSpeechPortrait( sp );
-            
+
             ShowPage();
         }
     }
-    
+
     _in_textbox = 0;
-    
+
     UnPress(UNPRESS_ALL);
 }
 
 
-// Create a promptbox.  Takes a speech portrat and three lines of text and 
+// Create a promptbox.  Takes a speech portrat and three lines of text and
 // displays a textbox of them.
 //
-// Then takes a |-delineated list and creates a promptbox.  
-// Returns the token index of the choice selected.  
+// Then takes a |-delineated list and creates a promptbox.
+// Returns the token index of the choice selected.
 // Doesn't allow cancelling at this time.
 //
 // Example:
 // if choices is "Yes|No|Maybe" makes a promptbox with "Yes", "No", and "Maybe"
-// as choosable choices.  If the player chooses "Yes", it returns 0, if the 
-// player chooses "No" it returns 1, and if the player chooses "Maybe" it 
+// as choosable choices.  If the player chooses "Yes", it returns 0, if the
+// player chooses "No" it returns 1, and if the player chooses "Maybe" it
 // returns 2.
 int Prompt(int sp, string s1, string s2, string s3, string choices)
 {
@@ -535,35 +537,35 @@ int PromptDirect(int sp, string question, string choices)
     int tex_font_h = FontHeight(v1rpg_LargeFont) + TEXTBOX_Y_BUFF;
     int prompt_wid, prompt_high;
     int prompt_x1, prompt_x2;
-    
+
     int ptr_w = TextWidth(v1rpg_LargeFont, "> ");
-    
+
     int count = TokenCount(choices, "|");
     if (count > MAX_PROMPT_OPTIONS) ErrorHandler("Moar than "+str(MAX_PROMPT_OPTIONS)+" options passed to the choicebox. This may cause graphical oddness");
 //exit( "longest: " +str(_LongestWidth(choices))  );
     int prompt_y1;
-    
+
 
     if( PROMPT_BOTM_Y ) {
 
-        
+
         prompt_y1 = PROMPT_BOTM_Y - (font_h * count) - (PROMPT_PADDING*2);
-        
+
         prompt_high = PROMPT_BOTM_Y - prompt_y1;
-        
+
     } else {
         prompt_y1 = PROMPT_Y;
-        
+
         prompt_high = (PROMPT_PADDING*2)+TEXTBOX_Y_BUFF+(count * font_h);
     }
-    
+
     if( PROMPT_WIDTH ) {
         prompt_wid = PROMPT_WIDTH;
 
     } else { //dynamic width!
         prompt_wid = _LongestWidth(choices) + (PROMPT_PADDING*2) + (font_h*2);
     }
-    
+
     //if the promptbox would've gone off the screen... make it align with the textbox
     if( (PROMPT_X+prompt_wid) > ImageWidth(screen) ) {
         prompt_x2 = TEXTBOX_BORDER_WIDTH+TEXTBOX_BORDER_X1;
@@ -572,25 +574,26 @@ int PromptDirect(int sp, string question, string choices)
         prompt_x2 = PROMPT_X+prompt_wid;
         prompt_x1 = PROMPT_X;
     }
-        
+
     menu_item = 0;
-    
+
     TextBoxDirect(sp, 2, question);
 
+    UnpressButtonAccept();
     while(!ButtonAccept(1))
     {
         MenuBackGroundDraw(); // Draw universal things
 
         //draw the textbox bg.
         V1_Box( TEXTBOX_BORDER_X1,TEXTBOX_BORDER_Y1,  TEXTBOX_BORDER_WIDTH,TEXTBOX_BORDER_HIGH );
-        
+
         //set clipping so we cannot draw outside the textbox
-        SetClip(    TEXTBOX_TEXTAREA_X,TEXTBOX_TEXTAREA_Y, 
+        SetClip(    TEXTBOX_TEXTAREA_X,TEXTBOX_TEXTAREA_Y,
                     TEXTBOX_TEXTAREA_X+TEXTBOX_TEXTAREA_WIDTH,TEXTBOX_TEXTAREA_Y+TEXTBOX_TEXTAREA_HIGH, screen );
         //print out the textbox lines.
         for (i = 0; i < TEXTBOX_LINES; i++)
         {
-            PrintString(TEXTBOX_TEXTAREA_X,TEXTBOX_TEXTAREA_Y + (tex_font_h * i), screen, v1rpg_LargeFont, GetToken(question, "|", i)); 
+            PrintString(TEXTBOX_TEXTAREA_X,TEXTBOX_TEXTAREA_Y + (tex_font_h * i), screen, v1rpg_LargeFont, GetToken(question, "|", i));
         }
 
         //restore clipping
@@ -601,27 +604,27 @@ int PromptDirect(int sp, string question, string choices)
         V1_Box( prompt_x1, prompt_y1-TEXTBOX_Y_BUFF, prompt_wid, prompt_high );
 
         //set the clipping rectangle so we cannot draw outside the promptbox's area!
-        SetClip(    prompt_x1+PROMPT_PADDING, prompt_y1+PROMPT_PADDING, 
+        SetClip(    prompt_x1+PROMPT_PADDING, prompt_y1+PROMPT_PADDING,
                     prompt_x2-PROMPT_PADDING,prompt_y1+prompt_high-PROMPT_PADDING, screen );
 
         //print out the options.
-        for(i = 0; i <= count; i++) 
+        for(i = 0; i <= count; i++)
         {
             PrintString(prompt_x1+PROMPT_PADDING+ptr_w+TEXTBOX_Y_BUFF, prompt_y1+PROMPT_PADDING+((i) * font_h), screen, v1rpg_LargeFont, GetToken(choices, "|", i));
         }
-        
+
         //print the pointer...
         PrintString(prompt_x1+PROMPT_PADDING+TEXTBOX_Y_BUFF, prompt_y1+PROMPT_PADDING+((menu_item) * font_h), screen, v1rpg_LargeFont, ">");
-        
+
         //restore the clipping rectangle.
         SetClip(0,0, ImageWidth(screen), ImageHeight(screen), screen);
-        
-        
+
+
         DrawSpeechPortrait( sp );
-        
+
         ShowPage();
     }
-    
+
     return menu_item;
 }
 
@@ -629,13 +632,13 @@ int PromptDirect(int sp, string question, string choices)
 // determines which choice in a prompt box is the longest.
 int _LongestWidth( string choices ) {
     int i, longest, temp;
-    
+
     for( i=0; i<TokenCount(choices,"|"); i++ ) {
         temp = TextWidth(v1rpg_LargeFont, GetToken(choices, "|", i) );
-        
+
         if( temp > longest ) longest = temp;
     }
-    
+
     return longest;
 }
 

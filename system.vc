@@ -8,23 +8,23 @@
 // See where all of the vc system source is.
 #include "vc/includes.vc"
 
-// This is a file that holds Targetting and effect functions 
+// This is a file that holds Targetting and effect functions
 // that items.dat and skills.dat would ask for,
 #include "vc/effects.vc"
 
 // notice that there is no "v3splash.vc" in the base directory of this game.
-// This is because "v3splash.vc", and all the files it needs, are stored 
-// within the "v3splash320.vpk" packfile.  This file is loaded by the game 
+// This is because "v3splash.vc", and all the files it needs, are stored
+// within the "v3splash320.vpk" packfile.  This file is loaded by the game
 // from a command in the "verge.cfg" file as follows:
 //
 // mount1  v3splash320.vpk
 //
-// all of the folders and files in the packfile act as though they're actually 
-// in the game directory.  Load up PackEd.exe yourself and open this file up to 
+// all of the folders and files in the packfile act as though they're actually
+// in the game directory.  Load up PackEd.exe yourself and open this file up to
 // look inside!
 #include "v3splash.vc"
 
-// Some various Story-related variables and effects. 
+// Some various Story-related variables and effects.
 //
 int sfx_waves;  ///used in the island.map flashback
 int wavetimer;  ///used in the island.map flashback
@@ -55,7 +55,7 @@ void f5_debug_set_activemode()
 void f8_debug_set_stepmode_or_step()
 {
     debug_metamode_active = 0;
-    
+
     if( key[SCAN_F8] )
     {
         debug_metamode_active_steppassthru = 1;
@@ -93,7 +93,7 @@ void AutoExec()
 
     trigger.onStep = "onStep";
     trigger.afterStep = "";
-    
+
     trigger.beforeEntityScript = "EntStart";
     trigger.afterEntityScript = "EntFinish";
 
@@ -110,10 +110,10 @@ void AutoExec()
 
     InitEnemyGroups();  // load the battle group resources
     InitSlashy();       // loads the weapon and enemy slashy anims.
-    
+
     selectmap_clear(1); // sets up the selectmap.
 
-/// put this in the load/save game and 
+/// put this in the load/save game and
 /// in the main menu.  Also put a startup
 /// default value somewhere.
 SetBattleEffectPauseTime( 80 );
@@ -123,17 +123,17 @@ playerdiagonals = 1;
 playerstep = 16;
 
     _prev_bm_idx = -1;  //set this up on load.  For battle menu cleanup.
-    
+
     init_events();      //loads all of the events in the event datafile.
     loadFunkOrama();    //loads the FUNK!
-    
+
     init_keyconf();
     SetRepeaterModeMcFAIL( 25 );
-    
+
     bm_autoexec();
-    
+
     MenuOff();  //let's not let anyone touch the menu until we're in-game, eh?
-    
+
     //we load all the data first so we can do the introduction without pause.
 
     HookRetrace("V1RPG_RenderFunc");// this is the v1_rpg library's default
@@ -145,17 +145,18 @@ playerstep = 16;
                                     //
                                     // If this confuses you, don't worry about it for now.
 
-    
+
 
     //This allows alt-f4 to exit verge.
     HookKey( SCAN_F4, "alt_f4" );
-    
+
 //    HookKey( SCAN_B, "dump_all_bm" );
-    
-    HookKey( SCAN_F5, "f5_debug_set_activemode" );  
+
+    HookKey( SCAN_F5, "f5_debug_set_activemode" );
     HookKey( SCAN_F8, "f8_debug_set_stepmode_or_step" );
-//    HookKey( SCAN_F12, "f12_debug_mcgrender" );    
+//    HookKey( SCAN_F12, "f12_debug_mcgrender" );
     HookKey( SCAN_F11, "dump_all_selectnodes" );
+    HookKey( SCAN_F12, "christmas" );
 
 
 V3Console__Init();
@@ -178,22 +179,31 @@ void fill_party()
 
 void christmas()
 {
-    int i;
+Log( "Christmas." );
+    int i, n;
     for( i=0; i<item_count; i++ )
     {
-        GiveItemI( i, Random(1,50) );
+Log( "pre ["+str(i)+"]: _equip_count = " + str(_equip_count) );
+        n = Random(1,GetMasterItemCount());
+
+        if( IsEquipmentItem(i) ) {
+Log( "Giving item "+str(i)+", which is equipment ("+GetItemNameI(i)+")." );
+        }
+
+        GiveItemI( i, n );
+Log( "post ["+str(i)+"]: _equip_count = " + str(_equip_count) );
     }
 }
 
 void magically_beef_up_allies()
 {
     int i;
-    
+
     for( i=0; i<PartySize(); i++ )
     {
         master_cast[party[i]].stats[STAT_MAX_HP] = 300;
-        
-        master_cast[party[i]].cur_hp = master_cast[party[i]].stats[STAT_MAX_HP]; 
+
+        master_cast[party[i]].cur_hp = master_cast[party[i]].stats[STAT_MAX_HP];
     }
 }
 
@@ -208,8 +218,8 @@ void InitMap() {
     //
     // note: mapswitchx, mapswitchy are parts of the v1_rpg library
     //       set by v1_MpaSwitch()
-    
-    if( !v1_party_init ) 
+
+    if( !v1_party_init )
     {
         if( __initmap_overworld_flag )
         {
@@ -221,7 +231,7 @@ void InitMap() {
             _overworld_mode = 0;
             SpawnParty( mapswitchx, mapswitchy );
         }
-        
+
         v1_party_init = 1;
     }
     // from the menu library, this makes sure that if you're in
@@ -243,37 +253,37 @@ void InitMap_SetOverworldMode( int i )
 }
 
 
-/// The opening seqence of the game!  
+/// The opening seqence of the game!
 ///
-/// Plays Toen's vcsplash (included in v3splash320.vpk), displays the Dept. 
+/// Plays Toen's vcsplash (included in v3splash320.vpk), displays the Dept.
 /// of Retrogaming logo, and then goes on to the intro map for the second part
 /// of the intro.
 void DoIntro()
 {
-    
+
     string sav_rstring = curmap.rstring;
-    
+
     ResetPreferences();
-    
+
     curmap.rstring = "R";
 
     ClearVCLayer(); //part of the v1_rpg.vc lib.  Clears the vclayer.
-    
+
     StopMusic();
-    
+
     //calls the v3splash() function, if it exists.
-    CallFunction("v3splash");   
-    
+    CallFunction("v3splash");
+
     //play the unofficial VERGE theme song, Hymn to Aurora!
-    PlayMusic( "res/music/AURORA.MOD" ); 
+    PlayMusic( "res/music/AURORA.MOD" );
     SetMusicVolume( 70 ) ;
-    
+
     int delay = 40;
     int longdelay = 100;
-    
+
     string _im = "res/images/story_fx/intro/retro.gif";
     int im = LoadImage( _im );
-    
+
     if( equ(sav_rstring, "") )
     {
         RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
@@ -296,7 +306,7 @@ void DoIntro()
         SetLucent(0);
         RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
         Blit( 0,0, im, screen );
-        Wait(longdelay);    
+        Wait(longdelay);
 
         SetLucent(0);
         RectFill( 0,0, ImageWidth(screen), ImageHeight(screen), RGB(0,0,0), screen );
@@ -325,66 +335,66 @@ void DoIntro()
         SetLucent(0);
         FillVCLayer( RGB(0,0,0) );
         Wait(delay);
-    
+
         SetLucent(75);
         VCPutIMG( _im, 0,0 );
         Wait(delay);
-        
+
         SetLucent(0);
         FillVCLayer( RGB(0,0,0) );
 
         SetLucent(50);
         VCPutIMG( _im, 0,0 );
         Wait(delay);
-        
+
         SetLucent(0);
         FillVCLayer( RGB(0,0,0) );
 
         SetLucent(25);
         VCPutIMG( _im, 0,0 );
         Wait(delay);
-        
+
         SetLucent(0);
         FillVCLayer( RGB(0,0,0) );
 
         SetLucent(0);
         VCPutIMG( _im, 0,0 );
         Wait(longdelay);
-        
+
         SetLucent(0);
         FillVCLayer( RGB(0,0,0) );
-        
+
         SetLucent(25);
         VCPutIMG( _im, 0,0 );
         Wait(delay);
-        
+
         SetLucent(0);
         FillVCLayer( RGB(0,0,0) );
-        
+
         SetLucent(50);
         VCPutIMG( _im, 0,0 );
         Wait(delay);
-        
+
         SetLucent(0);
         FillVCLayer( RGB(0,0,0) );
-        
+
         SetLucent(75);
         VCPutIMG( _im, 0,0 );
         Wait(delay);
-        
+
         SetLucent(0);
         FillVCLayer( RGB(0,0,0) );
-        
+
         Wait(delay);
     }
 
     FreeImage(im);
-    
+
     curmap.rstring = sav_rstring;
 
     //let's go to intro.map so we can play with entities!
     //
-    // To follow along the execution of the program, open up intro.vc.  
+    // To follow along the execution of the program, open up intro.vc.
     Map( "intro.map" );
 }
 
@@ -447,7 +457,7 @@ void alt_f4()
 }
 
 
-int _title_menu, _title_menu_load_done; /// Quick workarounds to get loadgames into the main title screen.  
+int _title_menu, _title_menu_load_done; /// Quick workarounds to get loadgames into the main title screen.
 
 
 /// Plays the closing credits sequence.
@@ -458,10 +468,10 @@ void Credits()
 {
     string sav_rstring = curmap.rstring;
 
-    curmap.rstring = "R";   
+    curmap.rstring = "R";
     FillVCLayer( RGB(0,0,0) );
-    
-    int y;  
+
+    int y;
     resetCredits();
 
     addIntroLine( y,   "The Sully Chronicles, v3 Simple Edition." );
@@ -583,7 +593,7 @@ void Credits()
     addIntroLine( y,   "Driving force behind GameFAQs.com's growth," );
     y+=10;
     addIntroLine( y,   "and early VERGEr." );
-    
+
 
     y+=350;
     addIntroLine( y, "" );
@@ -591,9 +601,9 @@ void Credits()
     FadeIn( 30 );
     doSimpleCredits( menu_font[0] );
     FadeOut(30);
-    
+
     curmap.rstring = sav_rstring;
-    
+
     //and... return to the very beginning of the game!
     DoIntro();
 }
@@ -607,21 +617,21 @@ void ResetPreferences()
 {
     global_gametime = 0;
 //  systemtime      = 0;
-    
+
 
     global_music_volume = 85;
     sfx_volume = 85;
     interface_volume = 85;
     global_noscroll = 0;
     global_menuluc = 0;
-    
+
     menu_colour[0] = rgb(0, 0, 0);
     menu_colour[1] = rgb(112, 112, 112);
     menu_colour[2] = rgb(144, 144, 144);
     menu_colour[3] = rgb(0, 0, 255);
-    
+
     ClearVCLayer();
-    
+
     vc_quake_on = 0;
     tint_on = 0;
     vc_filter_on = 0;
@@ -634,23 +644,23 @@ int _Ent_tmpvar;
 
 /// Call this at the beginning of any entity event or zone-event.
 ///
-/// This makes sure that the entity you're talking to (if any) stops 
-/// moving while you're talking to them, and turns off the ability to open your 
+/// This makes sure that the entity you're talking to (if any) stops
+/// moving while you're talking to them, and turns off the ability to open your
 /// menu while the conversation is going on.  VERY USEFUL.
 void EntStart() {
-    
+
     MenuOff();
     _Ent_tmpvar = entity.speed[event.entity];
-    
+
     entity.speed[event.entity]=0;
 }
 
 /// Call this at the end of any function where you called EntStart().
 ///
-/// if you fail to do this, the entity (if any) will not start moving 
+/// if you fail to do this, the entity (if any) will not start moving
 /// again, nor will the playre be able to open his or her menu.
 ///
-/// In general, these are useful functions, but be careful in their use, lest 
+/// In general, these are useful functions, but be careful in their use, lest
 /// you allow menus when you don't want them, or disallow menus when you do want
 /// them.
 void EntFinish() {
@@ -671,12 +681,12 @@ void SetVehicle( int i )
 }
 
 
-/// This is a cheapass control for how to handle 
+/// This is a cheapass control for how to handle
 /// playerspeed on a per-game basis.
 ///
-/// In this specific example, we want players to move really slow on the overworld, 
+/// In this specific example, we want players to move really slow on the overworld,
 /// unless they are in a specific vehicle (in which case they move at the vehicle's speed.
-/// If a player is not in a vehicle, they should move at speed 100, unless the 'run' button 
+/// If a player is not in a vehicle, they should move at speed 100, unless the 'run' button
 /// is being pressed, in which case they should move faster.
 ///
 /// This function is presently called from the renderfunction.

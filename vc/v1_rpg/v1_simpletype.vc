@@ -58,7 +58,7 @@ void FindItem( string itemname, int quantity )
     high = FontHeight( v1rpg_SmallFont );
     wid = TextWidth( v1rpg_SmallFont, msgstr );
 
-    UnPress(UNPRESS_ALL);
+    UnpressButtonAccept();
 
     timer = 0;
     while( timer<300 && !ButtonAccept(1) )
@@ -74,7 +74,7 @@ void FindItem( string itemname, int quantity )
         ShowPage();
     }
 
-    UnPress(UNPRESS_ALL);
+    UnpressButtonAccept();
 
     FreeImage( icon );
 
@@ -107,6 +107,8 @@ void DramaticUseItem( string itemname, int quantity )
     high = FontHeight( v1rpg_SmallFont );
     wid = TextWidth( v1rpg_SmallFont, msgstr );
 
+    UnpressButtonAccept();
+
     timer = 0;
     while( timer<300 && !ButtonAccept(1) )
     {
@@ -121,7 +123,7 @@ void DramaticUseItem( string itemname, int quantity )
         ShowPage();
     }
 
-    UnPress(UNPRESS_ALL);
+    UnpressButtonAccept();
 
     FreeImage( icon );
 
@@ -181,6 +183,8 @@ void Inn() {
 
     //play a little heal chirp
     MenuHappyBeep();
+
+    UnpressButtonAccept();
 
     //cue a dialog box saying that HP/MP recovered!
     while ( !ButtonAccept(1) )

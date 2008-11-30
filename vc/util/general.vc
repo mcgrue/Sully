@@ -44,16 +44,16 @@ int FileSize( string myfile )
 }
 
 // This function takes two values and a proportion out of 1000. At 0, it returns
-// the first value. At 1000, it returns the second. In between these two it 
-// interpolates -- 500 returns a value exactly halfway between the two values, 
+// the first value. At 1000, it returns the second. In between these two it
+// interpolates -- 500 returns a value exactly halfway between the two values,
 // 333 returns a value one-third of the total distance away from the first value,
-// and so on. 
+// and so on.
 int interpolate(int v1, int v2, int prop) {
     return v1 + ((v2-v1)*prop/1000);
 }
 
 /// Returns the contents of a file as one large string.
-/// Modified to take into account FileReadLn's 255-len buffer. 
+/// Modified to take into account FileReadLn's 255-len buffer.
 ///
 /// I forget who wrote the original.  Someone tell me!
 ///
@@ -63,21 +63,21 @@ string FileToString( string myfile )
 {
     string s, temp, longtemp;
     int size = FileSize(myfile);
-    
-    int running_count, long_flag; 
-    
+
+    int running_count, long_flag;
+
     int f = FileOpen(myfile, FILE_READ);
     long_flag = 0;
-    
+
     while( FileCurrentPos(f) < size )
     {
         temp = FileReadLn(f);
-        
+
         running_count += len(temp);
-        
+
         /// if the running count + 2 equals the current file position,
         /// then we are running within FileReadLn's buffer limit
-        if( 
+        if(
             (running_count+2) == FileCurrentPos(f) ||   //DOS file format
             (running_count+1) == FileCurrentPos(f)      //Unix file format
         )
@@ -89,7 +89,7 @@ string FileToString( string myfile )
             {
                 longtemp = longtemp+temp;
                 long_flag = 0;
-                
+
                 s = s + longtemp + chr(10);
                 longtemp = "";
             }
@@ -108,9 +108,9 @@ string FileToString( string myfile )
             long_flag = 1;
         }
     }
-    
+
     FileClose(f);
-    
+
     return s;
 }
 
@@ -221,19 +221,19 @@ void WaitForEntity( int wait_entity ){
 
 
 
-// takes a mapentity index, and prints out all of the current information about 
-// it to the logfile.  Useful for diagnosing problems, or just for general 
+// takes a mapentity index, and prints out all of the current information about
+// it to the logfile.  Useful for diagnosing problems, or just for general
 // education.
 void EntityDiagnose( int idx )
 {
     log( "EntityDiagnose("+str(idx)+")" );
     log( "====================" );
-    
+
     if( idx < 0 || idx >= entities )
     {
         log( "error: " +str(idx)+ " is not a valid mapentity index on this map.  Current entity count: " + str(entities) );
     }
-        
+
     log( "(x,y): (" +str(entity.x[idx])+","+str(entity.y[idx])+")" );
     log( "specframe: " + str(entity.specframe[idx]) );
     log( "frame: " + str(entity.frame[idx]) );
@@ -244,8 +244,8 @@ void EntityDiagnose( int idx )
     log( "visible: " + str(entity.visible[idx]) );
     log( "obstruct: " + str(entity.obstruct[idx]) );
     log( "obstructable: " + str(entity.obstructable[idx]) );
-    
-    log( "script: " + entity.script[idx] ); 
+
+    log( "script: " + entity.script[idx] );
 }
 
 /// for error reporting of terminally bad errors.
@@ -256,6 +256,7 @@ void FATAL_ERROR( string s )
 }
 
 void WARNING_ERROR( String s ) {
+    MessageBox( "WARNING: '"+s+"'" );
     Log( "WARNING: '"+s+"'" );
 }
 
@@ -266,7 +267,7 @@ void WARNING_ERROR( String s ) {
 // with an equivalent, as in the party-adding system.
 //  The entity will pass through any obstacles to take the shortest path. It moves at the speed at which it is set, so
 // if it's at speed 0 (for a scene, say) it will never arrive. Entities will move horizontally, then vertically.
-//  Note that when this function has executed, the entity is NOT yet in the correct position, just set to move there. 
+//  Note that when this function has executed, the entity is NOT yet in the correct position, just set to move there.
 // Wait until it has finished moving before actually setting it to stalk. If the stalkee moves in the meantime, it will
 // go stand behind his original position, not his new position, so keep him still while this happens.
 //  This function always sets the entity in question to tile-based movement at the end of its movestring.
@@ -283,18 +284,18 @@ void AlignStalker(int stalker, int stalkee)
     else if (stalkee < 0 || stalkee >= entities) { ErrorHandler("AlignStalker: Invalid stalkee index (" + str(stalkee) + ")."); }
     else {
         curx = entity.x[stalker]; // Preserve initial coordinates
-        cury = entity.y[stalker];        
+        cury = entity.y[stalker];
 
-        entity.obstructable[stalker] = 0;         
+        entity.obstructable[stalker] = 0;
         // Set the entity to stalk, check where it ends up, and then unset it and move it back.
         // This is necessary because EntityStalk's results cannot be predicted easily.
         EntityStalk(stalker, stalkee); // will move the entity into stalking position
-        EntityStalk(stalker, 0-1); // unstalk       
+        EntityStalk(stalker, 0-1); // unstalk
         goalx = entity.x[stalker]; // Store goal coordinates
         goaly = entity.y[stalker];
         entity.x[stalker] = curx; // Restore initial coordinates
         entity.y[stalker] = cury;
-        
+
         entity.obstructable[stalker] = 0; // Allow stalker to pass through obstacles
         // Now build the movestring.
         goalmove = "P"; // Switch to pixel-based movement
@@ -307,8 +308,8 @@ void AlignStalker(int stalker, int stalkee)
         else if (cury < goaly) // If above, move down.
             { goalmove = goalmove + "D" + str(goaly-cury); }
         goalmove = goalmove + "T"; // Switch to tile-based movement.
-        EntityMove(stalker, goalmove);      
-    }   
+        EntityMove(stalker, goalmove);
+    }
 }
 
 
@@ -323,13 +324,13 @@ int FindToken(string sf_string, string si_string, string toks)
     search_for = ToUpper(sf_string); // Convert everything to uppercase for case-insensitivity
     search_in = ToUpper(si_string);
     tokens = ToUpper(toks);
-    
+
     numtoks = TokenCount(search_in, tokens);
     for (ftcount=0;ftcount<numtoks;ftcount++)
-    {       
+    {
         if (!strcmp(search_for, GetToken(search_in, tokens, ftcount))) return ftcount; // if this token is a match, return its index
     }
-    
+
     return 0-1; // If this point is reached, there was no match.
 }
 
@@ -352,27 +353,27 @@ void MandatoryCallFunction( string callfunc )
 // To be clear, this only outlines the rectangle; it doesn't fill it.
 // You can use this to set a single line of obses by giving both x vals or both y vals the same.
 // Hasn't been tested very thoroughly. Yell at Gayo if it doesn't work.
-void SetObsRect(int x1p, int y1p, int x2p, int y2p, int obstile) 
+void SetObsRect(int x1p, int y1p, int x2p, int y2p, int obstile)
 {
     int i, x1, y1, x2, y2; // (x1,y1) will be top-left, (x2,y2) will be bottom-right
-    
+
     // First, get top-left and bottom-right corners. (We don't know that the points were
     // passed that way, after all).
     if (x1p <= x2p) { x1 = x1p; x2 = x2p; }
     else { x1 = x2p; x2 = x1p; }
     if (y1p <= y2p) { y1 = y1p; y2 = y2p; }
     else { y1 = y2p; y2 = y1p; }
-        
+
     if (x1 == x2) // Vertical line
     {
-        for (i=y1;i<=y2;i++) 
+        for (i=y1;i<=y2;i++)
         {
             SetObs(x1,i,obstile);
         }
     }
     else if (y1 == y2) // Horizontal line
     {
-        for (i=x1;i<=x2;i++) 
+        for (i=x1;i<=x2;i++)
         {
             SetObs(i,y1,obstile);
         }
@@ -380,21 +381,21 @@ void SetObsRect(int x1p, int y1p, int x2p, int y2p, int obstile)
     else // true rectangle
     {
         // First, draw the vertical lines.
-        for (i=y1;i<=y2;i++) 
+        for (i=y1;i<=y2;i++)
         {
             SetObs(x1,i,obstile);
             SetObs(x2,i,obstile);
-        }       
+        }
         // Then draw the horizontal lines, except for the parts that intersect the verticals.
-        for (i=x1+1;i<=x2-1;i++) 
+        for (i=x1+1;i<=x2-1;i++)
         {
             SetObs(i,y1,obstile);
             SetObs(i,y2,obstile);
-        }       
+        }
     }
 }
 
-// Takes a minimum, a maximum, and a number. If the number falls within the min-max range, it 
+// Takes a minimum, a maximum, and a number. If the number falls within the min-max range, it
 // returns that number. If it's less than minVal, it returns minVal. If it's more than maxVal,
 // it returns maxVal.
 int bound(int minVal, int maxVal, int trueVal)
@@ -411,7 +412,7 @@ string _stripWhitespace(string _whitestring, int _startpt)
     int _swi, _swnum;
     string _stripstring = "";
     _swnum = TokenCount(_whitestring,___strip_whitespace_tokens);
-    for (_swi = _startpt; _swi < _swnum; _swi++) 
+    for (_swi = _startpt; _swi < _swnum; _swi++)
     {
         // Concatenate all the white-delimited tokens together.
         _stripstring = _stripstring + GetToken(_whitestring,___strip_whitespace_tokens,_swi);

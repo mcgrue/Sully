@@ -14,7 +14,7 @@
 #define VERSION_STRING "(0.0.6.0) - Sully savefile format rc1"
 
 /// 0.0.6.0 upped the inventory limits.  We got more stuff!
-/// 0.0.5.0 Lost to time!
+/// 0.0.5.0 Added battle avoidance.
 /// 0.0.4.0 Added the CTR stat and the condition string. (Gayo)
 /// 0.0.3.0 Added (something, undocumented)
 /// 0.0.2.0 Added keyconfig vars to savegame.
@@ -574,6 +574,14 @@ void MenuLoadGame(int slot)
             doV0_5_0_0SaveGame( savegame );
             doSavegameFooter( savegame, slot, xc, yc, "0,0,5,0" );
         }
+        else if( version_number == EncodeVersionNumber(0,0,6,0) )
+        {
+            doV0_2_0_0SaveGame( savegame );
+            doV0_3_0_0SaveGame( savegame );
+            doV0_4_0_0SaveGame( savegame );
+            doV0_5_0_0SaveGame( savegame );
+            doSavegameFooter( savegame, slot, xc, yc, "0,0,6,0" );
+        }
         else
         {
             FileClose(savegame);
@@ -695,6 +703,11 @@ void doV0_4_0_0SaveGame( int savegame )
 void doV0_5_0_0SaveGame( int savegame )
 {
     battle_avoidance = FileReadQuad(savegame);
+}
+
+void doV0_6_0_0SaveGame( int savegame )
+{
+    // nothing, just increased inventory limits, invalidating old save games.
 }
 
 
