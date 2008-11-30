@@ -209,7 +209,7 @@ void flood_door()
             TextBox( T_DARIN,   "Hrm.  When'd this flood door get installed?",
                         "",
                         "");
-            TextBox( T_CRYSTAL, "'brought to you by the Paradise Isle",
+            TextBox( T_CRYSTAL, "'Brought to you by the Paradise Isle",
                         "Chamber of Commerce'?!",
                         "");
             TextBox( T_DARIN,   "Let's find how to open this!",
@@ -280,9 +280,9 @@ void bert()
                 
         TextBox(T_DARIN, "Oh yeah, I heard that they finally", "implemented it!", "I can't wait!");
         
-        TextBoxM(T_MANTA, "Actually, that's what I'm here to","tell you.","");        
-        TextBoxM(T_MANTA, "The battle system is basically","finished, but they found some","pretty bad bugs at the last");
-        TextBox(T_MANTA, "minute, so it's been disabled for","the time being.","");
+        TextBoxM(T_MANTA, "Actually, that's what I'm here to tell","you.","");        
+        TextBoxM(T_MANTA, "The battle system is basically finished,","but they found some pretty bad bugs","at the last minute, so it's been");
+        TextBox(T_MANTA, "disabled for the time being.","","");
         TextBox(T_DARIN, "You know, I can only be teased so much", "before it stops being fun.", "");
         TextBox(T_MANTA, "We'll see about that!","","");
         

@@ -150,7 +150,7 @@ Capacitor_Array 129 -       -               -               50      "Enables Sar
 Solar_Lens      129 -       -               -               50      "Enables Sara's 'Sunray' skill.|ATK+5, resist Enervate, Blind and Fugue"
 Turbocharger    129 -       -               -               50      "Enables Sara's 'Turbo' skill.|REA+1, resist Tangle"
 Photoaccumulator 129 -      -               -               50      "Enables Sara's 'Charge' skill.|HP+5, resist stat reducers"
-Neutralizer     129 -       -               -               50      "Enables Sara's 'Neutro' skill.|MGR+3, END+3, DEF+3, reduce ElementWeak, Depress, and Fragile"
+Neutralizer     129 -       -               -               50      "Enables Sara's 'Neutro' skill.|MGR+3, END+3, DEF+3, resist ElementWeak, Depress, and Fragile"
 Antimagic_Field 129 -       -               -               50      "Enables Sara's 'Negate' skill.|MGR+6, attacks add Silence"
 
 Headband        129 -       -               -               50      "For when you want something on your head, but a hat is too much.|DOD+3"
