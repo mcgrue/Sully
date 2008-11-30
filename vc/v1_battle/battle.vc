@@ -1717,28 +1717,12 @@ void makeLevelUpIndicatorDisappear() {
     mcg_turn_invisible(getCurrentMcGIdx());
 }
 
-string _determineSpriteAnimation( int bidx, int pidx ) {
-    string anim;
-
-    if( bat_is_dead(bidx,pidx) ) {
-        anim = "DEATH";
-    } else if(bat_is_weak(bidx,pidx)) {
-        anim = "WEAK";
-    } else {
-        anim = "IDLE";
-    }
-
-    return anim;
-}
-
 void setStartingBattleSpriteAnimations( int ally_party_idx, int sprite_idx )
 {
     string anim;
     int bat_spr_ref;
 
     anim = _determineSpriteAnimation(ally_party_idx,PARTY_ALLY);
-
-Log( "ally_party_idx ["+str(ally_party_idx)+"]: "+bat_getName(ally_party_idx,PARTY_ALLY)+" ("+anim+")" );
 
     ChangeSpriteAnimation( ally_party_idx, PARTY_ALLY, anim );
 }

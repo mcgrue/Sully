@@ -85,11 +85,11 @@ string sprfile_dir      = "res/images/sprites/";
 #define UNEQUIP_ARMOR_OK 1
 
 // ELEMENT RESISTANCE DEFINES - indices for lists of elemental resistances
-#define ABSORB_ELEMENT 0
-#define NEGATE_ELEMENT 1
-#define HALVE_ELEMENT 2
-#define DOUBLE_ELEMENT 3
-#define MAX_RESISTS 4
+#define ABSORB_ELEMENT  0
+#define NEGATE_ELEMENT  1
+#define HALVE_ELEMENT   2
+#define DOUBLE_ELEMENT  3
+#define MAX_RESISTS     4
 
 
 //STAT DEFINES - indexes for growable-stats arrays.
@@ -330,8 +330,8 @@ Cast master_cast[MAX_CAST]; //the master array of cast members.
 struct Item {
     string  name;   //name.  Must be unique.
     string  desc;   //description.  FLUFF.
-    int icon;   //index to icon
-    int price;  //base price for the item.  value of zero or less prevents sale.
+    int icon;       //index to icon
+    int price;      //base price for the item.  value of zero or less prevents sale.
 
     int use_flag;   //specifies if it can be used in battle, menu, or both.
 
@@ -340,14 +340,14 @@ struct Item {
 
     int equ_classes[MAX_CLASSES]; //master_class[] index references to the classes that can equip this item
 
-    int equ_slot;   //the slot this equipment can be put in.
+    int equ_slot;           //the slot this equipment can be put in.
     string  equ_modcode;    //a special string representing what happens when this equipment is put on or taken off.
 
     string equ_immune;      // Comma-delimited list of immune statuses granted by equipment
     string equ_auto;        // Comma-delimited list of automatic statuses granted by equipment
 
     string equ_resist[MAX_RESISTS]; // Comma-delimited lists of elemental affinities granted by equipment
-    string equ_element;     // Comma-delimited list of elements attached to weapon attacks granted by equipment.
+    string equ_element;             // Comma-delimited list of elements attached to weapon attacks granted by equipment.
 }
 
 //the master array of items.

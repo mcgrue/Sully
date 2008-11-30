@@ -540,8 +540,7 @@ int __bat_getPidxFromSpriteRef( int sprite_ref ) {
     return -1;
 }
 
-void bat_updateBattleSpriteAnimations( int bidx, int pidx )
-{
+string _determineSpriteAnimation( int bidx, int pidx ) {
     string anim;
 
     if( bat_is_dead(bidx,pidx) ) {
@@ -551,6 +550,13 @@ void bat_updateBattleSpriteAnimations( int bidx, int pidx )
     } else {
         anim = "IDLE";
     }
+
+    return anim;
+}
+
+void bat_updateBattleSpriteAnimations( int bidx, int pidx )
+{
+    string anim = _determineSpriteAnimation(bidx,pidx);
 
     ChangeSpriteAnimation( bidx,pidx, anim );
 }

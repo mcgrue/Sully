@@ -9,10 +9,12 @@
 /// Version number in 127.255.255.255 format, byte 4 ->1
 #define VERSION_4_BYTE 0
 #define VERSION_3_BYTE 0
-#define VERSION_2_BYTE 5
+#define VERSION_2_BYTE 6
 #define VERSION_1_BYTE 0
-#define VERSION_STRING "(0.0.5.0) - Sully savefile format rc1"
+#define VERSION_STRING "(0.0.6.0) - Sully savefile format rc1"
 
+/// 0.0.6.0 upped the inventory limits.  We got more stuff!
+/// 0.0.5.0 Lost to time!
 /// 0.0.4.0 Added the CTR stat and the condition string. (Gayo)
 /// 0.0.3.0 Added (something, undocumented)
 /// 0.0.2.0 Added keyconfig vars to savegame.
@@ -91,13 +93,13 @@ void MenuControlSave()
     {
         MenuHappyBeep();
         MenuClearDisplay(); // Free images and data used for display from memory
-        
+
         if( _title_menu )
         {
             _title_menu_load_done = 1;
             return;
         }
-        
+
         MenuRoot(); // Return to main menu
     }
 }
@@ -148,9 +150,9 @@ void MenuBlitSaveSlot(int location, string text, int image)
 // Clips long descriptions, no other error detection
 {
     int i;
-    
+
     String delim = chr(10); // was previously "|";
-    
+
     text = WrapText(menu_font[0], text, 125); // Wrap any text passed
     int lines = TokenCount(text, "|"); // Count lines used
     if (lines > 2) // If there are more than two lines
@@ -226,7 +228,7 @@ string ReadSystemTime(int filehandle)
 }
 
 // Saves the current position in the game to file specified
-// This uses a lot of arTemp slots, so make sure MAX_SCRATCH is 
+// This uses a lot of arTemp slots, so make sure MAX_SCRATCH is
 // at least as big as (max cast size)*(number of equip slots).
 // In Sully this is just 10*5=50 so the scratch of 1000 is plenty!
 void MenuSaveGame(int slot)
@@ -277,9 +279,9 @@ void MenuSaveGame(int slot)
         FileWriteQuad(savegame, MAX_EQUIP_SLOTS);
         for (yc = 0; yc <  MAX_CAST; yc++)
         {
-            // Level, XP and cur HP/MP are saved first. By saving these things 
+            // Level, XP and cur HP/MP are saved first. By saving these things
             // before dequipping gear we make the assumption that changing gear
-            // won't alter then. Gear actually CAN alter cur HP/MP by lowering 
+            // won't alter then. Gear actually CAN alter cur HP/MP by lowering
             // the max below the current value, but this happens at a higher
             // level than the equip/dequip functions called here, so we can
             // be confident that they'll remain untouched.
@@ -287,24 +289,24 @@ void MenuSaveGame(int slot)
             FileWriteQuad(savegame, master_cast[yc].exp);
             FileWriteQuad(savegame, master_cast[yc].cur_hp);
             FileWriteQuad(savegame, master_cast[yc].cur_mp);
-            // First things first, store  all equipment so it can be removed safely. This is done to 
-            // ensure that only the true values are saved. Then everything is re-equipped when you 
-            // reload, so that the game can robustly handle it when you save, quit, change equipment 
-            // stats, and reload. Yes, this does mean that the game is removing EVERYTHING from 
+            // First things first, store  all equipment so it can be removed safely. This is done to
+            // ensure that only the true values are saved. Then everything is re-equipped when you
+            // reload, so that the game can robustly handle it when you save, quit, change equipment
+            // stats, and reload. Yes, this does mean that the game is removing EVERYTHING from
             // EVERYBODY and then re-equipping it every time you save. Who knew, eh?
             for (xc = 0; xc < MAX_EQUIP_SLOTS; xc++)
-            {           
+            {
                 arTemp[(yc*MAX_EQUIP_SLOTS)+xc] = master_cast[yc].equipment[xc];
                 // Unequip gear to get true stat, skill and condition information.
                 // This function differs from the top-level dequipper in that it
                 // doesn't alter current HP/MP if they're now too high, that it
                 // doesn't give you a copy of the item in inventory, and that it
                 // doesn't account for changes to condition. The first two things
-                // are good in this context; the third is done explicitly later.                
+                // are good in this context; the third is done explicitly later.
                 _removeEquipment(yc,xc);
             }
             /// now rebuild the status and element modifiers.
-            ResetAllyEquipmentModifiers(yc);                    
+            ResetAllyEquipmentModifiers(yc);
             // Now save stats.
             for (xc = 0; xc < MAX_STATS; xc++)
             {
@@ -321,7 +323,7 @@ void MenuSaveGame(int slot)
                 // during the dequip loop.
                 FileWriteQuad(savegame, arTemp[(yc*MAX_EQUIP_SLOTS)+xc]);
                 //log("Char " + str(yc) + " Slot " + str(xc) + ": " + str(arTemp[(yc*MAX_EQUIP_SLOTS)+xc]) + " " + str((yc*MAX_EQUIP_SLOTS)+xc));
-            }           
+            }
         }
     // Item Data
         FileWriteQuad(savegame, money); // Nearly forgot!
@@ -333,7 +335,7 @@ void MenuSaveGame(int slot)
             FileWriteQuad(savegame, supply_inventory[yc].quant);
         }
 
-        FileWriteQuad(savegame, _equip_count);      
+        FileWriteQuad(savegame, _equip_count);
         FileWriteQuad(savegame, MAX_EQUIPMENT);
         for (yc = 0; yc <  MAX_EQUIPMENT; yc++)
         {
@@ -372,12 +374,12 @@ void MenuSaveGame(int slot)
         FileWriteString(savegame, curmap.path);
         FileWriteQuad(savegame, entity.x[playerent]);
         FileWriteQuad(savegame, entity.y[playerent]);
-        
-///// BEGIN 0.0.2.0 
+
+///// BEGIN 0.0.2.0
 
     // Keyconf data
         FileWriteQuad(savegame, CURRENT_KEYCOUNT);
-        
+
         for( i=0; i<32; i++ )
         {
             if( i < CURRENT_KEYCOUNT )
@@ -389,10 +391,10 @@ void MenuSaveGame(int slot)
                 FileWriteQuad(savegame, 0);
             }
         }
-        
+
         FileWriteQuad(savegame, _keymode);
 ///// BEGIN 0.0.3.0
-    
+
     //cast skill data
         FileWriteQuad(savegame, MAX_CAST);
 //Log( "Wrote a quad (MAX_CAST): "+str(MAX_CAST) );
@@ -407,21 +409,21 @@ void MenuSaveGame(int slot)
                 FileWriteQuad( savegame, master_cast[yc].skills[xc] );
             }
         }
-        
-///// BEGIN 0.0.4.0 
+
+///// BEGIN 0.0.4.0
         for(xc = 0; xc < MAX_CAST; xc++)
         {
             FileWriteString(savegame, master_cast[xc].condition);
         }
 
-///// BEGIN 0.0.5.0 
+///// BEGIN 0.0.5.0
 
         FileWriteQuad(savegame, battle_avoidance);
-        
-///// END OF SAVE FILE  
+
+///// END OF SAVE FILE
     // Footer
         FileWriteQuad(savegame, FileCurrentPos(savegame));
-        
+
     FileClose(savegame);
     FreeImage(mini);
     FreeImage(screenshot);
@@ -429,37 +431,37 @@ void MenuSaveGame(int slot)
     for(yc = 0; yc < MAX_CAST; yc++)
     {
         for (xc = 0; xc < MAX_EQUIP_SLOTS; xc++)
-        {           
+        {
             // Don equipment using temporarily saved data.
             if (arTemp[(yc*MAX_EQUIP_SLOTS)+xc] >= 0)
                 _applyEquipment(yc, arTemp[(yc*MAX_EQUIP_SLOTS)+xc], xc);
         }
         /// restore original status and element modifiers.
-        ResetAllyEquipmentModifiers(yc);                
+        ResetAllyEquipmentModifiers(yc);
     }
 
 }
 
 // Loads a game position from file specified.
-// This uses a lot of arTemp slots, so make sure MAX_SCRATCH is 
+// This uses a lot of arTemp slots, so make sure MAX_SCRATCH is
 // at least as big as (max cast size)*(number of equip slots).
 // In Sully this is just 10*5=50 so the scratch of 1000 is plenty!
 void MenuLoadGame(int slot)
 {
     log( "MenuLoadGame("+str(slot)+")" );
-    
+
     int xc, yc, i, xcoord, ycoord;
     string mapname;
     int savegame = FileOpen("save/save"+ThreeDigit(slot)+".sve", FILE_READ);
     // Header Size
-    
+
     int header_size = FileReadQuad(savegame);
     int version_number = FileReadQuad(savegame);
 
     // Check that there's enough scratch space to do the equipment-remembering.
     // We need one space for each slot for each cast member.
     if (MAX_SCRATCH < MAX_CAST * MAX_EQUIP_SLOTS) ErrorHandler("MenuSaveGame(): Not enough scratch space to handle equipment shuffling. Make sure MAX_SCRATCH is at least as big as MAX_CAST*MAX_EQUIP_SLOTS (" + str(MAX_CAST*MAX_EQUIP_SLOTS) + ").");
-    
+
         FileSeekPos(savegame, header_size, SEEK_SET);
     // Party Data
         curpartysize = FileReadQuad(savegame);
@@ -472,7 +474,7 @@ void MenuLoadGame(int slot)
         if (FileReadQuad(savegame) != MAX_CAST) ErrorHandler("Your MAX_CAST is screwed");
         if (FileReadQuad(savegame) != MAX_STATS) ErrorHandler("Your MAX_STATS is screwed");
         if (FileReadQuad(savegame) != MAX_EQUIP_SLOTS) ErrorHandler("Your MAX_EQUIP_SLOTS is screwed");
-        ClearCast(); 
+        ClearCast();
         for (yc = 0; yc <  MAX_CAST; yc++)
         {
             master_cast[yc].level = FileReadQuad(savegame);
@@ -484,9 +486,9 @@ void MenuLoadGame(int slot)
                 master_cast[yc].stats[xc] = FileReadQuad(savegame);
             }
             for (xc = 0; xc <  MAX_EQUIP_SLOTS; xc++)
-            {               
+            {
                 // We don't want to equip stuff just yet, so let's load it to a
-                // temporary location and then equip it at the end.             
+                // temporary location and then equip it at the end.
                 arTemp[(yc*MAX_EQUIP_SLOTS)+xc] = FileReadQuad(savegame);
                 //log("Char " + str(yc) + " Slot " + str(xc) + ": " + str(arTemp[(yc*MAX_EQUIP_SLOTS)+xc]) + " " + str((yc*MAX_EQUIP_SLOTS)+xc));
             }
@@ -560,18 +562,18 @@ void MenuLoadGame(int slot)
         else if( version_number == EncodeVersionNumber(0,0,4,0) )
         {
             doV0_2_0_0SaveGame( savegame );
-            doV0_3_0_0SaveGame( savegame );         
+            doV0_3_0_0SaveGame( savegame );
             doV0_4_0_0SaveGame( savegame );
-            doSavegameFooter( savegame, slot, xc, yc, "0,0,4,0" );                      
-        }       
+            doSavegameFooter( savegame, slot, xc, yc, "0,0,4,0" );
+        }
         else if( version_number == EncodeVersionNumber(0,0,5,0) )
         {
             doV0_2_0_0SaveGame( savegame );
-            doV0_3_0_0SaveGame( savegame );         
+            doV0_3_0_0SaveGame( savegame );
             doV0_4_0_0SaveGame( savegame );
             doV0_5_0_0SaveGame( savegame );
             doSavegameFooter( savegame, slot, xc, yc, "0,0,5,0" );
-        }       
+        }
         else
         {
             FileClose(savegame);
@@ -579,7 +581,7 @@ void MenuLoadGame(int slot)
             log( "Error, version was: '"+str(version_number)+"'" );
             exit("");
         }
-        // And we're done! Now it's time to equip all the gear from where it was 
+        // And we're done! Now it's time to equip all the gear from where it was
         // temporarily stored.
         for (yc = 0; yc <  MAX_CAST; yc++)
         {
@@ -587,13 +589,13 @@ void MenuLoadGame(int slot)
             {
                 //log("Char " + str(yc) + " Slot " + str(xc) + ": " + str(arTemp[(yc*MAX_EQUIP_SLOTS)+xc]) + " " + str((yc*MAX_EQUIP_SLOTS)+xc));
                 if (arTemp[(yc*MAX_EQUIP_SLOTS)+xc] >= 0)
-                {                   
+                {
                     _applyEquipment(yc, arTemp[(yc*MAX_EQUIP_SLOTS)+xc], xc);
                 }
             }
             /// restore status and element modifiers.
-            ResetAllyEquipmentModifiers(yc);                            
-        }       
+            ResetAllyEquipmentModifiers(yc);
+        }
         // Go to the appropriate map.
         V1_MapSwitch(mapname, xcoord / 16, ycoord / 16, TBLACK);
 }
@@ -603,7 +605,7 @@ void doV0_2_0_0SaveGame( int savegame )
 {
     int i, numkeys;
 
-    // next 34 quads: 
+    // next 34 quads:
     // 0: CURRENT_KEYCOUNT of savefile (check this against present one, error if different)
     // 1-32: the key vals, up to 32 different ones.  If you've modded for > 32 keys, a new format is in order, BITCH.
     // 33: the _key_mode of the savefile.
@@ -622,7 +624,7 @@ void doV0_2_0_0SaveGame( int savegame )
             if (i<numkeys) _my_keys[i] = FileReadQuad(savegame);
             // otherwise the value is padding, so just skip over it
             else FileReadQuad(savegame);
-        }       
+        }
         _keymode = FileReadQuad(savegame); // Read keymode (final of the 34 key quads)
         ReinforceKeymapping();
     }
@@ -648,15 +650,15 @@ void doV0_2_0_0SaveGame( int savegame )
 
         _keymode = arTemp[33];
         ReinforceKeymapping();
-    }*/ 
-    
+    }*/
+
 }
 
 
 void doV0_3_0_0SaveGame( int savegame )
 {
     int xc, yc;
-    
+
     if( FileReadQuad(savegame) != MAX_CAST ) ErrorHandler("Your MAX_CAST is screwed (skill section)");
 
     //master_cast[MAX_CAST].skills[MAX_SKILLS]
@@ -664,11 +666,11 @@ void doV0_3_0_0SaveGame( int savegame )
     for (yc = 0; yc <  MAX_CAST; yc++)
     {
         master_cast[yc].skillcount = FileReadQuad(savegame);
-        
+
         if( master_cast[yc].skillcount < 0 )
             master_cast[yc].skillcount = 0;
-        
-        
+
+
         if( master_cast[yc].skillcount < 0 )
         {
             master_cast[yc].skillcount = 0;
@@ -687,7 +689,7 @@ void doV0_4_0_0SaveGame( int savegame )
     for (xc=0; xc < MAX_CAST; xc++)
     {
         master_cast[xc].condition = FileReadString(savegame);
-    }   
+    }
 }
 
 void doV0_5_0_0SaveGame( int savegame )
@@ -718,7 +720,7 @@ void PreLoadUpkeep()
 {
     //reset to the default mapping... if there's a custom mapping it'll be loaded.
     ResetToDefaultKeymapping();
-    
+
     ClearVCLayer();
     cameratracking = 1;
     _title_menu = 0;
