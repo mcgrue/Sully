@@ -468,7 +468,7 @@ void mcg_delete( int idx )
             McGrender_layers[mcgV_heap[idx].layer_idx].head_idx = -1;
         }
     } else {
-        WARNING_ERROR( "mcg_delete tried to delete a mcgrender heap item("+str(idx)+") with an invalid layer indice ("+str(mcgV_heap[idx].layer_idx)+").  This really shouldn't happen." );
+//        WARNING_ERROR( "mcg_delete tried to delete a mcgrender heap item("+str(idx)+") with an invalid layer indice ("+str(mcgV_heap[idx].layer_idx)+").  This really shouldn't happen." );
     }
 
     mcgV_heap[idx].prev_idx = -1;

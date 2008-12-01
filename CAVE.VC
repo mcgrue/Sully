@@ -420,8 +420,6 @@ void replaceSandColumns()
 
 void start()
 {
-    battles_enabled_here = 1;
-
     playerstep=0;
 
     cavePrep();

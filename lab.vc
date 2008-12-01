@@ -1,8 +1,6 @@
 /// The autoexec function for lab.map
 void start()
 {
-    battles_enabled_here = 1;
-
     playerstep=16;
 
     SaveDisable();

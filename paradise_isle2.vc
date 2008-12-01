@@ -573,5 +573,5 @@ void exit_house()
 
 void normal_tree()
 {
-    TextBox( T_DARIN, "This is a normal tree. It has to work twice","as hard as a palm tree for half the","recognition.");
+    TextBox( T_DARIN, "This is a normal tree. It has to work","twice as hard as a palm tree for half","the recognition.");
 }

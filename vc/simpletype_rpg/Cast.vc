@@ -1381,20 +1381,15 @@ int _calcMyLevelFromMyXP( int cast_idx ) {
 
     int i, level, curexp;
 
-    curexp = GetXP(cast_idx);
-    // Total EXP required for each level and compare iteratively to EXP currently possessed.
-    // We'll start at level 2 (at spot 1 in the array) under the assumption that level 1
-    // requires 0 XP. Because otherwise the game would barf if level 1 DIDN'T require 0 XP,
-    // and nobody wants that.
+    curexp = GetXP(cast_idx);    
     for (i=1;i<MAX_LEVELS;i++) {
         if( GetXPRequired(cast_idx, i+1) > curexp ) {
             // If the character doesn't have the XP required for level i+1, return i
             return i;
         }
     }
-
     //we've reached max. Damn!
-    return MAX_LEVELS;
+    return i;
 }
 
 /// Helper for BM_MakeCastMenu, returns a string of all skills in a group.  shows MP cost if mp_flag is true.

@@ -1,7 +1,5 @@
 void start() 
 {
-    battles_enabled_here = 1;
-
     SaveDisable(); //cannot save in towns.
         
     InitMap();

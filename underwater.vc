@@ -2,6 +2,10 @@
 void start()
 {
     SaveDisable(); //cannot save in dungeons.
+    SetBattleArea("Undersea_Cave");
+    SetBattleBackground("caves.png");
+    if (0) DisableBattles(); // before the mascot fight, there are no random encounters...
+    else EnableBattles();    // ...but after the mascot fight, the whole cave is fair game!
     
     arMapTemp[0] = 0;   //warp unstep
     arMapTemp[1] = 0;   //red unstep
@@ -26,9 +30,9 @@ void start()
     if (flags[CHEST_UNDERSEA_A]) SetTile(36, 14, 2, 568);
     if (flags[CHEST_UNDERSEA_B]) SetTile(90, 75, 2, 568);   
 
-
     //do all the map init stuff (defined in system.vc)
     InitMap();
+    
     
     V1_StartMusic("res/music/AQUASUB.IT");
 }
@@ -65,7 +69,7 @@ void chestB()
 {   
     if( OpenTreasure(CHEST_UNDERSEA_B, 90, 75, 568, 2) )
     {
-        FindMoney( 400 );
+        FindMoney( 200 );
     }
 }
 
@@ -281,14 +285,14 @@ void bert()
         TextBox(T_DARIN, "Oh yeah, I heard that they finally", "implemented it!", "I can't wait!");
         
         TextBoxM(T_MANTA, "Actually, that's what I'm here to tell","you.","");        
-        TextBoxM(T_MANTA, "The battle system is basically finished,","but they found some pretty bad bugs","at the last minute, so it's been");
-        TextBox(T_MANTA, "disabled for the time being.","","");
+        TextBoxM(T_MANTA, "The battle system is basically finished,","but they found some pretty bad bugs","at the last minute, so it's been disabled");
+        TextBox(T_MANTA, "for the time being.","","");
         TextBox(T_DARIN, "You know, I can only be teased so much", "before it stops being fun.", "");
         TextBox(T_MANTA, "We'll see about that!","","");
         
         flags[F_SEA_BERT] = 1; //trip this conversation flag.
     }
-    else if (flags[F_SEA_BERT] <= 0) // before surprise battle, but after talking to Bert.
+    else if (flags[F_SEA_BERT] == 1) // before surprise battle, but after talking to Bert.
     {
         TextBox(T_DARIN, "You know, I can only be teased so much", "before it stops being fun.", "");
         TextBox(T_MANTA, "We'll see about that!","","");

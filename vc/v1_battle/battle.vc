@@ -54,6 +54,8 @@ void bLog( String s )
 /// in it's definition entry but the specified callfunc does not exist.
 #define BATTLE_GROUP_CALLFUNC_STRICT 0
 
+#define BATTLE_BACKGROUND_PATH "res/images/battle/backgrounds/"
+
 /// the battle effect triggers
 #include "vc/v1_battle/battle_triggers.vc"
 
@@ -95,6 +97,28 @@ int bs_enemy_sprite_ref_count;
 
 /// just a container for cleanup purposes...
 int previous_battle_allycount;
+
+/// This holds the battle-group key for the current area.
+string battle_key = "";
+
+// Set/get the current battle-group key
+string CurrentBattleArea() { return battle_key; }
+void SetBattleArea(string new_key) { battle_key = new_key; }
+
+
+string battle_background_filename = "";
+
+// Set/get the current battle background filename (relative to BATTLE_BACKGROUND_PATH).
+// The actual file is loaded as needed.
+string BattleBackground() { return battle_background_filename; } // returns location relative to BATTLE_BACKGROUND_PATH
+void SetBattleBackground(string bgfile) { battle_background_filename = bgfile; } // sets location relative to BATTLE_BACKGROUND_PATH
+
+
+// Set/get the random encounter status (on or off)
+int BattlesEnabled() { return battles_enabled_here; }
+void EnableBattles() { battles_enabled_here = 1; }
+void DisableBattles() { battles_enabled_here = 0; }
+
 
 // this is to return 1 when we're in a battle, 0 when we're not!
 int IsInBattle()

@@ -13,11 +13,11 @@
 
 
 
-#define PARTY_NULL  -8008  ///specifies that the batent_ref in this battle_queue_entry is not a party at all,
+#define PARTY_NULL  0  ///specifies that the batent_ref in this battle_queue_entry is not a party at all,
                            /// and should be checked for special processing.
 
-#define PARTY_ALLY  31337  ///specifies that the batent_ref in this battle_queue_entry is in the ally party.
-#define PARTY_ENEMY 666    ///specifies that the batent_ref in this battle_queue_entry is in the enemy party.
+#define PARTY_ALLY  1  ///specifies that the batent_ref in this battle_queue_entry is in the ally party.
+#define PARTY_ENEMY 2    ///specifies that the batent_ref in this battle_queue_entry is in the enemy party.
 
 #define MAX_BATTLE_QUEUE_ENTRIES            64  ///the maximum number of battle queue entries.
 #define MAX_BATTLE_QUEUE_ENTRIES_PLUS_ONE   65  ///A stupid hack so we have a 'temp' slot for shuffling things around.

@@ -1,7 +1,5 @@
 void start() 
 {
-    battles_enabled_here = 1;
-
     //if( ! (flags[F_RODNE_FLASHBACK] ||flags[F_LAB_SAVE_CRYSTAL]) )     //bad for compiler
     //DeMorgan, I'll see you in HELL!
     //if( (flags[F_RODNE_FLASHBACK] || flags[F_LAB_SAVE_CRYSTAL]) == 0 ) //also bad
