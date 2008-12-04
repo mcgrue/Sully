@@ -1,9 +1,0 @@
-// Bunny enemy, drawn by hahn.
-//name		wd	ht	per_row	rows	padding
-momma_bunny.gif	16	16	3	1	1
-anim idle F0W15F1W15F2W15B
-anim weak F0W15F1W15F2W15B
-anim attack F0W15F1W15F2W15
-anim hit F0 W45
-anim death F0
-//

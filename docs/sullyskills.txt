@@ -1,12 +1,13 @@
-SULLY SKILLS v0.4
+SULLY SKILLS v0.5
 
 Changes:
 v0.1: First version
 v0.2: Taser is resisted by MGR, not Defense Value. Added some Fortune effects. Weakened Baffle. Added new skills to Black Magic, White Magic, and Gadgetry. Added the Skill Acquisition and Starting Skills sections.
 v0.3: Modified the effects of a few skills so they add status effects rather than doing other, weirder things. Panacea now removes Grave, but only if the target is still alive. The stuff Dispel removes is made explicit; there are now some status effects (for example, the ElementWeak group) that can't be removed by anything except Redecorate. Jackpot's been changed -- it's drastically weaker now, targets an entire party. Monkeywrench no longer imrpoves FER. Cleave can now miss. Sweep no longer has reduced accuracy. Impale is a little stronger. Seal is now party-ranged. Added Quincunx to Swordsmanship, Soul Bleed and Snuff Spirit to Shake Spear, and Immunize and Chaos Orb to Gadgetry.
 v0.4: Changed Mozilla to Iceweasel, and added Mozilla as a separate ability. Glogy is more likely to succeed, and Sancho never fails. Desperation is stronger, but more expensive. Rush now raises FER to 999 (rather than 100), just in case. Added some general clarifications to moves like Magic Sword and Frenzy. HP/MP Bond can be used outside combat. Slap and Cancel now work on bosses, but not very well. Snake Eyes now reduces you to 2 HP, not 1, as best befits the name. The way Fortune works with the Rabbit's Foot is simpler now. Neon Justice now adds Grave. Lance and Galfrey have a few more starting skills, and Crystal's are now set.
+v0.5: Most MP costs have been adjusted, and skills now have their Power listed. Grave is now White Magic. Invisibility is gone, and Sneak and Decoy are different. Made a few other minor tweaks to power.
 
-Exact MP costs and charge/delay values can be found in the formal skill datafile. Powers aren't stated explicitly anywhere, but I have them kicking around someplace in my personal notes.
+Charge/delay values can be found in the formal skill datafile.
 
 If it's not stated explicitly (and if the skill isn't referred to as being "a normal attack"), assume a skill always hits.
 Note that skills referred to as being modified normal attacks get as many hits as the person has strikes, and if the target is killed midway, excess strikes will hit another enemy, same as normal attacks..
@@ -27,12 +28,13 @@ Note that skills referred to as being modified normal attacks get as many hits a
  STARTING SKILLS
 -----------------
 DARIN: Magic Sword
-CRYSTAL: Heal, Aura Heal, Panacea, Refresh, Revive, Quicken, Barrier, Shield, Might, Enlighten, Regen
+CRYSTAL (initial): Heal, Panacea, Revive, Barrier, Shield
+CRYSTAL (rescued): Heal, Aura Heal, Panacea, Refresh, Revive, Quicken, Barrier, Shield, Might, Enlighten, Regen
 DEXTER: Flame, Ice, Bolt
 LANCE: Sleep, Trouble, Backlash
 PAXTON: Heal, Panacea, Firefox, Thunderbird, Iceweasel, Mozilla
 SARA: Monkeywrench, Scanner
-GALFREY: Dark Spear, Blast Quads, Rush, Armor Break, Brain Stab
+GALFREY: Dark Spear, Blast Quads, Rush, Brain Stab
 MR. E: (none)
 
 -------------
@@ -40,106 +42,105 @@ MR. E: (none)
 -------------
 Black Magic is generally susceptible to Reflect/Nullify.
 
-	Flame (Low): Fire attack. Single-range. Power (Low).
-	Inferno (Mid): Fire attack. Party-range. Power (Mid).
-	Mega Flame (Mid): Fire attack. Single-range. Power (High).
-	Ice (Low): Ice attack. Single-range. Power (Low).
-	Blizzard (Mid): Ice attack. Single-range. Power (Mid).
-	Mega Ice (Mid): Ice attack. Party-range. Power (High).
-	Bolt (Low): Electric attack. Single-range. Power (Low).
-	Storm (Mid): Electric attack. Party-range. Power (Mid).
-	Mega Bolt (Mid): Electric attack. Single-range. Power (High).
-	Baffle (Low): Adds Confuse. Party-range, base success 50%.
-	Charm (Low): Adds Charm. Single-range, base success 75%.
-	Fragile (Low): Adds Fragile. Single-range, always hits.
-	Depress (Low): Adds Depress. Single-range, always hits.
-	Gank (Mid): Adds Death. Single-range, base success 50%.
-	Blood Suck (Low): Deals Drain-elemental damage, drains HP. Single-range, power (Low).
-	Soul Drain (V.Low): Deals Drain-elemental MP damage, drains MP. Single-range, power (V.Low)
-	Divide (Mid): Halves the HP of all enemies, rounding up. This is Reduction-elemental damage and some guys halve or are immune to it (no one doubles or absorbs it, though). Always hits.
-	Sleep (Low): Adds Sleep. Single-range, base success 75%.
-	Stun (Low): Adds Paralysis. Single-range, base success 75%.
-	Miasma (Low): Adds Poison. Party-range, base success 100%.
-	Dispossess (Low): Steals item. Works only as well as an ordinary Steal action.
-	Trouble (1 MP): Immediately get into a fight, if you're in an area where you can. Menu only. Can be used in a few places to summon secret enemies or bosses that can't be met any other way, like the Maya Guitar.
-	Penultima (High): Non-elemental attack. Single-range. Power (V.High).
-	Fragile All (Mid): Adds Fragile. Party-range, always hits.
-	Depress All (Mid): Adds Depress. Party-range, always hits.
-	Imbalance (Mid): Make target weak to a random element (out of Holy, Dark, Fire, Ice, and Electric) that he was previously neutral towards. If he wasn't neutral towards anything, has no effect. Formally, this spell adds one of Holyweak, Darkweak, Fireweak, Iceweak, or Electricweak status, chosen as described. It can be used repeatedly on the same target, in which case it won't repeat the same weakness twice.
-	Grave (Low): Adds Grave. Party-range, always hits (even works on dead targets, unlike other statuses).
+	Flame (3 MP): Fire attack. Single-range. Power 20.
+	Inferno (8 MP): Fire attack. Party-range. Power 30.
+	Mega Flame (8 MP): Fire attack. Single-range. Power 45.
+	Ice (3 MP): Ice attack. Single-range. Power 20.
+	Blizzard (8 MP): Ice attack. Single-range. Power 30.
+	Mega Ice (8 MP): Ice attack. Party-range. Power 45.
+	Bolt (3 MP): Electric attack. Single-range. Power 20.
+	Storm (8 MP): Electric attack. Party-range. Power 30.
+	Mega Bolt (8 MP): Electric attack. Single-range. Power 45.
+	Baffle (2 MP): Adds Confuse. Party-range, base success 50%.
+	Charm (4 MP): Adds Charm. Single-range, base success 75%.
+	Fragile (3 MP): Adds Fragile. Single-range, always hits.
+	Depress (3 MP): Adds Depress. Single-range, always hits.
+	Gank (5 MP): Adds Death. Single-range, base success 50%.
+	Blood Suck (4 MP): Deals Drain-elemental damage, drains HP. Single-range, power 20.
+	Soul Drain (3 MP): Deals Drain-elemental MP damage, drains MP. Single-range, power 5
+	Divide (8 MP): Halves the HP of all enemies, rounding up. This is Reduction-elemental damage and some guys halve or are immune to it (no one doubles or absorbs it, though). Always hits.
+	Sleep (2 MP): Adds Sleep. Single-range, base success 75%.
+	Stun (5 MP): Adds Paralysis. Single-range, base success 75%.
+	Miasma (3 MP): Adds Poison. Party-range, base success 100%.
+	Dispossess (4 MP): Steals item. Works only as well as an ordinary Steal action.
+	Trouble (0 MP): Immediately get into a fight, if you're in an area where you can. Menu only. Can be used in a few places to summon secret enemies or bosses that can't be met any other way, like the Maya Guitar.
+	Penultima (18 MP): Non-elemental attack. Single-range. Power 90.
+	Fragile All (8 MP): Adds Fragile. Party-range, always hits.
+	Depress All (8 MP): Adds Depress. Party-range, always hits.
+	Imbalance (10 MP): Make target weak to a random element (out of Holy, Dark, Fire, Ice, and Electric) that he was previously neutral towards. If he wasn't neutral towards anything, has no effect. Formally, this spell adds one of Holyweak, Darkweak, Fireweak, Iceweak, or Electricweak status, chosen as described. It can be used repeatedly on the same target, in which case it won't repeat the same weakness twice.	
 
 -------------
  WHITE MAGIC
 -------------
 White Magic is generally susceptible to Reflect/Nullify.
 
-	Heal (Low) Heals. Power (Low). Single.
-	Aura Heal (Mid): Heals. Power (Low). Party.
-	Mega Heal (Mid): Power (Mid). Single.
-	Full Heal (High): Heals 9999 HP. Single-range.
-	Panacea (Low): Removes Poison, Enervate, Blind, Confuse, Charm, Silence, Seal, Sleep, Paralysis, and (if the target is alive) Grave. Single-range.
-	Refresh (Low): Removes Slow, Weak, Fragile, Depress, Tangle, Fugue. Single-range.
-	Dispel (Mid): Removes Quick, Might, Protect, Barrier, Accurate, Evade, Enlighten, Invincible, Lifeline, Regenerate, Nullify, Reflect, Counter, Neutro.
-	Revive (Mid): Revives with 25% HP. Single-range.
-	Mega Revive (V.High): Revives with full HP. Single-range.
-	Quicken (Mid): Adds Quick. Single-range.
-	Might (Low): Adds Might. Single-range.
-	Enlighten (Low): Adds Enlighten. Single-range.
-	Lifeline (Mid): Adds Lifeline. Single-range.
-	Regen (Low): Adds Regeneration. Single-range.
-	Shield (Mid): Adds Protect. Single-range.
-	Barrier (Mid): Adds Barrier. Single-range.
-	Reflect (Mid): Adds Reflect. Single-range.
-	Seal (Low): Adds Seal. Party-range, base success 75%.
-	Slow (Mid): Adds Slow. Single-range, always hits.
-	Invisibility (High): Have no random encounters for a while. Menu only.
-	Neon Justice (V.High): Holy attack. Party-range. Adds Grave (always, but only on living enemies). Power (High).
-	Punish (Low): Holy attack. Single-range. Power (Low).
-	Quicken All (High): Adds Quick. Party-range.
-	Might All (High): Adds Might. Party-range.
-	Enlighten All (Mid): Adds Enlighten. Party-range.
-	Regen All (Mid): Adds Regeneration. Party-range.
-	Barrier All (High): Adds Barrier. Party-range.
-	Shield All (High): Adds Protect. Party-range.
-	Slow All (High): Adds Slow. Party-range. Always hits.
+	Heal (4) Heals. Power 15. Single.
+	Aura Heal (10 MP): Heals. Power 20. Party.
+	Mega Heal (10 MP): Heals. Power 60. Single.
+	Full Heal (14 MP): Heals exactly 9999 HP. Single-range.
+	Panacea (4 MP): Removes Poison, Enervate, Blind, Confuse, Charm, Silence, Seal, Sleep, Paralysis, and (if the target is alive) Grave. Single-range.
+	Refresh (3 MP): Removes Slow, Weak, Fragile, Depress, Tangle, Fugue. Single-range.
+	Dispel (8 MP): Removes Quick, Might, Protect, Barrier, Accurate, Evade, Enlighten, Invincible, Lifeline, Regenerate, Nullify, Reflect, Counter, Neutro, Immune.
+	Revive (9 MP): Revives with 25% HP. Single-range.
+	Mega Revive (24 MP): Revives with full HP. Single-range.
+	Quicken (5 MP): Adds Quick. Single-range.
+	Might (3 MP): Adds Might. Single-range.
+	Enlighten (3 MP): Adds Enlighten. Single-range.
+	Lifeline (10 MP): Adds Lifeline. Single-range.
+	Regen (3 MP): Adds Regeneration. Single-range.
+	Shield (5 MP): Adds Protect. Single-range.
+	Barrier (5 MP): Adds Barrier. Single-range.
+	Reflect (7 MP): Adds Reflect. Single-range.
+	Seal (3 MP): Adds Seal. Party-range, base success 75%.
+	Slow (5 MP): Adds Slow. Single-range, always hits.	
+	Neon Justice (20 MP): Holy attack. Party-range. Adds Grave (always, but only on living enemies). Power 55.
+	Punish (4 MP): Holy attack. Single-range. Power 20.
+	Quicken All (13 MP): Adds Quick. Party-range.
+	Might All (8 MP): Adds Might. Party-range.
+	Enlighten All (8 MP): Adds Enlighten. Party-range.
+	Regen All (8 MP): Adds Regeneration. Party-range.
+	Barrier All (12 MP): Adds Barrier. Party-range.
+	Shield All (12 MP): Adds Protect. Party-range.
+	Slow All (12 MP): Adds Slow. Party-range. Always hits.
+	Grave (6 MP): Adds Grave. Party-range, always hits (even works on dead targets, unlike other statuses).
 
 ---------------
  FUCHSIA MAGIC
 ---------------
 Fuchsia Magic is generally susceptible to Reflect/Nullify.
 
-	Ravish (High): Reduces HP to 1. This counts as Reduction-elemental damage (see Divide). Single-target.
-	Fabulous (High): Adds Invincibility. Single-range.
-	Sex Bomb (High): Adds Charm. Always works unless target is immune. Party-target.
-	Redecorate (Mid): Removes all status effects except Rewarding on everyone (including dead). Targets both parties.
-	Death Magenta (V.High): Ultimate attack spell (non-elemental). Party-range, Power (V.High). 
+	Ravish (15 MP): Reduces HP to 1. This counts as Reduction-elemental damage (see Divide). Single-target.
+	Fabulous (5 MP): Adds Invincibility. Single-range.
+	Male Bomb (8 MP): Adds Charm. Always works unless target is immune. Party-target.
+	Redecorate (10 MP): Removes all non-permanent status effects except Rewarding on everyone (including dead). Targets both parties.
+	Death Magenta (30 MP): Ultimate attack spell (non-elemental). Party-range, Power 110. 
 
 ------
  JIVE
 ------
 	
-	Smoove (High):  Steals item. Is twice as likely to work as an ordinary theft. Single-range.
-	Strobe (Mid): Adds Blind. Party-range. Success 75%.
-	Move Buster (Low): Normal attack with STK+1, but substitute user's MAG for STR and substitute (Skill's Pwr) for user's ATK. Each hit has a 20% chance to add Confuse and a 20% chance to add Blind (unmodified by stats).
-	Funky Flow (Low): Adds Quick. Self only.
-	Bling Blast (High): Non-elemental magic attack. Deals damage based on party's total money (doesn't actually cost money to use, though). Single-target.
+	Smoove (12 MP):  Steals item. Is twice as likely to work as an ordinary theft. Single-range.
+	Strobe (6 MP): Adds Blind. Party-range. Success 75%.
+	Move Buster (5 MP): Normal attack with STK+1, but substitute user's MAG for STR (the attack still opposes target's END/DEF, not MGR). Each hit has a 20% chance to add Confuse and a 20% chance to add Blind (unmodified by stats).
+	Funky Flow (4 MP): Adds Quick. Self only.
+	Bling Blast (5 MP): Non-elemental magic attack. Power is equal to cbrt(money), maxing out at 80. Single-target. 
 
 
 ----------
  TRICKERY
 ----------
-Trickery skills are often limited more by charge/delay than by MP costs.
+Trickery skills are often limited more by charge/delay than by MP costs. They aren't generally susceptible to Reflect/Nullify.
 
-	Eagle Eye (Low): Adds Accurate. Single-range.
-	Air Guard (Low): Adds Evade. Single-range.
-	Blind (Low): Adds Blind. Single-range, base success 100%.
-	Tangle (Low): Adds Tangle. Single-range, always hits.
-	Retreat (Low): The whole party escapes automatically.
-	Decoy (0 MP): Removes user from combat and replaces him with a character called Decoy. This character cannot act or counterattack and has only 1 HP, but when he is killed he explodes, doing a bunch of non-elemental damage to the party responsible for his death. Unfortunately, the person who originally used the skill is gone for the rest of the fight. Decoy is immune to all status effects, good or bad.
+	Eagle Eye (2 MP): Adds Accurate. Single-range.
+	Air Guard (2 MP): Adds Evade. Single-range.
+	Blind (2 MP): Adds Blind. Single-range, base success 100%.
+	Tangle (2 MP): Adds Tangle. Single-range, always hits.
+	Retreat (2 MP): The whole party escapes automatically.
+	Decoy (10 MP): Adds Decoy status to user. Self only.
 	Backlash (0 MP): User gains Accurate, Evade, and Counter for a duration equal to the skill's wait time.
-	Sneak (Low): Reduce encounter rate for a time. Menu only.
-	Pillage (Low): Get money from an enemy. Amount is based on (but less than) its drop cash. Base success rate 75% (test HIT versus DOD). Can be used repeatedly on the same enemy.
-	Jackpot (Mid): Deals an amount of physical, non-elemental damage equal to the last two digits of the group's money total. However, it doesn't let on that this is how it calculates it. Party-target. Ignores defense, but is still reduced by Protect.
+	Sneak (6 MP): For a short time, greatly increase chance of surprising the enemy. Menu only.
+	Pillage (3 MP): Get money from an enemy. Amount is based on (but less than) its drop cash. Base success rate 75% (test HIT versus DOD). Can be used repeatedly on the same enemy.
+	Jackpot (6 MP): Deals an amount of physical (vs. END/DEF), non-elemental damage based on money total. The damage dealt is equal to the highest number that can be obtained from two consecutive digits of the total. For instance, if you had 1243 clams, it would do 43 damage. If you had 100 clams, it would do 10 damage. Party-target. Ignores defense, but is still reduced by Protect.
 
 
 --------
@@ -147,28 +148,28 @@ Trickery skills are often limited more by charge/delay than by MP costs.
 --------
 Summon skills have long charge times, but are not subject to Reflect or Nullify.
 
-	Firefox (Mid): Fire attack. Party-range. Power (High). Adds Confuse at 50%.
-	Iceweasel (Mid): Ice attack. Party-range. Power (High). Adds Seal at 50%.	
-	Thunderbird (Mid): Electric attack. Party-range. Power (High). Adds Sleep at 50%.
-	Mozilla (Mid): Non-elemental attack. Party-range. Power (High).
-	Joe (High): Holy attack. Party-range. Power (V.High). Adds Death at 33%.
-	Glogy (Mid): Adds Blind, Charm, Poison, Enervate, Seal, Sleep, and Paralysis at 75% each. Party-range.
-	Sancho (Mid): Adds Slow, Weak, Fragile, Depress, Tangle and Fugue. All hit automatically. Party-range.	
+	Firefox (12 MP): Fire attack. Party-range. Power 45. Adds Confuse at 50%.
+	Iceweasel (12 MP): Ice attack. Party-range. Power 45. Adds Seal at 50%.	
+	Thunderbird (12 MP): Electric attack. Party-range. Power 45. Adds Sleep at 50%.
+	Mozilla (12 MP): Non-elemental attack. Party-range. Power 45.
+	Joe (18 MP): Holy attack. Party-range. Power 60. Adds Death at 33%.
+	Sully (10 MP): Adds Blind, Charm, Poison, Enervate, Seal, Sleep, and Paralysis at 75% each. Party-range.
+	Sancho (10 MP): Adds Slow, Weak, Fragile, Depress, Tangle and Fugue. All hit automatically. Party-range.	
 
 
 ---------------
  SWORDSMANSHIP
 ---------------
 	
-	Sword Dance (Mid): Make a normal attack with doubled STK. 
-	Cleave (Low): If 250% of the user's normal attack damage would be enough to kill target enemy, deal that much damage. Otherwise, deal 1 damage. Single-range. Damage is always physical and non-elemental. Has a to-hit check the same as that of a normal attack.
-	Wave Blade (Low): Physical attack skill (not normal attack) at standard weapon damage. Uses equipped weapon's element. Party-range.
-	Counter (0 MP): Adds Counter. Self only.
-	Desperation (High): Deals non-elemental physical damage equal to the HP user is currently missing, ignoring defense (but not Protect). Single-target.
-	Flashblade (Low): Completely normal attack (has extremely low delay).
-	Stonewall (Low): For the duration of the skill, user gains Invincible. Self only.
+	Sword Dance (5 MP): Make a normal attack with doubled STK. 
+	Cleave (2 MP): If 250% of the user's normal attack damage would be enough to kill target enemy, deal that much damage. Otherwise, deal 1 damage. Single-range. Damage is always physical and non-elemental. Has a to-hit check the same as that of a normal attack.
+	Wave Blade (4 MP): Physical attack skill (not normal attack) at standard weapon damage. Uses equipped weapon's element. Party-range.
+	Counter (1 MP): Adds Counter. Self only.
+	Desperation (4 MP): Deals non-elemental physical damage equal to the HP user is currently missing, ignoring defense (but not Protect). Single-target.
+	Flashblade (3 MP): Normal attack that has a doubled FER and extremely low delay.
+	Stonewall (2 MP): For the duration of the skill, user gains Invincible. Self only.
 	Magic Sword (0 MP): Make a normal attack, but it's magical, not physical, and the enemy resists with MGR rather than with his defense value. Uses the weapon's own element. Rather than normal Attack Value, uses an effective Attack Value of (MAG*ATK).
-	Quincunx (High): Five physical blasts that always hit (not nornmal attacks). Each is a different element, in the order Fire, Ice, Electric, Dark, Holy. Single-target.
+	Quincunx (10 MP): Five physical blasts that always hit (not nornmal attacks, but use ATK*STR for damage). Each is a different element, in the order Fire, Ice, Electric, Dark, Holy. Single-target.
 
 
 -------------
@@ -182,7 +183,7 @@ Shake Spear skills never cost MP, so they're balanced by charge/delay.
 	Frenzy (0 MP): Make a normal attack with STK+1, but attack a different random living (HP > 0) target in the selected party for each strike. Party-range (random single targets within party).
 	Armor Break (0 MP): Adds Fragile. Single-range, 75% base hit rate (STR versus END). 
 	Rush (0 MP): Make a normal attack with halved HIT and 999 FER. 
-	Impale (0 MP): Perfectly kills anyone who is not immune to death (always works). Against those who are immune, does 5x the damage of a single strike (physical, uses weapon's element, not a normal attack). Single-range, always hits.
+	Impale (0 MP): Perfectly kills anyone who is not immune to death (always works). Against those who are immune, does 6x the damage of a single strike (physical, uses weapon's element, not a normal attack). Single-range, always hits.
 	Soul Bleed (0 MP): Adds Enervate. Single-range, 75% base hit rate (HIT versus DOD).
 	Snuff Spirit (0 MP): Physical non-elemental attack (not a normal attack). Single-range, always hits. Does 4.5x usual damage, but this is reduced by the percentage of his total MP that the target still has. Against targets with 0 max MP it does the full damage.
 	
@@ -191,16 +192,16 @@ Shake Spear skills never cost MP, so they're balanced by charge/delay.
  GADGETRY
 ----------
 	
-	Monkeywrench (0 MP): Normal attack with AntiMech element. Single-target. Machines are critically weak to the AntiMech element, while everyone else is immune to it. 
-	Grenade (Low): Physical non-elemental attack (not normal attack). Uses STR*MAG for damage, but does 3x the usual amount of damage. Can't critical, but can miss -- has a base hit rate of 50% (modified using HIT vs DOD, like an attack). Party-range.
-	Hypno-Ray (V.Low): Adds Sleep, Paralysis, Confuse and Enervate at 33% each. Single-target.
+	Monkeywrench (0 MP MP): Normal attack with AntiMech element. Single-target. Machines are critically weak to the AntiMech element, while everyone else is immune to it. 
+	Grenade (5 MP): Physical non-elemental attack (not normal attack). Uses STR*MAG for damage, but does 3x the usual amount of damage. Can't critical, but can miss -- has a base hit rate of 50% (modified using HIT vs DOD, like an attack). Party-range.
+	Hypno-Ray (3 MP): Adds Sleep, Paralysis, Confuse and Enervate at 33% each. Single-target.
 	Scanner (0 MP): See info on target. Single-range, always hits.
-	Bazooka (High): Physical non-elemental attack (not normal attack). Uses STR*MAG for damage, but does 5x the usual amount of damage. Single-range.
-	Self-Destruct (Low): Deals non-elemental magical damage equal to the user's current HP, but kills user. Party-range.
-	Forcefield (High): Adds Barrier and Protect. Self only.
-	Fire Hose (V.Low): Removes an enemy from combat (the enemy gives no exp, items or money, and it cannot be revived since it is totally gone). Doesn't work on bosses or on enemies that are immune to instant death; always works on others. 
-	Chaos Orb (Mid): Attack that selects a random 80x64 area of the battlefield (fully within the region in which enemies can be located) and deals non-elemental magical damage to all enemies whose sprites overlap that area (if any). Never misses, Power (High).
-	Immunize (Low): Adds Immune. Single-range.
+	Bazooka (10 MP): Physical non-elemental attack (not normal attack). Uses STR*MAG for damage, but does 5x the usual amount of damage. Single-range.
+	Self-Destruct (0 MP): Deals non-elemental magical damage equal to the user's current HP, but kills user. Party-range.
+	Forcefield (8 MP): Adds Barrier and Protect. Self only.
+	Fire Hose (1 MP): Removes an enemy from combat (the enemy gives no exp, items or money, and it cannot be revived since it is totally gone). Doesn't work on bosses or on enemies that are immune to instant death; always works on others. 
+	Chaos Orb (4 MP): Attack that selects a random 80x64 area of the battlefield (fully within the region in which enemies can be located) and deals non-elemental magical damage to all enemies whose sprites overlap that area (if any). Never misses, Power 35.
+	Immunize (4 MP): Adds Immune. Single-range.
 
 -----------------
  PERSONAL SKILLS
@@ -322,16 +323,40 @@ SoulDr   .    .    .    X    .        Barrie   .    X    .    .    .
 Divide   .    .    X    X    .        Reflct   .    .    .    X    .
 Sleep    X    .    .    .    .        Seal     X    X    .    .    .
 Stun     .    .    X    .    .        Slow     .    X    X    .    .
-Miasma   X    .    .    .    .        Invis    .    .    .    X    .
-Dispos   .    X    .    .    .        NeonJs   .    .    .    .    X
-Troubl   X    .    .    .    .        Punish   .    .    X    X    .
-Penult   .    .    .    .    X        QknAll   .    .    .    .    X
-FrgAll   .    .    X    .    .        MgtAll   .    .    X    .    .
-DprAll   .    .    X    .    .        EnlAll   .    .    X    .    .
-Imblnc   .    .    .    .    X        RgnAll   .    .    X    .    .
-Grave    .    X    .    .    .        BrrAll   .    .    .    X    .
+Miasma   X    .    .    .    .        NeonJs   .    .    .    .    X
+Dispos   .    X    .    .    .        Punish   .    .    X    X    .
+Troubl   X    .    .    .    .        QknAll   .    .    .    .    X
+Penult   .    .    .    .    X        MgtAll   .    .    X    .    .
+FrgAll   .    .    X    .    .        EnlAll   .    .    X    .    .
+DprAll   .    .    X    .    .        RgnAll   .    .    X    .    .
+Imblnc   .    .    .    .    X        BrrAll   .    .    .    X    .
                                       ShdAll   .    .    .    X    .
                                       SlwAll   .    .    .    X    .
+                                      Grave    .    X    .    .    . 
+                                      
+
+
+-----------------------
+ SKILL LEARNING LEVELS 
+-----------------------
+
+These are the levels at which new skills are learned for Swordsmanship and Shake Spear. These are, needless to say, very tentative.
+
+SWORDSMANSHIP:
+L  3: Counter
+L  4: Cleave
+L  7: Stonewall
+L 10: Sword Dance
+L 13: Desperation
+L 16: Flashblade
+L 20: Wave Blade
+L 26: Quincunx
+
+SHAKE SPEAR
+L 17: Armor Break
+L 20: Soul Bleed
+L 24: Snuff Spirit
+L 28: Impale
 
 -----------------
  MAGIC USABILITY
@@ -340,8 +365,8 @@ Not everybody can use every spell in a given skill group even if he knows that g
 
 Darin (White): Heal, Aura Heal, Panacea, Refresh, Revive, Quicken, Might, Enlighten, Regen, Shield, Barrier, Seal, Slow, Punish
 Crystal (White): All white magic
-Dexter (Black, Fuchsia): All black magic
-Lance (Black): Flame, Ice, Bolt, Baffle, Charm, Fragile, Depress, Gank, Blood Suck, Soul Drain, Sleep, Stun, Miasma, Trouble, Fragile All, Depress All, Imbalance, Grave
+Dexter (Black, Fuchsia): All black and fuchsia magic
+Lance (Black): Flame, Ice, Bolt, Baffle, Charm, Fragile, Depress, Gank, Blood Suck, Soul Drain, Sleep, Stun, Miasma, Trouble, Fragile All, Depress All, Imbalance
 Paxton (White): All white magic EXCEPT Mega Revive, Punish and Neon Justice
 Mr. E (White, Black): All white and black magic
 

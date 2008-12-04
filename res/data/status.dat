@@ -9,30 +9,30 @@ Conditions: on_end, on_death, on_rest, on_hit, on_act, on_life
 // REMOVE and CANCELS are both comma-delimited lists. 
 //
 // Remove conditions:
-//	on_death
-//	on_rest
-//	on_end
-//	
+//  on_death
+//  on_rest
+//  on_end
+//  
 
 Poison
-//Icon	Dur	RenderFunc	EffectFunc
-127	-1	SR_Poison	-
+//Icon  Dur RenderFunc  EffectFunc
+127 -1  SR_Poison   -
 DESC "Lose HP steadily in and out of battle."
 REMOVE on_death, on_rest // Commas are important here! 
 
 --
 
 Enervate
-//Icon	Dur	RenderFunc	EffectFunc
-128	-1	SR_Enervate	-
+//Icon  Dur RenderFunc  EffectFunc
+128 -1  SR_Enervate -
 DESC "Lose MP steadily in and out of battle."
 REMOVE on_death, on_rest
 
 --
 
 Blind
-//Icon	Dur	RenderFunc	EffectFunc
-129	-1	SR_Blind	-
+//Icon  Dur RenderFunc  EffectFunc
+129 -1  SR_Blind    -
 DESC "Hit and critical rate reduced."
 REMOVE on_death, on_rest
 
@@ -43,56 +43,56 @@ REMOVE on_death, on_rest
 --
 
 Confuse
-//Icon	Dur	RenderFunc	EffectFunc
-130	-1	SR_Confuse	-
+//Icon  Dur RenderFunc  EffectFunc
+130 -1  SR_Confuse  -
 DESC "Attack random targets until damaged."
 REMOVE on_hit, on_death, on_end
 
 --
 
 Charm
-//Icon	Dur	RenderFunc	EffectFunc
-131	-1	SR_Charm	-
+//Icon  Dur RenderFunc  EffectFunc
+131 -1  SR_Charm    -
 DESC "Attack own party until damaged."
 REMOVE on_hit, on_death, on_end
 
 --
 
 Silence
-//Icon	Dur	RenderFunc	EffectFunc
-132	100	SR_Silence	-
+//Icon  Dur RenderFunc  EffectFunc
+132 100 SR_Silence  -
 DESC "Cannot use magic."
 REMOVE on_death, on_rest
 
 --
 
 Seal
-//Icon	Dur	RenderFunc	EffectFunc
-133	100	SR_Seal		-
+//Icon  Dur RenderFunc  EffectFunc
+133 100 SR_Seal     -
 DESC "Cannot use any special abilities."
 REMOVE on_death, on_rest
 
 --
 
 Sleep
-//Icon	Dur	RenderFunc	EffectFunc
-134	75	SR_Sleep	-
+//Icon  Dur RenderFunc  EffectFunc
+134 75  SR_Sleep    -
 DESC "Cannot take action until damaged."
 REMOVE on_hit, on_death, on_end
 
 --
 
 Paralysis
-//Icon	Dur	RenderFunc	EffectFunc
-135	50	SR_Paralysis	-
+//Icon  Dur RenderFunc  EffectFunc
+135 75  SR_Paralysis    -
 DESC "Cannot take action."
 REMOVE on_death, on_rest
 
 --
 
 Slow
-//Icon	Dur	RenderFunc	EffectFunc
-136	75	SR_Slow		-
+//Icon  Dur RenderFunc  EffectFunc
+136 75  SR_Slow     -
 DESC "Reaction speed reduced."
 REMOVE on_death, on_end
 CANCELS Quick
@@ -104,8 +104,8 @@ CANCELS Quick
 --
 
 Weak
-//Icon	Dur	RenderFunc	EffectFunc
-137	75	SR_Weak		-
+//Icon  Dur RenderFunc  EffectFunc
+137 75  SR_Weak     -
 DESC "Attack power reduced."
 REMOVE on_death, on_end
 CANCELS Might
@@ -117,8 +117,8 @@ CANCELS Might
 --
 
 Fragile
-//Icon	Dur	RenderFunc	EffectFunc
-138	75	SR_Fragile	-
+//Icon  Dur RenderFunc  EffectFunc
+138 75  SR_Fragile  -
 DESC "Physical defense reduced."
 REMOVE on_death, on_end
 CANCELS Protect
@@ -130,8 +130,8 @@ CANCELS Protect
 --
 
 Depress
-//Icon	Dur	RenderFunc	EffectFunc
-139	75	SR_Depress	-
+//Icon  Dur RenderFunc  EffectFunc
+139 75  SR_Depress  -
 DESC "Magic defense reduced."
 REMOVE on_death, on_end
 CANCELS Barrier
@@ -143,8 +143,8 @@ CANCELS Barrier
 --
 
 Tangle
-//Icon	Dur	RenderFunc	EffectFunc
-140	75	SR_Tangle	-
+//Icon  Dur RenderFunc  EffectFunc
+140 75  SR_Tangle   -
 DESC "Evasion reduced."
 REMOVE on_death, on_end
 CANCELS Evade
@@ -156,8 +156,8 @@ CANCELS Evade
 --
 
 Fugue
-//Icon	Dur	RenderFunc	EffectFunc
-141	75	SR_Fragile	-
+//Icon  Dur RenderFunc  EffectFunc
+141 75  SR_Fragile  -
 DESC "Magic power reduced."
 REMOVE on_death, on_end
 CANCELS Enlighten
@@ -169,16 +169,16 @@ CANCELS Enlighten
 --
 
 Death
-//Icon	Dur	RenderFunc	EffectFunc
-142	-1	SR_Death	Status_Death
+//Icon  Dur RenderFunc  EffectFunc
+142 -1  SR_Death    Status_Death
 DESC "Instantly defeated."
 REMOVE on_death
 
 --
 
 Quick
-//Icon	Dur	RenderFunc	EffectFunc
-143	75	SR_Quick	-
+//Icon  Dur RenderFunc  EffectFunc
+143 75  SR_Quick    -
 DESC "Reaction speed increased."
 REMOVE on_death, on_end
 CANCELS Slow
@@ -190,8 +190,8 @@ CANCELS Slow
 --
 
 Might
-//Icon	Dur	RenderFunc	EffectFunc
-144	75	SR_Might	-
+//Icon  Dur RenderFunc  EffectFunc
+144 75  SR_Might    -
 DESC "Attack power increased."
 REMOVE on_death, on_end
 CANCELS Weak
@@ -203,8 +203,8 @@ CANCELS Weak
 --
 
 Protect
-//Icon	Dur	RenderFunc	EffectFunc
-145	75	SR_Protect	-
+//Icon  Dur RenderFunc  EffectFunc
+145 75  SR_Protect  -
 DESC "Physical defense increased."
 REMOVE on_death, on_end
 CANCELS Fragile
@@ -216,8 +216,8 @@ CANCELS Fragile
 --
 
 Barrier
-//Icon	Dur	RenderFunc	EffectFunc
-146	75	SR_Barrier	-
+//Icon  Dur RenderFunc  EffectFunc
+146 75  SR_Barrier  -
 DESC "Magic defense increased."
 REMOVE on_death, on_end
 CANCELS Depress
@@ -229,8 +229,8 @@ CANCELS Depress
 --
 
 Accurate
-//Icon	Dur	RenderFunc	EffectFunc
-147	75	SR_Accurate	-
+//Icon  Dur RenderFunc  EffectFunc
+147 75  SR_Accurate -
 DESC "Hit and critical increased."
 REMOVE on_death, on_end
 
@@ -241,8 +241,8 @@ REMOVE on_death, on_end
 --
 
 Evade
-//Icon	Dur	RenderFunc	EffectFunc
-148	75	SR_Evade	-
+//Icon  Dur RenderFunc  EffectFunc
+148 75  SR_Evade    -
 DESC "Evasion increased."
 REMOVE on_death, on_end
 CANCELS Tangle
@@ -254,8 +254,8 @@ CANCELS Tangle
 --
 
 Enlighten
-//Icon	Dur	RenderFunc	EffectFunc
-149	75	SR_Enlighten	-
+//Icon  Dur RenderFunc  EffectFunc
+149 75  SR_Enlighten    -
 DESC "Magic power increased."
 REMOVE on_death, on_end
 CANCELS Fugue
@@ -267,8 +267,8 @@ CANCELS Fugue
 --
 
 Invincible
-//Icon	Dur	RenderFunc	EffectFunc
-150	25	SR_Invincible	-
+//Icon  Dur RenderFunc  EffectFunc
+150 25  SR_Invincible   -
 DESC "Immune to direct damage."
 REMOVE on_death, on_end
 
@@ -279,8 +279,8 @@ REMOVE on_death, on_end
 --
 
 Lifeline
-//Icon	Dur	RenderFunc	EffectFunc
-151	-1	SR_Lifeline	-
+//Icon  Dur RenderFunc  EffectFunc
+151 -1  SR_Lifeline -
 DESC "Revive automatically when defeated."
 REMOVE on_death, on_end
 
@@ -289,32 +289,32 @@ REMOVE on_death, on_end
 --
 
 Regenerate
-//Icon	Dur	RenderFunc	EffectFunc
-152	100	SR_Regenerate	-
+//Icon  Dur RenderFunc  EffectFunc
+152 100 SR_Regenerate   -
 DESC "Gradually regain HP."
 REMOVE on_death, on_end
 
 --
 
 Nullify
-//Icon	Dur	RenderFunc	EffectFunc
-153	75	SR_Nullify	-
+//Icon  Dur RenderFunc  EffectFunc
+153 75  SR_Nullify  -
 DESC "Most magic has no effect"
 REMOVE on_death, on_end
 
 --
 
 Reflect
-//Icon	Dur	RenderFunc	EffectFunc
-154	75	SR_Reflect	-
+//Icon  Dur RenderFunc  EffectFunc
+154 75  SR_Reflect  -
 DESC "Most spells are reflected."
 REMOVE on_death, on_end
 
 --
 
 Counter
-//Icon	Dur	RenderFunc	EffectFunc
-155	50	SR_Counter	-
+//Icon  Dur RenderFunc  EffectFunc
+155 50  SR_Counter  -
 DESC "Always counter-attacks."
 REMOVE on_death, on_end
 
@@ -325,8 +325,8 @@ REMOVE on_death, on_end
 --
 
 Grave
-//Icon	Dur	RenderFunc	EffectFunc
-156	-1	SR_Grave	-
+//Icon  Dur RenderFunc  EffectFunc
+156 -1  SR_Grave    -
 DESC "Cannot be revived."
 REMOVE on_end
 
@@ -360,8 +360,8 @@ REMOVE on_end
 Neutro
 // Note that Neutro only resists Fire, Ice, Electric, Holy, and Dark, 
 // not weird elements like AntiMech or Reduction.
-//Icon	Dur	RenderFunc	EffectFunc
-157	-1	SR_Neutro	-
+//Icon  Dur RenderFunc  EffectFunc
+157 -1  SR_Neutro   -
 DESC "Elemental damage is reduced." 
 REMOVE on_end, on_death
 
@@ -371,64 +371,64 @@ Rewarding
 // This only matters on enemies. It's added by the Lucky Day Fortune skill, and nothing else.
 // It makes the target guaranteed to drop items and ensures that any theft attempts against
 // it will succeed if it has something to steal.
-//Icon	Dur	RenderFunc	EffectFunc
-X	-1	SR_Rewarding	-
+//Icon  Dur RenderFunc  EffectFunc
+X   -1  SR_Rewarding    -
 DESC "You're sure to get something good!"
 // No removal conditions because it's permanent and only applied to enemies.
 
 --
 
 FireWeak
-//Icon	Dur	RenderFunc	EffectFunc
-158	-1	SR_FireWeak	-
+//Icon  Dur RenderFunc  EffectFunc
+158 -1  SR_FireWeak -
 DESC "Weak against Fire damage."
 REMOVE on_end, on_death
 
 --
 
 IceWeak
-//Icon	Dur	RenderFunc	EffectFunc
-159	-1	SR_IceWeak	-
+//Icon  Dur RenderFunc  EffectFunc
+159 -1  SR_IceWeak  -
 DESC "Weak against Fire damage."
 REMOVE on_end, on_death
 
 --
 
 ElectricWeak
-//Icon	Dur	RenderFunc	EffectFunc
-160	-1	SR_ElectricWeak	-
+//Icon  Dur RenderFunc  EffectFunc
+160 -1  SR_ElectricWeak -
 DESC "Weak against Electric damage."
 REMOVE on_end, on_death
 
 --
 
 HolyWeak
-//Icon	Dur	RenderFunc	EffectFunc
-161	-1	SR_HolyWeak	-
+//Icon  Dur RenderFunc  EffectFunc
+161 -1  SR_HolyWeak -
 DESC "Weak against Holy damage."
 REMOVE on_end, on_death
 
 --
 
 DarkWeak
-//Icon	Dur	RenderFunc	EffectFunc
-162	-1	SR_DarkWeak	-
+//Icon  Dur RenderFunc  EffectFunc
+162 -1  SR_DarkWeak -
 DESC "Weak against Dark damage."
 REMOVE on_end, on_death
 
 --
 
 Immune
-//Icon	Dur	RenderFunc	EffectFunc
-163	150	SR_Immune	-
+//Icon  Dur RenderFunc  EffectFunc
+163 150 SR_Immune   -
 DESC "Protected from ailments."
 REMOVE on_end, on_death
 
 --
 
 Lucky
-//Icon	Dur	RenderFunc	EffectFunc
-X	-1	SR_Lucky	-
+//Icon  Dur RenderFunc  EffectFunc
+X   -1  SR_Lucky    -
 DESC "Maybe something good will happen?"
 REMOVE on_end, on_death
 
