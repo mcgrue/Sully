@@ -1,0 +1,12 @@
+// Mole enemy, drawn by Gayo
+//name      wd  ht  per_row rows    padding
+mole.png    24  18  7       5       1  
+anim idle       F0 W150 F1 W10 F2 W60 F3 W5 F2 W5 F3 W5 F2 W60 F1 W10   F0 W120 F1 W10 F2 W90 F3 W5 F2 W5 F3 W5 F2 W60 F1 W10 B
+anim weak       F0 W60 F4 W15 F5 W90 F4 W8   F0 W60 F4 W15 F5 W120 F4 W8 B
+anim attack     F0 W5 F7 W5 W8 W5 F9 W5 F10 W15 F11 W5 F12 W5 F13 W20 F7 W5
+anim hit        F30 W45
+anim death      F14 W15 F15 W5 F16 W5 F17 W5 F6 W45 F18 W10 F19 W10 F20 W10 F21 W10 F22 W10 F23 W10 F24 W10 F6
+anim charging   F25 W5 F26 W5 F27 W10 B
+anim casting    F25 W5 F7 W10 F28 W5 F29 W30
+
+
