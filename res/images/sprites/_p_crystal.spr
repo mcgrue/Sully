@@ -1,6 +1,6 @@
 // Crystal's battle character, drawn by the Amazing Mordred
 //name          wd  ht  per_row rows    padding
-_b_crystal.pcx  32  32  9   11  1
+_b_crystal.png  32  32  9   11  1
 anim idle       F0W15F1W15B
 anim weak       F2W15F3W15B
 anim attack     F54 W5 F55 W5 F56 W5 F57 W15

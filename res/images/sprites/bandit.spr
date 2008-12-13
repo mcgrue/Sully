@@ -1,0 +1,11 @@
+// Bandit enemy, drawn by Gayo
+//name      wd  ht  per_row rows    padding
+bandit.png  32  32  8       4       1  
+anim idle       F0 W45 F1 W15 F2 W5 F3 W30 F4 W15 F5 W5 F6 W10 F7 W15 F8 W20 F9 W12 F10 W25 F11 W15 B
+anim weak       F18 W60 F19 W60 B
+anim attack     F0 W10 F13 W5 F14 W20 F15 W15
+anim hit        F16 W10 F17 W35
+anim death      F12
+anim charging   F20 W30 F21 W30 B
+anim casting    F24 W10 F25 W5 F26 W5 F27 W5 F28 W5 F29 W50
+
