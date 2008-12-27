@@ -88,7 +88,7 @@ int _mapwrap_on;
 string _old_rstring;
 int _dualmode_on, _dualmode_counter;
 
-int _debugTile = LoadImage( "tile.png" );
+int _debugTile = LoadImage( "res/system/tile.png" );
 
 
 /********************************** code **********************************/
