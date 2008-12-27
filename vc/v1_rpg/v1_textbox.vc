@@ -224,24 +224,33 @@ int PROMPT_PADDING =    4;
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+int _v1rpg_noscroll;
+void v1rpg_SetNoScroll( int n ) {
+    if( IntExists("global_noscroll") ) {
+        SetInt("global_noscroll", n);
+    }
+    v1rpg_SetNoScroll = n;
+}
+
+int v1rpg_GetNoScroll() {
+    if( IntExists("global_noscroll") ) {
+        return GetInt("global_noscroll");
+    }
+    return v1rpg_SetNoScroll;
+}
 
 
 // 1 sets Textscrolling on,
 // 0 turns it off.
 void SetTextBoxScroll( int on )
 {
-    if( on ) {
-        global_noscroll = 0;
-    } else {
-        global_noscroll = 1;
-    }
+    v1rpg_SetNoScroll( on );
 }
 
 //returns 1 if text scroll mode is on, 0 if it's off.
 int GetTextBoxScrollMode()
 {
-    if( global_noscroll ) return 0;
-    return 1;
+    return v1rpg_GetNoScroll();
 }
 
 #define MAX_AUTOTEXT_PAGES 32
@@ -430,7 +439,7 @@ void TextBoxDirect(int sp, int m, string s)
     int font_h = FontHeight(v1rpg_LargeFont) + TEXTBOX_Y_BUFF;
 
 
-    if (global_noscroll)
+    if( v1rpg_GetNoScroll() )
     {
         line_num = TEXTBOX_LINES-1;
         time_last = 0;
@@ -471,7 +480,7 @@ void TextBoxDirect(int sp, int m, string s)
         {
             if (line_num < (TEXTBOX_LINES-1)) { line_num++; time_last = systemtime; }
             else if (m == 1) TBlit(TEXTMORE_X,TEXTMORE_Y + (cos(systemtime * 2) * 4 / 65536), textmore, screen);
-            else if (m == 2 && global_noscroll) line_num++;
+            else if (m == 2 && v1rpg_GetNoScroll()) line_num++;
         }
 
         DrawSpeechPortrait( sp );
