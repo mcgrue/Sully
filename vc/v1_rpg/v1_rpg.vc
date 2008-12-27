@@ -5,6 +5,7 @@
 *                                                                          *
 ***************************************************************************/
 
+#include "vc/v1_rpg/$$$_v1rpg_compatibility.vc"
 #include "vc/v1_rpg/v1_music.vc"
 #include "vc/v1_rpg/v1_textbox.vc"
 #include "vc/v1_rpg/v1_maineffects.vc"
@@ -713,8 +714,9 @@ void CenterMessageBox( int font, string msg ) {
 /// the menu is disabled during this function.
 void Banner( string msg, int duration )
 {
-    int menu_mode = MenuCanBeOn();
-    MenuOff();
+    CallFunction( "MenuCanBeOn" );
+    int menu_mode = GetInt("_MenuCanBeOn");
+    CallFunction( "MenuOff" );
 
     UnpressButtonAccept();
 
@@ -728,7 +730,7 @@ void Banner( string msg, int duration )
 
     UnpressButtonAccept();
 
-    if(menu_mode)   MenuOn();
+    if(menu_mode)   CallFunction( "MenuOn" );
 }
 
 

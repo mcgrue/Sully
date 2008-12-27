@@ -5,24 +5,23 @@
 //  all of the stuff actually being altered (money/items/etc) is in the simpletype lib.
 //////////////////////////////////
 
-
 // Removes an amount of money from the party's coffers.
 //
 // lets you remove more than you have, resulting in a negative amount.
 //  so check before you do it!
 void TakeMoney(int amount)
 {
-    Banner( "Lost "+str(amount)+" "+moneyname+"!", 300 );
+    Banner( "Lost "+str(amount)+" "+v1rpg_getMoneyname()+"!", 300 );
 
-    money -= amount;
+    v1rpg_SetMoney( v1rpg_GetMoney() - amount );
 }
 
 // Adds an amount of money to the party's coffers.
 //
 void FindMoney(int amt) {
-    Banner( "Got "+str(amt)+" "+moneyname+"!", 300 );
+    Banner( "Got "+str(amt)+" "+v1rpg_getMoneyname()+"!", 300 );
 
-    money += amt;
+    v1rpg_SetMoney( v1rpg_GetMoney() + amt );
 }
 
 
@@ -35,10 +34,11 @@ void FindItem( string itemname, int quantity )
     int idx;
     string msgstr;
 
-    int menu_mode = MenuCanBeOn();
-    MenuOff();
+    CallFunction( "MenuCanBeOn" );
+    int menu_mode = GetInt("_MenuCanBeOn");
+    CallFunction( "MenuOff" );
 
-    GiveItem( itemname, quantity );
+    v1rpg_GiveItem( itemname, quantity );
 
     idx=IsItem(itemname);
 
@@ -78,7 +78,7 @@ void FindItem( string itemname, int quantity )
 
     FreeImage( icon );
 
-    if( menu_mode ) MenuOn();
+    if(menu_mode)   CallFunction( "MenuOn" );
 }
 
 
@@ -90,8 +90,9 @@ void DramaticUseItem( string itemname, int quantity )
     int idx;
     string msgstr;
 
-    int menu_mode = MenuCanBeOn();
-    MenuOff();
+    CallFunction( "MenuCanBeOn" );
+    int menu_mode = GetInt("_MenuCanBeOn");
+    CallFunction( "MenuOff" );
 
     TakeItem( itemname, quantity );
 
@@ -127,7 +128,7 @@ void DramaticUseItem( string itemname, int quantity )
 
     FreeImage( icon );
 
-    if( menu_mode ) MenuOn();
+    if(menu_mode)   CallFunction( "MenuOn" );
 }
 
 

@@ -7,7 +7,6 @@
 //
 //
 
-
 /****** Textbox variables *******/
 
 //how many lines of font per textbox
@@ -41,6 +40,9 @@ int TEXTMORE_Y  =   (240 - 16);
 #define SPEECH_Y        189-33-8
 
 
+void v1rpg_drawBackground() {
+    CallFunction( "MenuBackGroundDraw" );
+}
 
 
 // Specifies how much y-space to put between a Textbox or Promptbox line.
@@ -224,20 +226,7 @@ int PROMPT_PADDING =    4;
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-int _v1rpg_noscroll;
-void v1rpg_SetNoScroll( int n ) {
-    if( IntExists("global_noscroll") ) {
-        SetInt("global_noscroll", n);
-    }
-    v1rpg_SetNoScroll = n;
-}
 
-int v1rpg_GetNoScroll() {
-    if( IntExists("global_noscroll") ) {
-        return GetInt("global_noscroll");
-    }
-    return v1rpg_SetNoScroll;
-}
 
 
 // 1 sets Textscrolling on,
@@ -454,7 +443,7 @@ void TextBoxDirect(int sp, int m, string s)
 
     while( line_num < TEXTBOX_LINES )
     {
-        MenuBackGroundDraw(); // Draw universal things
+        v1rpg_drawBackground(); // Draw universal things
 
         //draw the textbox bg.
         V1_Box( TEXTBOX_BORDER_X1,TEXTBOX_BORDER_Y1,  TEXTBOX_BORDER_WIDTH,TEXTBOX_BORDER_HIGH );
@@ -493,7 +482,7 @@ void TextBoxDirect(int sp, int m, string s)
         time_last = systemtime;
         while ((systemtime - time_last) < 30)
         {
-            MenuBackGroundDraw(); // Draw universal things
+            v1rpg_drawBackground(); // Draw universal things
 
             DrawSpeechPortrait( sp );
 
@@ -584,14 +573,14 @@ int PromptDirect(int sp, string question, string choices)
         prompt_x1 = PROMPT_X;
     }
 
-    menu_item = 0;
+    v1rpg_setPromptSelection(0);
 
     TextBoxDirect(sp, 2, question);
 
     UnpressButtonAccept();
     while(!ButtonAccept(1))
     {
-        MenuBackGroundDraw(); // Draw universal things
+        v1rpg_drawBackground(); // Draw universal things
 
         //draw the textbox bg.
         V1_Box( TEXTBOX_BORDER_X1,TEXTBOX_BORDER_Y1,  TEXTBOX_BORDER_WIDTH,TEXTBOX_BORDER_HIGH );
@@ -608,7 +597,9 @@ int PromptDirect(int sp, string question, string choices)
         //restore clipping
         SetClip(0,0, ImageWidth(screen), ImageHeight(screen), screen);
 
-        menu_item = MenuControlArrows(menu_item, count);
+        v1rpg_setPromptSelection(
+            v1rpg_ControlArrows(v1rpg_getPromptSelection(), count)
+        );
 
         V1_Box( prompt_x1, prompt_y1-TEXTBOX_Y_BUFF, prompt_wid, prompt_high );
 
@@ -623,7 +614,7 @@ int PromptDirect(int sp, string question, string choices)
         }
 
         //print the pointer...
-        PrintString(prompt_x1+PROMPT_PADDING+TEXTBOX_Y_BUFF, prompt_y1+PROMPT_PADDING+((menu_item) * font_h), screen, v1rpg_LargeFont, ">");
+        PrintString(prompt_x1+PROMPT_PADDING+TEXTBOX_Y_BUFF, prompt_y1+PROMPT_PADDING+((v1rpg_getPromptSelection()) * font_h), screen, v1rpg_LargeFont, ">");
 
         //restore the clipping rectangle.
         SetClip(0,0, ImageWidth(screen), ImageHeight(screen), screen);
@@ -634,7 +625,7 @@ int PromptDirect(int sp, string question, string choices)
         ShowPage();
     }
 
-    return menu_item;
+    return v1rpg_getPromptSelection();
 }
 
 // Helper function.
