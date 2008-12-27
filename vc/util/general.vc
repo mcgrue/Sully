@@ -7,21 +7,6 @@
 
 /************************** entity.face constants ****************************/
 
-#define UNPRESS_ALL     9
-
-
-// The valid values of Entity.Face[]
-//
-// These should really be predefined.
-#define FACE_UP         1
-#define FACE_DOWN       2
-#define FACE_LEFT       3
-#define FACE_RIGHT      4
-
-#define TRUE 1
-#define FALSE 0
-
-
 // These four functions return true if the player entity is facing in the specified
 // direction
 //

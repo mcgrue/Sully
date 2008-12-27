@@ -81,7 +81,7 @@ int McGrender_active_layer;
 ///
 void InitMcgrender()
 {
-    mcg_destroy_everything();
+    mcg_destroy_everything( "InitMcgrender" );
 
     /// the dicts can stay after being born
     if( !_mcg_dict_init ) {
@@ -357,15 +357,17 @@ int mcg_initialize() {
 int _mcg_initialize = mcg_initialize();
 
 /// destroys everything on this mcgrender
-void mcg_destroy_everything()
+void mcg_destroy_everything( string wherefrom )
 {
+MessageBox( "mcg_destroy_everything from '"+wherefrom+"'" );
+
     int i;
 
     for( i=0; i<MCGRENDER_STACKSIZE; i++ )
     {
         //CallFunction( mcgV_heap[i].delete_callfunc );
 
-        if( i <= mcgV_heap_count ) {
+        if( i < mcgV_heap_count ) {
             mcg_delete( i );
         } else {
             /// initial state for the heap is -1, not 0.
@@ -1041,7 +1043,7 @@ void mcgrender_end_layer( int i ) {
 
 /// Debug function.  Logs out all of the vitals for mcgV_heap[idx].
 /// @param idx the mcgV_heap[] entry to print out to the log.
-void mcg_print( int idx )
+void mcg_dump( int idx )
 {
     log( "mcgV_heap["+str(idx)+"]" );
     log( "======================" );
@@ -1068,11 +1070,11 @@ void mcg_print( int idx )
 }
 
 /// Logs out all mcgV_heap entries that are presently 'on'
-void mcg_print_all()
+void mcg_dump_all()
 {
     int i;
 
-    Log( "mcg_print_all" );
+    Log( "mcg_dump_all" );
     Log( "==================================" );
     Log( "mcgV_heap_count: " + str(mcgV_heap_count) );
 
@@ -1080,17 +1082,17 @@ void mcg_print_all()
 
         if( mcgV_heap[i].is_visible )
         {
-            mcg_print( i );
+            mcg_dump( i );
         }
     }
 }
 
 
-void McRenderToString( string title )
+void McRender_dump( string title )
 {
     int i;
 
-    Log( "McRenderToString: " + title );
+    Log( "McRender_dump: " + title );
     Log( "=========================" );
     Log( "Number of images on heap: " + str(mcgV_heap_count) );
     Log( "Number of sprites in heap: " + str(mcgV_sprite_count) );
@@ -1099,7 +1101,7 @@ void McRenderToString( string title )
 
     for( i=0; i<McGrender_layer_count; i++ )
     {
-        McLayerToString( i );
+        McLayer_dump( i );
     }
     Log( "" );
     Log( "</"+title+">" );
@@ -1108,7 +1110,7 @@ void McRenderToString( string title )
 }
 
 
-void McLayerToString( int idx )
+void McLayer_dump( int idx )
 {
     Log( "mcg_mkIV_layer["+str(idx)+"]..." );
     Log( "=========================" );
@@ -1121,7 +1123,7 @@ void McLayerToString( int idx )
 
     while( node >= 0 )
     {
-        mcg_print( node );
+        mcg_dump( node );
         cnt++;
 
         if( cnt > McGrender_layers[idx].count )

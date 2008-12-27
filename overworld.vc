@@ -10,10 +10,10 @@ void start()
         SetTile( 22,26,0,272 );
         SetObs( 22,26,0 );
     }
-    
+
     SetWeather(WEATHER_CLOUDS);
     InitMap();
-        
+
     if( flags[F_RODNE_FLASHBACK] )
     {
         V1_StartMusic("VANGELIS.MOD");
@@ -64,7 +64,8 @@ void chasm_east()
 /// The mapswitch to bumville.map
 void bumsville()
 {
-    V1_MapSwitch("bumville.map", 62, 65, TBLACK);
+    //V1_MapSwitch("bumville.map", 62, 65, TBLACK);
+    V1_MapSwitch("town01.map", 10, 17, TBLACK);
 }
 
 /// The mapswitch to village.map

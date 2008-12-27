@@ -207,11 +207,16 @@ int MenuOn()
     HookButton( 3, "MenuEntry" );
 }
 
+int _MenuCanBeOn;
 int MenuCanBeOn()
 {
-    if( _menu_on && !_in_textbox && !IsInBattle() )
-        return 1;
-    return 0;
+    if( _menu_on && !_in_textbox && !IsInBattle() ) {
+        _MenuCanBeOn = 1;
+    } else {
+        _MenuCanBeOn = 0;
+    }
+
+    return _MenuCanBeOn;
 }
 
 // Return the index of a menu name
@@ -243,32 +248,32 @@ void MenuRoot()
 }
 
 
-int _im_menuMotionStint = -1; 
+int _im_menuMotionStint = -1;
 int _ref_menuMotionStint;
 
 int _ref_menuLayer;
 int _ref_aboveMenuLayer;
 
 void MenuMcgrenderInitialization() {
-    _ref_menuLayer      = McgSpawnLayer(); 
-    _ref_aboveMenuLayer = McgSpawnLayer(); 
+    _ref_menuLayer      = McgSpawnLayer();
+    _ref_aboveMenuLayer = McgSpawnLayer();
 
     McgSetActiveLayer( _ref_menuLayer );
-    
+
     if( !ImageValid(_im_menuMotionStint) ) {
         _im_menuMotionStint = NewImage(1,1);
     }
-    
-    MenuSetupRandomSlide(screen); // I do random awesome stuff when giddy and tired.  
-    
-    _ref_menuMotionStint = 
-        mcg_add_image( 
+
+    MenuSetupRandomSlide(screen); // I do random awesome stuff when giddy and tired.
+
+    _ref_menuMotionStint =
+        mcg_add_image(
             __menu_target_x1, __menu_target_y1,
-            0,0, 
-            20, 
-            _im_menuMotionStint 
+            0,0,
+            20,
+            _im_menuMotionStint
         );
-    
+
     mcg_add_complex( "MenuBackGroundDraw", -1 );
     mcg_add_complex( "MenuCurrentDrawFunction", -1 );
     mcg_add_complex( "MenuCurrentControlFunction", -1 );
@@ -293,22 +298,22 @@ void RenderMenu() {
 void MenuEntry()
 {
     int i;
-    
+
     if( MenuCanBeOn() )
     {
         ButtonMenu(1);
         Unpress(9);
-        
+
         MenuInitSkillMenus();
-        
+
         /// hacky, but everything about the skill menu is.
         /// this makes it so you cannot access the Defend/Run/b-side of the battle menu.
         for( i=0; i<partysize() ; i++ ) {
             master_battle_menus[i].page_base_count = 1;
         }
-        
+
         MenuMcgrenderInitialization();
-        
+
         _menu_is_on = 1;
         menu_done = 0;
         menu_option = 0;
@@ -324,25 +329,25 @@ void MenuEntry()
             RenderMenu();
             ShowPage();
         }
-        
+
         /// and then move it on out.
-        mcg_newmove( 
-            _ref_menuMotionStint, 
+        mcg_newmove(
+            _ref_menuMotionStint,
             __menu_target_x2, __menu_target_y2,
-            20 
+            20
         );
-        
-        while( mcg_isMoving(_ref_menuMotionStint) )  
+
+        while( mcg_isMoving(_ref_menuMotionStint) )
         {
             Render();
             RenderMenu();
             ShowPage();
         }
-        
+
         /// And then clean up the menu, because we're done drawing it!
         _menu_is_on = 0;
         CleanupAllBattleMenus();
-        mcg_destroy_everything();
+        mcg_destroy_everything( "MenuEntry" );
         HookButton( 3, "MenuEntry" );
     }
 }
@@ -356,38 +361,38 @@ void MenuSetupRandomSlide( int img ) {
         case 0: // from left
             __menu_target_x1 = -ImageWidth(img);
             __menu_target_y1 = 0;
-            
+
         case 1: // from right
             __menu_target_x1 = ImageWidth(img);
             __menu_target_y1 = 0;
-            
+
         case 2: // from down
             __menu_target_x1 = 0;
             __menu_target_y1 = -ImageHeight(img);
-            
+
         case 3: // from up
             __menu_target_x1 = 0;
             __menu_target_y1 = ImageHeight(img);
-            
+
     }
-    
+
     switch(Random(0,3)) {
         case 0: // to left
             __menu_target_x2 = -ImageWidth(img);
             __menu_target_y2 = 0;
-            
+
         case 1: // to right
             __menu_target_x2 = ImageWidth(img);
             __menu_target_y2 = 0;
-            
+
         case 2: // to down
             __menu_target_x2 = 0;
             __menu_target_y2 = -ImageHeight(img);
-            
+
         case 3: // to up
             __menu_target_x2 = 0;
             __menu_target_y2 = ImageHeight(img);
-            
+
     }
 }
 
@@ -649,7 +654,7 @@ int MenuControlTwoArrows(string int_one, int lim_one, string int_two, int lim_tw
 
         CallFunction(_m2ASnd2); //call the sound function defined with Menu2ArrowSetSounds()
     }
-    
+
     return change;
 }
 
@@ -708,23 +713,23 @@ int ColourDivider(int colour, int division)
 /// for drawing the menu panels.
 /// @todo rename to MainMenu_DrawBackground
 void MenuDrawBackground(int x1, int y1, int x2, int y2, int active)
-{    
+{
     _MenuDrawBackground(
-        x1+___menupos_x, 
-        y1+___menupos_y, 
-        x2+___menupos_x, 
-        y2+___menupos_y, 
+        x1+___menupos_x,
+        y1+___menupos_y,
+        x2+___menupos_x,
+        y2+___menupos_y,
         active
     );
 }
 
 /// The actual box-drawing with option-menu-color transparency is here.
-/// Main Menu functions should use MenuDrawBackground().  This is the raw function 
+/// Main Menu functions should use MenuDrawBackground().  This is the raw function
 /// that that uses.
 void _MenuDrawBackground(int x1, int y1, int x2, int y2, int active)
 {
 
-    
+
     int _x1 = x1 + 4;
     int _y1 = y1 + 4;
 
@@ -733,21 +738,21 @@ void _MenuDrawBackground(int x1, int y1, int x2, int y2, int active)
 
     _x1 = min(max(0,_x1),ImageWidth(screen));
     _x2 = min(max(0,_x2),ImageWidth(screen));
-    
+
     _y1 = min(max(0,_y1),ImageHeight(screen));
     _y2 = min(max(0,_y2),ImageHeight(screen));
-    
+
     SetLucent(global_menuluc * 10);
     SetCustomColorFilter(ColourDivider(menu_colour[2 + active], 4), menu_colour[2 + active]);
-    
+
     active = ImageShell(
-        _x1, 
-        _y1, 
-        _x2 - _x1, 
-        _y2 - _y1, 
+        _x1,
+        _y1,
+        _x2 - _x1,
+        _y2 - _y1,
         screen
     );
-    
+
     ColorFilter(CF_CUSTOM, active);
     FreeImage(active);
     SetLucent(0);
@@ -796,15 +801,15 @@ int ___menupos_y = 0;
 void MenuBlitRight(int active, int selected)
 {
     MenuDrawBackground(
-        MENU_B_X1, 
-        MENU_B_Y1, 
-        
-        MENU_B_X2, 
-        MENU_B_Y2, 
-        
+        MENU_B_X1,
+        MENU_B_Y1,
+
+        MENU_B_X2,
+        MENU_B_Y2,
+
         active
     );
-    
+
     PrintString(___menupos_x+248, selected * 20 + ___menupos_y+ 25, screen, menu_font[0], ">");
     PrintString(___menupos_x+255, ___menupos_y+25, screen, menu_font[0], "ITEM");
     PrintString(___menupos_x+255, ___menupos_y+45, screen, menu_font[0], "SKILL");
@@ -820,15 +825,15 @@ void MenuBlitRight(int active, int selected)
 void MenuBlitBottom()
 {
     MenuDrawBackground(
-        MENU_C_X1, 
-        MENU_C_Y1, 
-        
-        MENU_C_X2, 
-        MENU_C_Y2, 
-        
+        MENU_C_X1,
+        MENU_C_Y1,
+
+        MENU_C_X2,
+        MENU_C_Y2,
+
         0
     );
-    
+
     PrintString(___menupos_x+245, ___menupos_y+185, screen, menu_font[0], moneyname + ":");
     PrintRight(___menupos_x+305, ___menupos_y+195, screen, menu_font[0], str(money));
     PrintString(___menupos_x+245, ___menupos_y+205, screen, menu_font[0], "Time:");
@@ -846,15 +851,15 @@ void MenuBlitCenter(int active)
 {
     int i, frame;
     MenuDrawBackground(
-        MENU_A_X1, 
-        MENU_A_Y1, 
-        
-        MENU_A_X2, 
-        MENU_A_Y2, 
-        
+        MENU_A_X1,
+        MENU_A_Y1,
+
+        MENU_A_X2,
+        MENU_A_Y2,
+
         active
     );
-    
+
     for (i = 0; i < PartySize(); i++)
     {
         if(i == menu_cast) frame = GetFrameWalk();
@@ -862,14 +867,14 @@ void MenuBlitCenter(int active)
         MenuBlitCast(i, i, frame);
         // MenuBlitCast doesn't show Max HP/MP due to shens, so they need to be blitted here.
         MenuPrintStat(
-            ___menupos_x+MENU_CAST_X, 
-            ___menupos_y+MENU_CAST_Y + (i * 42), 
+            ___menupos_x+MENU_CAST_X,
+            ___menupos_y+MENU_CAST_Y + (i * 42),
             STAT_MAX_HP, menu_font[0], GetMaxHP(party[i])
         );
-        
+
         MenuPrintStat(
-            ___menupos_x+MENU_CAST_X, 
-            ___menupos_y+MENU_CAST_Y + (i * 42), 
+            ___menupos_x+MENU_CAST_X,
+            ___menupos_y+MENU_CAST_Y + (i * 42),
             STAT_MAX_MP, menu_font[0], GetMaxMP(party[i])
         );
     }
@@ -892,9 +897,9 @@ int GetFrameSad()
 void MenuBlitCast(int member, int location, int frame)
 {
     MenuBlitCastFull(
-        ___menupos_x+MENU_CAST_X, 
-        ___menupos_y+MENU_CAST_Y + (location * 42), 
-        member, 
+        ___menupos_x+MENU_CAST_X,
+        ___menupos_y+MENU_CAST_Y + (location * 42),
+        member,
         frame
     );
 }
@@ -916,7 +921,7 @@ void MenuBlitCastFull(int x, int y, int member, int frame)
     PrintString(x + 115, y + 10, screen, menu_font[0], "HP:");
     PrintRight(x + 115 + TextWidth(menu_font[0], "MP:000/"), y + 10, screen, menu_font[0], str(GetCurHP(party[member]))+"/");
     PrintString(x + 115, y + 20, screen, menu_font[0], "MP:");
-    PrintRight(x + 115 + TextWidth(menu_font[0], "MP:000/"), y + 20, screen, menu_font[0], str(GetCurMP(party[member]))+"/");   
+    PrintRight(x + 115 + TextWidth(menu_font[0], "MP:000/"), y + 20, screen, menu_font[0], str(GetCurMP(party[member]))+"/");
 }
 
 //        -----------------------------------
@@ -978,8 +983,8 @@ void MenuForceEquip() {
 void MakeBox(int x1, int y1, int w, int h, int active, int dest)
 {
     int x2 = x1+w;
-    int y2 = y1+h; 
-    
+    int y2 = y1+h;
+
     SetLucent(global_menuluc * 10);
     SetCustomColorFilter(ColourDivider(menu_colour[2 + active], 4), menu_colour[2 + active]);
     active = ImageShell(x1 + 4, y1 + 4, x2 - 5 - x1, y2 - 5 - y1, dest);
@@ -987,34 +992,34 @@ void MakeBox(int x1, int y1, int w, int h, int active, int dest)
     FreeImage(active);
     SetLucent(0);
 
-    
+
     Line(x1, y1 + 2, x1, y2 - 3, menu_colour[0], dest); // TL -> BL
     Line(x1 + 2, y1, x2 - 3, y1, menu_colour[0], dest); // TL -> TR
-    
+
     Line(x2 - 1, y2 - 3, x2 - 1, y1 + 2, menu_colour[0], dest); // BR -> TR
     Line(x2 - 3, y2 - 1, x1 + 2, y2 - 1, menu_colour[0], dest); // BR -> BL
-    
+
 
     Rect(x1 + 1, y1 + 1, x2 - 2, y2 - 2, menu_colour[1], dest);
      SetPixel(x1 + 1, y1 + 1, menu_colour[0], dest); // TL
      SetPixel(x2 - 2, y1 + 1, menu_colour[0], dest); // TR
      SetPixel(x1 + 1, y2 - 2, menu_colour[0], dest); // BL
      SetPixel(x2 - 2, y2 - 2, menu_colour[0], dest); // BR
-    
+
 
     Rect(x1 + 2, y1 + 2, x2 - 3, y2 - 3, menu_colour[2], dest);
      SetPixel(x1 + 2, y1 + 2, menu_colour[1], dest); // TL
      SetPixel(x2 - 3, y1 + 2, menu_colour[1], dest); // TR
      SetPixel(x1 + 2, y2 - 3, menu_colour[1], dest); // BL
      SetPixel(x2 - 3, y2 - 3, menu_colour[1], dest); // BR
-    
+
 
     Rect(x1 + 3, y1 + 3, x2 - 4, y2 - 4, menu_colour[0], dest);
      SetPixel(x1 + 3, y1 + 3, menu_colour[2], dest); // TL
      SetPixel(x2 - 4, y1 + 3, menu_colour[2], dest); // TR
      SetPixel(x1 + 3, y2 - 4, menu_colour[2], dest); // BL
      SetPixel(x2 - 4, y2 - 4, menu_colour[2], dest); // BR
-     
+
     if( IsVCCustomFilterOn() )
     {
         VCCustomFilterRestore();

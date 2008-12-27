@@ -13,7 +13,7 @@ _debug_tick_counter = 0;
 
     /// clean out the mcgrender engine.  Hope you saved anything you needed in there
     /// from before!
-    mcg_destroy_everything();
+    mcg_destroy_everything( "cleanupPreviousBattle" );
 
 /*
 for( i=0; i<PartySize(); i++ ) {

@@ -90,7 +90,6 @@
 // the resource-loader for the Sully, Simple and Clean library
 void SSAC_LoadResources() {
     SSAC_InitData(); //loads datafiles.
-    initInventories(); //cleans inventory
     verify_Inventory_Integrity();
 }
 

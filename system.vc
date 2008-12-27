@@ -42,7 +42,7 @@ void HackLogFinderThingForWonkyBM()
 }
 
 void f12_debug_mcgrender() {
-    McRenderToString( str(systemtime) );
+    McRender_dump( str(systemtime) );
 }
 
 
@@ -88,16 +88,14 @@ void AutoExec()
 
 //    Exit( GetSystemSaveDir("Sully") );
 
-    // run tests
-    runTests();
+// run tests
+//runTests();
 
     trigger.onStep = "onStep";
     trigger.afterStep = "";
 
     trigger.beforeEntityScript = "EntStart";
     trigger.afterEntityScript = "EntFinish";
-
-    InitMcgrender();
 
     //the following functions initialize things in the various libraries
     // that need initializing... images, sounds, whatever.
@@ -154,9 +152,9 @@ playerstep = 16;
 
     HookKey( SCAN_F5, "f5_debug_set_activemode" );
     HookKey( SCAN_F8, "f8_debug_set_stepmode_or_step" );
-//    HookKey( SCAN_F12, "f12_debug_mcgrender" );
+HookKey( SCAN_F12, "f12_debug_mcgrender" );
     HookKey( SCAN_F11, "dump_all_selectnodes" );
-    HookKey( SCAN_F12, "christmas" );
+//    HookKey( SCAN_F12, "christmas" );
 
 
 V3Console__Init();

@@ -86,7 +86,7 @@ void chasm_west()
 {
     _mapwrap_on = 0;
     //V1_MapSwitch("chasm.map", 4, 1, TBLACK);
-    
+
     V1_MapSwitch("gorge.map", 36, 19, TBLACK);
 }
 
@@ -95,7 +95,7 @@ void chasm_east()
 {
     _mapwrap_on = 0;
     //V1_MapSwitch("chasm.map", 97, 40, TBLACK);
-    
+
     V1_MapSwitch("gorge.map", 95, 19, TBLACK);
 }
 
@@ -104,7 +104,9 @@ void bumsville()
 {
     _mapwrap_on = 0;
     //V1_MapSwitch("RODNE.MAP",32,2,TBLACK);
-    V1_MapSwitch("bumville.map", 118, 93, TBLACK);
+    //V1_MapSwitch("bumville.map", 118, 93, TBLACK);
+
+    V1_MapSwitch("town01.map", 10, 17, TBLACK);
 }
 
 /// The mapswitch to rodne.map
@@ -169,7 +171,7 @@ void airship()
 start();
 
 return;
-    
+
 
 GrantSkill( "Darin", "Sword_Dance" );
 GrantSkill( "Darin", "Cleave" );

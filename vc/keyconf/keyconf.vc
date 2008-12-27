@@ -2,6 +2,8 @@
 ///
 /// This set of functions provides for a user-input wrapper, allowing for easy reconfiguration
 
+int using_mcfail = init_keyconf();
+
 /// 4 for verge standard, 8 for SNES.
 #define CURRENT_KEYCOUNT 8
 
@@ -29,8 +31,41 @@
 #define BUTTON_DEFAULT_SEL  32  //SCAN_D
 #define BUTTON_DEFAULT_STA  33  //SCAN_F
 
-int sfx_keyconf_buzz;
+int mcfail_sfx_keyconf_buzz;
+int mcfail_sfx_keyconf_chirp;
 int fnt_kyconf;
+
+
+
+int mcfail_ControlArrows_result;
+
+int mcfail_ControlArrows( ... args ) {
+
+    if( args.length != 2 ) {
+        McFailure( "mcfail_ControlArrows needs two int args, got "+str(args.length)+" args" );
+    }
+
+    if( !args.is_int[0] || !args.is_int[1] ) {
+        McFailure( "mcfail_ControlArrows needs two int args, got some non-int args." );
+    }
+
+    int value = args.int_value[0];
+    int limit = args.int_value[1];
+
+    if( ButtonUp(1) || ButtonLeft(1) || ButtonLeftTop(1) )
+    {
+        value = (value - 1 + limit) % limit;
+        PlaySound(mcfail_sfx_keyconf_chirp, GetKeyConfVol());
+    }
+    else if( ButtonDown(1) || ButtonRight(1) || ButtonRightTop(1) )
+    {
+        value = (value + 1) % limit;
+        PlaySound(mcfail_sfx_keyconf_chirp, GetKeyConfVol());
+    }
+
+    mcfail_ControlArrows_result = value;
+    return mcfail_ControlArrows_result;
+}
 
 /// returns the volume level for the config menu's soundeffects.
 int GetKeyConfVol()
@@ -38,13 +73,17 @@ int GetKeyConfVol()
     return 75;
 }
 
-void init_keyconf()
+int init_keyconf()
 {
     init_keyconfig();
 
-    sfx_keyconf_buzz = LoadSound( "/res/system/keyconf/angry_buzz.wav" );
+    mcfail_sfx_keyconf_buzz = LoadSound( "/vc/keyconf/angry_buzz.wav" );
+    mcfail_sfx_keyconf_chirp = LoadSound( "/vc/keyconf/happy_beep.wav" );
+
     fnt_kyconf = LoadFontEx("vc\keyconf\grue_5x5.gif", 5, 5);
     EnableVariableWidth(fnt_kyconf);
+
+    return 1;
 }
 
 string GetKeyConfName( int _my_keys_idx )
@@ -98,7 +137,7 @@ int _my_dirs_unpress[4];
 
 /// 0 for 'unset', 1 for keyboard, 2 for joystick.
 
-#define KEYMODE_DEFAULT     0
+#define KEYMODE_DEFAULT         0
 #define KEYMODE_CUST_KEYBOARD   1
 #define KEYMODE_CUST_JOYSTICK   2
 
@@ -268,11 +307,14 @@ void _UpdateCustJoyMcFAIL()
     }
 }
 
+void McFailure( string s ) {
+    exit( s );
+}
 
 /// This is called if the _keymode is invalid.
 void ButtonError( string s )
 {
-    exit( "ButtonError("+s+"): _keymode was " + str(_keymode) );
+    McFailure( "ButtonError("+s+"): _keymode was " + str(_keymode) );
 }
 
 void _SetUnpressKey( int idx )

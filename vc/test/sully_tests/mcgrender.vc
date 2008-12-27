@@ -13,12 +13,12 @@ void test_create_layer() {
     _mcg_setup();
     assertTrue( McgGetLayerCount() == 0 );
     int layer0 = McgSpawnLayer();
-    
+
     assertTrue( McgGetLayerCount() == 1 );
     assertTrue( McgGetActiveLayer() == -1 );
-    
+
     int layer1 = McgSpawnLayer();
-    
+
     assertTrue( McgGetLayerCount() == 2 );
     assertTrue( McgGetActiveLayer() == -1 );
 }
@@ -44,23 +44,23 @@ void test_heap_count() {
     int image2 = NewImage(3,3);
     int image3 = NewImage(3,3);
     int image4 = NewImage(3,3);
-    
+
     mcg_add_image( 0,0, 0,0, 0, image1 );
     mcg_add_image( 0,0, 0,0, 0, image2 );
     mcg_add_image( 0,0, 0,0, 0, image3 );
     mcg_add_image( 0,0, 0,0, 0, image4 );
-    
+
     //Exit( "taco: " + str(McgGetHeapCount()) );
-    
+
     assertTrue( McgGetHeapCount() == 4 );
-    
+
     int layer1 = McgSpawnLayer();
     McgSetActiveLayer( layer1 );
-    
+
     int image5 = NewImage(3,3);
     int image6 = NewImage(3,3);
     int image7 = NewImage(3,3);
-    
+
     mcg_add_image( 0,0, 0,0, 0, image5 );
     mcg_add_image( 0,0, 0,0, 0, image6 );
     mcg_add_image( 0,0, 0,0, 0, image7 );
@@ -78,14 +78,14 @@ void test_layer_count() {
     int image2 = NewImage(3,3);
     int image3 = NewImage(3,3);
     int image4 = NewImage(3,3);
-    
+
     mcg_add_image( 0,0, 0,0, 0, image1 );
     mcg_add_image( 0,0, 0,0, 0, image2 );
     mcg_add_image( 0,0, 0,0, 0, image3 );
     mcg_add_image( 0,0, 0,0, 0, image4 );
-    
+
     assertTrue( McgGetLayersImageCount(layer0) == 4 );
-    
+
     int layer1 = McgSpawnLayer();
     McgSetActiveLayer( layer1 );
 
@@ -102,7 +102,7 @@ void test_layer_count() {
     mcg_add_image( 0,0, 0,0, 0, image9 );
 
     assertTrue( McgGetLayersImageCount(layer1) == 5 );
-    
+
     assertTrue( McgGetHeapCount() == 9 );
 }
 
