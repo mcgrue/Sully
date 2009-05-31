@@ -4,11 +4,6 @@
 // the builtins, but don't for one reason or another (usually duplication)
 //
 
-#define FACE_UP 1
-#define FACE_DOWN 2
-#define FACE_LEFT 3
-#define FACE_RIGHT 4
-
 /************************** entity.face constants ****************************/
 
 // These four functions return true if the player entity is facing in the specified
