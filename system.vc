@@ -108,7 +108,8 @@ void AutoExec()
 
     InitEnemyGroups();  // load the battle group resources
     InitSlashy();       // loads the weapon and enemy slashy anims.
-
+    InitMcgrender();    // load McGrender because OTHERWISE WE MIGHT DIE		
+    
     selectmap_clear(1); // sets up the selectmap.
 
 /// put this in the load/save game and
