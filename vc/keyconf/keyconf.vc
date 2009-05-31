@@ -49,8 +49,8 @@ int mcfail_ControlArrows( ... args ) {
         McFailure( "mcfail_ControlArrows needs two int args, got some non-int args." );
     }
 
-    int value = args.int_value[0];
-    int limit = args.int_value[1];
+    int value = args.int[0];
+    int limit = args.int[1];
 
     if( ButtonUp(1) || ButtonLeft(1) || ButtonLeftTop(1) )
     {
